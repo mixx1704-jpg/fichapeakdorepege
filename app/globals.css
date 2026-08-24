@@ -51,7 +51,7 @@ textarea { resize: vertical; }
   border: 0 !important;
 }
 
-.app-shell { min-height: 100vh; }
+.app-shell { min-height: 100vh; color: var(--ink); background: var(--paper); }
 .app-shell[data-theme="dark"] {
   --paper: #11110f;
   --surface: #191917;
@@ -83,13 +83,29 @@ textarea { resize: vertical; }
 .app-shell[data-theme="dark"] .extra-dice input,
 .app-shell[data-theme="dark"] .rank-control,
 .app-shell[data-theme="dark"] .target-select select,
-.app-shell[data-theme="dark"] .character-switcher > select { background: #211f1c; }
+.app-shell[data-theme="dark"] .character-switcher > select,
+.app-shell[data-theme="dark"] .inline-controls input,
+.app-shell[data-theme="dark"] .custom-perk-row input,
+.app-shell[data-theme="dark"] .custom-perk-row textarea { background: #211f1c; }
 .app-shell[data-theme="dark"] .section-block,
 .app-shell[data-theme="dark"] .attribute-card,
 .app-shell[data-theme="dark"] .catalog-card,
 .app-shell[data-theme="dark"] .resource-card,
 .app-shell[data-theme="dark"] .pe-mini { background: rgba(30, 29, 26, 0.88); }
 .app-shell[data-theme="dark"] .test-command.kagune { background: var(--wine-dark); }
+.app-shell[data-theme="dark"] .mobile-nav { background: rgba(25, 25, 23, 0.96); }
+.app-shell[data-theme="dark"] .grade-progress { background: rgba(212, 90, 103, 0.07); }
+.app-shell[data-theme="dark"] .icon-button:hover,
+.app-shell[data-theme="dark"] .segmented button.active,
+.app-shell[data-theme="dark"] .activation-toggle span { color: var(--ink); background: var(--surface-strong); }
+.app-shell[data-theme="dark"] .segmented,
+.app-shell[data-theme="dark"] .filter-row button { background: rgba(255, 255, 255, 0.025); }
+.app-shell[data-theme="dark"] .filter-row button.active { color: var(--paper); background: var(--ink); }
+.app-shell[data-theme="dark"] .validation-panel { background: rgba(139, 23, 34, 0.16); }
+.app-shell[data-theme="dark"] .validation-panel ul,
+.app-shell[data-theme="dark"] .hit-rule span { color: var(--muted); }
+.app-shell[data-theme="dark"] input::placeholder,
+.app-shell[data-theme="dark"] textarea::placeholder { color: var(--faint); opacity: 1; }
 .topbar {
   position: sticky;
   z-index: 50;
@@ -310,6 +326,14 @@ textarea { resize: vertical; }
 .inline-controls input[type="number"] { width: 100%; height: 36px; padding: 0 10px; border: 1px solid var(--line); border-radius: 6px; background: #fff; }
 .check-row { display: flex; align-items: center; gap: 8px; min-height: 36px; color: var(--muted); font-size: 10px; }
 .check-row input { accent-color: var(--wine); }
+.grade-progress { display: grid; gap: 8px; margin-top: 15px; padding: 13px; border: 1px solid var(--line); border-radius: 8px; background: var(--wine-soft); }
+.grade-progress > div:first-child { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.grade-progress > div:first-child span { color: var(--muted); font-size: 10px; font-weight: 700; }
+.grade-progress > div:first-child strong { color: var(--wine); font-size: 11px; }
+.grade-progress .meter { height: 5px; overflow: hidden; border-radius: 99px; background: color-mix(in srgb, var(--line) 72%, transparent); }
+.grade-progress .meter i { display: block; height: 100%; border-radius: inherit; background: var(--wine); transition: width .25s ease; }
+.grade-progress small { color: var(--ink); font-size: 10px; }
+.grade-progress em { color: var(--muted); font-size: 9px; font-style: normal; }
 .ability-text { margin: 0; font-family: Georgia, "Times New Roman", serif; font-size: 18px; line-height: 1.55; }
 .rule-note { margin-top: 20px; padding: 13px 14px; border-left: 2px solid var(--wine); color: var(--muted); background: var(--wine-soft); font-size: 11px; line-height: 1.5; }
 .rule-note b { color: var(--ink); }
@@ -417,6 +441,20 @@ textarea { resize: vertical; }
 .rank-control button:hover:not(:disabled) { color: var(--wine); background: var(--wine-soft); }
 .rank-control span { min-width: 34px; border-right: 1px solid var(--line); border-left: 1px solid var(--line); text-align: center; font-size: 9px; font-weight: 800; line-height: 31px; }
 
+.custom-perks { display: grid; gap: 4px; }
+.custom-perk-list { display: grid; gap: 9px; }
+.custom-perk-row { display: grid; grid-template-columns: minmax(160px, .8fr) 105px minmax(230px, 1.4fr) 38px; gap: 8px; align-items: end; padding: 11px; border: 1px solid var(--line); border-radius: 9px; background: color-mix(in srgb, var(--surface) 88%, transparent); }
+.custom-perk-row label { min-width: 0; display: grid; gap: 5px; }
+.custom-perk-row label > span { color: var(--muted); font-size: 8px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
+.custom-perk-row input, .custom-perk-row textarea { width: 100%; min-width: 0; padding: 0 9px; border: 1px solid var(--line); border-radius: 6px; background: #fff; font-size: 10px; }
+.custom-perk-row input { height: 36px; }
+.custom-perk-row textarea { min-height: 36px; padding-top: 8px; resize: vertical; }
+.custom-perk-cost > div { display: flex; align-items: center; }
+.custom-perk-cost input { border-radius: 6px 0 0 6px; }
+.custom-perk-cost b { height: 36px; display: grid; place-items: center; padding: 0 8px; border: 1px solid var(--line); border-left: 0; border-radius: 0 6px 6px 0; color: var(--wine); font-size: 9px; }
+.custom-perk-remove { width: 38px; height: 36px; border: 1px solid var(--line); border-radius: 6px; color: var(--muted); background: transparent; font-size: 18px; }
+.custom-perk-remove:hover { color: var(--wine); border-color: var(--wine); }
+
 .weapon-builder { display: grid; gap: 20px; }
 .weapon-head { display: flex; align-items: end; justify-content: space-between; gap: 20px; }
 .weapon-head > div { flex: 1; display: grid; grid-template-columns: .85fr 1.7fr; gap: 12px; }
@@ -518,6 +556,8 @@ textarea { resize: vertical; }
   .segmented { width: 100%; }
   .segmented button { flex: 1; }
   .catalog-grid, .catalog-grid.effects, .catalog-grid.evolutions { grid-template-columns: 1fr; }
+  .custom-perk-row { grid-template-columns: 1fr 92px 38px; }
+  .custom-perk-description { grid-column: 1 / -1; grid-row: 2; }
   .catalog-card { min-height: 220px; }
   .weapon-head { align-items: stretch; flex-direction: column; }
   .weapon-head > div { grid-template-columns: 1fr; }

@@ -27,6 +27,7 @@ type KaguneFamily = "Ukaku" | "Koukaku" | "Rinkaku" | "Bikaku";
 type WeaponKind = "nenhum" | "kagune" | "quinque" | "arata";
 type RankedChoice = { rank: number; target?: AttributeKey };
 type InventoryItem = { id: string; name: string; quantity: number; notes: string };
+type CustomPerk = { id: string; name: string; description: string; cost: number };
 
 type CharacterSheet = {
   id: string;
@@ -46,6 +47,7 @@ type CharacterSheet = {
   physicalBonus: AttributeKey;
   secondMentalBonus: AttributeKey;
   perks: Record<string, RankedChoice>;
+  customPerks: CustomPerk[];
   drawbacks: Record<string, RankedChoice>;
   weaponKind: WeaponKind;
   kaguneName: string;
@@ -57,6 +59,7 @@ type CharacterSheet = {
   effects: Record<string, RankedChoice>;
   selectedEvolutions: string[];
   extraPE: number;
+  progressPE: number;
   includeGradePE: boolean;
   currentLife: number;
   currentSanity: number;
@@ -97,9 +100,9 @@ function newCharacter(name = "Novo personagem"): CharacterSheet {
     archetype: "O Protetor", concept: "", centralPhrase: "", image: "",
     baseAttributes: blankAttributeMap(), extraDice: blankAttributeMap(),
     mentalBonus: "raciocinio", physicalBonus: "forca", secondMentalBonus: "controle",
-    perks: {}, drawbacks: {}, weaponKind: "nenhum", kaguneName: "", kaguneType: "Rinkaku",
+    perks: {}, customPerks: [], drawbacks: {}, weaponKind: "nenhum", kaguneName: "", kaguneType: "Rinkaku",
     kaguneSecondType: "", kaguneActive: false, quinxFrame: 2, sourceGhoulGrade: 2,
-    effects: {}, selectedEvolutions: [], extraPE: 0, includeGradePE: true,
+    effects: {}, selectedEvolutions: [], extraPE: 0, progressPE: 0, includeGradePE: false,
     currentLife: 0, currentSanity: 0, currentRC: 0, hunger: 0, instinct: 0,
     anchors: [{ name: "", bond: "" }, { name: "", bond: "" }, { name: "", bond: "" }],
     appearance: "", history: "", personality: "", kaguneDescription: "", notes: "", conditions: "",
@@ -113,7 +116,7 @@ function normalizeCharacter(input: Partial<CharacterSheet>): CharacterSheet {
     ...base, ...input, id: input.id || base.id,
     baseAttributes: { ...base.baseAttributes, ...(input.baseAttributes || {}) },
     extraDice: { ...base.extraDice, ...(input.extraDice || {}) },
-    perks: input.perks || {}, drawbacks: input.drawbacks || {}, effects: input.effects || {},
+    perks: input.perks || {}, customPerks: input.customPerks || [], drawbacks: input.drawbacks || {}, effects: input.effects || {},
     selectedEvolutions: input.selectedEvolutions || [],
     anchors: input.anchors?.length ? input.anchors.slice(0, 3) : base.anchors,
     inventory: input.inventory || [],
@@ -284,10 +287,12 @@ export default function Home() {
     const looseHitAdjustments = increaseHitRank % 3;
 
     const attributePE = attributeKeys.reduce((total, key) => total + attributePurchaseCost(sheet.baseAttributes[key]), 0);
-    const perksPE = Object.entries(sheet.perks).reduce((total, [id, acquired]) => {
+    const catalogPerksPE = Object.entries(sheet.perks).reduce((total, [id, acquired]) => {
       const item = perks.find((candidate) => candidate.id === id);
       return total + (item ? perkCostForSheet(item, acquired.rank, sheet.species) : 0);
     }, 0);
+    const customPerksPE = sheet.customPerks.reduce((total, item) => total + Math.max(0, item.cost || 0), 0);
+    const perksPE = catalogPerksPE + customPerksPE;
     const drawbackCredit = Object.entries(sheet.drawbacks).reduce((total, [id, acquired]) => {
       const item = drawbacks.find((candidate) => candidate.id === id);
       return total + (item ? rankCost(item.credit, acquired.rank, "choice") : 0);
@@ -312,8 +317,16 @@ export default function Home() {
     const frameBudget = sheet.species === "quinx" ? 2 + (sheet.quinxFrame >= 3 ? 4 : 0) + (sheet.quinxFrame >= 4 ? Math.floor(sheet.grade / 2) : 0) + (sheet.quinxFrame >= 5 ? Math.floor(sheet.grade / 2) : 0) : 0;
     const freeKaguneBudget = frameBudget + (sheet.species === "humano-dominante" ? 6 : 0);
     const paidEffectPE = sheet.weaponKind === "kagune" ? Math.max(0, actualEffectPE - freeKaguneBudget) : 0;
-    const gradeGrant = sheet.includeGradePE ? Math.max(0, (sheet.grade - 2) * 5) : 0;
-    const peAvailable = 20 + species.creationGrant + gradeGrant + sheet.extraPE + drawbackCredit;
+    const promotionIndex = Math.max(0, Math.floor((sheet.grade - 2) / 2));
+    const currentGradeRequirement = promotionIndex * 10;
+    const cumulativeGradeRequirement = promotionIndex * (promotionIndex + 1) * 5;
+    const hasNextGrade = sheet.grade < 14;
+    const nextGrade = hasNextGrade ? sheet.grade + 2 : sheet.grade;
+    const nextGradeRequirement = hasNextGrade ? (promotionIndex + 1) * 10 : 0;
+    const nextCumulativeRequirement = cumulativeGradeRequirement + nextGradeRequirement;
+    const progressToNextGrade = Math.max(0, nextCumulativeRequirement - sheet.progressPE);
+    const progressInCurrentGrade = Math.max(0, Math.min(nextGradeRequirement, sheet.progressPE - cumulativeGradeRequirement));
+    const peAvailable = 20 + species.creationGrant + sheet.extraPE + drawbackCredit;
     const peSpent = species.subCost + quimeraCost + attributePE + perksPE + paidEffectPE + evolutionPE;
     const peRemaining = peAvailable - peSpent;
 
@@ -341,10 +354,11 @@ export default function Home() {
     attributeKeys.forEach((key) => { if (sheet.baseAttributes[key] > purchasedCap) issues.push(`${attributeLabels[key]} passa do limite comprado ${purchasedCap}.`); });
     if (sheet.drawbacks.desabilidade?.target && permanentAttributes[sheet.drawbacks.desabilidade.target] > 4) issues.push(`${attributeLabels[sheet.drawbacks.desabilidade.target]} passa do limite 4 de Desabilidade.`);
     Object.keys(sheet.perks).forEach((id) => { const item = perks.find((candidate) => candidate.id === id); if (item && !perkRequirementMet(item, sheet, permanentAttributes)) issues.push(`Requisito não atendido: ${item.name}.`); });
+    if (sheet.progressPE < cumulativeGradeRequirement) issues.push(`O Grau ${sheet.grade} requer ${cumulativeGradeRequirement} PE de progressão acumulados.`);
     if (sheet.weaponKind === "quinque" && Object.keys(sheet.effects).some((id) => kaguneEffects.find((item) => item.id === id)?.type.includes("Biológico"))) issues.push("Quinque não recebe efeitos Biológicos, salvo exceção do Narrador.");
     if (peRemaining < 0) issues.push(`Faltam ${Math.abs(peRemaining)} PE para fechar a ficha.`);
 
-    return { species, speciesBonuses, permanentAttributes, activeAttributes, permanentDice, attributeTests, primaryAttribute, kaguneTest, increaseHitRank, looseHitAdjustments, attributePE, perksPE, drawbackCredit, nominalEffectPE, actualEffectPE, freeKaguneBudget, paidEffectPE, evolutionPE, gradeGrant, peAvailable, peSpent, peRemaining, maxLife, maxSanity, maxRC, carrying, movement, determination, rd, blockTest, dodgeTest, purchasedCap, issues, quimeraCost, frameBudget };
+    return { species, speciesBonuses, permanentAttributes, activeAttributes, permanentDice, attributeTests, primaryAttribute, kaguneTest, increaseHitRank, looseHitAdjustments, attributePE, catalogPerksPE, customPerksPE, perksPE, drawbackCredit, nominalEffectPE, actualEffectPE, freeKaguneBudget, paidEffectPE, evolutionPE, currentGradeRequirement, cumulativeGradeRequirement, hasNextGrade, nextGrade, nextGradeRequirement, nextCumulativeRequirement, progressToNextGrade, progressInCurrentGrade, peAvailable, peSpent, peRemaining, maxLife, maxSanity, maxRC, carrying, movement, determination, rd, blockTest, dodgeTest, purchasedCap, issues, quimeraCost, frameBudget };
   }, [sheet]);
 
   const filteredPerks = useMemo(() => {
@@ -373,6 +387,19 @@ export default function Home() {
   };
   const setAttribute = (key: AttributeKey, value: number) => updateSheet((current) => ({ ...current, baseAttributes: { ...current.baseAttributes, [key]: Math.max(0, Math.min(12, value)) } }));
   const setExtraDice = (key: AttributeKey, value: number) => updateSheet((current) => ({ ...current, extraDice: { ...current.extraDice, [key]: Math.max(-10, Math.min(20, value)) } }));
+
+  const addCustomPerk = () => updateSheet((current) => ({
+    ...current,
+    customPerks: [...current.customPerks, { id: uid(), name: "Nova vantagem", description: "", cost: 0 }],
+  }));
+  const updateCustomPerk = (id: string, patch: Partial<CustomPerk>) => updateSheet((current) => ({
+    ...current,
+    customPerks: current.customPerks.map((item) => item.id === id ? { ...item, ...patch } : item),
+  }));
+  const removeCustomPerk = (id: string) => updateSheet((current) => ({
+    ...current,
+    customPerks: current.customPerks.filter((item) => item.id !== id),
+  }));
 
   const togglePerk = (item: Perk) => updateSheet((current) => {
     const next = { ...current.perks };
@@ -479,7 +506,7 @@ export default function Home() {
               <div className="resource-grid"><ResourceCard label="Vida" current={sheet.currentLife} max={derived.maxLife} tone="life" onChange={(value) => patchSheet({ currentLife: value })} /><ResourceCard label="Sanidade" current={sheet.currentSanity} max={derived.maxSanity} tone="sanity" onChange={(value) => patchSheet({ currentSanity: value })} />{sheet.weaponKind === "kagune" && <ResourceCard label="RC" current={sheet.currentRC} max={derived.maxRC} tone="rc" onChange={(value) => patchSheet({ currentRC: value })} />}{showsHunger && <ResourceCard label="Fome" current={sheet.hunger} max={10} tone="hunger" onChange={(value) => patchSheet({ hunger: value })} />}{showsInstinct && <ResourceCard label="Carga instintiva" current={sheet.instinct} max={10} tone="instinct" onChange={(value) => patchSheet({ instinct: value })} />}</div>
               <div className="stat-strip"><Stat label="RD" value={derived.rd} /><Stat label="Deslocamento" value={`${derived.movement} ${derived.movement === 1 ? "espaço" : "espaços"}`} /><Stat label="Carga" value={derived.carrying} />{hasDetermination && <Stat label="Determinação" value={derived.determination} />}<Stat label="Bloqueio" value={derived.blockTest} mono onCopy={() => copyTest(derived.blockTest, "block")} copied={copied === "block"} /><Stat label="Esquiva" value={derived.dodgeTest} mono onCopy={() => copyTest(derived.dodgeTest, "dodge")} copied={copied === "dodge"} /></div>
             </section>
-            <section className="summary-columns"><div className="section-block compact"><SectionTitle kicker="Evolução" title="Pontos de Evolução" /><div className="pe-hero"><strong className={derived.peRemaining < 0 ? "negative" : ""}>{derived.peRemaining}</strong><span>PE disponíveis</span></div><div className="ledger"><Ledger label="Verba total" value={derived.peAvailable} /><Ledger label="Atributos" value={derived.attributePE} negative /><Ledger label="Vantagens" value={derived.perksPE} negative /><Ledger label="Kakuhou / arma" value={derived.paidEffectPE + derived.evolutionPE + derived.quimeraCost} negative /><Ledger label="Subespécie" value={derived.species.subCost} negative /><Ledger label="Desvantagens" value={derived.drawbackCredit} positive /></div><div className="inline-controls"><label><span>PE adicionais</span><input type="number" value={sheet.extraPE} onChange={(event) => patchSheet({ extraPE: Number(event.target.value) || 0 })} /></label><label className="check-row"><input type="checkbox" checked={sheet.includeGradePE} onChange={(event) => patchSheet({ includeGradePE: event.target.checked })} /><span>Verba inicial por Grau (+{derived.gradeGrant})</span></label></div></div>
+            <section className="summary-columns"><div className="section-block compact"><SectionTitle kicker="Evolução" title="Pontos de Evolução" /><div className="pe-hero"><strong className={derived.peRemaining < 0 ? "negative" : ""}>{derived.peRemaining}</strong><span>PE disponíveis</span></div><div className="ledger"><Ledger label="Verba total" value={derived.peAvailable} /><Ledger label="Atributos" value={derived.attributePE} negative /><Ledger label="Vantagens do catálogo" value={derived.catalogPerksPE} negative /><Ledger label="Vantagens personalizadas" value={derived.customPerksPE} negative /><Ledger label="Kakuhou / arma" value={derived.paidEffectPE + derived.evolutionPE + derived.quimeraCost} negative /><Ledger label="Subespécie" value={derived.species.subCost} negative /><Ledger label="Desvantagens" value={derived.drawbackCredit} positive /></div><div className="inline-controls"><label><span>PE adicionais</span><input type="number" value={sheet.extraPE} onChange={(event) => patchSheet({ extraPE: Number(event.target.value) || 0 })} /></label><label><span>PE de progressão acumulados</span><input type="number" min={0} value={sheet.progressPE} onChange={(event) => patchSheet({ progressPE: Math.max(0, Number(event.target.value) || 0) })} /></label></div><div className="grade-progress"><div><span>{derived.hasNextGrade ? `Grau ${sheet.grade} → ${derived.nextGrade}` : "Grau máximo"}</span><strong>{derived.hasNextGrade ? `${derived.nextGradeRequirement} PE` : `Etapa final: ${derived.currentGradeRequirement} PE`}</strong></div><div className="meter"><i style={{ width: `${derived.hasNextGrade ? Math.max(0, Math.min(100, derived.nextGradeRequirement ? (derived.progressInCurrentGrade / derived.nextGradeRequirement) * 100 : 0)) : 100}%` }} /></div><small>{derived.hasNextGrade ? (derived.progressToNextGrade === 0 ? `Pode subir para o Grau ${derived.nextGrade}` : `Faltam ${derived.progressToNextGrade} PE acumulados para o Grau ${derived.nextGrade}`) : "Progressão de Grau concluída."}</small><em>Até o Grau {sheet.grade}: {derived.cumulativeGradeRequirement} PE acumulados.</em></div></div>
               <div className="section-block compact"><SectionTitle kicker="Psiquê" title={currentArchetype.name} /><p className="ability-text">{currentArchetype.ability}</p><div className="rule-note"><b>2 usos por descanso.</b> Habilidades em duas etapas só gastam o uso após a conclusão.</div>{sheet.conditions && <div className="condition-note"><span>Condições</span><p>{sheet.conditions}</p></div>}</div>
             </section>
             {derived.issues.length > 0 && <section className="validation-panel"><div><span>!</span><strong>{derived.issues.length} {derived.issues.length === 1 ? "ponto para revisar" : "pontos para revisar"}</strong></div><ul>{derived.issues.map((issue) => <li key={issue}>{issue}</li>)}</ul></section>}
@@ -493,8 +520,8 @@ export default function Home() {
           </div>}
 
           {tab === "vantagens" && <div className="page-stack"><PageHeader number="03" title="Vantagens & desvantagens" description="Requisitos, custos e bônus permanentes são conferidos na hora." />
-            <div className="catalog-toolbar"><div className="segmented"><button type="button" className={perkView === "vantagens" ? "active" : ""} onClick={() => setPerkView("vantagens")}>Vantagens <span>{Object.keys(sheet.perks).length}</span></button><button type="button" className={perkView === "desvantagens" ? "active" : ""} onClick={() => setPerkView("desvantagens")}>Desvantagens <span>{Object.keys(sheet.drawbacks).length}</span></button></div><label className="search-field"><span>⌕</span><input value={catalogSearch} onChange={(event) => setCatalogSearch(event.target.value)} placeholder="Buscar por nome ou efeito" /></label></div>
-            {perkView === "vantagens" ? <><div className="filter-row">{["Todas", "Genérica", "Força", "Vigor", "Precisão", "Agilidade", "Raciocínio", "Percepção", "Presença", "Controle"].map((category) => <button type="button" key={category} className={perkCategory === category ? "active" : ""} onClick={() => setPerkCategory(category)}>{category}</button>)}</div><div className="catalog-summary"><span>{filteredPerks.length} opções</span><strong>{derived.perksPE} PE investidos</strong></div><div className="catalog-grid">{filteredPerks.map((item) => {
+            <div className="catalog-toolbar"><div className="segmented"><button type="button" className={perkView === "vantagens" ? "active" : ""} onClick={() => setPerkView("vantagens")}>Vantagens <span>{Object.keys(sheet.perks).length + sheet.customPerks.length}</span></button><button type="button" className={perkView === "desvantagens" ? "active" : ""} onClick={() => setPerkView("desvantagens")}>Desvantagens <span>{Object.keys(sheet.drawbacks).length}</span></button></div><label className="search-field"><span>⌕</span><input value={catalogSearch} onChange={(event) => setCatalogSearch(event.target.value)} placeholder="Buscar por nome ou efeito" /></label></div>
+            {perkView === "vantagens" ? <><section className="section-block compact custom-perks"><SectionTitle kicker="Regras da mesa" title="Vantagens personalizadas" aside={<button type="button" className="text-button" onClick={addCustomPerk}>+ Criar vantagem</button>} /><p className="section-help">Crie vantagens próprias e defina o custo em PE. O valor entra automaticamente no total da ficha.</p>{sheet.customPerks.length ? <div className="custom-perk-list">{sheet.customPerks.map((item) => <div className="custom-perk-row" key={item.id}><label><span>Nome</span><input value={item.name} onChange={(event) => updateCustomPerk(item.id, { name: event.target.value })} placeholder="Nome da vantagem" /></label><label className="custom-perk-cost"><span>Custo</span><div><input type="number" min={0} value={item.cost} onChange={(event) => updateCustomPerk(item.id, { cost: Math.max(0, Number(event.target.value) || 0) })} /><b>PE</b></div></label><label className="custom-perk-description"><span>Descrição</span><textarea rows={2} value={item.description} onChange={(event) => updateCustomPerk(item.id, { description: event.target.value })} placeholder="Efeito, requisito e observações..." /></label><button type="button" className="custom-perk-remove" aria-label={`Remover ${item.name || "vantagem personalizada"}`} onClick={() => removeCustomPerk(item.id)}>×</button></div>)}</div> : <button type="button" className="empty-add" onClick={addCustomPerk}>Nenhuma vantagem personalizada <span>Criar a primeira</span></button>}</section><div className="filter-row">{["Todas", "Genérica", "Força", "Vigor", "Precisão", "Agilidade", "Raciocínio", "Percepção", "Presença", "Controle"].map((category) => <button type="button" key={category} className={perkCategory === category ? "active" : ""} onClick={() => setPerkCategory(category)}>{category}</button>)}</div><div className="catalog-summary"><span>{filteredPerks.length} opções do catálogo</span><strong>{derived.perksPE} PE investidos no total</strong></div><div className="catalog-grid">{filteredPerks.map((item) => {
               const acquired = sheet.perks[item.id]; const eligible = perkRequirementMet(item, sheet, derived.permanentAttributes); const price = perkCostForSheet(item, acquired?.rank || 1, sheet.species);
               return <CatalogCard key={item.id} selected={Boolean(acquired)} unavailable={!eligible} tone={item.category.toLocaleLowerCase("pt-BR")}><div className="catalog-card-top"><span>{item.category}</span><b>{price} PE</b></div><h3>{item.name}</h3><p>{item.description}</p><div className="requirement">{item.attribute && item.min ? `${attributeLabels[item.attribute]} ${item.min}` : item.requirement || "Disponível"}{hasHumanPerkSurcharge(item, sheet.species) && <em>+2 PE: Corpo de Carne</em>}{!eligible && <em>Requisito pendente</em>}</div>{acquired && item.targetAttribute && <label className="target-select"><span>Atributo</span><select value={acquired.target || "forca"} onChange={(event) => updateSheet((current) => ({ ...current, perks: { ...current.perks, [item.id]: { ...acquired, target: event.target.value as AttributeKey } } }))}>{(item.targetAttribute === "physical" ? physicalAttributes : item.targetAttribute === "mental" ? mentalAttributes : attributeKeys).map((key) => <option key={key} value={key}>{attributeLabels[key]}</option>)}</select></label>}<div className="card-actions">{acquired && (item.maxRank || 1) > 1 && <RankControl rank={acquired.rank} max={item.maxRank || 1} onDown={() => updatePerkRank(item, -1)} onUp={() => updatePerkRank(item, 1)} />}<button type="button" className={acquired ? "remove" : "add"} onClick={() => togglePerk(item)}>{acquired ? "Remover" : "Adicionar"}</button></div></CatalogCard>;
             })}</div></> : <><div className="catalog-summary"><span>{filteredDrawbacks.length} opções</span><strong className="positive">+{derived.drawbackCredit} PE recebidos</strong></div><div className="catalog-grid">{filteredDrawbacks.map((item) => {
