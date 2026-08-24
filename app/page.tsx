@@ -63,6 +63,8 @@ type CharacterSheet = {
   mentalBonus: AttributeKey;
   physicalBonus: AttributeKey;
   secondMentalBonus: AttributeKey;
+  secondPhysicalBonus: AttributeKey;
+  artificialDominantBlend: boolean;
   perks: Record<string, RankedChoice>;
   customPerks: CustomPerk[];
   drawbacks: Record<string, RankedChoice>;
@@ -126,6 +128,7 @@ function newCharacter(name = "Novo personagem"): CharacterSheet {
     archetype: "O Protetor", concept: "", centralPhrase: "", image: "",
     baseAttributes: blankAttributeMap(), extraDice: blankAttributeMap(),
     mentalBonus: "raciocinio", physicalBonus: "forca", secondMentalBonus: "controle",
+    secondPhysicalBonus: "agilidade", artificialDominantBlend: false,
     perks: {}, customPerks: [], drawbacks: {}, weaponKind: "nenhum", kaguneName: "", kaguneType: "Rinkaku",
     kaguneSecondType: "", kaguneActive: false, quinxFrame: 2, sourceGhoulGrade: 2,
     effects: {}, selectedEvolutions: [], extraPE: 0, progressPE: 0, includeGradePE: false,
@@ -302,8 +305,11 @@ export default function Home() {
     const humanBased = ["humano", "humano-dominante", "ghoul-artificial", "quinx"].includes(sheet.species);
     if (humanBased) speciesBonuses[sheet.mentalBonus] += 1;
     if (sheet.species === "humano-dominante") speciesBonuses[sheet.physicalBonus] += 2;
-    if (sheet.species === "ghoul-dominante") { speciesBonuses[sheet.physicalBonus] += 1; speciesBonuses[sheet.secondMentalBonus] += 1; }
-    if (sheet.species === "ghoul-artificial") speciesBonuses[sheet.physicalBonus] += 1;
+    if (sheet.species === "ghoul-dominante") {
+      speciesBonuses[sheet.physicalBonus] += 1;
+      speciesBonuses[sheet.secondPhysicalBonus] += 1;
+    }
+    if (sheet.species === "ghoul-artificial") speciesBonuses[sheet.physicalBonus] += sheet.artificialDominantBlend ? 2 : 1;
 
     const permanentAttributes = blankAttributeMap();
     attributeKeys.forEach((key) => { permanentAttributes[key] = sheet.baseAttributes[key] + speciesBonuses[key] + (sheet.perks[`acurado-${key}`] ? 1 : 0); });
@@ -450,7 +456,7 @@ export default function Home() {
     const peRemaining = peAvailable - peSpent;
 
     const gradeMultiplier = Math.max(1, sheet.grade / 2);
-    const maxLife = Math.max(1, Math.floor(10 + activeAttributes.vigor + species.lifeBase * gradeMultiplier + (sheet.perks.resistente ? Math.min(sheet.grade, 10) : 0) - (sheet.species === "ghoul-artificial" ? Math.floor(sheet.grade / 2) : 0)));
+    const maxLife = Math.max(1, Math.floor(10 + activeAttributes.vigor + species.lifeBase * gradeMultiplier + (sheet.perks.resistente ? Math.min(sheet.grade, 10) : 0)));
     let maxSanity = 10 + activeAttributes.controle - (sheet.selectedEvolutions.includes("monstro") ? 5 : 0);
     if (sheet.drawbacks["mente-fragil"]) maxSanity = Math.floor(maxSanity / 2);
     maxSanity = Math.max(1, maxSanity);
@@ -684,7 +690,7 @@ export default function Home() {
 
           {tab === "atributos" && <div className="page-stack"><PageHeader number="02" title="Atributos" description="O valor do Atributo cria o ++. Dados extras alteram apenas a quantidade de d8." />
             <div className="formula-rule"><div><span>Atributo 4</span><code>4d8++2&gt;&gt;5</code></div><b>+</b><div><span>Skill: +1 dado</span><code>1d8</code></div><b>=</b><div className="result"><span>Teste final</span><code>5d8++2&gt;&gt;5</code></div></div>
-            <section className="bonus-choices section-block compact"><SectionTitle kicker="Bônus de espécie" title="Escolhas gratuitas" /><div className="field-grid three">{["humano", "humano-dominante", "ghoul-artificial", "quinx"].includes(sheet.species) && <Field label="+1 Mental"><select value={sheet.mentalBonus} onChange={(event) => patchSheet({ mentalBonus: event.target.value as AttributeKey })}>{mentalAttributes.map((key) => <option key={key} value={key}>{attributeLabels[key]}</option>)}</select></Field>}{["humano-dominante", "ghoul-dominante", "ghoul-artificial"].includes(sheet.species) && <Field label={sheet.species === "humano-dominante" ? "+2 Físico" : "+1 Físico"}><select value={sheet.physicalBonus} onChange={(event) => patchSheet({ physicalBonus: event.target.value as AttributeKey })}>{physicalAttributes.map((key) => <option key={key} value={key}>{attributeLabels[key]}</option>)}</select></Field>}{sheet.species === "ghoul-dominante" && <Field label="+1 Mental"><select value={sheet.secondMentalBonus} onChange={(event) => patchSheet({ secondMentalBonus: event.target.value as AttributeKey })}>{mentalAttributes.map((key) => <option key={key} value={key}>{attributeLabels[key]}</option>)}</select></Field>}</div></section>
+            <section className="bonus-choices section-block compact"><SectionTitle kicker="Bônus de espécie" title="Escolhas gratuitas" />{sheet.species === "ghoul-artificial" && <label className="species-variant-toggle"><input type="checkbox" checked={sheet.artificialDominantBlend} onChange={(event) => patchSheet({ artificialDominantBlend: event.target.checked })} /><span><b>Humano-Dominante + Ghoul Artificial</b><small>Troca o bônus físico para +2. Mantém +1 Mental, Vida e passivas de Ghoul Artificial, sem receber as fraquezas do Humano Dominante.</small></span></label>}<div className="field-grid three">{["humano", "humano-dominante", "ghoul-artificial", "quinx"].includes(sheet.species) && <Field label="+1 Mental"><select value={sheet.mentalBonus} onChange={(event) => patchSheet({ mentalBonus: event.target.value as AttributeKey })}>{mentalAttributes.map((key) => <option key={key} value={key}>{attributeLabels[key]}</option>)}</select></Field>}{["humano-dominante", "ghoul-dominante", "ghoul-artificial"].includes(sheet.species) && <Field label={sheet.species === "humano-dominante" || (sheet.species === "ghoul-artificial" && sheet.artificialDominantBlend) ? "+2 Físico" : "+1 Físico A"}><select value={sheet.physicalBonus} onChange={(event) => { const physicalBonus = event.target.value as AttributeKey; patchSheet({ physicalBonus, ...(sheet.species === "ghoul-dominante" && physicalBonus === sheet.secondPhysicalBonus ? { secondPhysicalBonus: physicalAttributes.find((key) => key !== physicalBonus) || "agilidade" } : {}) }); }}>{physicalAttributes.map((key) => <option key={key} value={key}>{attributeLabels[key]}</option>)}</select></Field>}{sheet.species === "ghoul-dominante" && <Field label="+1 Físico B"><select value={sheet.secondPhysicalBonus} onChange={(event) => patchSheet({ secondPhysicalBonus: event.target.value as AttributeKey })}>{physicalAttributes.filter((key) => key !== sheet.physicalBonus).map((key) => <option key={key} value={key}>{attributeLabels[key]}</option>)}</select></Field>}</div></section>
             <section><div className="attribute-section-head"><div><span>Físicos</span><p>Limite comprado atual: {derived.purchasedCap}</p></div><strong>{physicalAttributes.reduce((sum, key) => sum + attributePurchaseCost(sheet.baseAttributes[key]), 0)} PE</strong></div><div className="attribute-grid">{physicalAttributes.map((key) => <AttributeCard key={key} attributeKey={key} sheet={sheet} derived={derived} copied={copied} onCopy={copyTest} onSet={setAttribute} onExtra={setExtraDice} />)}</div></section>
             <section><div className="attribute-section-head"><div><span>Mentais</span><p>Limite comprado atual: {derived.purchasedCap}</p></div><strong>{mentalAttributes.reduce((sum, key) => sum + attributePurchaseCost(sheet.baseAttributes[key]), 0)} PE</strong></div><div className="attribute-grid">{mentalAttributes.map((key) => <AttributeCard key={key} attributeKey={key} sheet={sheet} derived={derived} copied={copied} onCopy={copyTest} onSet={setAttribute} onExtra={setExtraDice} />)}</div></section>
           </div>}

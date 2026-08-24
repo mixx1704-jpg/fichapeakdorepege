@@ -373,6 +373,12 @@ textarea { resize: vertical; }
 .formula-rule > b { color: var(--line-strong); font-size: 24px; font-weight: 300; }
 .formula-rule .result code { color: var(--wine); }
 .bonus-choices { box-shadow: none; }
+.species-variant-toggle { display: flex; align-items: flex-start; gap: 10px; margin: -4px 0 14px; padding: 12px; border: 1px solid var(--line); border-radius: 9px; background: var(--surface-strong); cursor: pointer; }
+.species-variant-toggle input { margin-top: 2px; accent-color: var(--wine); }
+.species-variant-toggle span { display: grid; gap: 4px; }
+.species-variant-toggle b { color: var(--ink); font-size: 10px; }
+.species-variant-toggle small { color: var(--muted); font-size: 9px; line-height: 1.5; }
+.species-variant-toggle:has(input:checked) { border-color: color-mix(in srgb, var(--wine) 50%, var(--line)); background: var(--wine-soft); }
 .attribute-section-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; padding-bottom: 12px; border-bottom: 1px solid var(--ink); }
 .attribute-section-head span { font-family: Georgia, "Times New Roman", serif; font-size: 25px; }
 .attribute-section-head p { margin: 3px 0 0; color: var(--muted); font-size: 10px; }

@@ -53,8 +53,8 @@ export const speciesOptions = [
   { id: "humano", label: "Humano", lifeBase: 2, cap: 6, creationGrant: 6, subCost: 0, hasKagune: false, hasHunger: false, summary: "+2 Vida Base, +6 PE de criação, +1 Atributo Mental e uma rerrolagem por sessão." },
   { id: "ghoul", label: "Ghoul", lifeBase: 5, cap: 8, creationGrant: 0, subCost: 0, hasKagune: true, hasHunger: true, summary: "+5 Vida Base, Kakuhou, Kagune, RC e Fome." },
   { id: "humano-dominante", label: "Híbrido — Humano Dominante", lifeBase: 4, cap: 8, creationGrant: 6, subCost: 6, hasKagune: false, hasHunger: false, summary: "Base humana, +2 em um Atributo Físico e 6 PE para efeitos passivos de Kakuhou." },
-  { id: "ghoul-dominante", label: "Híbrido — Ghoul Dominante", lifeBase: 4, cap: 8, creationGrant: 0, subCost: 8, hasKagune: true, hasHunger: true, summary: "+1 Físico, +1 Mental e efeitos de Kagune custam -3 PE (mínimo 1)." },
-  { id: "ghoul-artificial", label: "Ghoul Artificial", lifeBase: 3, cap: 8, creationGrant: 6, subCost: 6, hasKagune: true, hasHunger: true, summary: "Base humana, +1 Físico, +3 Vida Base e redução de Vida igual à metade do Grau." },
+  { id: "ghoul-dominante", label: "Híbrido — Ghoul Dominante", lifeBase: 4, cap: 8, creationGrant: 0, subCost: 8, hasKagune: true, hasHunger: true, summary: "+1 em dois Atributos Físicos diferentes e efeitos de Kagune custam -3 PE (mínimo 1)." },
+  { id: "ghoul-artificial", label: "Ghoul Artificial", lifeBase: 3, cap: 8, creationGrant: 6, subCost: 6, hasKagune: true, hasHunger: true, summary: "Base humana e Ghoul, +1 Mental, +1 Físico, +3 Vida Base, Kakuhou, Kagune, RC e Fome. Pode usar a variação Humano-Dominante sem herdar suas fraquezas." },
   { id: "quinx", label: "Quinx", lifeBase: 4, cap: 8, creationGrant: 6, subCost: 6, hasKagune: true, hasHunger: false, summary: "+4 Vida Base, Frame, Carga Instintiva e Kagune implantada." },
 ] as const;
 
