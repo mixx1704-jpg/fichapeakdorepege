@@ -7,6 +7,7 @@ import {
   attributeDescriptions,
   attributeKeys,
   attributeLabels,
+  combatManeuvers,
   drawbacks,
   evolutions,
   kaguneEffects,
@@ -18,12 +19,12 @@ import {
   type Drawback,
   type Evolution,
   type KaguneEffect,
+  type KaguneFamily,
   type Perk,
   type SpeciesId,
 } from "./data";
 
 type TabId = "resumo" | "atributos" | "vantagens" | "kakuhou" | "historia";
-type KaguneFamily = "Ukaku" | "Koukaku" | "Rinkaku" | "Bikaku";
 type WeaponKind = "nenhum" | "kagune" | "quinque" | "arata";
 type RankedChoice = { rank: number; target?: AttributeKey };
 type InventoryItem = { id: string; name: string; quantity: number; notes: string };
@@ -37,14 +38,17 @@ type DamageContext = {
   kaguneExtraSteps: number;
   kaguneExtraDice: number;
   kaguneExtraModifier: number;
+  kaguneExtraRD: number;
   focusLethalDice: number;
   preciseHitDice: number;
   multiTailsPlusRank: number;
   milPenasSacrifices: number;
   growthPoints: number;
   predadorCeusStacks: number;
+  koukakuMode: "normal" | "attack" | "defense";
   active: Record<string, boolean>;
 };
+type CustomBonuses = { hp: number; rc: number; sanity: number; attributes: Record<AttributeKey, number> };
 
 type CharacterSheet = {
   id: string;
@@ -72,6 +76,8 @@ type CharacterSheet = {
   kaguneName: string;
   kaguneType: KaguneFamily;
   kaguneSecondType: KaguneFamily | "";
+  kaguneThirdType: KaguneFamily | "";
+  kaguneFourthType: KaguneFamily | "";
   kaguneActive: boolean;
   quinxFrame: number;
   sourceGhoulGrade: number;
@@ -94,6 +100,7 @@ type CharacterSheet = {
   conditions: string;
   inventory: InventoryItem[];
   damageContext: DamageContext;
+  customBonuses: CustomBonuses;
   updatedAt: number;
 };
 
@@ -117,9 +124,9 @@ const uid = () => `${Date.now().toString(36)}-${Math.random().toString(36).slice
 const blankDamageContext = (): DamageContext => ({
   physicalAttribute: "forca", targetKaguneType: "",
   physicalExtraSteps: 0, physicalExtraDice: 0, physicalExtraModifier: 0,
-  kaguneExtraSteps: 0, kaguneExtraDice: 0, kaguneExtraModifier: 0,
+  kaguneExtraSteps: 0, kaguneExtraDice: 0, kaguneExtraModifier: 0, kaguneExtraRD: 0,
   focusLethalDice: 0, preciseHitDice: 0, multiTailsPlusRank: 1,
-  milPenasSacrifices: 0, growthPoints: 0, predadorCeusStacks: 0, active: {},
+  milPenasSacrifices: 0, growthPoints: 0, predadorCeusStacks: 0, koukakuMode: "normal", active: {},
 });
 
 function newCharacter(name = "Novo personagem"): CharacterSheet {
@@ -130,12 +137,12 @@ function newCharacter(name = "Novo personagem"): CharacterSheet {
     mentalBonus: "raciocinio", physicalBonus: "forca", secondMentalBonus: "controle",
     secondPhysicalBonus: "agilidade", artificialDominantBlend: false,
     perks: {}, customPerks: [], drawbacks: {}, weaponKind: "nenhum", kaguneName: "", kaguneType: "Rinkaku",
-    kaguneSecondType: "", kaguneActive: false, quinxFrame: 2, sourceGhoulGrade: 2,
+    kaguneSecondType: "", kaguneThirdType: "", kaguneFourthType: "", kaguneActive: false, quinxFrame: 2, sourceGhoulGrade: 2,
     effects: {}, selectedEvolutions: [], extraPE: 0, progressPE: 0, includeGradePE: false,
     currentLife: 0, currentSanity: 0, currentRC: 0, hunger: 0, instinct: 0,
     anchors: [{ name: "", bond: "" }, { name: "", bond: "" }, { name: "", bond: "" }],
     appearance: "", history: "", personality: "", kaguneDescription: "", notes: "", conditions: "",
-    inventory: [], damageContext: blankDamageContext(), updatedAt: Date.now(),
+    inventory: [], damageContext: blankDamageContext(), customBonuses: { hp: 0, rc: 0, sanity: 0, attributes: blankAttributeMap() }, updatedAt: Date.now(),
   };
 }
 
@@ -154,6 +161,11 @@ function normalizeCharacter(input: Partial<CharacterSheet>): CharacterSheet {
       ...(input.damageContext || {}),
       active: { ...base.damageContext.active, ...(input.damageContext?.active || {}) },
     },
+    customBonuses: {
+      ...base.customBonuses,
+      ...(input.customBonuses || {}),
+      attributes: { ...base.customBonuses.attributes, ...(input.customBonuses?.attributes || {}) },
+    },
   };
 }
 
@@ -171,9 +183,13 @@ function incrementalCosts(effect: KaguneEffect, rank: number) {
   return effect.cost.slice(0, rank);
 }
 
+function kaguneFamiliesForSheet(sheet: Pick<CharacterSheet, "kaguneType" | "kaguneSecondType" | "kaguneThirdType" | "kaguneFourthType">) {
+  return new Set<KaguneFamily>([sheet.kaguneType, sheet.kaguneSecondType, sheet.kaguneThirdType, sheet.kaguneFourthType].filter(Boolean) as KaguneFamily[]);
+}
+
 function effectCostForSheet(effect: KaguneEffect, rank: number, sheet: CharacterSheet) {
   const baseIncrements = incrementalCosts(effect, rank);
-  const foreignBikaku = sheet.kaguneType === "Bikaku" && effect.family !== "Geral" && effect.family !== "Bikaku";
+  const foreignBikaku = sheet.kaguneType === "Bikaku" && effect.family !== "Geral" && !kaguneFamiliesForSheet(sheet).has(effect.family as KaguneFamily);
   const paidIncrements = baseIncrements.map((increment) => {
     let levelCost = increment + (foreignBikaku && !sheet.selectedEvolutions.includes("custo-beneficio") ? 2 : 0);
     if (sheet.species === "ghoul-dominante") levelCost = Math.max(1, levelCost - 3);
@@ -185,6 +201,10 @@ function effectCostForSheet(effect: KaguneEffect, rank: number, sheet: Character
     paidTotal: paidIncrements.reduce((total, value) => total + value, 0),
     paidIncrements,
   };
+}
+
+function evolutionCostForSheet(item: Evolution, sheet: CharacterSheet) {
+  return sheet.species === "ghoul-dominante" ? Math.max(1, item.cost - 3) : item.cost;
 }
 
 function attributePurchaseCost(level: number) {
@@ -211,6 +231,18 @@ function formatDamage(steps: number, extraDice: number, modifier: number, fixedD
   return `${dice}${modifier > 0 ? `+${modifier}` : modifier < 0 ? modifier : ""}`;
 }
 
+function multiplyDamage(formula: string, count: number) {
+  if (count <= 1) return formula;
+  const dice = formula.match(/\d+d\d+/g) || [];
+  const scaledDice = dice.map((term) => {
+    const [amount, sides] = term.split("d").map(Number);
+    return `${amount * count}d${sides}`;
+  });
+  const modifierMatch = formula.match(/([+-]\d+)$/);
+  const modifier = modifierMatch ? Number(modifierMatch[1]) * count : 0;
+  return `${scaledDice.join("+")}${modifier > 0 ? `+${modifier}` : modifier < 0 ? modifier : ""}`;
+}
+
 const humanSurchargeIds = new Set([
   "terapeuta", "atante-medicina", "determinado-salvar", "apostador", "arma-favorita",
   "paciente", "nunca-prostra", "corpo-pesado", "corpo-leve", "frio-calculista",
@@ -222,16 +254,33 @@ function hasHumanPerkSurcharge(item: Perk, species: SpeciesId) {
   return species === "humano" && qualifiesForHumanSurcharge;
 }
 
-function perkCostForSheet(item: Perk, rank: number, species: SpeciesId) {
+function perkCostForSheet(item: Perk, rank: number, sheet: CharacterSheet) {
   const base = rankCost(item.cost, rank, item.costMode);
-  return base + (hasHumanPerkSurcharge(item, species) ? 2 * rank : 0);
+  let total = base + (hasHumanPerkSurcharge(item, sheet.species) ? 2 * rank : 0);
+  if (sheet.species === "ghoul-dominante" && item.category === "Kagune Quimera") total = Math.max(1, total - 3);
+  return total;
 }
 
 function perkRequirementMet(perk: Perk, sheet: CharacterSheet, permanentAttributes: Record<AttributeKey, number>) {
   if (perk.species && !perk.species.includes(sheet.species)) return false;
   if (perk.attribute && perk.min && permanentAttributes[perk.attribute] < perk.min) return false;
+  if (perk.requirements && Object.entries(perk.requirements).some(([key, value]) => permanentAttributes[key as AttributeKey] < Number(value))) return false;
+  if (perk.minGrade && sheet.grade < perk.minGrade) return false;
+  const families = kaguneFamiliesForSheet(sheet);
+  if (perk.kaguneTypes && perk.kaguneTypes.some((family) => !families.has(family))) return false;
+  if (perk.minKaguneTypes && families.size < perk.minKaguneTypes) return false;
+  if (perk.requiredEffect && !sheet.effects[perk.requiredEffect]) return false;
+  if (perk.requiredEvolution && !sheet.selectedEvolutions.includes(perk.requiredEvolution)) return false;
   if (perk.requirement === "Aliado" && !sheet.perks.aliado) return false;
   if (perk.requirement === "Refúgio" && !sheet.perks.refugio) return false;
+  return true;
+}
+
+function evolutionRequirementMet(item: Evolution, sheet: CharacterSheet) {
+  if (sheet.grade < item.grade) return false;
+  const families = kaguneFamiliesForSheet(sheet);
+  if (item.kaguneTypes && item.kaguneTypes.some((family) => !families.has(family))) return false;
+  if (item.minKaguneTypes && families.size < item.minKaguneTypes) return false;
   return true;
 }
 
@@ -247,9 +296,9 @@ function effectMaximum(item: KaguneEffect, sheet: CharacterSheet) {
   let max = item.maxRank || 1;
   if (item.id === "aumentar-dano") max = Math.min(max, Math.max(1, Math.floor(sheet.grade / 2)));
   if (item.id === "aumentar-passos") max = Math.min(max, Math.max(1, Math.floor(sheet.grade / 2)));
-  if (item.id === "aumentar-distancia") max = sheet.kaguneType === "Koukaku" || sheet.kaguneSecondType === "Koukaku" ? 2 : 1;
+  if (item.id === "aumentar-distancia") max = kaguneFamiliesForSheet(sheet).has("Koukaku") ? 2 : 1;
   if (item.id === "couraca-superior") max = Math.max(1, Math.floor(sheet.grade / 2));
-  if (sheet.kaguneType === "Bikaku" && item.family !== "Geral" && item.family !== "Bikaku" && !sheet.selectedEvolutions.includes("custo-beneficio")) max = Math.max(1, max - 1);
+  if (sheet.kaguneType === "Bikaku" && item.family !== "Geral" && !kaguneFamiliesForSheet(sheet).has(item.family as KaguneFamily) && !sheet.selectedEvolutions.includes("custo-beneficio")) max = Math.max(1, max - 1);
   return max;
 }
 
@@ -328,7 +377,7 @@ export default function Home() {
     if (sheet.species === "ghoul-artificial") speciesBonuses[sheet.physicalBonus] += sheet.artificialDominantBlend ? 2 : 1;
 
     const permanentAttributes = blankAttributeMap();
-    attributeKeys.forEach((key) => { permanentAttributes[key] = sheet.baseAttributes[key] + speciesBonuses[key] + (sheet.perks[`acurado-${key}`] ? 1 : 0); });
+    attributeKeys.forEach((key) => { permanentAttributes[key] = sheet.baseAttributes[key] + speciesBonuses[key] + (sheet.perks[`acurado-${key}`] ? 1 : 0) + sheet.customBonuses.attributes[key]; });
     const activeAttributes = { ...permanentAttributes };
     const bodyUpgrade = sheet.effects["aprimoramentos-corporais"];
     if (sheet.kaguneActive && bodyUpgrade?.target) activeAttributes[bodyUpgrade.target] += bodyUpgrade.rank;
@@ -345,17 +394,18 @@ export default function Home() {
     })) as Record<AttributeKey, string>;
 
     const increaseHitRank = sheet.effects["aumentar-acerto"]?.rank || 0;
+    const multipleTailsRank = sheet.effects["multiplas-caudas"]?.rank || 0;
     const primaryAttribute: AttributeKey = sheet.kaguneType === "Ukaku" ? "precisao" : sheet.kaguneType === "Koukaku" ? "vigor" : sheet.kaguneType === "Rinkaku" ? "forca" : "agilidade";
     const primaryValue = activeAttributes[primaryAttribute];
     const primaryDice = (primaryValue === 0 ? 2 : primaryValue) + permanentDice[primaryAttribute] + sheet.extraDice[primaryAttribute];
-    const kaguneModifier = Math.floor(primaryValue / 2) + Math.floor(increaseHitRank / 3);
+    const kaguneModifier = Math.floor(primaryValue / 2) + Math.floor(increaseHitRank / 3) + (multipleTailsRank >= 4 ? 1 : 0);
     const kaguneTest = formatTest(primaryDice, kaguneModifier, primaryValue === 0);
     const looseHitAdjustments = increaseHitRank % 3;
 
     const damage = sheet.damageContext;
     const isActive = (scope: "physical" | "kagune", id: string) => Boolean(damage.active[`${scope}:${id}`]);
     const situationalSteps = (scope: "physical" | "kagune") => {
-      let total = 0;
+      let total = sheet.perks.furioso?.rank || 0;
       if (sheet.archetype === "O Justiceiro" && isActive(scope, "justiceiro")) total += 2;
       if (sheet.archetype === "O Hedonista" && isActive(scope, "hedonista")) total += 3;
       if (sheet.perks["golpe-preciso"] && isActive(scope, "golpe-preciso")) total += damage.preciseHitDice;
@@ -384,17 +434,25 @@ export default function Home() {
     if (sheet.drawbacks["soca-fofo"]) physicalSteps -= 2;
     let physicalExtraDamageDice = damage.physicalExtraDice - consumedDice("physical");
     if (sheet.perks.skadoosh && isActive("physical", "skadoosh")) physicalExtraDamageDice += 1;
+    if (sheet.perks["impacto-cinetico"] && isActive("physical", "impacto-cinetico")) physicalExtraDamageDice += 2;
+    if (sheet.perks["corpo-cerco"] && isActive("physical", "corpo-cerco")) physicalExtraDamageDice += 3;
+    if (sheet.perks["cacador-aberturas"] && isActive("physical", "cacador-aberturas")) physicalExtraDamageDice += 2;
+    if (sheet.perks.oportunista && isActive("physical", "oportunista")) physicalExtraDamageDice += 2;
+    if (sheet.perks["guarda-agressiva"] && isActive("physical", "guarda-agressiva")) physicalExtraDamageDice += 2;
+    if (sheet.perks["ritmo-combate"] && isActive("physical", "ritmo-combate")) physicalExtraDamageDice += 1;
+    if (sheet.perks.carrasco && isActive("physical", "carrasco")) physicalExtraDamageDice += 2;
+    if (sheet.perks["ultimo-homem-pe"] && isActive("physical", "ultimo-homem-pe")) physicalExtraDamageDice += 2;
     const physicalDamageModifier = Math.floor(physicalValue / 2) + damage.physicalExtraModifier + hungerDamage;
     const physicalDamage = formatDamage(physicalSteps, physicalExtraDamageDice, physicalDamageModifier, sheet.perks["lenda-dragao"] && isActive("physical", "lenda-dragao") ? 1 : 0);
 
     let kaguneSteps = Math.floor(primaryValue / 2) + (sheet.effects["aumentar-passos"]?.rank || 0) + damage.kaguneExtraSteps + situationalSteps("kagune");
     let kaguneDamageModifier = Math.floor(primaryValue / 2) + (sheet.effects["aumentar-dano"]?.rank || 0) + damage.kaguneExtraModifier + hungerDamage;
     let kaguneExtraDamageDice = damage.kaguneExtraDice - consumedDice("kagune");
-    const kaguneFamilies = new Set<KaguneFamily>([sheet.kaguneType]);
-    if (sheet.kaguneSecondType) kaguneFamilies.add(sheet.kaguneSecondType);
+    const kaguneFamilies = kaguneFamiliesForSheet(sheet);
     if (kaguneFamilies.has("Rinkaku")) kaguneDamageModifier += 2;
     if ((kaguneFamilies.has("Ukaku") && damage.targetKaguneType === "Bikaku") || (kaguneFamilies.has("Rinkaku") && damage.targetKaguneType === "Koukaku")) kaguneDamageModifier += 2;
-    kaguneExtraDamageDice += Math.min(3, sheet.effects["multiplas-caudas"]?.rank || 0);
+    kaguneExtraDamageDice += Math.min(3, multipleTailsRank);
+    kaguneSteps += multipleTailsRank;
     if (sheet.effects["mudanca-forma"] && isActive("kagune", "mudanca-forma")) kaguneSteps += Math.floor(sheet.effects["mudanca-forma"].rank / 2);
     if (sheet.effects.cristalizacao && isActive("kagune", "cristalizacao")) {
       kaguneSteps += [0, 2, 3, 4][sheet.effects.cristalizacao.rank] || 4;
@@ -405,7 +463,7 @@ export default function Home() {
     if (sheet.effects["tiros-explosivos"] && isActive("kagune", "tiros-explosivos")) kaguneSteps += sheet.effects["tiros-explosivos"].rank;
     if (sheet.effects["lamina-cauda-viva"] && isActive("kagune", "lamina-cauda-viva")) kaguneSteps += 2;
     if (sheet.selectedEvolutions.includes("perda-peso") && isActive("kagune", "perda-peso")) kaguneSteps += 2;
-    if (sheet.selectedEvolutions.includes("mestre-armas") && isActive("kagune", "mestre-armas")) kaguneSteps += 2;
+    if (sheet.selectedEvolutions.includes("mestre-armas") && damage.koukakuMode === "attack" && isActive("kagune", "mestre-armas")) kaguneSteps += 2;
     if (sheet.selectedEvolutions.includes("multiplas-caudas-plus") && isActive("kagune", "multiplas-caudas-plus")) {
       if (damage.multiTailsPlusRank === 1) kaguneExtraDamageDice += 1;
       if (damage.multiTailsPlusRank >= 2) kaguneSteps += damage.multiTailsPlusRank === 2 ? 1 : 2;
@@ -425,13 +483,101 @@ export default function Home() {
     if (sheet.selectedEvolutions.includes("centopeia") && isActive("kagune", "centopeia")) kaguneExtraDamageDice += 4;
     if (sheet.perks["wally-like"] && isActive("kagune", "wally-like")) kaguneExtraDamageDice += Math.min(activeAttributes.agilidade, Math.floor(activeAttributes.agilidade / 2) + Math.floor(activeAttributes.precisao / 2));
     if (sheet.perks.ceifador && isActive("kagune", "ceifador")) kaguneExtraDamageDice += 8;
+    if (sheet.effects["estouro-rc"] && isActive("kagune", "estouro-rc")) kaguneExtraDamageDice += 3;
+    if (sheet.effects["estouro-rc"] && isActive("kagune", "estouro-rc-penalidade")) kaguneExtraDamageDice -= 1;
+    if (sheet.perks["cristais-tungstenio"] && isActive("kagune", "cristais-tungstenio")) { kaguneSteps += 2; kaguneExtraDamageDice -= 2; }
+    if (sheet.perks["railgun-rc"] && isActive("kagune", "railgun-rc")) { kaguneSteps += 1; kaguneExtraDamageDice += 6; }
+    if (sheet.perks["ultimo-horizonte"] && isActive("kagune", "ultimo-horizonte")) { kaguneSteps += 2; kaguneExtraDamageDice += 10; }
+    if (sheet.perks["hidra-cristalina"] && isActive("kagune", "hidra-cristalina")) kaguneExtraDamageDice += 3;
+    if (sheet.perks["muda-penas"] && isActive("kagune", "muda-penas")) kaguneExtraDamageDice += 2;
+    if (sheet.perks["predador-angulo-morto"] && isActive("kagune", "predador-angulo-morto")) kaguneExtraDamageDice += 2;
+    if (sheet.perks["mergulho-escarlate"] && isActive("kagune", "mergulho-escarlate")) { kaguneSteps += 1; kaguneExtraDamageDice += 3; }
+    if (sheet.perks["tentaculo-blindado"] && isActive("kagune", "tentaculo-blindado")) kaguneExtraDamageDice += 2;
+    if (sheet.perks["leviata-imortal"] && isActive("kagune", "leviata-imortal")) kaguneExtraDamageDice += 3;
+    if (sheet.perks["postura-dupla"] && isActive("kagune", "postura-dupla-ataque")) kaguneExtraDamageDice += 2;
+    if (sheet.perks["lanca-escorpionica"] && isActive("kagune", "lanca-escorpionica")) kaguneExtraDamageDice += 2;
+    if (sheet.perks["arsenal-carrasco"] && isActive("kagune", "arsenal-carrasco-ataque")) kaguneExtraDamageDice += 4;
+    if (sheet.perks["cavaleiro-escarlate"] && isActive("kagune", "cavaleiro-escarlate-ataque")) kaguneExtraDamageDice += 5;
+    if (sheet.perks["danca-serpentes"] && isActive("kagune", "danca-serpentes")) kaguneExtraDamageDice += 2;
+    if (sheet.perks["predador-reacao"] && isActive("kagune", "predador-reacao")) kaguneExtraDamageDice += 3;
+    if (sheet.perks.orochi && isActive("kagune", "orochi")) kaguneExtraDamageDice += 3;
+    if (sheet.perks["serafim-ferro-sangue"] && isActive("kagune", "serafim-ferro-sangue")) kaguneExtraDamageDice += 3;
+    if (sheet.perks["motor-cerco-celeste"] && isActive("kagune", "motor-cerco-celeste")) kaguneExtraDamageDice += 2;
+    if (sheet.perks["leviata-carne"] && isActive("kagune", "leviata-carne-ataque")) kaguneExtraDamageDice += 2;
+    if (sheet.perks["trindade-predatoria"] && isActive("kagune", "trindade-predatoria-ataque")) kaguneExtraDamageDice += 2;
+    if (sheet.perks["quimera-absoluta"] && isActive("kagune", "quimera-absoluta")) kaguneExtraDamageDice += 4;
+    if (sheet.perks["impacto-cinetico"] && isActive("kagune", "impacto-cinetico")) kaguneExtraDamageDice += 2;
+    if (sheet.perks["corpo-cerco"] && isActive("kagune", "corpo-cerco")) kaguneExtraDamageDice += 3;
+    if (sheet.perks["cacador-aberturas"] && isActive("kagune", "cacador-aberturas")) kaguneExtraDamageDice += 2;
+    if (sheet.perks.oportunista && isActive("kagune", "oportunista")) kaguneExtraDamageDice += 2;
+    if (sheet.perks["guarda-agressiva"] && isActive("kagune", "guarda-agressiva")) kaguneExtraDamageDice += 2;
+    if (sheet.perks["ritmo-combate"] && isActive("kagune", "ritmo-combate")) kaguneExtraDamageDice += 1;
+    if (sheet.perks.carrasco && isActive("kagune", "carrasco")) kaguneExtraDamageDice += 2;
+    if (sheet.perks["ultimo-homem-pe"] && isActive("kagune", "ultimo-homem-pe")) kaguneExtraDamageDice += 2;
+
+    const formaVersatilRank = sheet.effects["forma-versatil"]?.rank || 0;
+    const canUseVersatileForm = sheet.weaponKind !== "nenhum" && formaVersatilRank > 0 && kaguneFamilies.has("Koukaku");
+    const kaguneManifested = sheet.kaguneActive || (canUseVersatileForm && damage.koukakuMode !== "normal");
+    const characterRD = sheet.perks["pele-dura"] ? Math.floor(activeAttributes.vigor / 2) : 0;
+    let kaguneRD = kaguneManifested && kaguneFamilies.has("Koukaku") ? 2 : 0;
+    if (kaguneManifested) kaguneRD += sheet.effects["couraca-revestida"]?.rank || 0;
+    const superiorArmor = kaguneManifested ? sheet.effects["couraca-superior"]?.rank || 0 : 0;
+    if (superiorArmor) kaguneRD += activeAttributes.vigor + Math.max(0, superiorArmor - 1);
+    if (kaguneManifested) kaguneRD += damage.kaguneExtraRD;
+    if (sheet.perks["carne-mineral"] && isActive("kagune", "carne-mineral")) kaguneRD += 3;
+    if (sheet.perks["leviata-imortal"] && isActive("kagune", "leviata-imortal")) kaguneRD += 5;
+    if (sheet.perks["postura-dupla"] && isActive("kagune", "postura-dupla-defesa")) kaguneRD += 2;
+    if (sheet.perks["arsenal-carrasco"] && isActive("kagune", "arsenal-carrasco-defesa")) kaguneRD += 3;
+    if (sheet.perks["cavaleiro-escarlate"] && isActive("kagune", "cavaleiro-escarlate-defesa")) kaguneRD += 4;
+    if (sheet.perks["guarda-hidra"] && isActive("kagune", "guarda-hidra")) kaguneRD += 2;
+    if (sheet.perks["serafim-ferro-sangue"] && isActive("kagune", "serafim-ferro-sangue-defesa")) kaguneRD += 3;
+    if (sheet.perks["motor-cerco-celeste"] && isActive("kagune", "motor-cerco-celeste-defesa")) kaguneRD += 2;
+    if (sheet.perks["leviata-carne"] && isActive("kagune", "leviata-carne-defesa")) kaguneRD += 2;
+    if (sheet.perks["trindade-predatoria"] && isActive("kagune", "trindade-predatoria-defesa")) kaguneRD += 3;
+    if (sheet.perks["quimera-absoluta"] && isActive("kagune", "quimera-absoluta")) kaguneRD += 4;
+    if (sheet.selectedEvolutions.includes("perda-peso") && isActive("kagune", "perda-peso")) kaguneRD = Math.max(0, kaguneRD - 6);
+    let rawRD = characterRD + kaguneRD;
+    const stepsBeforeVersatileForm = kaguneSteps;
+    const rdBeforeVersatileForm = rawRD;
+    const versatileDamageBonusSteps = Math.max(0, kaguneSteps - Math.floor(primaryValue / 2));
+    let versatileConvertedDamageSteps = 0;
+    const versatileConvertibleRD = Math.max(0, kaguneRD);
+    let versatileConvertedRD = 0;
+    let versatileStepChange = 0;
+    let versatileRDChange = 0;
+    if (canUseVersatileForm && damage.koukakuMode === "defense") {
+      versatileConvertedDamageSteps = Math.floor(versatileDamageBonusSteps / 2);
+      kaguneSteps -= versatileConvertedDamageSteps;
+      rawRD += formaVersatilRank + versatileConvertedDamageSteps;
+      versatileStepChange = -versatileConvertedDamageSteps;
+      versatileRDChange = formaVersatilRank + versatileConvertedDamageSteps;
+    }
+    if (canUseVersatileForm && damage.koukakuMode === "attack") {
+      versatileConvertedRD = Math.floor(versatileConvertibleRD / 2);
+      const gainedSteps = formaVersatilRank + Math.floor(versatileConvertedRD / 2);
+      rawRD -= versatileConvertedRD;
+      kaguneSteps += gainedSteps;
+      versatileStepChange = gainedSteps;
+      versatileRDChange = -versatileConvertedRD;
+    }
     const kaguneDamage = formatDamage(kaguneSteps, kaguneExtraDamageDice, kaguneDamageModifier);
+    const additionalEvolutionTails = sheet.selectedEvolutions.includes("multiplas-caudas-plus") && isActive("kagune", "multiplas-caudas-plus") ? damage.multiTailsPlusRank : 0;
+    const rinkakuTailCount = multipleTailsRank > 0 ? Math.min(5, 2 + Math.min(3, multipleTailsRank)) + additionalEvolutionTails : 0;
+    const rinkakuTailDamage = multipleTailsRank > 0 ? formatDamage(kaguneSteps - 2, kaguneExtraDamageDice, kaguneDamageModifier) : "";
+    const rinkakuAllTailsDamage = multipleTailsRank > 0 ? multiplyDamage(rinkakuTailDamage, rinkakuTailCount) : "";
 
     const attributePE = attributeKeys.reduce((total, key) => total + attributePurchaseCost(sheet.baseAttributes[key]), 0);
     const catalogPerksPE = Object.entries(sheet.perks).reduce((total, [id, acquired]) => {
       const item = perks.find((candidate) => candidate.id === id);
-      return total + (item ? perkCostForSheet(item, acquired.rank, sheet.species) : 0);
+      return total + (item ? perkCostForSheet(item, acquired.rank, sheet) : 0);
     }, 0);
+    const kagunePerksPE = Object.entries(sheet.perks).reduce((total, [id, acquired]) => {
+      const item = perks.find((candidate) => candidate.id === id);
+      return total + (item?.category === "Kagune Quimera" ? perkCostForSheet(item, acquired.rank, sheet) : 0);
+    }, 0);
+    const nonKaguneCatalogPerksPE = catalogPerksPE - kagunePerksPE;
+    const nonKagunePerkCount = Object.keys(sheet.perks).filter((id) => perks.find((candidate) => candidate.id === id)?.category !== "Kagune Quimera").length;
+    const kagunePerkLevelCount = Object.entries(sheet.perks).reduce((total, [id, acquired]) => perks.find((candidate) => candidate.id === id)?.category === "Kagune Quimera" ? total + acquired.rank : total, 0);
     const customPerksPE = sheet.customPerks.reduce((total, item) => total + Math.max(0, item.cost || 0), 0);
     const perksPE = catalogPerksPE + customPerksPE;
     const drawbackCredit = Object.entries(sheet.drawbacks).reduce((total, [id, acquired]) => {
@@ -450,8 +596,13 @@ export default function Home() {
       actualEffectPE += costs.paidTotal;
       effectLevelCount += acquired.rank;
     });
-    const evolutionPE = sheet.selectedEvolutions.reduce((total, id) => total + (evolutions.find((candidate) => candidate.id === id)?.cost || 0), 0);
-    const quimeraCost = sheet.weaponKind === "kagune" && sheet.kaguneSecondType ? 6 : 0;
+    const nominalEvolutionPE = sheet.selectedEvolutions.reduce((total, id) => total + (evolutions.find((candidate) => candidate.id === id)?.cost || 0), 0);
+    const evolutionPE = sheet.selectedEvolutions.reduce((total, id) => {
+      const item = evolutions.find((candidate) => candidate.id === id);
+      return total + (item ? evolutionCostForSheet(item, sheet) : 0);
+    }, 0);
+    const quimeraTypeCount = kaguneFamilies.size;
+    const quimeraCost = sheet.weaponKind === "kagune" ? Math.max(0, quimeraTypeCount - 1) * 6 : 0;
     const frameBudget = sheet.species === "quinx" ? 2 + (sheet.quinxFrame >= 3 ? 4 : 0) + (sheet.quinxFrame >= 4 ? Math.floor(sheet.grade / 2) : 0) + (sheet.quinxFrame >= 5 ? Math.floor(sheet.grade / 2) : 0) : 0;
     const freeKaguneBudget = frameBudget + (sheet.species === "humano-dominante" ? 6 : 0);
     const paidEffectPE = sheet.weaponKind === "kagune" ? Math.max(0, actualEffectPE - freeKaguneBudget) : 0;
@@ -469,20 +620,29 @@ export default function Home() {
     const peRemaining = peAvailable - peSpent;
 
     const gradeMultiplier = Math.max(1, sheet.grade / 2);
-    const maxLife = Math.max(1, Math.floor(10 + activeAttributes.vigor + species.lifeBase * gradeMultiplier + (sheet.perks.resistente ? Math.min(sheet.grade, 10) : 0)));
-    let maxSanity = 10 + activeAttributes.controle - (sheet.selectedEvolutions.includes("monstro") ? 5 : 0);
+    const maxLife = Math.max(1, Math.floor(10 + activeAttributes.vigor + species.lifeBase * gradeMultiplier + (sheet.perks.resistente ? Math.min(sheet.grade, 10) : 0) + sheet.customBonuses.hp));
+    let maxSanity = 10 + activeAttributes.controle - (sheet.selectedEvolutions.includes("monstro") ? 5 : 0) + sheet.customBonuses.sanity;
     if (sheet.drawbacks["mente-fragil"]) maxSanity = Math.floor(maxSanity / 2);
     maxSanity = Math.max(1, maxSanity);
     const carrying = 7 + activeAttributes.forca;
     const movement = sheet.perks.velocista ? 2 : 1;
     const determination = sheet.perks["nunca-prostra"] ? activeAttributes.controle + 4 : activeAttributes.controle + 2;
+    const evolutionLevelCount = sheet.selectedEvolutions.length;
     const effectRC = sheet.species === "ghoul-dominante" ? actualEffectPE + effectLevelCount : nominalEffectPE;
-    const maxRC = sheet.weaponKind === "kagune" ? effectRC + evolutionPE + 4 : 0;
-    let rd = sheet.perks["pele-dura"] ? Math.floor(activeAttributes.vigor / 2) : 0;
-    if (sheet.kaguneActive && sheet.weaponKind === "kagune" && (sheet.kaguneType === "Koukaku" || sheet.kaguneSecondType === "Koukaku")) rd += 2;
-    if (sheet.kaguneActive) rd += sheet.effects["couraca-revestida"]?.rank || 0;
-    const superiorArmor = sheet.kaguneActive ? sheet.effects["couraca-superior"]?.rank || 0 : 0;
-    if (superiorArmor) rd += activeAttributes.vigor + Math.max(0, superiorArmor - 1);
+    const evolutionRC = sheet.species === "ghoul-dominante" ? evolutionPE + evolutionLevelCount : nominalEvolutionPE;
+    const kagunePerkRC = sheet.species === "ghoul-dominante" ? kagunePerksPE + kagunePerkLevelCount : kagunePerksPE;
+    const maxRC = sheet.weaponKind === "kagune" ? Math.max(0, effectRC + evolutionRC + kagunePerkRC + quimeraCost + activeAttributes.vigor + 4 + sheet.customBonuses.rc) : 0;
+    const rd = rawRD;
+    const kaguneInvestmentPE = sheet.weaponKind === "kagune" ? actualEffectPE + evolutionPE + kagunePerksPE + quimeraCost : 0;
+    const rawKaguneDurability = activeAttributes.vigor + kaguneInvestmentPE;
+    const durabilityMultiplier = sheet.kaguneType === "Ukaku" ? 0.5 : sheet.kaguneType === "Koukaku" ? 1.5 : 1;
+    const kaguneDurability = sheet.weaponKind === "kagune" ? Math.max(1, Math.floor(rawKaguneDurability * durabilityMultiplier) - multipleTailsRank) : 0;
+    const normalRegenerationRank = sheet.effects["regeneracao-anormal"]?.rank || 0;
+    const normalRegeneration = normalRegenerationRank > 0 ? 1 + (normalRegenerationRank - 1) * 2 : 0;
+    const superiorRegenerationRank = sheet.effects["regeneracao-superior"]?.rank || 0;
+    const superiorRegeneration = superiorRegenerationRank === 1 ? Math.ceil(maxLife / 6) : superiorRegenerationRank === 2 ? Math.ceil(maxLife / 4) : superiorRegenerationRank === 3 ? Math.ceil(maxLife / 2) : superiorRegenerationRank >= 4 ? maxLife : 0;
+    const regenerationSkill = Math.max(normalRegeneration, superiorRegeneration);
+    const regeneration = regenerationSkill > 0 ? regenerationSkill + sheet.grade : 0;
     const blockBonus = (sheet.perks["corpo-pesado"] ? 1 : 0) + (sheet.effects["bloqueio-ferro"] && sheet.kaguneActive ? 1 : 0);
     const dodgeBonus = (sheet.perks["corpo-leve"] ? 1 : 0) + (sheet.effects["esquiva-pena"] && sheet.kaguneActive ? 1 : 0) + (sheet.perks["cem-por-cento"] ? 1 : 0) + (sheet.perks.ceifador ? 2 : 0);
     const blockTest = formatTest((activeAttributes.vigor === 0 ? 2 : activeAttributes.vigor) + permanentDice.vigor + sheet.extraDice.vigor + blockBonus, Math.floor(activeAttributes.vigor / 2), activeAttributes.vigor === 0);
@@ -493,31 +653,38 @@ export default function Home() {
     attributeKeys.forEach((key) => { if (sheet.baseAttributes[key] > purchasedCap) issues.push(`${attributeLabels[key]} passa do limite comprado ${purchasedCap}.`); });
     if (sheet.drawbacks.desabilidade?.target && permanentAttributes[sheet.drawbacks.desabilidade.target] > 4) issues.push(`${attributeLabels[sheet.drawbacks.desabilidade.target]} passa do limite 4 de Desabilidade.`);
     Object.keys(sheet.perks).forEach((id) => { const item = perks.find((candidate) => candidate.id === id); if (item && !perkRequirementMet(item, sheet, permanentAttributes)) issues.push(`Requisito não atendido: ${item.name}.`); });
-    if (sheet.weaponKind === "quinque" && Object.keys(sheet.effects).some((id) => kaguneEffects.find((item) => item.id === id)?.type.includes("Biológico"))) issues.push("Quinque não recebe efeitos Biológicos, salvo exceção do Narrador.");
+    if (sheet.weaponKind === "quinque" && Object.keys(sheet.effects).some((id) => id !== "forma-versatil" && kaguneEffects.find((item) => item.id === id)?.type.includes("Biológico"))) issues.push("Quinque não recebe efeitos Biológicos, salvo Forma Versátil e exceções do Narrador.");
     if (peRemaining < 0) issues.push(`Faltam ${Math.abs(peRemaining)} PE para fechar a ficha.`);
 
-    return { species, speciesBonuses, permanentAttributes, activeAttributes, permanentDice, attributeTests, primaryAttribute, kaguneTest, increaseHitRank, looseHitAdjustments, physicalAttribute, physicalValue, physicalSteps, physicalDamageModifier, physicalDamage, kaguneSteps, kaguneDamageModifier, kaguneDamage, attributePE, catalogPerksPE, customPerksPE, perksPE, drawbackCredit, nominalEffectPE, actualEffectPE, effectLevelCount, effectRC, freeKaguneBudget, paidEffectPE, evolutionPE, currentGradeRequirement, cumulativeGradeRequirement, gradeGrant, gradeRewardBreakdown, hasNextGrade, nextGrade, nextGradeRequirement, nextCumulativeRequirement, peAvailable, peSpent, peRemaining, maxLife, maxSanity, maxRC, carrying, movement, determination, rd, blockTest, dodgeTest, purchasedCap, issues, quimeraCost, frameBudget };
+    return { species, speciesBonuses, permanentAttributes, activeAttributes, permanentDice, attributeTests, primaryAttribute, kaguneTest, increaseHitRank, looseHitAdjustments, physicalAttribute, physicalValue, physicalSteps, physicalDamageModifier, physicalDamage, kaguneSteps, kaguneDamageModifier, kaguneDamage, rinkakuTailCount, rinkakuTailDamage, rinkakuAllTailsDamage, multipleTailsRank, formaVersatilRank, stepsBeforeVersatileForm, rdBeforeVersatileForm, versatileDamageBonusSteps, versatileConvertedDamageSteps, versatileConvertibleRD, versatileConvertedRD, versatileStepChange, versatileRDChange, attributePE, catalogPerksPE, nonKaguneCatalogPerksPE, nonKagunePerkCount, kagunePerksPE, kagunePerkLevelCount, customPerksPE, perksPE, drawbackCredit, nominalEffectPE, actualEffectPE, effectLevelCount, effectRC, freeKaguneBudget, paidEffectPE, nominalEvolutionPE, evolutionPE, evolutionLevelCount, evolutionRC, currentGradeRequirement, cumulativeGradeRequirement, gradeGrant, gradeRewardBreakdown, hasNextGrade, nextGrade, nextGradeRequirement, nextCumulativeRequirement, peAvailable, peSpent, peRemaining, maxLife, maxSanity, maxRC, carrying, movement, determination, rd, kaguneInvestmentPE, rawKaguneDurability, durabilityMultiplier, kaguneDurability, normalRegeneration, superiorRegeneration, regenerationSkill, regeneration, blockTest, dodgeTest, purchasedCap, issues, quimeraCost, quimeraTypeCount, frameBudget };
   }, [sheet]);
 
   const filteredPerks = useMemo(() => {
     const query = catalogSearch.trim().toLocaleLowerCase("pt-BR");
-    return perks.filter((item) => (perkCategory === "Todas" || item.category === perkCategory) && (!query || `${item.name} ${item.description} ${item.requirement || ""}`.toLocaleLowerCase("pt-BR").includes(query)));
+    return perks.filter((item) => item.category !== "Kagune Quimera" && (perkCategory === "Todas" || item.category === perkCategory) && (!query || `${item.name} ${item.description} ${item.requirement || ""}`.toLocaleLowerCase("pt-BR").includes(query)));
   }, [catalogSearch, perkCategory]);
   const filteredDrawbacks = useMemo(() => {
     const query = catalogSearch.trim().toLocaleLowerCase("pt-BR");
     return drawbacks.filter((item) => !query || `${item.name} ${item.description}`.toLocaleLowerCase("pt-BR").includes(query));
   }, [catalogSearch]);
   const compatibleFamilies = useMemo(() => {
-    const families = new Set<string>(["Geral", sheet.kaguneType]);
-    if (sheet.kaguneSecondType) families.add(sheet.kaguneSecondType);
-    if (sheet.kaguneType === "Bikaku" || sheet.kaguneSecondType === "Bikaku") ["Ukaku", "Koukaku", "Rinkaku", "Bikaku"].forEach((family) => families.add(family));
+    const selected = kaguneFamiliesForSheet(sheet);
+    const families = new Set<string>(["Geral", ...selected]);
+    if (selected.has("Bikaku")) ["Ukaku", "Koukaku", "Rinkaku", "Bikaku"].forEach((family) => families.add(family));
     return families;
-  }, [sheet.kaguneType, sheet.kaguneSecondType]);
+  }, [sheet]);
   const filteredEffects = useMemo(() => {
     const query = effectSearch.trim().toLocaleLowerCase("pt-BR");
     return kaguneEffects.filter((item) => (effectFamily === "Todos" || (effectFamily === "Compatíveis" ? compatibleFamilies.has(item.family) : item.family === effectFamily)) && (!query || `${item.name} ${item.description} ${item.type}`.toLocaleLowerCase("pt-BR").includes(query)));
   }, [effectSearch, effectFamily, compatibleFamilies]);
-  const filteredEvolutions = useMemo(() => evolutions.filter((item) => item.family === "Geral" || item.family === sheet.kaguneType || item.family === sheet.kaguneSecondType), [sheet.kaguneType, sheet.kaguneSecondType]);
+  const filteredQuimeraPerks = useMemo(() => {
+    const query = effectSearch.trim().toLocaleLowerCase("pt-BR");
+    return perks.filter((item) => item.category === "Kagune Quimera" && (!query || `${item.name} ${item.description} ${item.requirement || ""}`.toLocaleLowerCase("pt-BR").includes(query)));
+  }, [effectSearch]);
+  const filteredEvolutions = useMemo(() => {
+    const families = kaguneFamiliesForSheet(sheet);
+    return evolutions.filter((item) => item.family === "Geral" || item.family === "Quimera" || families.has(item.family as KaguneFamily));
+  }, [sheet]);
 
   const copyTest = async (formula: string, key: string) => {
     try { await navigator.clipboard.writeText(formula); setCopied(key); window.setTimeout(() => setCopied(""), 1300); }
@@ -526,6 +693,8 @@ export default function Home() {
   const setAttribute = (key: AttributeKey, value: number) => updateSheet((current) => ({ ...current, baseAttributes: { ...current.baseAttributes, [key]: Math.max(0, Math.min(12, value)) } }));
   const setExtraDice = (key: AttributeKey, value: number) => updateSheet((current) => ({ ...current, extraDice: { ...current.extraDice, [key]: Math.max(-10, Math.min(20, value)) } }));
   const patchDamage = (patch: Partial<DamageContext>) => updateSheet((current) => ({ ...current, damageContext: { ...current.damageContext, ...patch } }));
+  const patchCustomBonuses = (patch: Partial<Omit<CustomBonuses, "attributes">>) => updateSheet((current) => ({ ...current, customBonuses: { ...current.customBonuses, ...patch } }));
+  const setCustomAttributeBonus = (key: AttributeKey, value: number) => updateSheet((current) => ({ ...current, customBonuses: { ...current.customBonuses, attributes: { ...current.customBonuses.attributes, [key]: value } } }));
   const toggleDamageCondition = (scope: "physical" | "kagune", id: string) => updateSheet((current) => ({
     ...current,
     damageContext: { ...current.damageContext, active: { ...current.damageContext.active, [`${scope}:${id}`]: !current.damageContext.active[`${scope}:${id}`] } },
@@ -632,6 +801,14 @@ export default function Home() {
     add(Boolean(sheet.perks.adaptabilidade), "adaptabilidade", "Adaptabilidade concluída", "+metade do Raciocínio em Passos");
     add(Boolean(sheet.perks.fortificador), "fortificador", "Fortificador", "+2 Passos");
     add(Boolean(sheet.perks["foco-letal"]), "foco-letal", "Foco Letal", "−dados, +2 Passos por dado");
+    add(Boolean(sheet.perks["impacto-cinetico"]), "impacto-cinetico", "Impacto Cinético", "+2 dados de dano após mover");
+    add(Boolean(sheet.perks["corpo-cerco"]), "corpo-cerco", "Corpo de Cerco", "+3 dados após Bloqueio total");
+    add(Boolean(sheet.perks["cacador-aberturas"]), "cacador-aberturas", "Caçador de Aberturas", "+2 dados após erro inimigo");
+    add(Boolean(sheet.perks.oportunista), "oportunista", "Oportunista", "+2 dados em ataque de oportunidade");
+    add(Boolean(sheet.perks["guarda-agressiva"]), "guarda-agressiva", "Guarda Agressiva", "+2 dados após Bloqueio total");
+    add(Boolean(sheet.perks["ritmo-combate"]), "ritmo-combate", "Ritmo de Combate", "+1 dado de dano");
+    add(Boolean(sheet.perks.carrasco), "carrasco", "Carrasco", "+2 dados contra alvo com 1/4 da Vida");
+    add(Boolean(sheet.perks["ultimo-homem-pe"]), "ultimo-homem-pe", "Último Homem de Pé", "+2 dados de dano");
     if (scope === "physical") add(Boolean(sheet.perks["lenda-dragao"]), "lenda-dragao", "Lenda do Dragão", "+1d12 fixo");
     if (scope === "kagune") {
       add(Boolean(sheet.effects["mudanca-forma"]), "mudanca-forma", "Mudança de Forma ofensiva", "+1 Passo a cada 2 níveis");
@@ -640,6 +817,8 @@ export default function Home() {
       add(Boolean(sheet.effects["adicionar-elemento"]), "adicionar-elemento", "Elemento ativo", "+3/+6 no dano");
       add(Boolean(sheet.effects["tiros-explosivos"]), "tiros-explosivos", "Tiros Explosivos", "+1/+2 Passos");
       add(Boolean(sheet.effects["lamina-cauda-viva"]), "lamina-cauda-viva", "Lâmina de Cauda Viva", "+2 Passos após errar");
+      add(Boolean(sheet.effects["estouro-rc"]), "estouro-rc", "Estouro de RC", "+3 dados de dano");
+      add(Boolean(sheet.effects["estouro-rc"]), "estouro-rc-penalidade", "Após Estouro de RC", "−1 dado de dano");
       add(sheet.selectedEvolutions.includes("perda-peso"), "perda-peso", "Perda de Peso", "+2 Passos");
       add(sheet.selectedEvolutions.includes("mestre-armas"), "mestre-armas", "Mestre das Armas ofensivo", "+2 Passos");
       add(sheet.selectedEvolutions.includes("multiplas-caudas-plus"), "multiplas-caudas-plus", "Múltiplas Caudas +", "+dado ou Passos conforme compras");
@@ -658,6 +837,36 @@ export default function Home() {
       add(sheet.selectedEvolutions.includes("centopeia"), "centopeia", "Centopeia", "+4 dados");
       add(Boolean(sheet.perks["wally-like"]), "wally-like", "Wally Like", "+metades de Agilidade e Precisão");
       add(Boolean(sheet.perks.ceifador), "ceifador", "Ceifador furtivo/oportunidade", "+8 dados");
+      add(Boolean(sheet.perks["cristais-tungstenio"]), "cristais-tungstenio", "Cristais de Tungstênio", "+2 Passos e −2 dados");
+      add(Boolean(sheet.perks["railgun-rc"]), "railgun-rc", "Railgun de RC", "+6 dados e +1 Passo");
+      add(Boolean(sheet.perks["ultimo-horizonte"]), "ultimo-horizonte", "Último Horizonte", "+10 dados e +2 Passos");
+      add(Boolean(sheet.perks["hidra-cristalina"]), "hidra-cristalina", "Hidra Cristalina", "+3 dados");
+      add(Boolean(sheet.perks["muda-penas"]), "muda-penas", "Muda de Penas", "+2 dados");
+      add(Boolean(sheet.perks["predador-angulo-morto"]), "predador-angulo-morto", "Predador de Ângulo Morto", "+2 dados");
+      add(Boolean(sheet.perks["mergulho-escarlate"]), "mergulho-escarlate", "Mergulho Escarlate", "+3 dados e +1 Passo");
+      add(Boolean(sheet.perks["tentaculo-blindado"]), "tentaculo-blindado", "Tentáculo Blindado", "+2 dados");
+      add(Boolean(sheet.perks["carne-mineral"]), "carne-mineral", "Carne Mineral", "+3 RD");
+      add(Boolean(sheet.perks["leviata-imortal"]), "leviata-imortal", "Leviatã Imortal", "+3 dados e +5 RD");
+      add(Boolean(sheet.perks["postura-dupla"]), "postura-dupla-ataque", "Postura Dupla — Duelo", "+2 dados");
+      add(Boolean(sheet.perks["postura-dupla"]), "postura-dupla-defesa", "Postura Dupla — Guarda", "+2 RD");
+      add(Boolean(sheet.perks["lanca-escorpionica"]), "lanca-escorpionica", "Lança Escorpiônica", "+2 dados em oportunidade");
+      add(Boolean(sheet.perks["arsenal-carrasco"]), "arsenal-carrasco-ataque", "Arsenal — Machado", "+4 dados");
+      add(Boolean(sheet.perks["arsenal-carrasco"]), "arsenal-carrasco-defesa", "Arsenal — Escudo-Cauda", "+3 RD");
+      add(Boolean(sheet.perks["cavaleiro-escarlate"]), "cavaleiro-escarlate-ataque", "Cavaleiro — Oportunidade", "+5 dados");
+      add(Boolean(sheet.perks["cavaleiro-escarlate"]), "cavaleiro-escarlate-defesa", "Cavaleiro — Defesa", "+4 RD");
+      add(Boolean(sheet.perks["danca-serpentes"]), "danca-serpentes", "Dança das Serpentes", "+2 dados");
+      add(Boolean(sheet.perks["guarda-hidra"]), "guarda-hidra", "Guarda de Hidra", "+2 RD");
+      add(Boolean(sheet.perks["predador-reacao"]), "predador-reacao", "Predador de Reação", "+3 dados");
+      add(Boolean(sheet.perks.orochi), "orochi", "Orochi", "+3 dados");
+      add(Boolean(sheet.perks["serafim-ferro-sangue"]), "serafim-ferro-sangue", "Serafim — Tentáculos", "+3 dados");
+      add(Boolean(sheet.perks["serafim-ferro-sangue"]), "serafim-ferro-sangue-defesa", "Serafim — Armadura", "+3 RD");
+      add(Boolean(sheet.perks["motor-cerco-celeste"]), "motor-cerco-celeste", "Motor de Cerco — ataque", "+2 dados");
+      add(Boolean(sheet.perks["motor-cerco-celeste"]), "motor-cerco-celeste-defesa", "Motor de Cerco — defesa", "+2 RD");
+      add(Boolean(sheet.perks["leviata-carne"]), "leviata-carne-ataque", "Leviatã de Carne — ataque", "+2 dados");
+      add(Boolean(sheet.perks["leviata-carne"]), "leviata-carne-defesa", "Leviatã de Carne — defesa", "+2 RD");
+      add(Boolean(sheet.perks["trindade-predatoria"]), "trindade-predatoria-ataque", "Trindade — Rinkaku", "+2 dados");
+      add(Boolean(sheet.perks["trindade-predatoria"]), "trindade-predatoria-defesa", "Trindade — Koukaku", "+3 RD");
+      add(Boolean(sheet.perks["quimera-absoluta"]), "quimera-absoluta", "Quimera Absoluta", "+4 dados e +4 RD");
     }
     return options;
   };
@@ -694,9 +903,10 @@ export default function Home() {
             </section>
             <section className="section-block"><SectionTitle kicker="Estado atual" title="Recursos e parâmetros" aside={<button className="text-button" type="button" onClick={() => patchSheet({ currentLife: derived.maxLife, currentSanity: derived.maxSanity, currentRC: derived.maxRC })}>Preencher máximos</button>} />
               <div className="resource-grid"><ResourceCard label="Vida" current={sheet.currentLife} max={derived.maxLife} tone="life" onChange={(value) => patchSheet({ currentLife: value })} /><ResourceCard label="Sanidade" current={sheet.currentSanity} max={derived.maxSanity} tone="sanity" onChange={(value) => patchSheet({ currentSanity: value })} />{sheet.weaponKind === "kagune" && <ResourceCard label="RC" current={sheet.currentRC} max={derived.maxRC} tone="rc" onChange={(value) => patchSheet({ currentRC: value })} />}{showsHunger && <ResourceCard label="Fome" current={sheet.hunger} max={10} tone="hunger" onChange={(value) => patchSheet({ hunger: value })} />}{showsInstinct && <ResourceCard label="Carga instintiva" current={sheet.instinct} max={10} tone="instinct" onChange={(value) => patchSheet({ instinct: value })} />}</div>
-              <div className="stat-strip"><Stat label="RD" value={derived.rd} /><Stat label="Deslocamento" value={`${derived.movement} ${derived.movement === 1 ? "espaço" : "espaços"}`} /><Stat label="Carga" value={derived.carrying} />{hasDetermination && <Stat label="Determinação" value={derived.determination} />}<Stat label="Bloqueio" value={derived.blockTest} mono onCopy={() => copyTest(derived.blockTest, "block")} copied={copied === "block"} /><Stat label="Esquiva" value={derived.dodgeTest} mono onCopy={() => copyTest(derived.dodgeTest, "dodge")} copied={copied === "dodge"} /></div>
+              <div className="stat-strip"><Stat label="RD" value={derived.rd} />{sheet.weaponKind === "kagune" && <Stat label="Dureza da Kagune" value={derived.kaguneDurability} />}{sheet.weaponKind === "kagune" && <Stat label="Regeneração / turno" value={derived.regeneration} />}<Stat label="Deslocamento" value={`${derived.movement} ${derived.movement === 1 ? "espaço" : "espaços"}`} /><Stat label="Carga" value={derived.carrying} />{hasDetermination && <Stat label="Determinação" value={derived.determination} />}<Stat label="Bloqueio" value={derived.blockTest} mono onCopy={() => copyTest(derived.blockTest, "block")} copied={copied === "block"} /><Stat label="Esquiva" value={derived.dodgeTest} mono onCopy={() => copyTest(derived.dodgeTest, "dodge")} copied={copied === "dodge"} /></div>
+              <div className="custom-resource-bonuses"><span>Ajustes adicionais da mesa</span><div><Field label="Vida adicional"><input type="number" value={sheet.customBonuses.hp} onChange={(event) => patchCustomBonuses({ hp: Number(event.target.value) || 0 })} /></Field><Field label="RC adicional"><input type="number" value={sheet.customBonuses.rc} onChange={(event) => patchCustomBonuses({ rc: Number(event.target.value) || 0 })} /></Field><Field label="Sanidade adicional"><input type="number" value={sheet.customBonuses.sanity} onChange={(event) => patchCustomBonuses({ sanity: Number(event.target.value) || 0 })} /></Field></div></div>
             </section>
-            <section className="summary-columns"><div className="section-block compact"><SectionTitle kicker="Evolução" title="Pontos de Evolução" /><div className="pe-hero"><strong className={derived.peRemaining < 0 ? "negative" : ""}>{derived.peRemaining}</strong><span>PE disponíveis</span></div><div className="ledger"><Ledger label="Verba total" value={derived.peAvailable} /><Ledger label="Ganho acumulado por Grau" value={derived.gradeGrant} positive /><Ledger label="Atributos" value={derived.attributePE} negative /><Ledger label="Vantagens do catálogo" value={derived.catalogPerksPE} negative /><Ledger label="Vantagens personalizadas" value={derived.customPerksPE} negative /><Ledger label="Kakuhou / arma" value={derived.paidEffectPE + derived.evolutionPE + derived.quimeraCost} negative /><Ledger label="Subespécie" value={derived.species.subCost} negative /><Ledger label="Desvantagens" value={derived.drawbackCredit} positive /></div><div className="inline-controls single"><label><span>PE adicionais</span><input type="number" value={sheet.extraPE} onChange={(event) => patchSheet({ extraPE: Number(event.target.value) || 0 })} /></label></div><div className="grade-progress"><div><span>Grau {sheet.grade}</span><strong>+{derived.gradeGrant} PE por progressão</strong></div><small>{derived.gradeRewardBreakdown.length ? `Ganhos: ${derived.gradeRewardBreakdown.join(" + ")} = ${derived.gradeGrant} PE.` : "Grau inicial: ainda sem ganho de promoção."}</small><em>{derived.hasNextGrade ? `Ao alcançar o Grau ${derived.nextGrade}, recebe mais ${derived.nextGradeRequirement} PE.` : `Grau máximo alcançado. A última promoção concedeu ${derived.currentGradeRequirement} PE.`}</em></div></div>
+            <section className="summary-columns"><div className="section-block compact"><SectionTitle kicker="Evolução" title="Pontos de Evolução" /><div className="pe-hero"><strong className={derived.peRemaining < 0 ? "negative" : ""}>{derived.peRemaining}</strong><span>PE disponíveis</span></div><div className="ledger"><Ledger label="Verba total" value={derived.peAvailable} /><Ledger label="Ganho acumulado por Grau" value={derived.gradeGrant} positive /><Ledger label="Atributos" value={derived.attributePE} negative /><Ledger label="Vantagens do catálogo" value={derived.nonKaguneCatalogPerksPE} negative /><Ledger label="Vantagens personalizadas" value={derived.customPerksPE} negative /><Ledger label="Kakuhou / arma" value={derived.paidEffectPE + derived.evolutionPE + derived.quimeraCost + derived.kagunePerksPE} negative /><Ledger label="Subespécie" value={derived.species.subCost} negative /><Ledger label="Desvantagens" value={derived.drawbackCredit} positive /></div><div className="inline-controls single"><label><span>PE adicionais</span><input type="number" value={sheet.extraPE} onChange={(event) => patchSheet({ extraPE: Number(event.target.value) || 0 })} /></label></div><div className="grade-progress"><div><span>Grau {sheet.grade}</span><strong>+{derived.gradeGrant} PE por progressão</strong></div><small>{derived.gradeRewardBreakdown.length ? `Ganhos: ${derived.gradeRewardBreakdown.join(" + ")} = ${derived.gradeGrant} PE.` : "Grau inicial: ainda sem ganho de promoção."}</small><em>{derived.hasNextGrade ? `Ao alcançar o Grau ${derived.nextGrade}, recebe mais ${derived.nextGradeRequirement} PE.` : `Grau máximo alcançado. A última promoção concedeu ${derived.currentGradeRequirement} PE.`}</em></div></div>
               <div className="section-block compact"><SectionTitle kicker="Psiquê" title={currentArchetype.name} /><p className="ability-text">{currentArchetype.ability}</p><div className="rule-note"><b>2 usos por descanso.</b> Habilidades em duas etapas só gastam o uso após a conclusão.</div>{sheet.conditions && <div className="condition-note"><span>Condições</span><p>{sheet.conditions}</p></div>}</div>
             </section>
             {derived.issues.length > 0 && <section className="validation-panel"><div><span>!</span><strong>{derived.issues.length} {derived.issues.length === 1 ? "ponto para revisar" : "pontos para revisar"}</strong></div><ul>{derived.issues.map((issue) => <li key={issue}>{issue}</li>)}</ul></section>}
@@ -704,16 +914,16 @@ export default function Home() {
 
           {tab === "atributos" && <div className="page-stack"><PageHeader number="02" title="Atributos" description="O valor do Atributo cria o ++. Dados extras alteram apenas a quantidade de d8." />
             <div className="formula-rule"><div><span>Atributo 4</span><code>4d8++2&gt;&gt;5</code></div><b>+</b><div><span>Skill: +1 dado</span><code>1d8</code></div><b>=</b><div className="result"><span>Teste final</span><code>5d8++2&gt;&gt;5</code></div></div>
-            <section className="bonus-choices section-block compact"><SectionTitle kicker="Bônus de espécie" title="Escolhas gratuitas" />{sheet.species === "ghoul-artificial" && <label className="species-variant-toggle"><input type="checkbox" checked={sheet.artificialDominantBlend} onChange={(event) => patchSheet({ artificialDominantBlend: event.target.checked })} /><span><b>Humano-Dominante + Ghoul Artificial</b><small>Troca o bônus físico para +2. Mantém +1 Mental, Vida e passivas de Ghoul Artificial, sem receber as fraquezas do Humano Dominante.</small></span></label>}<div className="field-grid three">{["humano", "humano-dominante", "ghoul-artificial", "quinx"].includes(sheet.species) && <Field label="+1 Mental"><select value={sheet.mentalBonus} onChange={(event) => patchSheet({ mentalBonus: event.target.value as AttributeKey })}>{mentalAttributes.map((key) => <option key={key} value={key}>{attributeLabels[key]}</option>)}</select></Field>}{["humano-dominante", "ghoul-dominante", "ghoul-artificial"].includes(sheet.species) && <Field label={sheet.species === "humano-dominante" || (sheet.species === "ghoul-artificial" && sheet.artificialDominantBlend) ? "+2 Físico" : "+1 Físico A"}><select value={sheet.physicalBonus} onChange={(event) => { const physicalBonus = event.target.value as AttributeKey; patchSheet({ physicalBonus, ...(sheet.species === "ghoul-dominante" && physicalBonus === sheet.secondPhysicalBonus ? { secondPhysicalBonus: physicalAttributes.find((key) => key !== physicalBonus) || "agilidade" } : {}) }); }}>{physicalAttributes.map((key) => <option key={key} value={key}>{attributeLabels[key]}</option>)}</select></Field>}{sheet.species === "ghoul-dominante" && <Field label="+1 Físico B"><select value={sheet.secondPhysicalBonus} onChange={(event) => patchSheet({ secondPhysicalBonus: event.target.value as AttributeKey })}>{physicalAttributes.filter((key) => key !== sheet.physicalBonus).map((key) => <option key={key} value={key}>{attributeLabels[key]}</option>)}</select></Field>}</div></section>
+            <section className="bonus-choices section-block compact"><SectionTitle kicker="Bônus de espécie" title="Escolhas gratuitas" />{sheet.species === "ghoul-artificial" && <label className="species-variant-toggle"><input type="checkbox" checked={sheet.artificialDominantBlend} onChange={(event) => patchSheet({ artificialDominantBlend: event.target.checked })} /><span><b>Humano-Dominante + Ghoul Artificial</b><small>Troca o bônus físico para +2. Mantém +1 Mental, Vida e passivas de Ghoul Artificial, sem receber as fraquezas do Humano Dominante.</small></span></label>}<div className="field-grid three">{["humano", "humano-dominante", "ghoul-artificial", "quinx"].includes(sheet.species) && <Field label="+1 Mental"><select value={sheet.mentalBonus} onChange={(event) => patchSheet({ mentalBonus: event.target.value as AttributeKey })}>{mentalAttributes.map((key) => <option key={key} value={key}>{attributeLabels[key]}</option>)}</select></Field>}{["humano-dominante", "ghoul-dominante", "ghoul-artificial"].includes(sheet.species) && <Field label={sheet.species === "humano-dominante" || (sheet.species === "ghoul-artificial" && sheet.artificialDominantBlend) ? "+2 Físico" : "+1 Físico A"}><select value={sheet.physicalBonus} onChange={(event) => { const physicalBonus = event.target.value as AttributeKey; patchSheet({ physicalBonus, ...(sheet.species === "ghoul-dominante" && physicalBonus === sheet.secondPhysicalBonus ? { secondPhysicalBonus: physicalAttributes.find((key) => key !== physicalBonus) || "agilidade" } : {}) }); }}>{physicalAttributes.map((key) => <option key={key} value={key}>{attributeLabels[key]}</option>)}</select></Field>}{sheet.species === "ghoul-dominante" && <Field label="+1 Físico B"><select value={sheet.secondPhysicalBonus} onChange={(event) => patchSheet({ secondPhysicalBonus: event.target.value as AttributeKey })}>{physicalAttributes.filter((key) => key !== sheet.physicalBonus).map((key) => <option key={key} value={key}>{attributeLabels[key]}</option>)}</select></Field>}</div><div className="custom-attribute-bonuses"><span>Bônus adicionais da mesa</span><div>{attributeKeys.map((key) => <Field key={key} label={attributeLabels[key]}><input type="number" value={sheet.customBonuses.attributes[key]} onChange={(event) => setCustomAttributeBonus(key, Number(event.target.value) || 0)} /></Field>)}</div></div></section>
             <section><div className="attribute-section-head"><div><span>Físicos</span><p>Limite comprado atual: {derived.purchasedCap}</p></div><strong>{physicalAttributes.reduce((sum, key) => sum + attributePurchaseCost(sheet.baseAttributes[key]), 0)} PE</strong></div><div className="attribute-grid">{physicalAttributes.map((key) => <AttributeCard key={key} attributeKey={key} sheet={sheet} derived={derived} copied={copied} onCopy={copyTest} onSet={setAttribute} onExtra={setExtraDice} />)}</div></section>
             <section><div className="attribute-section-head"><div><span>Mentais</span><p>Limite comprado atual: {derived.purchasedCap}</p></div><strong>{mentalAttributes.reduce((sum, key) => sum + attributePurchaseCost(sheet.baseAttributes[key]), 0)} PE</strong></div><div className="attribute-grid">{mentalAttributes.map((key) => <AttributeCard key={key} attributeKey={key} sheet={sheet} derived={derived} copied={copied} onCopy={copyTest} onSet={setAttribute} onExtra={setExtraDice} />)}</div></section>
           </div>}
 
           {tab === "vantagens" && <div className="page-stack"><PageHeader number="03" title="Vantagens & desvantagens" description="Requisitos, custos e bônus permanentes são conferidos na hora." />
-            <div className="catalog-toolbar"><div className="segmented"><button type="button" className={perkView === "vantagens" ? "active" : ""} onClick={() => setPerkView("vantagens")}>Vantagens <span>{Object.keys(sheet.perks).length + sheet.customPerks.length}</span></button><button type="button" className={perkView === "desvantagens" ? "active" : ""} onClick={() => setPerkView("desvantagens")}>Desvantagens <span>{Object.keys(sheet.drawbacks).length}</span></button></div><label className="search-field"><span>⌕</span><input value={catalogSearch} onChange={(event) => setCatalogSearch(event.target.value)} placeholder="Buscar por nome ou efeito" /></label></div>
-            {perkView === "vantagens" ? <><section className="section-block compact custom-perks"><SectionTitle kicker="Regras da mesa" title="Vantagens personalizadas" aside={<button type="button" className="text-button" onClick={addCustomPerk}>+ Criar vantagem</button>} /><p className="section-help">Crie vantagens próprias e defina o custo em PE. O valor entra automaticamente no total da ficha.</p>{sheet.customPerks.length ? <div className="custom-perk-list">{sheet.customPerks.map((item) => <div className="custom-perk-row" key={item.id}><label><span>Nome</span><input value={item.name} onChange={(event) => updateCustomPerk(item.id, { name: event.target.value })} placeholder="Nome da vantagem" /></label><label className="custom-perk-cost"><span>Custo</span><div><input type="number" min={0} value={item.cost} onChange={(event) => updateCustomPerk(item.id, { cost: Math.max(0, Number(event.target.value) || 0) })} /><b>PE</b></div></label><label className="custom-perk-description"><span>Descrição</span><textarea rows={2} value={item.description} onChange={(event) => updateCustomPerk(item.id, { description: event.target.value })} placeholder="Efeito, requisito e observações..." /></label><button type="button" className="custom-perk-remove" aria-label={`Remover ${item.name || "vantagem personalizada"}`} onClick={() => removeCustomPerk(item.id)}>×</button></div>)}</div> : <button type="button" className="empty-add" onClick={addCustomPerk}>Nenhuma vantagem personalizada <span>Criar a primeira</span></button>}</section><div className="filter-row">{["Todas", "Genérica", "Força", "Vigor", "Precisão", "Agilidade", "Raciocínio", "Percepção", "Presença", "Controle"].map((category) => <button type="button" key={category} className={perkCategory === category ? "active" : ""} onClick={() => setPerkCategory(category)}>{category}</button>)}</div><div className="catalog-summary"><span>{filteredPerks.length} opções do catálogo</span><strong>{derived.perksPE} PE investidos no total</strong></div><div className="catalog-grid">{filteredPerks.map((item) => {
-              const acquired = sheet.perks[item.id]; const eligible = perkRequirementMet(item, sheet, derived.permanentAttributes); const price = perkCostForSheet(item, acquired?.rank || 1, sheet.species);
-              return <CatalogCard key={item.id} selected={Boolean(acquired)} unavailable={!eligible} tone={item.category.toLocaleLowerCase("pt-BR")}><div className="catalog-card-top"><span>{item.category}</span><b>{price} PE</b></div><h3>{item.name}</h3><p>{item.description}</p><div className="requirement">{item.attribute && item.min ? `${attributeLabels[item.attribute]} ${item.min}` : item.requirement || "Disponível"}{hasHumanPerkSurcharge(item, sheet.species) && <em>+2 PE: Corpo de Carne</em>}{!eligible && <em>Requisito pendente</em>}</div>{acquired && item.targetAttribute && <label className="target-select"><span>Atributo</span><select value={acquired.target || "forca"} onChange={(event) => updateSheet((current) => ({ ...current, perks: { ...current.perks, [item.id]: { ...acquired, target: event.target.value as AttributeKey } } }))}>{(item.targetAttribute === "physical" ? physicalAttributes : item.targetAttribute === "mental" ? mentalAttributes : attributeKeys).map((key) => <option key={key} value={key}>{attributeLabels[key]}</option>)}</select></label>}<div className="card-actions">{acquired && (item.maxRank || 1) > 1 && <RankControl rank={acquired.rank} max={item.maxRank || 1} onDown={() => updatePerkRank(item, -1)} onUp={() => updatePerkRank(item, 1)} />}<button type="button" className={acquired ? "remove" : "add"} onClick={() => togglePerk(item)}>{acquired ? "Remover" : "Adicionar"}</button></div></CatalogCard>;
+            <div className="catalog-toolbar"><div className="segmented"><button type="button" className={perkView === "vantagens" ? "active" : ""} onClick={() => setPerkView("vantagens")}>Vantagens <span>{derived.nonKagunePerkCount + sheet.customPerks.length}</span></button><button type="button" className={perkView === "desvantagens" ? "active" : ""} onClick={() => setPerkView("desvantagens")}>Desvantagens <span>{Object.keys(sheet.drawbacks).length}</span></button></div><label className="search-field"><span>⌕</span><input value={catalogSearch} onChange={(event) => setCatalogSearch(event.target.value)} placeholder="Buscar por nome ou efeito" /></label></div>
+            {perkView === "vantagens" ? <><section className="section-block compact maneuver-section"><SectionTitle kicker="Expansão" title="Manobras avançadas" /><p className="section-help">Regras universais e gratuitas: não gastam PE e já estão disponíveis para todos.</p><div className="maneuver-grid">{combatManeuvers.map((item) => <article key={item.name}><span>Manobra</span><strong>{item.name}</strong><p>{item.description}</p></article>)}</div></section><section className="section-block compact custom-perks"><SectionTitle kicker="Regras da mesa" title="Vantagens personalizadas" aside={<button type="button" className="text-button" onClick={addCustomPerk}>+ Criar vantagem</button>} /><p className="section-help">Crie vantagens próprias e defina o custo em PE. O valor entra automaticamente no total da ficha.</p>{sheet.customPerks.length ? <div className="custom-perk-list">{sheet.customPerks.map((item) => <div className="custom-perk-row" key={item.id}><label><span>Nome</span><input value={item.name} onChange={(event) => updateCustomPerk(item.id, { name: event.target.value })} placeholder="Nome da vantagem" /></label><label className="custom-perk-cost"><span>Custo</span><div><input type="number" min={0} value={item.cost} onChange={(event) => updateCustomPerk(item.id, { cost: Math.max(0, Number(event.target.value) || 0) })} /><b>PE</b></div></label><label className="custom-perk-description"><span>Descrição</span><textarea rows={2} value={item.description} onChange={(event) => updateCustomPerk(item.id, { description: event.target.value })} placeholder="Efeito, requisito e observações..." /></label><button type="button" className="custom-perk-remove" aria-label={`Remover ${item.name || "vantagem personalizada"}`} onClick={() => removeCustomPerk(item.id)}>×</button></div>)}</div> : <button type="button" className="empty-add" onClick={addCustomPerk}>Nenhuma vantagem personalizada <span>Criar a primeira</span></button>}</section><div className="filter-row">{["Todas", "Genérica", "Força", "Vigor", "Precisão", "Agilidade", "Raciocínio", "Percepção", "Presença", "Controle", "Híbrida", "Combate"].map((category) => <button type="button" key={category} className={perkCategory === category ? "active" : ""} onClick={() => setPerkCategory(category)}>{category}</button>)}</div><div className="catalog-summary"><span>{filteredPerks.length} opções do catálogo</span><strong>{derived.nonKaguneCatalogPerksPE + derived.customPerksPE} PE investidos no total</strong></div><div className="catalog-grid">{filteredPerks.map((item) => {
+              const acquired = sheet.perks[item.id]; const eligible = perkRequirementMet(item, sheet, derived.permanentAttributes); const price = perkCostForSheet(item, acquired?.rank || 1, sheet);
+              return <CatalogCard key={item.id} selected={Boolean(acquired)} unavailable={!eligible} tone={item.category.toLocaleLowerCase("pt-BR")}><div className="catalog-card-top"><span>{item.category}</span><b>{price} PE{item.category === "Kagune Quimera" && sheet.species === "ghoul-dominante" ? ` (${rankCost(item.cost, acquired?.rank || 1, item.costMode)} base)` : ""}</b></div><h3>{item.name}</h3><p>{item.description}</p><div className="requirement">{item.attribute && item.min ? `${attributeLabels[item.attribute]} ${item.min}` : item.requirement || "Disponível"}{hasHumanPerkSurcharge(item, sheet.species) && <em>+2 PE: Corpo de Carne</em>}{item.category === "Kagune Quimera" && sheet.species === "ghoul-dominante" && <em>−3 PE de Kagune Superior</em>}{!eligible && <em>Requisito pendente</em>}</div>{acquired && item.targetAttribute && <label className="target-select"><span>Atributo</span><select value={acquired.target || "forca"} onChange={(event) => updateSheet((current) => ({ ...current, perks: { ...current.perks, [item.id]: { ...acquired, target: event.target.value as AttributeKey } } }))}>{(item.targetAttribute === "physical" ? physicalAttributes : item.targetAttribute === "mental" ? mentalAttributes : attributeKeys).map((key) => <option key={key} value={key}>{attributeLabels[key]}</option>)}</select></label>}<div className="card-actions">{acquired && (item.maxRank || 1) > 1 && <RankControl rank={acquired.rank} max={item.maxRank || 1} onDown={() => updatePerkRank(item, -1)} onUp={() => updatePerkRank(item, 1)} />}<button type="button" className={acquired ? "remove" : "add"} disabled={!eligible && !acquired} onClick={() => togglePerk(item)}>{acquired ? "Remover" : "Adicionar"}</button></div></CatalogCard>;
             })}</div></> : <><div className="catalog-summary"><span>{filteredDrawbacks.length} opções</span><strong className="positive">+{derived.drawbackCredit} PE recebidos</strong></div><div className="catalog-grid">{filteredDrawbacks.map((item) => {
               const acquired = sheet.drawbacks[item.id]; const eligible = !item.species || item.species.includes(sheet.species); const maxRank = Array.isArray(item.credit) ? item.credit.length : 1; const credit = rankCost(item.credit, acquired?.rank || 1, "choice");
               return <CatalogCard key={item.id} selected={Boolean(acquired)} unavailable={!eligible} tone="drawback"><div className="catalog-card-top"><span>Desvantagem</span><b>+{credit} PE</b></div><h3>{item.name}</h3><p>{item.description}</p><div className="requirement">{eligible ? "Disponível" : "Espécie incompatível"}</div>{acquired && item.targetAttribute && <label className="target-select"><span>Atributo limitado</span><select value={acquired.target || "forca"} onChange={(event) => updateSheet((current) => ({ ...current, drawbacks: { ...current.drawbacks, [item.id]: { ...acquired, target: event.target.value as AttributeKey } } }))}>{attributeKeys.map((key) => <option key={key} value={key}>{attributeLabels[key]}</option>)}</select></label>}<div className="card-actions">{acquired && maxRank > 1 && <RankControl rank={acquired.rank} max={maxRank} onDown={() => updateSheet((current) => ({ ...current, drawbacks: { ...current.drawbacks, [item.id]: { ...acquired, rank: Math.max(1, acquired.rank - 1) } } }))} onUp={() => updateSheet((current) => ({ ...current, drawbacks: { ...current.drawbacks, [item.id]: { ...acquired, rank: Math.min(maxRank, acquired.rank + 1) } } }))} />}<button type="button" className={acquired ? "remove" : "add"} disabled={!eligible && !acquired} onClick={() => toggleDrawback(item)}>{acquired ? "Remover" : "Adicionar"}</button></div></CatalogCard>;
@@ -722,20 +932,26 @@ export default function Home() {
 
           {tab === "kakuhou" && <div className="page-stack"><PageHeader number="04" title="Kakuhou & arma RC" description="Kagune, Quinque e Arata usam o mesmo catálogo, com restrições e verbas próprias." />
             <section className="weapon-builder section-block"><div className="weapon-head"><div><Field label="Estrutura"><select value={sheet.weaponKind} onChange={(event) => patchSheet({ weaponKind: event.target.value as WeaponKind })}><option value="nenhum">Nenhuma</option><option value="kagune">Kagune / Kakuhou</option><option value="quinque">Quinque</option><option value="arata">Arata</option></select></Field><Field label="Nome"><input value={sheet.kaguneName} onChange={(event) => patchSheet({ kaguneName: event.target.value })} placeholder="Nome da arma ou Kagune" /></Field></div>{sheet.weaponKind !== "nenhum" && <label className="activation-toggle"><input type="checkbox" checked={sheet.kaguneActive} onChange={(event) => patchSheet({ kaguneActive: event.target.checked })} /><span><i />{sheet.kaguneActive ? "Ativa" : "Inativa"}</span></label>}</div>
-              {sheet.weaponKind !== "nenhum" && <><div className="field-grid four"><Field label="Tipo principal"><select value={sheet.kaguneType} onChange={(event) => patchSheet({ kaguneType: event.target.value as KaguneFamily })}>{["Ukaku", "Koukaku", "Rinkaku", "Bikaku"].map((type) => <option key={type}>{type}</option>)}</select></Field>{sheet.weaponKind === "kagune" && <Field label="Tipo quimera"><select value={sheet.kaguneSecondType} onChange={(event) => patchSheet({ kaguneSecondType: event.target.value as KaguneFamily | "" })}><option value="">Nenhum</option>{["Ukaku", "Koukaku", "Rinkaku", "Bikaku"].filter((type) => type !== sheet.kaguneType).map((type) => <option key={type}>{type}</option>)}</select></Field>}{sheet.species === "quinx" && <Field label="Frame"><select value={sheet.quinxFrame} onChange={(event) => patchSheet({ quinxFrame: Number(event.target.value) })}>{[1, 2, 3, 4, 5].map((frame) => <option key={frame}>{frame}</option>)}</select></Field>}{(sheet.weaponKind === "quinque" || sheet.weaponKind === "arata") && <Field label="Grau do Ghoul fonte"><select value={sheet.sourceGhoulGrade} onChange={(event) => patchSheet({ sourceGhoulGrade: Number(event.target.value) })}>{[2, 4, 6, 8, 10, 12, 14].map((grade) => <option key={grade}>{grade}</option>)}</select></Field>}</div>
+              {sheet.weaponKind !== "nenhum" && <><div className="field-grid four"><Field label="Tipo principal"><select value={sheet.kaguneType} onChange={(event) => { const kaguneType = event.target.value as KaguneFamily; patchSheet({ kaguneType, kaguneSecondType: sheet.kaguneSecondType === kaguneType ? "" : sheet.kaguneSecondType, kaguneThirdType: sheet.kaguneThirdType === kaguneType ? "" : sheet.kaguneThirdType, kaguneFourthType: sheet.kaguneFourthType === kaguneType ? "" : sheet.kaguneFourthType }); }}>{["Ukaku", "Koukaku", "Rinkaku", "Bikaku"].map((type) => <option key={type}>{type}</option>)}</select></Field>{sheet.weaponKind === "kagune" && <Field label="Quimera II"><select value={sheet.kaguneSecondType} onChange={(event) => { const kaguneSecondType = event.target.value as KaguneFamily | ""; patchSheet({ kaguneSecondType, kaguneThirdType: kaguneSecondType ? sheet.kaguneThirdType : "", kaguneFourthType: kaguneSecondType ? sheet.kaguneFourthType : "" }); }}><option value="">Nenhum</option>{["Ukaku", "Koukaku", "Rinkaku", "Bikaku"].filter((type) => type !== sheet.kaguneType).map((type) => <option key={type}>{type}</option>)}</select></Field>}{sheet.weaponKind === "kagune" && sheet.kaguneSecondType && <Field label="Quimera III"><select value={sheet.kaguneThirdType} onChange={(event) => { const kaguneThirdType = event.target.value as KaguneFamily | ""; patchSheet({ kaguneThirdType, kaguneFourthType: kaguneThirdType ? sheet.kaguneFourthType : "" }); }}><option value="">Nenhum</option>{["Ukaku", "Koukaku", "Rinkaku", "Bikaku"].filter((type) => type !== sheet.kaguneType && type !== sheet.kaguneSecondType).map((type) => <option key={type}>{type}</option>)}</select></Field>}{sheet.weaponKind === "kagune" && sheet.kaguneThirdType && <Field label="Quimera IV"><select value={sheet.kaguneFourthType} onChange={(event) => patchSheet({ kaguneFourthType: event.target.value as KaguneFamily | "" })}><option value="">Nenhum</option>{["Ukaku", "Koukaku", "Rinkaku", "Bikaku"].filter((type) => type !== sheet.kaguneType && type !== sheet.kaguneSecondType && type !== sheet.kaguneThirdType).map((type) => <option key={type}>{type}</option>)}</select></Field>}{sheet.species === "quinx" && <Field label="Frame"><select value={sheet.quinxFrame} onChange={(event) => patchSheet({ quinxFrame: Number(event.target.value) })}>{[1, 2, 3, 4, 5].map((frame) => <option key={frame}>{frame}</option>)}</select></Field>}{(sheet.weaponKind === "quinque" || sheet.weaponKind === "arata") && <Field label="Grau do Ghoul fonte"><select value={sheet.sourceGhoulGrade} onChange={(event) => patchSheet({ sourceGhoulGrade: Number(event.target.value) })}>{[2, 4, 6, 8, 10, 12, 14].map((grade) => <option key={grade}>{grade}</option>)}</select></Field>}</div>
                 <div className="weapon-metrics">{sheet.weaponKind === "kagune" ? <><Stat label="Teste principal" value={derived.kaguneTest} mono onCopy={() => copyTest(derived.kaguneTest, "kagune")} copied={copied === "kagune"} /><Stat label="Atributo principal" value={attributeLabels[derived.primaryAttribute]} /><Stat label="RC máximo" value={derived.maxRC} /><Stat label="Verba gratuita" value={`${derived.freeKaguneBudget} PE`} /></> : <><Stat label="Verba de criação" value={`${8 + sheet.sourceGhoulGrade} PE`} /><Stat label="Investido" value={`${derived.actualEffectPE} PE`} /><Stat label="Ativos" value={sheet.weaponKind === "quinque" ? "Sacrificam dados" : "Conforme efeito"} /><Stat label="Efeitos" value={Object.keys(sheet.effects).length} /></>}</div>
-                {sheet.weaponKind === "kagune" && sheet.species === "ghoul-dominante" && <div className="hit-rule"><strong>RC do Ghoul Dominante</strong><span>4 base + {derived.actualEffectPE} do PE realmente gasto + {derived.effectLevelCount} dos níveis comprados{derived.evolutionPE > 0 ? ` + ${derived.evolutionPE} das evoluções` : ""} = <b>{derived.maxRC} RC</b>.</span></div>}
+                {sheet.weaponKind === "kagune" && sheet.species === "ghoul-dominante" && <div className="hit-rule"><strong>RC do Ghoul Dominante</strong><span>4 base + {derived.activeAttributes.vigor} Vigor + {derived.actualEffectPE} PE de efeitos + {derived.effectLevelCount} níveis + {derived.evolutionPE} PE de evoluções + {derived.evolutionLevelCount} evoluções + {derived.kagunePerksPE} PE de Vantagens Quimera + {derived.kagunePerkLevelCount} compras + {derived.quimeraCost} da configuração{sheet.customBonuses.rc ? ` + ${sheet.customBonuses.rc} ajuste` : ""} = <b>{derived.maxRC} RC</b>.</span></div>}
+                {sheet.weaponKind === "kagune" && sheet.species !== "ghoul-dominante" && <div className="hit-rule"><strong>Cálculo de RC</strong><span>4 base + {derived.activeAttributes.vigor} Vigor + {derived.nominalEffectPE} em efeitos + {derived.nominalEvolutionPE} em evoluções + {derived.kagunePerksPE} em Vantagens Quimera + {derived.quimeraCost} da configuração{sheet.customBonuses.rc ? ` + ${sheet.customBonuses.rc} ajuste` : ""} = <b>{derived.maxRC} RC</b>.</span></div>}
+                {sheet.weaponKind === "kagune" && <div className="hit-rule"><strong>Dureza e regeneração</strong><span>Dureza: ({derived.activeAttributes.vigor} Vigor + {derived.kaguneInvestmentPE} PE investidos) × {derived.durabilityMultiplier}{derived.multipleTailsRank > 0 ? ` − ${derived.multipleTailsRank} de Múltiplas Caudas` : ""} = <b>{derived.kaguneDurability}</b>. Regeneração: {derived.regenerationSkill} da melhor skill + Grau {sheet.grade} = <b>{derived.regeneration}</b> por turno.</span></div>}
                 {derived.increaseHitRank > 0 && <div className="hit-rule"><strong>Aumentar Acerto N{derived.increaseHitRank}</strong><span>{Math.floor(derived.increaseHitRank / 3) > 0 ? `+${Math.floor(derived.increaseHitRank / 3)} no modificador ++. ` : ""}{derived.looseHitAdjustments > 0 ? `${derived.looseHitAdjustments} ${derived.looseHitAdjustments === 1 ? "compra permite" : "compras permitem"} elevar um dado específico em +1 após a rolagem.` : "Todas as compras estão consolidadas no ++."}</span></div>}</>}
             </section>
             <section className="section-block damage-calculator"><SectionTitle kicker="Cálculo automático" title="Passos de dano" /><p className="section-help">Atributos, vantagens, desvantagens e melhorias permanentes já entram no valor. Ative abaixo apenas o que estiver valendo neste golpe.</p><div className="damage-grid">
               <DamageCard title="Socos, chutes e golpes normais" kicker="Dano físico" formula={derived.physicalDamage} attribute={`${attributeLabels[derived.physicalAttribute]} ${derived.physicalValue}`} steps={derived.physicalSteps} modifier={derived.physicalDamageModifier} scope="physical" conditions={damageConditionsFor("physical")} active={sheet.damageContext.active} onToggle={toggleDamageCondition} onCopy={() => copyTest(derived.physicalDamage, "physical-damage")} copied={copied === "physical-damage"} controls={<><Field label="Atributo de escala"><select value={sheet.damageContext.physicalAttribute} onChange={(event) => patchDamage({ physicalAttribute: event.target.value as "forca" | "vigor" })}><option value="forca">Força</option><option value="vigor">Vigor</option></select></Field><Field label="Passos manuais"><input type="number" value={sheet.damageContext.physicalExtraSteps} onChange={(event) => patchDamage({ physicalExtraSteps: Number(event.target.value) || 0 })} /></Field><Field label="Dados manuais"><input type="number" value={sheet.damageContext.physicalExtraDice} onChange={(event) => patchDamage({ physicalExtraDice: Number(event.target.value) || 0 })} /></Field><Field label="Mod. manual"><input type="number" value={sheet.damageContext.physicalExtraModifier} onChange={(event) => patchDamage({ physicalExtraModifier: Number(event.target.value) || 0 })} /></Field></>} counters={(sheet.perks["golpe-preciso"] || sheet.perks["foco-letal"]) && <div className="damage-counters">{sheet.perks["golpe-preciso"] && <Field label="Dados convertidos: Golpe Preciso"><input type="number" min={0} value={sheet.damageContext.preciseHitDice} onChange={(event) => patchDamage({ preciseHitDice: Math.max(0, Number(event.target.value) || 0) })} /></Field>}{sheet.perks["foco-letal"] && <Field label="Dados convertidos: Foco Letal"><input type="number" min={0} max={3} value={sheet.damageContext.focusLethalDice} onChange={(event) => patchDamage({ focusLethalDice: Math.max(0, Math.min(3, Number(event.target.value) || 0)) })} /></Field>}</div>} />
-              <DamageCard title={sheet.weaponKind === "kagune" ? (sheet.kaguneName || "Kagune") : "Kagune / arma RC"} kicker="Dano da Kagune" formula={derived.kaguneDamage} attribute={`${attributeLabels[derived.primaryAttribute]} ${derived.activeAttributes[derived.primaryAttribute]}`} steps={derived.kaguneSteps} modifier={derived.kaguneDamageModifier} scope="kagune" conditions={damageConditionsFor("kagune")} active={sheet.damageContext.active} onToggle={toggleDamageCondition} onCopy={() => copyTest(derived.kaguneDamage, "kagune-damage")} copied={copied === "kagune-damage"} controls={<><Field label="Kagune do alvo"><select value={sheet.damageContext.targetKaguneType} onChange={(event) => patchDamage({ targetKaguneType: event.target.value as KaguneFamily | "" })}><option value="">Não informada</option>{["Ukaku", "Koukaku", "Rinkaku", "Bikaku"].map((type) => <option key={type}>{type}</option>)}</select></Field><Field label="Passos manuais"><input type="number" value={sheet.damageContext.kaguneExtraSteps} onChange={(event) => patchDamage({ kaguneExtraSteps: Number(event.target.value) || 0 })} /></Field><Field label="Dados manuais"><input type="number" value={sheet.damageContext.kaguneExtraDice} onChange={(event) => patchDamage({ kaguneExtraDice: Number(event.target.value) || 0 })} /></Field><Field label="Mod. manual"><input type="number" value={sheet.damageContext.kaguneExtraModifier} onChange={(event) => patchDamage({ kaguneExtraModifier: Number(event.target.value) || 0 })} /></Field></>} counters={<div className="damage-counters">{sheet.perks["golpe-preciso"] && <Field label="Dados: Golpe Preciso"><input type="number" min={0} value={sheet.damageContext.preciseHitDice} onChange={(event) => patchDamage({ preciseHitDice: Math.max(0, Number(event.target.value) || 0) })} /></Field>}{sheet.perks["foco-letal"] && <Field label="Dados: Foco Letal"><input type="number" min={0} max={3} value={sheet.damageContext.focusLethalDice} onChange={(event) => patchDamage({ focusLethalDice: Math.max(0, Math.min(3, Number(event.target.value) || 0)) })} /></Field>}{sheet.selectedEvolutions.includes("multiplas-caudas-plus") && <Field label="Compras: Múltiplas Caudas +"><input type="number" min={1} max={3} value={sheet.damageContext.multiTailsPlusRank} onChange={(event) => patchDamage({ multiTailsPlusRank: Math.max(1, Math.min(3, Number(event.target.value) || 1)) })} /></Field>}{sheet.selectedEvolutions.includes("mil-penas") && <Field label="Ataques sacrificados"><input type="number" min={0} value={sheet.damageContext.milPenasSacrifices} onChange={(event) => patchDamage({ milPenasSacrifices: Math.max(0, Number(event.target.value) || 0) })} /></Field>}{sheet.selectedEvolutions.includes("continua-crescendo") && <Field label="Pontos de Crescimento"><input type="number" min={0} value={sheet.damageContext.growthPoints} onChange={(event) => patchDamage({ growthPoints: Math.max(0, Number(event.target.value) || 0) })} /></Field>}{sheet.selectedEvolutions.includes("predador-ceus") && <Field label="Acúmulo Predador dos Céus"><input type="number" min={0} max={4} value={sheet.damageContext.predadorCeusStacks} onChange={(event) => patchDamage({ predadorCeusStacks: Math.max(0, Math.min(4, Number(event.target.value) || 0)) })} /></Field>}</div>} />
-            </div><div className="damage-legend"><span><b>Automático:</b> +1 Passo e +1 Modificador a cada 2 pontos do atributo.</span><span><b>Separado:</b> melhorias de Kagune nunca alteram socos ou chutes.</span>{sheet.hunger >= 10 && <span className="warning"><b>Fome 10:</b> +{sheet.grade} no dano já aplicado aos dois ataques.</span>}</div></section>
+              <DamageCard title={sheet.weaponKind === "kagune" ? (sheet.kaguneName || "Kagune") : "Kagune / arma RC"} kicker="Dano da Kagune" formula={derived.kaguneDamage} attribute={`${attributeLabels[derived.primaryAttribute]} ${derived.activeAttributes[derived.primaryAttribute]}`} steps={derived.kaguneSteps} modifier={derived.kaguneDamageModifier} scope="kagune" conditions={damageConditionsFor("kagune")} active={sheet.damageContext.active} onToggle={toggleDamageCondition} onCopy={() => copyTest(derived.kaguneDamage, "kagune-damage")} copied={copied === "kagune-damage"} controls={<><Field label="Kagune do alvo"><select value={sheet.damageContext.targetKaguneType} onChange={(event) => patchDamage({ targetKaguneType: event.target.value as KaguneFamily | "" })}><option value="">Não informada</option>{["Ukaku", "Koukaku", "Rinkaku", "Bikaku"].map((type) => <option key={type}>{type}</option>)}</select></Field><Field label="Passos manuais"><input type="number" value={sheet.damageContext.kaguneExtraSteps} onChange={(event) => patchDamage({ kaguneExtraSteps: Number(event.target.value) || 0 })} /></Field><Field label="Dados manuais"><input type="number" value={sheet.damageContext.kaguneExtraDice} onChange={(event) => patchDamage({ kaguneExtraDice: Number(event.target.value) || 0 })} /></Field><Field label="Mod. manual"><input type="number" value={sheet.damageContext.kaguneExtraModifier} onChange={(event) => patchDamage({ kaguneExtraModifier: Number(event.target.value) || 0 })} /></Field><Field label="RD manual da Kagune"><input type="number" value={sheet.damageContext.kaguneExtraRD} onChange={(event) => patchDamage({ kaguneExtraRD: Number(event.target.value) || 0 })} /></Field></>} counters={<div className="damage-counters">{sheet.perks["golpe-preciso"] && <Field label="Dados: Golpe Preciso"><input type="number" min={0} value={sheet.damageContext.preciseHitDice} onChange={(event) => patchDamage({ preciseHitDice: Math.max(0, Number(event.target.value) || 0) })} /></Field>}{sheet.perks["foco-letal"] && <Field label="Dados: Foco Letal"><input type="number" min={0} max={3} value={sheet.damageContext.focusLethalDice} onChange={(event) => patchDamage({ focusLethalDice: Math.max(0, Math.min(3, Number(event.target.value) || 0)) })} /></Field>}{sheet.selectedEvolutions.includes("multiplas-caudas-plus") && <Field label="Compras: Múltiplas Caudas +"><input type="number" min={1} max={3} value={sheet.damageContext.multiTailsPlusRank} onChange={(event) => patchDamage({ multiTailsPlusRank: Math.max(1, Math.min(3, Number(event.target.value) || 1)) })} /></Field>}{sheet.selectedEvolutions.includes("mil-penas") && <Field label="Ataques sacrificados"><input type="number" min={0} value={sheet.damageContext.milPenasSacrifices} onChange={(event) => patchDamage({ milPenasSacrifices: Math.max(0, Number(event.target.value) || 0) })} /></Field>}{sheet.selectedEvolutions.includes("continua-crescendo") && <Field label="Pontos de Crescimento"><input type="number" min={0} value={sheet.damageContext.growthPoints} onChange={(event) => patchDamage({ growthPoints: Math.max(0, Number(event.target.value) || 0) })} /></Field>}{sheet.selectedEvolutions.includes("predador-ceus") && <Field label="Acúmulo Predador dos Céus"><input type="number" min={0} max={4} value={sheet.damageContext.predadorCeusStacks} onChange={(event) => patchDamage({ predadorCeusStacks: Math.max(0, Math.min(4, Number(event.target.value) || 0)) })} /></Field>}</div>} />
+            </div>{derived.multipleTailsRank > 0 && <div className="combat-breakdown"><div><span>Rinkaku · {derived.rinkakuTailCount} tentáculos</span><strong>Dano individual</strong><button type="button" onClick={() => copyTest(derived.rinkakuTailDamage, "tail-damage")}><code>{derived.rinkakuTailDamage}</code><i>{copied === "tail-damage" ? "Copiado" : "⧉"}</i></button><small>Dano padrão da Kagune com −2 Passos. Múltiplas Caudas N{derived.multipleTailsRank} já concedeu +{derived.multipleTailsRank} Passos e +{Math.min(3, derived.multipleTailsRank)} dados.</small></div><div><span>Todos acertando o mesmo alvo</span><strong>Dano total</strong><button type="button" onClick={() => copyTest(derived.rinkakuAllTailsDamage, "all-tails-damage")}><code>{derived.rinkakuAllTailsDamage}</code><i>{copied === "all-tails-damage" ? "Copiado" : "⧉"}</i></button><small>{derived.rinkakuTailCount} vezes o dano individual, somado em uma única fórmula.</small></div></div>}{derived.formaVersatilRank > 0 && kaguneFamiliesForSheet(sheet).has("Koukaku") && <div className="versatile-form-panel"><div><span>Forma Versátil N{derived.formaVersatilRank}</span><strong>Configuração da Koukaku</strong><select value={sheet.damageContext.koukakuMode} onChange={(event) => patchDamage({ koukakuMode: event.target.value as DamageContext["koukakuMode"] })}><option value="normal">Forma normal</option><option value="attack">Lâmina que Tudo Corta</option><option value="defense">Escudo Inquebrável</option></select><small className="versatile-rule">{sheet.damageContext.koukakuMode === "defense" ? `Metade de ${derived.versatileDamageBonusSteps} Passos bônus = ${derived.versatileConvertedDamageSteps} convertidos em RD; +${derived.formaVersatilRank} RD natural do efeito.` : sheet.damageContext.koukakuMode === "attack" ? `Metade de ${derived.versatileConvertibleRD} RD da Kagune = ${derived.versatileConvertedRD} RD convertidos; cada 2 concedem 1 Passo, além de +${derived.formaVersatilRank} Passos naturais.` : "Selecione uma forma para aplicar a conversão automaticamente. A troca custa 4 RC."}</small></div><div className="versatile-metrics"><span><small>Passos antes</small><b>{derived.stepsBeforeVersatileForm}</b></span><span><small>Alteração</small><b>{derived.versatileStepChange >= 0 ? `+${derived.versatileStepChange}` : derived.versatileStepChange}</b></span><span><small>Passos finais</small><b>{derived.kaguneSteps}</b></span><span><small>RD antes</small><b>{derived.rdBeforeVersatileForm}</b></span><span><small>Alteração</small><b>{derived.versatileRDChange >= 0 ? `+${derived.versatileRDChange}` : derived.versatileRDChange}</b></span><span><small>RD final</small><b>{derived.rd}</b></span></div></div>}<div className="damage-legend"><span><b>Automático:</b> +1 Passo e +1 Modificador a cada 2 pontos do atributo.</span><span><b>Furioso:</b> +{sheet.perks.furioso?.rank || 0} Passos em todos os danos do personagem.</span><span><b>Separado:</b> melhorias de Kagune nunca alteram socos ou chutes.</span>{sheet.hunger >= 10 && <span className="warning"><b>Fome 10:</b> +{sheet.grade} no dano já aplicado aos dois ataques.</span>}</div></section>
             {sheet.weaponKind !== "nenhum" && <><section><div className="catalog-toolbar"><div><span className="section-kicker">Efeitos de criação</span><h2 className="toolbar-title">Catálogo de efeitos</h2></div><label className="search-field"><span>⌕</span><input value={effectSearch} onChange={(event) => setEffectSearch(event.target.value)} placeholder="Buscar efeito" /></label></div><div className="filter-row">{["Compatíveis", "Todos", "Geral", "Ukaku", "Koukaku", "Rinkaku", "Bikaku"].map((family) => <button type="button" key={family} className={effectFamily === family ? "active" : ""} onClick={() => setEffectFamily(family)}>{family}</button>)}</div><div className="catalog-summary"><span>{filteredEffects.length} efeitos</span><strong>{derived.actualEffectPE} PE em efeitos</strong></div><div className="catalog-grid effects">{filteredEffects.map((item) => {
-              const acquired = sheet.effects[item.id]; const compatible = compatibleFamilies.has(item.family); const biologicalBlocked = sheet.weaponKind === "quinque" && item.type.includes("Biológico"); const shownRank = acquired?.rank || 1; const costs = effectCostForSheet(item, shownRank, sheet); const discounted = costs.paidTotal !== costs.baseTotal;
+              const acquired = sheet.effects[item.id]; const compatible = compatibleFamilies.has(item.family); const biologicalBlocked = sheet.weaponKind === "quinque" && item.id !== "forma-versatil" && item.type.includes("Biológico"); const shownRank = acquired?.rank || 1; const costs = effectCostForSheet(item, shownRank, sheet); const discounted = costs.paidTotal !== costs.baseTotal;
               return <CatalogCard key={item.id} selected={Boolean(acquired)} unavailable={!compatible || biologicalBlocked} tone={familyColor(item.family)}><div className="catalog-card-top"><span>{item.family} · {item.type}</span><b>{costs.paidTotal} PE{discounted ? ` (${costs.baseTotal} base)` : ""}</b></div><h3>{item.name}</h3><p>{item.description}</p><div className="requirement">{item.requirement || (biologicalBlocked ? "Biológico: incompatível com Quinque" : compatible ? "Compatível" : "Fora do tipo")}{sheet.species === "ghoul-dominante" && <em>Por nível: {costs.paidIncrements.map((cost) => `${cost} PE`).join(" + ")}</em>}</div>{acquired && item.targetAttribute && <label className="target-select"><span>Atributo</span><select value={acquired.target || "forca"} onChange={(event) => updateSheet((current) => ({ ...current, effects: { ...current.effects, [item.id]: { ...acquired, target: event.target.value as AttributeKey } } }))}>{physicalAttributes.map((key) => <option key={key} value={key}>{attributeLabels[key]}</option>)}</select></label>}<div className="card-actions">{acquired && effectMaximum(item, sheet) > 1 && <RankControl rank={acquired.rank} max={effectMaximum(item, sheet)} onDown={() => updateEffectRank(item, -1)} onUp={() => updateEffectRank(item, 1)} />}<button type="button" className={acquired ? "remove" : "add"} disabled={biologicalBlocked && !acquired} onClick={() => toggleEffect(item)}>{acquired ? "Remover" : "Adicionar"}</button></div></CatalogCard>;
             })}</div></section>
-              {sheet.weaponKind === "kagune" && <section><div className="attribute-section-head"><div><span>Evoluções na Kakuhou</span><p>Opções liberadas a partir do Grau 6</p></div><strong>{derived.evolutionPE} PE</strong></div><div className="catalog-grid evolutions">{filteredEvolutions.map((item) => { const selected = sheet.selectedEvolutions.includes(item.id); const eligible = sheet.grade >= item.grade; return <CatalogCard key={item.id} selected={selected} unavailable={!eligible} tone={familyColor(item.family)}><div className="catalog-card-top"><span>{item.family} · Grau {item.grade}+</span><b>{item.cost} PE</b></div><h3>{item.name}</h3><p>{item.description}</p><div className="requirement">{item.requirement || (eligible ? "Disponível" : `Requer Grau ${item.grade}`)}</div><div className="card-actions solo"><button type="button" className={selected ? "remove" : "add"} disabled={!eligible && !selected} onClick={() => toggleEvolution(item)}>{selected ? "Remover" : "Adicionar"}</button></div></CatalogCard>; })}</div></section>}
+              {sheet.weaponKind === "kagune" && <section><div className="attribute-section-head"><div><span>Vantagens de Kagune Quimera</span><p>Integram a Kakuhou e entram automaticamente em PE, RC, Dureza e requisitos.</p></div><strong>{derived.kagunePerksPE} PE</strong></div><div className="catalog-summary"><span>{filteredQuimeraPerks.length} opções quiméricas</span><strong>{Object.keys(sheet.perks).filter((id) => perks.find((candidate) => candidate.id === id)?.category === "Kagune Quimera").length} adquiridas</strong></div><div className="catalog-grid effects">{filteredQuimeraPerks.map((item) => {
+                const acquired = sheet.perks[item.id]; const eligible = perkRequirementMet(item, sheet, derived.permanentAttributes); const price = perkCostForSheet(item, acquired?.rank || 1, sheet);
+                return <CatalogCard key={item.id} selected={Boolean(acquired)} unavailable={!eligible} tone={item.category.toLocaleLowerCase("pt-BR")}><div className="catalog-card-top"><span>Kakuhou · Quimera</span><b>{price} PE{sheet.species === "ghoul-dominante" ? ` (${rankCost(item.cost, acquired?.rank || 1, item.costMode)} base)` : ""}</b></div><h3>{item.name}</h3><p>{item.description}</p><div className="requirement">{item.requirement || "Disponível"}{sheet.species === "ghoul-dominante" && <em>−3 PE de Kagune Superior</em>}{!eligible && <em>Requisito pendente</em>}</div><div className="card-actions">{acquired && (item.maxRank || 1) > 1 && <RankControl rank={acquired.rank} max={item.maxRank || 1} onDown={() => updatePerkRank(item, -1)} onUp={() => updatePerkRank(item, 1)} />}<button type="button" className={acquired ? "remove" : "add"} disabled={!eligible && !acquired} onClick={() => togglePerk(item)}>{acquired ? "Remover" : "Adicionar"}</button></div></CatalogCard>;
+              })}</div></section>}
+              {sheet.weaponKind === "kagune" && <section><div className="attribute-section-head"><div><span>Evoluções na Kakuhou</span><p>Inclui as novas Evoluções Quiméricas da expansão</p></div><strong>{derived.evolutionPE} PE</strong></div><div className="catalog-grid evolutions">{filteredEvolutions.map((item) => { const selected = sheet.selectedEvolutions.includes(item.id); const eligible = evolutionRequirementMet(item, sheet); const paidCost = evolutionCostForSheet(item, sheet); return <CatalogCard key={item.id} selected={selected} unavailable={!eligible} tone={familyColor(item.family)}><div className="catalog-card-top"><span>{item.family} · Grau {item.grade}+</span><b>{paidCost} PE{paidCost !== item.cost ? ` (${item.cost} base)` : ""}</b></div><h3>{item.name}</h3><p>{item.description}</p><div className="requirement">{item.requirement || (eligible ? "Disponível" : `Requer Grau ${item.grade}`)}{sheet.species === "ghoul-dominante" && <em>−3 PE de Kagune Superior</em>}</div><div className="card-actions solo"><button type="button" className={selected ? "remove" : "add"} disabled={!eligible && !selected} onClick={() => toggleEvolution(item)}>{selected ? "Remover" : "Adicionar"}</button></div></CatalogCard>; })}</div></section>}
             </>}
           </div>}
 
@@ -773,8 +989,8 @@ function AttributeCard({ attributeKey, sheet, derived, copied, onCopy, onSet, on
   derived: { speciesBonuses: Record<AttributeKey, number>; permanentAttributes: Record<AttributeKey, number>; activeAttributes: Record<AttributeKey, number>; permanentDice: Record<AttributeKey, number>; attributeTests: Record<AttributeKey, string>; primaryAttribute: AttributeKey; kaguneTest: string; looseHitAdjustments: number; purchasedCap: number };
   copied: string; onCopy: (formula: string, key: string) => void; onSet: (key: AttributeKey, value: number) => void; onExtra: (key: AttributeKey, value: number) => void;
 }) {
-  const base = sheet.baseAttributes[attributeKey]; const total = derived.activeAttributes[attributeKey]; const speciesBonus = derived.speciesBonuses[attributeKey];
+  const base = sheet.baseAttributes[attributeKey]; const total = derived.activeAttributes[attributeKey]; const speciesBonus = derived.speciesBonuses[attributeKey]; const customBonus = sheet.customBonuses.attributes[attributeKey];
   const acurado = sheet.perks[`acurado-${attributeKey}`] ? 1 : 0; const bodyUpgrade = sheet.kaguneActive && sheet.effects["aprimoramentos-corporais"]?.target === attributeKey ? sheet.effects["aprimoramentos-corporais"].rank : 0;
   const rawBonus = derived.permanentDice[attributeKey]; const formula = derived.attributeTests[attributeKey]; const isPrimary = sheet.weaponKind === "kagune" && derived.primaryAttribute === attributeKey;
-  return <article className={`attribute-card ${base > derived.purchasedCap ? "over-cap" : ""}`}><div className="attribute-title"><div><span>{attributeLabels[attributeKey]}</span><p>{attributeDescriptions[attributeKey]}</p></div><b>{attributePurchaseCost(base)} PE</b></div><div className="attribute-value-row"><div className="stepper"><button type="button" onClick={() => onSet(attributeKey, base - 1)} disabled={base <= 0}>−</button><strong>{base}</strong><button type="button" onClick={() => onSet(attributeKey, base + 1)}>+</button></div>{(speciesBonus + acurado + bodyUpgrade) > 0 && <div className="total-value"><span>Total</span><b>{total}</b></div>}</div><div className="bonus-chips">{speciesBonus > 0 && <span>+{speciesBonus} espécie</span>}{acurado > 0 && <span>+1 Acurado</span>}{bodyUpgrade > 0 && <span>+{bodyUpgrade} Kakuhou</span>}{rawBonus > 0 && <span>+{rawBonus}d8 Vantagem</span>}</div><button className="test-command" type="button" onClick={() => onCopy(formula, attributeKey)}><span>{copied === attributeKey ? "Copiado" : "Teste Rollem"}</span><code>{formula}</code><i>⧉</i></button>{base === 0 && <p className="zero-rule">Atributo 0: role 2d8 e use o menor resultado.</p>}{isPrimary && <button className="test-command kagune" type="button" onClick={() => onCopy(derived.kaguneTest, `${attributeKey}-kagune`)}><span>{copied === `${attributeKey}-kagune` ? "Copiado" : "Com Kagune"}</span><code>{derived.kaguneTest}</code><i>⧉</i></button>}<label className="extra-dice"><span>Dados extras / penalidade</span><div><button type="button" onClick={() => onExtra(attributeKey, sheet.extraDice[attributeKey] - 1)}>−</button><input type="number" value={sheet.extraDice[attributeKey]} onChange={(event) => onExtra(attributeKey, Number(event.target.value) || 0)} /><button type="button" onClick={() => onExtra(attributeKey, sheet.extraDice[attributeKey] + 1)}>+</button></div></label></article>;
+  return <article className={`attribute-card ${base > derived.purchasedCap ? "over-cap" : ""}`}><div className="attribute-title"><div><span>{attributeLabels[attributeKey]}</span><p>{attributeDescriptions[attributeKey]}</p></div><b>{attributePurchaseCost(base)} PE</b></div><div className="attribute-value-row"><div className="stepper"><button type="button" onClick={() => onSet(attributeKey, base - 1)} disabled={base <= 0}>−</button><strong>{base}</strong><button type="button" onClick={() => onSet(attributeKey, base + 1)}>+</button></div>{(speciesBonus + acurado + bodyUpgrade + customBonus) !== 0 && <div className="total-value"><span>Total</span><b>{total}</b></div>}</div><div className="bonus-chips">{speciesBonus > 0 && <span>+{speciesBonus} espécie</span>}{acurado > 0 && <span>+1 Acurado</span>}{bodyUpgrade > 0 && <span>+{bodyUpgrade} Kakuhou</span>}{customBonus !== 0 && <span>{customBonus > 0 ? "+" : ""}{customBonus} mesa</span>}{rawBonus > 0 && <span>+{rawBonus}d8 Vantagem</span>}</div><button className="test-command" type="button" onClick={() => onCopy(formula, attributeKey)}><span>{copied === attributeKey ? "Copiado" : "Teste Rollem"}</span><code>{formula}</code><i>⧉</i></button>{base === 0 && <p className="zero-rule">Atributo 0: role 2d8 e use o menor resultado.</p>}{isPrimary && <button className="test-command kagune" type="button" onClick={() => onCopy(derived.kaguneTest, `${attributeKey}-kagune`)}><span>{copied === `${attributeKey}-kagune` ? "Copiado" : "Com Kagune"}</span><code>{derived.kaguneTest}</code><i>⧉</i></button>}<label className="extra-dice"><span>Dados extras / penalidade</span><div><button type="button" onClick={() => onExtra(attributeKey, sheet.extraDice[attributeKey] - 1)}>−</button><input type="number" value={sheet.extraDice[attributeKey]} onChange={(event) => onExtra(attributeKey, Number(event.target.value) || 0)} /><button type="button" onClick={() => onExtra(attributeKey, sheet.extraDice[attributeKey] + 1)}>+</button></div></label></article>;
 }

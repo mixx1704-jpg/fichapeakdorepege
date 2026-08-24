@@ -1,3 +1,7 @@
+import { combatManeuvers, expansionEvolutions, expansionKaguneEffects, expansionPerks } from "./expansion-data";
+
+export { combatManeuvers };
+
 export const attributeKeys = [
   "forca",
   "vigor",
@@ -10,6 +14,7 @@ export const attributeKeys = [
 ] as const;
 
 export type AttributeKey = (typeof attributeKeys)[number];
+export type KaguneFamily = "Ukaku" | "Koukaku" | "Rinkaku" | "Bikaku";
 
 export const attributeLabels: Record<AttributeKey, string> = {
   forca: "Força",
@@ -69,7 +74,10 @@ export type CatalogCategory =
   | "Raciocínio"
   | "Percepção"
   | "Presença"
-  | "Controle";
+  | "Controle"
+  | "Kagune Quimera"
+  | "Híbrida"
+  | "Combate";
 
 export interface Perk {
   id: string;
@@ -84,6 +92,12 @@ export interface Perk {
   species?: SpeciesId[];
   maxRank?: number;
   targetAttribute?: "physical" | "mental" | "any";
+  requirements?: Partial<Record<AttributeKey, number>>;
+  minGrade?: number;
+  kaguneTypes?: KaguneFamily[];
+  minKaguneTypes?: number;
+  requiredEffect?: string;
+  requiredEvolution?: string;
 }
 
 const perk = (
@@ -121,7 +135,7 @@ export const perks: Perk[] = [
   perk("frio-calculista", "Frio e Calculista", "Genérica", 3, "+1 dado nos testes de Sanidade ou Fome, conforme a escolha."),
   perk("psicopatia", "Psicopatia", "Genérica", 5, "Você não possui Alicerces; hábitos definidos passam a recuperar sua Sanidade."),
   perk("observador-frio", "Observador Frio", "Genérica", 3, "+1 dado de Raciocínio para perceber intenções, manipulações e blefes."),
-  perk("furioso", "Furioso", "Genérica", [3, 5, 7, 9], "Cada compra concede +1 passo de personagem.", { costMode: "sum", maxRank: 4 }),
+  perk("furioso", "Furioso", "Genérica", [3, 5, 7, 9], "Cada compra concede +1 Passo de Dano em todos os ataques do personagem.", { costMode: "sum", maxRank: 4 }),
   perk("aliado-grau", "Grau Superior — Aliado", "Genérica", 3, "Aumente o Grau do Aliado em 2.", { requirement: "Aliado", maxRank: 6 }),
   perk("aliado-prioritario", "Prioritário — Aliado", "Genérica", 3, "Pedidos feitos ao Aliado recebem alta prioridade.", { requirement: "Aliado" }),
   perk("aliado-ghoul", "Ghoul — Aliado", "Genérica", 5, "Transforme o Aliado em Ghoul.", { requirement: "Aliado" }),
@@ -250,6 +264,7 @@ export const perks: Perk[] = [
   perk("alma-estavel", "Alma Estável", "Controle", 8, "Só sofra Quebra depois de a Sanidade ficar negativa em duas ocasiões.", { attribute: "controle", min: 8 }),
   perk("inabalavel", "Inabalável", "Controle", 15, "Uma vez por sessão, reduza pela metade uma perda de Sanidade; uma vez a cada duas sessões, impeça uma nova Mácula.", { attribute: "controle", min: 9 }),
   perk("frio-neve", "Frio como a Neve", "Controle", 8, "+2 dados permanentes em testes de Controle.", { attribute: "controle", min: 10 }),
+  ...expansionPerks,
 ];
 
 export interface Drawback {
@@ -334,14 +349,14 @@ export const kaguneEffects: KaguneEffect[] = [
   effect("asas-anjo", "Asas de Anjo", "Ukaku", 5, 1, "Ativo · 2 RC", "Voo com velocidade igual ao Deslocamento Base."),
 
   effect("couraca-superior", "Couraça Revestida Superior", "Koukaku", [5, 8, 11, 14, 17, 20, 23], 7, "Passivo", "No N1, RD igual ao Vigor; níveis seguintes adicionam +1 RD. Máximo metade do Grau.", { costMode: "choice" }),
-  effect("forma-versatil", "Forma Versátil", "Koukaku", 5, 3, "Ativo · 4 RC", "Alterne entre Escudo Inquebrável e Lâmina que Tudo Corta."),
+  effect("forma-versatil", "Forma Versátil", "Koukaku", 5, 3, "Ativo · Biológico · 4 RC", "Escudo: +1 RD por nível e metade dos Passos bônus vira RD. Lâmina: +1 Passo por nível e metade da RD da Kagune é convertida em Passos na proporção de 2 RD para 1 Passo. Quinques podem comprar este efeito."),
   effect("alterar-aparencia", "Alterar Aparência", "Koukaku", [3, 6], 2, "Ativo · Biológico", "Altere voz, face e corpo; o custo de RC cresce com a complexidade.", { costMode: "choice" }),
   effect("koukaku-fragmentavel", "Koukaku Fragmentável", "Koukaku", 3, 3, "Ativo · 1 Ação + 2 RC", "Crie fragmentos-armadilha que atacam e prendem o alvo."),
   effect("clones-aco", "Clones de Aço", "Koukaku", 8, 3, "Ativo · 6 RC/clone", "Cada compra aumenta o máximo de clones até 3.", { requirement: "Koukaku Fragmentável N1" }),
   effect("bloqueio-ferro", "Bloqueio de Ferro", "Koukaku", 3, 1, "Passivo", "+1 dado em Vigor para Bloqueio."),
 
   effect("regeneracao-superior", "Regeneração Anormal Superior", "Rinkaku", [3, 8, 15, 25], 4, "Passivo · Biológico", "Cure 1/6, 1/4 ou 1/2 dos PV; N4 permite cura total por 6 RC.", { costMode: "choice" }),
-  effect("multiplas-caudas", "Múltiplas Caudas", "Rinkaku", 3, 4, "Passivo · Biológico", "Adicione caudas e ataques; ganhe dano e, no N4, +1 Modificador de Acerto, com Resistência menor."),
+  effect("multiplas-caudas", "Múltiplas Caudas", "Rinkaku", 3, 4, "Passivo · Biológico", "Cada nível concede +1 Passo; os três primeiros também concedem +1 dado e uma cauda. Cada cauda causa o dano padrão −2 Passos; no N4, +1 Modificador de Acerto. Dureza −1 por nível."),
   effect("contra-ataque", "Contra Ataque", "Rinkaku", 3, 1, "Ativo · 2 RC", "Uma vez por rodada, contra-golpeie com -2 dados para superar o ataque."),
   effect("construto-dividido", "Construto Dividido", "Rinkaku", 3, 1, "Ativo · 2 RC", "Crie um construto de cena com dureza igual à metade do Grau."),
 
@@ -349,6 +364,7 @@ export const kaguneEffects: KaguneEffect[] = [
   effect("pressao-defensiva", "Pressão Defensiva", "Bikaku", 5, 1, "Ativo · 2 RC", "Após aplicar RD, reduza pela metade o dano restante."),
   effect("lamina-cauda-viva", "Lâmina de Cauda Viva", "Bikaku", 6, 1, "Ativo · 2 RC", "Após errar, ganhe +1 dado e +2 Passos contra o alvo, uma vez por alvo."),
   effect("espinho-carne", "Espinho da Carne", "Bikaku", 3, 2, "Ativo · 2 RC", "Fixe espinho, imponha penalidade de acerto e dano por turno; a segunda aplicação intensifica."),
+  ...expansionKaguneEffects,
 ];
 
 export interface Evolution {
@@ -356,12 +372,14 @@ export interface Evolution {
   name: string;
   cost: number;
   grade: number;
-  family: "Geral" | "Ukaku" | "Koukaku" | "Rinkaku" | "Bikaku";
+  family: "Geral" | KaguneFamily | "Quimera";
   requirement?: string;
   description: string;
+  kaguneTypes?: KaguneFamily[];
+  minKaguneTypes?: number;
 }
 
-const evolution = (id: string, name: string, cost: number, grade: number, family: Evolution["family"], description: string, requirement?: string): Evolution => ({ id, name, cost, grade, family, description, requirement });
+const evolution = (id: string, name: string, cost: number, grade: number, family: Evolution["family"], description: string, requirement?: string, options: Partial<Evolution> = {}): Evolution => ({ id, name, cost, grade, family, description, requirement, ...options });
 
 export const evolutions: Evolution[] = [
   evolution("forma-especial", "Forma Especial", 8, 6, "Geral", "Defina com o Narrador uma propriedade coerente do Kakuhou. Fragmentos ofensivos: máximo 5, cada adicional sofre -1 Passo e -1 Modificador de Acerto."),
@@ -372,7 +390,7 @@ export const evolutions: Evolution[] = [
   evolution("anjo", "Anjo", 5, 6, "Ukaku", "Com Ukaku ativa, tenha voo verdadeiro com deslocamento aéreo normal.", "Agilidade 4; Força 2"),
   evolution("fenix", "Assim como uma Fênix", 10, 6, "Ukaku", "Uma vez por sessão, consuma todo o RC (mínimo 10) para sobreviver com 1 Vida; Kagune desativa e Fome +2."),
   evolution("adaptacao", "Adaptação", 15, 6, "Koukaku", "Ao defender, role 1d5; no 5, aplique RD e depois reduza pela metade o dano restante."),
-  evolution("perda-peso", "Perda de Peso", 8, 6, "Koukaku", "RD da Koukaku vira 0; ataques +2 Passos e some metade da Agilidade base em dados de Bloqueio."),
+  evolution("perda-peso", "Perda de Peso", 8, 6, "Koukaku", "Enquanto ativa, reduza a RD da Koukaku em 6, mínimo 0; ataques recebem +2 Passos e o Bloqueio soma metade da Agilidade base em dados. Em crítico de Bloqueio, 1d6: com 6, faça um ataque comum adicional, uma vez por rodada."),
   evolution("mestre-armas", "Mestre das Armas", 8, 6, "Koukaku", "Na configuração ofensiva, golpes recebem +2 Passos de Dano."),
   evolution("multiplas-caudas-plus", "Múltiplas Caudas +", 8, 6, "Rinkaku", "Cada compra cria uma cauda permanente e amplia dano; cada cauda adicional pode atacar por 2 RC.", "Máximo 3 compras"),
   evolution("axolote", "Regeneração do Axolote", 10, 6, "Rinkaku", "Uma vez por turno, gaste 6 RC para regenerar todos os membros perdidos; não recupera Vida."),
@@ -409,4 +427,5 @@ export const evolutions: Evolution[] = [
   evolution("centopeia", "Centopeia", 30, 12, "Rinkaku", "Uma vez por sessão, por 3 turnos: +4 dano, +2 acerto, +2 Esquiva, regeneração de cauda e ataque extra por 10 RC.", "Mil Pernas da Centopeia; Sanidade baixa"),
   evolution("ja-vi", "Já Vi Isso Antes", 20, 12, "Bikaku", "Repetições da mesma técnica melhoram a defesa: +2, +4 e depois +6 dados."),
   evolution("evolucao-convergente", "Evolução Convergente", 30, 12, "Bikaku", "Uma vez por sessão, por 3 turnos, escolha duas adaptações por turno e acumule dano quando inimigos errarem.", "Um Contra Cem"),
+  ...expansionEvolutions,
 ];
