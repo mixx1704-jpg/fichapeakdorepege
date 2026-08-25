@@ -356,7 +356,7 @@ export const kaguneEffects: KaguneEffect[] = [
   effect("bloqueio-ferro", "Bloqueio de Ferro", "Koukaku", 3, 1, "Passivo", "+1 dado em Vigor para Bloqueio."),
 
   effect("regeneracao-superior", "Regeneração Anormal Superior", "Rinkaku", [3, 8, 15, 25], 4, "Passivo · Biológico", "Cure 1/6, 1/4 ou 1/2 dos PV; N4 permite cura total por 6 RC.", { costMode: "choice" }),
-  effect("multiplas-caudas", "Múltiplas Caudas", "Rinkaku", 3, 4, "Passivo · Biológico", "Cada nível concede +1 Passo; os três primeiros também concedem +1 dado e uma cauda. Cada cauda causa o dano padrão −2 Passos; no N4, +1 Modificador de Acerto. Dureza −1 por nível."),
+  effect("multiplas-caudas", "Múltiplas Caudas", "Rinkaku", 3, 4, "Passivo · Biológico", "Cada nível cria +1 cauda, chegando a 5 no N4 com a cauda inicial. Cada cauda usa o dano padrão da Kagune com −2 Passos; a quantidade de caudas não adiciona dados ou Passos artificiais à fórmula individual. No N4, +1 Modificador de Acerto. Dureza −1 por nível."),
   effect("contra-ataque", "Contra Ataque", "Rinkaku", 3, 1, "Ativo · 2 RC", "Uma vez por rodada, contra-golpeie com -2 dados para superar o ataque."),
   effect("construto-dividido", "Construto Dividido", "Rinkaku", 3, 1, "Ativo · 2 RC", "Crie um construto de cena com dureza igual à metade do Grau."),
 
