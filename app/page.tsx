@@ -23,8 +23,10 @@ import {
   type Perk,
   type SpeciesId,
 } from "./data";
+import { KakujaPanel } from "./KakujaPanel";
+import { blankKakujaState, type KakujaState } from "./kakuja-data";
 
-type TabId = "resumo" | "atributos" | "vantagens" | "kakuhou" | "historia";
+type TabId = "resumo" | "atributos" | "vantagens" | "kakuhou" | "kakuja" | "historia";
 type WeaponKind = "nenhum" | "kagune" | "quinque" | "arata";
 type RankedChoice = { rank: number; target?: AttributeKey };
 type InventoryItem = { id: string; name: string; quantity: number; notes: string };
@@ -101,6 +103,7 @@ type CharacterSheet = {
   inventory: InventoryItem[];
   damageContext: DamageContext;
   customBonuses: CustomBonuses;
+  kakuja: KakujaState;
   updatedAt: number;
 };
 
@@ -142,12 +145,14 @@ function newCharacter(name = "Novo personagem"): CharacterSheet {
     currentLife: 0, currentSanity: 0, currentRC: 0, hunger: 0, instinct: 0,
     anchors: [{ name: "", bond: "" }, { name: "", bond: "" }, { name: "", bond: "" }],
     appearance: "", history: "", personality: "", kaguneDescription: "", notes: "", conditions: "",
-    inventory: [], damageContext: blankDamageContext(), customBonuses: { hp: 0, rc: 0, sanity: 0, attributes: blankAttributeMap() }, updatedAt: Date.now(),
+    inventory: [], damageContext: blankDamageContext(), customBonuses: { hp: 0, rc: 0, sanity: 0, attributes: blankAttributeMap() },
+    kakuja: blankKakujaState(), updatedAt: Date.now(),
   };
 }
 
 function normalizeCharacter(input: Partial<CharacterSheet>): CharacterSheet {
   const base = newCharacter(input.name || "Personagem");
+  const blankKakuja = blankKakujaState();
   return {
     ...base, ...input, id: input.id || base.id,
     baseAttributes: { ...base.baseAttributes, ...(input.baseAttributes || {}) },
@@ -165,6 +170,18 @@ function normalizeCharacter(input: Partial<CharacterSheet>): CharacterSheet {
       ...base.customBonuses,
       ...(input.customBonuses || {}),
       attributes: { ...base.customBonuses.attributes, ...(input.customBonuses?.attributes || {}) },
+    },
+    kakuja: {
+      ...blankKakuja,
+      ...(input.kakuja || {}),
+      selectedModules: input.kakuja?.selectedModules || [],
+      selectedInstabilities: input.kakuja?.selectedInstabilities || [],
+      selectedElements: input.kakuja?.selectedElements || [],
+      activeTechniques: input.kakuja?.activeTechniques || [],
+      customModules: input.kakuja?.customModules || [],
+      profiles: input.kakuja?.profiles?.length
+        ? blankKakuja.profiles.map((fallback, index) => ({ ...fallback, ...(input.kakuja?.profiles[index] || {}) }))
+        : blankKakuja.profiles,
     },
   };
 }
@@ -318,6 +335,10 @@ export default function Home() {
   const [showMenu, setShowMenu] = useState(false);
   const importRef = useRef<HTMLInputElement>(null);
   const sheet = characters.find((character) => character.id === activeId) || characters[0];
+
+  useEffect(() => {
+    if (tab === "kakuja" && sheet.grade < 6) setTab("resumo");
+  }, [sheet.grade, tab]);
 
   useEffect(() => {
     try {
@@ -618,7 +639,8 @@ export default function Home() {
     const gradeGrant = cumulativeGradeRequirement;
     const gradeRewardBreakdown = Array.from({ length: promotionIndex }, (_, index) => (index + 1) * 10);
     const peAvailable = 20 + species.creationGrant + gradeGrant + sheet.extraPE + drawbackCredit;
-    const peSpent = species.subCost + quimeraCost + attributePE + perksPE + paidEffectPE + evolutionPE;
+    const kakujaCommonPE = Math.max(0, sheet.kakuja.extraKakujaPE || 0);
+    const peSpent = species.subCost + quimeraCost + attributePE + perksPE + paidEffectPE + evolutionPE + kakujaCommonPE;
     const peRemaining = peAvailable - peSpent;
 
     const gradeMultiplier = Math.max(1, sheet.grade / 2);
@@ -658,7 +680,7 @@ export default function Home() {
     if (sheet.weaponKind === "quinque" && Object.keys(sheet.effects).some((id) => id !== "forma-versatil" && kaguneEffects.find((item) => item.id === id)?.type.includes("Biológico"))) issues.push("Quinque não recebe efeitos Biológicos, salvo Forma Versátil e exceções do Narrador.");
     if (peRemaining < 0) issues.push(`Faltam ${Math.abs(peRemaining)} PE para fechar a ficha.`);
 
-    return { species, speciesBonuses, permanentAttributes, activeAttributes, permanentDice, attributeTests, primaryAttribute, kaguneTest, increaseHitRank, looseHitAdjustments, physicalAttribute, physicalValue, physicalSteps, physicalDamageModifier, physicalDamage, kaguneSteps, kaguneDamageModifier, kaguneDamage, rinkakuTailCount, rinkakuTailDamage, rinkakuAllTailsDamage, multipleTailsRank, formaVersatilRank, stepsBeforeVersatileForm, rdBeforeVersatileForm, versatileDamageBonusSteps, versatileConvertedDamageSteps, versatileConvertibleRD, versatileConvertedRD, versatileStepChange, versatileRDChange, attributePE, catalogPerksPE, nonKaguneCatalogPerksPE, nonKagunePerkCount, kagunePerksPE, kagunePerkLevelCount, customPerksPE, perksPE, drawbackCredit, nominalEffectPE, actualEffectPE, effectLevelCount, effectRC, freeKaguneBudget, paidEffectPE, nominalEvolutionPE, evolutionPE, evolutionLevelCount, evolutionRC, currentGradeRequirement, cumulativeGradeRequirement, gradeGrant, gradeRewardBreakdown, hasNextGrade, nextGrade, nextGradeRequirement, nextCumulativeRequirement, peAvailable, peSpent, peRemaining, maxLife, maxSanity, maxRC, carrying, movement, determination, rd, kaguneInvestmentPE, rawKaguneDurability, durabilityMultiplier, kaguneDurability, normalRegeneration, superiorRegeneration, regenerationSkill, regeneration, blockTest, dodgeTest, purchasedCap, issues, quimeraCost, quimeraTypeCount, frameBudget };
+    return { species, speciesBonuses, permanentAttributes, activeAttributes, permanentDice, attributeTests, primaryAttribute, kaguneTest, increaseHitRank, looseHitAdjustments, physicalAttribute, physicalValue, physicalSteps, physicalDamageModifier, physicalDamage, kaguneSteps, kaguneDamageModifier, kaguneDamage, rinkakuTailCount, rinkakuTailDamage, rinkakuAllTailsDamage, multipleTailsRank, formaVersatilRank, stepsBeforeVersatileForm, rdBeforeVersatileForm, versatileDamageBonusSteps, versatileConvertedDamageSteps, versatileConvertibleRD, versatileConvertedRD, versatileStepChange, versatileRDChange, attributePE, catalogPerksPE, nonKaguneCatalogPerksPE, nonKagunePerkCount, kagunePerksPE, kagunePerkLevelCount, customPerksPE, perksPE, drawbackCredit, nominalEffectPE, actualEffectPE, effectLevelCount, effectRC, freeKaguneBudget, paidEffectPE, nominalEvolutionPE, evolutionPE, evolutionLevelCount, evolutionRC, currentGradeRequirement, cumulativeGradeRequirement, gradeGrant, gradeRewardBreakdown, hasNextGrade, nextGrade, nextGradeRequirement, nextCumulativeRequirement, peAvailable, peSpent, peRemaining, kakujaCommonPE, maxLife, maxSanity, maxRC, carrying, movement, determination, rd, kaguneInvestmentPE, rawKaguneDurability, durabilityMultiplier, kaguneDurability, normalRegeneration, superiorRegeneration, regenerationSkill, regeneration, blockTest, dodgeTest, purchasedCap, issues, quimeraCost, quimeraTypeCount, frameBudget };
   }, [sheet]);
 
   const filteredPerks = useMemo(() => {
@@ -873,6 +895,15 @@ export default function Home() {
     return options;
   };
 
+  const navItems: [TabId, string, string][] = [
+    ["resumo", "01", "Resumo"],
+    ["atributos", "02", "Atributos"],
+    ["vantagens", "03", "Vantagens"],
+    ["kakuhou", "04", "Kakuhou & arma"],
+    ...(sheet.grade >= 6 ? [["kakuja", "05", "KAKUJA"] as [TabId, string, string]] : []),
+    ["historia", sheet.grade >= 6 ? "06" : "05", "História & notas"],
+  ];
+
   return (
     <main className="app-shell" data-theme={theme}>
       <header className="topbar">
@@ -889,7 +920,7 @@ export default function Home() {
       </header>
 
       <div className="workspace">
-        <aside className="sidebar"><nav aria-label="Seções da ficha">{([["resumo", "01", "Resumo"], ["atributos", "02", "Atributos"], ["vantagens", "03", "Vantagens"], ["kakuhou", "04", "Kakuhou & arma"], ["historia", "05", "História & notas"]] as [TabId, string, string][]).map(([id, number, label]) => <button key={id} type="button" className={tab === id ? "active" : ""} onClick={() => setTab(id)}><span>{number}</span>{label}</button>)}</nav>
+        <aside className="sidebar"><nav aria-label="Seções da ficha">{navItems.map(([id, number, label]) => <button key={id} type="button" className={tab === id ? "active" : ""} onClick={() => setTab(id)}><span>{number}</span>{label}</button>)}</nav>
           <div className="pe-mini"><div><span>PE restante</span><strong className={derived.peRemaining < 0 ? "negative" : ""}>{derived.peRemaining}</strong></div><div className="meter"><i style={{ width: `${Math.max(0, Math.min(100, derived.peAvailable ? (derived.peSpent / derived.peAvailable) * 100 : 0))}%` }} /></div><small>{derived.peSpent} gastos de {derived.peAvailable}</small></div>
         </aside>
 
@@ -908,7 +939,7 @@ export default function Home() {
               <div className="stat-strip"><Stat label="RD" value={derived.rd} />{sheet.weaponKind === "kagune" && <Stat label="Dureza da Kagune" value={derived.kaguneDurability} />}{sheet.weaponKind === "kagune" && <Stat label="Regeneração / turno" value={derived.regeneration} />}<Stat label="Deslocamento" value={`${derived.movement} ${derived.movement === 1 ? "espaço" : "espaços"}`} /><Stat label="Carga" value={derived.carrying} />{hasDetermination && <Stat label="Determinação" value={derived.determination} />}<Stat label="Bloqueio" value={derived.blockTest} mono onCopy={() => copyTest(derived.blockTest, "block")} copied={copied === "block"} /><Stat label="Esquiva" value={derived.dodgeTest} mono onCopy={() => copyTest(derived.dodgeTest, "dodge")} copied={copied === "dodge"} /></div>
               <div className="custom-resource-bonuses"><span>Ajustes adicionais da mesa</span><div><Field label="Vida adicional"><input type="number" value={sheet.customBonuses.hp} onChange={(event) => patchCustomBonuses({ hp: Number(event.target.value) || 0 })} /></Field><Field label="RC adicional"><input type="number" value={sheet.customBonuses.rc} onChange={(event) => patchCustomBonuses({ rc: Number(event.target.value) || 0 })} /></Field><Field label="Sanidade adicional"><input type="number" value={sheet.customBonuses.sanity} onChange={(event) => patchCustomBonuses({ sanity: Number(event.target.value) || 0 })} /></Field></div></div>
             </section>
-            <section className="summary-columns"><div className="section-block compact"><SectionTitle kicker="Evolução" title="Pontos de Evolução" /><div className="pe-hero"><strong className={derived.peRemaining < 0 ? "negative" : ""}>{derived.peRemaining}</strong><span>PE disponíveis</span></div><div className="ledger"><Ledger label="Verba total" value={derived.peAvailable} /><Ledger label="Ganho acumulado por Grau" value={derived.gradeGrant} positive /><Ledger label="Atributos" value={derived.attributePE} negative /><Ledger label="Vantagens do catálogo" value={derived.nonKaguneCatalogPerksPE} negative /><Ledger label="Vantagens personalizadas" value={derived.customPerksPE} negative /><Ledger label="Kakuhou / arma" value={derived.paidEffectPE + derived.evolutionPE + derived.quimeraCost + derived.kagunePerksPE} negative /><Ledger label="Subespécie" value={derived.species.subCost} negative /><Ledger label="Desvantagens" value={derived.drawbackCredit} positive /></div><div className="inline-controls single"><label><span>PE adicionais</span><input type="number" value={sheet.extraPE} onChange={(event) => patchSheet({ extraPE: Number(event.target.value) || 0 })} /></label></div><div className="grade-progress"><div><span>Grau {sheet.grade}</span><strong>+{derived.gradeGrant} PE por progressão</strong></div><small>{derived.gradeRewardBreakdown.length ? `Ganhos: ${derived.gradeRewardBreakdown.join(" + ")} = ${derived.gradeGrant} PE.` : "Grau inicial: ainda sem ganho de promoção."}</small><em>{derived.hasNextGrade ? `Ao alcançar o Grau ${derived.nextGrade}, recebe mais ${derived.nextGradeRequirement} PE.` : `Grau máximo alcançado. A última promoção concedeu ${derived.currentGradeRequirement} PE.`}</em></div></div>
+            <section className="summary-columns"><div className="section-block compact"><SectionTitle kicker="Evolução" title="Pontos de Evolução" /><div className="pe-hero"><strong className={derived.peRemaining < 0 ? "negative" : ""}>{derived.peRemaining}</strong><span>PE disponíveis</span></div><div className="ledger"><Ledger label="Verba total" value={derived.peAvailable} /><Ledger label="Ganho acumulado por Grau" value={derived.gradeGrant} positive /><Ledger label="Atributos" value={derived.attributePE} negative /><Ledger label="Vantagens do catálogo" value={derived.nonKaguneCatalogPerksPE} negative /><Ledger label="Vantagens personalizadas" value={derived.customPerksPE} negative /><Ledger label="Kakuhou / arma" value={derived.paidEffectPE + derived.evolutionPE + derived.quimeraCost + derived.kagunePerksPE} negative /><Ledger label="Kakuja · PE comum" value={derived.kakujaCommonPE} negative /><Ledger label="Subespécie" value={derived.species.subCost} negative /><Ledger label="Desvantagens" value={derived.drawbackCredit} positive /></div><div className="inline-controls single"><label><span>PE adicionais</span><input type="number" value={sheet.extraPE} onChange={(event) => patchSheet({ extraPE: Number(event.target.value) || 0 })} /></label></div><div className="grade-progress"><div><span>Grau {sheet.grade}</span><strong>+{derived.gradeGrant} PE por progressão</strong></div><small>{derived.gradeRewardBreakdown.length ? `Ganhos: ${derived.gradeRewardBreakdown.join(" + ")} = ${derived.gradeGrant} PE.` : "Grau inicial: ainda sem ganho de promoção."}</small><em>{derived.hasNextGrade ? `Ao alcançar o Grau ${derived.nextGrade}, recebe mais ${derived.nextGradeRequirement} PE.` : `Grau máximo alcançado. A última promoção concedeu ${derived.currentGradeRequirement} PE.`}</em></div></div>
               <div className="section-block compact"><SectionTitle kicker="Psiquê" title={currentArchetype.name} /><p className="ability-text">{currentArchetype.ability}</p><div className="rule-note"><b>2 usos por descanso.</b> Habilidades em duas etapas só gastam o uso após a conclusão.</div>{sheet.conditions && <div className="condition-note"><span>Condições</span><p>{sheet.conditions}</p></div>}</div>
             </section>
             {derived.issues.length > 0 && <section className="validation-panel"><div><span>!</span><strong>{derived.issues.length} {derived.issues.length === 1 ? "ponto para revisar" : "pontos para revisar"}</strong></div><ul>{derived.issues.map((issue) => <li key={issue}>{issue}</li>)}</ul></section>}
@@ -957,7 +988,19 @@ export default function Home() {
             </>}
           </div>}
 
-          {tab === "historia" && <div className="page-stack"><PageHeader number="05" title="História & notas" description="Tudo que não cabe nos números, guardado junto da ficha." />
+          {tab === "kakuja" && sheet.grade >= 6 && <div className="page-stack"><PageHeader number="05" title="KAKUJA" description="Construção modular independente, com repertório, Perfis, CM e dano próprios." />
+            <KakujaPanel
+              grade={sheet.grade}
+              species={sheet.species}
+              vigor={derived.permanentAttributes.vigor}
+              kaguneNaturalSteps={Math.floor(derived.permanentAttributes[derived.primaryAttribute] / 2)}
+              kaguneFamilies={[...kaguneFamiliesForSheet(sheet)]}
+              state={sheet.kakuja}
+              onChange={(kakuja) => patchSheet({ kakuja })}
+            />
+          </div>}
+
+          {tab === "historia" && <div className="page-stack"><PageHeader number={sheet.grade >= 6 ? "06" : "05"} title="História & notas" description="Tudo que não cabe nos números, guardado junto da ficha." />
             <div className="story-grid"><section className="section-block compact"><SectionTitle kicker="Personagem" title="História" /><Field label="História"><textarea rows={12} value={sheet.history} onChange={(event) => patchSheet({ history: event.target.value })} placeholder="Origem, eventos marcantes, relações e objetivos..." /></Field><Field label="Personalidade"><textarea rows={6} value={sheet.personality} onChange={(event) => patchSheet({ personality: event.target.value })} placeholder="Hábitos, contradições, medos e desejos..." /></Field><Field label="Aparência"><textarea rows={5} value={sheet.appearance} onChange={(event) => patchSheet({ appearance: event.target.value })} placeholder="Traços, roupas, marcas e postura..." /></Field></section>
               <div className="page-stack tight"><section className="section-block compact"><SectionTitle kicker="Psiquê" title="Alicerces" /><p className="section-help">Escolha de um a três. Registre a pessoa e a característica central do vínculo.</p><div className="anchor-list">{sheet.anchors.map((anchor, index) => <div key={index}><span>{String(index + 1).padStart(2, "0")}</span><input value={anchor.name} onChange={(event) => patchSheet({ anchors: sheet.anchors.map((item, itemIndex) => itemIndex === index ? { ...item, name: event.target.value } : item) })} placeholder="Nome" /><input value={anchor.bond} onChange={(event) => patchSheet({ anchors: sheet.anchors.map((item, itemIndex) => itemIndex === index ? { ...item, bond: event.target.value } : item) })} placeholder="Característica central" /></div>)}</div></section><section className="section-block compact"><SectionTitle kicker="Estado" title="Condições" /><textarea rows={5} value={sheet.conditions} onChange={(event) => patchSheet({ conditions: event.target.value })} placeholder="Máculas, ferimentos, efeitos ativos..." /></section><section className="section-block compact"><SectionTitle kicker="Kakuhou / arma" title="Descrição visual" /><textarea rows={6} value={sheet.kaguneDescription} onChange={(event) => patchSheet({ kaguneDescription: event.target.value })} placeholder="Forma, cor, origem, mudanças e manifestações..." /></section></div>
             </div>
@@ -966,7 +1009,7 @@ export default function Home() {
           </div>}
         </section>
       </div>
-      <nav className="mobile-nav" aria-label="Seções da ficha">{(["resumo", "atributos", "vantagens", "kakuhou", "historia"] as TabId[]).map((id, index) => <button key={id} type="button" className={tab === id ? "active" : ""} onClick={() => setTab(id)}><span>{String(index + 1).padStart(2, "0")}</span>{id === "kakuhou" ? "Kakuhou" : id.charAt(0).toUpperCase() + id.slice(1)}</button>)}</nav>
+      <nav className="mobile-nav" aria-label="Seções da ficha">{navItems.map(([id, number, label]) => <button key={id} type="button" className={tab === id ? "active" : ""} onClick={() => setTab(id)}><span>{number}</span>{id === "kakuja" ? "Kakuja" : id === "kakuhou" ? "Kakuhou" : label.split(" ")[0]}</button>)}</nav>
     </main>
   );
 }
