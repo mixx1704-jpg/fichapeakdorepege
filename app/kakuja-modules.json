@@ -18,7 +18,7 @@
     "cb": 6,
     "ck": 3,
     "cm": 1,
-    "effect": "Conte como uma categoria de tamanho acima, alcance corpo a corpo +1 espaço e +2 dados de dano corpo a corpo. Sofra -1 dado de Esquiva.",
+    "effect": "Conte como uma categoria de tamanho acima, alcance corpo a corpo +1 espaço e +2 Passos de Dano corpo a corpo. Sofra -1 dado de Esquiva.",
     "category": "Estrutural • Tamanho"
   },
   {
@@ -29,8 +29,11 @@
     "cb": 10,
     "ck": 5,
     "cm": 2,
-    "effect": "Substitui o nível I. Conte como duas categorias acima, alcance total +2 espaços e +4 dados de dano corpo a corpo. Sofra -2 Esquiva e pague +2 RC ao ativar.",
-    "category": "Estrutural • Tamanho"
+    "effect": "Substitui o nível I. Conte como duas categorias acima, alcance total +2 espaços e +4 Passos de Dano corpo a corpo. Sofra -2 Esquiva e pague +2 RC ao ativar.",
+    "category": "Estrutural • Tamanho",
+    "requires": [
+      "massa-ampliada-i"
+    ]
   },
   {
     "id": "colosso-de-rc",
@@ -40,8 +43,11 @@
     "cb": 16,
     "ck": 8,
     "cm": 3,
-    "effect": "Substitui Massa II. Conte como três categorias acima, mantenha alcance +2, +4 dados e receba +1 Passo corpo a corpo. Sofra -3 Esquiva, pague +4 RC ao ativar e não atravesse áreas estreitas.",
-    "category": "Estrutural • Tamanho"
+    "effect": "Substitui Massa II. Conte como três categorias acima, mantenha alcance +2, +5 Passos de Dano corpo a corpo. Sofra -3 Esquiva, pague +4 RC ao ativar e não atravesse áreas estreitas.",
+    "category": "Estrutural • Tamanho",
+    "requires": [
+      "massa-ampliada-ii"
+    ]
   },
   {
     "id": "corpo-integral",
@@ -128,7 +134,7 @@
     "cb": 8,
     "ck": 4,
     "cm": 1,
-    "effect": "No início do turno escolha Casco (+2 RD, -1 espaço de movimento) ou Exposição (+2 dados de dano, -2 RD).",
+    "effect": "No início do turno escolha Casco (+2 RD, -1 espaço de movimento) ou Exposição (+2 Passos de Dano, -2 RD).",
     "category": "Estrutural • Postura"
   },
   {
@@ -139,7 +145,7 @@
     "cb": 12,
     "ck": 6,
     "cm": 2,
-    "effect": "Divida a Kakuja em até 5 fragmentos. Eles continuam resolvendo um único ataque. Por 4 RC, um fragmento faz o único ataque adicional do turno com metade dos dados e -1 acerto.",
+    "effect": "Divida a Kakuja em até 5 fragmentos. Eles continuam resolvendo um único ataque. Por 4 RC, um fragmento faz o único ataque adicional do turno com metade dos Passos de Dano e -1 acerto.",
     "category": "Biológico • Enxame"
   },
   {
@@ -184,7 +190,10 @@
     "ck": 4,
     "cm": 0,
     "effect": "Exige o nível I. Anote três Perfis; a troca passa a custar uma Ação e 3 RC.",
-    "category": "Metamorfose"
+    "category": "Metamorfose",
+    "requires": [
+      "morfologia-alternativa-i"
+    ]
   },
   {
     "id": "mudanca-relampago",
@@ -195,7 +204,10 @@
     "ck": 5,
     "cm": 1,
     "effect": "Uma vez por turno, troque de Perfil sem Ação pagando +3 RC. Não concede ataque ou defesa adicional.",
-    "category": "Metamorfose"
+    "category": "Metamorfose",
+    "requires": [
+      "morfologia-alternativa-i"
+    ]
   },
   {
     "id": "instinto-adaptativo",
@@ -382,7 +394,10 @@
     "ck": 3,
     "cm": 1,
     "effect": "Exige I. +1 Passo adicional.",
-    "category": "Ofensivo • Passivo"
+    "category": "Ofensivo • Passivo",
+    "requires": [
+      "potencia-predatoria-i"
+    ]
   },
   {
     "id": "potencia-predatoria-iii",
@@ -393,7 +408,10 @@
     "ck": 4,
     "cm": 1,
     "effect": "Exige II. +1 Passo adicional.",
-    "category": "Ofensivo • Passivo"
+    "category": "Ofensivo • Passivo",
+    "requires": [
+      "potencia-predatoria-ii"
+    ]
   },
   {
     "id": "potencia-predatoria-iv",
@@ -404,7 +422,10 @@
     "ck": 5,
     "cm": 1,
     "effect": "Exige III. +1 Passo adicional.",
-    "category": "Ofensivo • Passivo"
+    "category": "Ofensivo • Passivo",
+    "requires": [
+      "potencia-predatoria-iii"
+    ]
   },
   {
     "id": "potencia-predatoria-v",
@@ -415,7 +436,10 @@
     "ck": 6,
     "cm": 1,
     "effect": "Exige IV. +1 Passo adicional.",
-    "category": "Ofensivo • Passivo"
+    "category": "Ofensivo • Passivo",
+    "requires": [
+      "potencia-predatoria-iv"
+    ]
   },
   {
     "id": "potencia-predatoria-vi",
@@ -426,7 +450,10 @@
     "ck": 7,
     "cm": 1,
     "effect": "Exige V. +1 Passo adicional.",
-    "category": "Ofensivo • Passivo"
+    "category": "Ofensivo • Passivo",
+    "requires": [
+      "potencia-predatoria-v"
+    ]
   },
   {
     "id": "massa-de-impacto",
@@ -436,7 +463,7 @@
     "cb": 6,
     "ck": 3,
     "cm": 1,
-    "effect": "+2 dados de dano nos ataques corpo a corpo da Kakuja.",
+    "effect": "+2 Passos de Dano nos ataques corpo a corpo da Kakuja.",
     "category": "Ofensivo • Passivo"
   },
   {
@@ -458,7 +485,7 @@
     "cb": 8,
     "ck": 4,
     "cm": 1,
-    "effect": "No início do turno escolha: Lâmina (+1 Passo), Martelo (+3 dados e -1 acerto), Lança (+1 acerto e +1 alcance), Chicote (segundo alvo com metade dos dados e -2 Passos) ou Escudo (+2 RD).",
+    "effect": "No início do turno escolha: Lâmina (+1 Passo), Martelo (+3 Passos de Dano e -1 acerto), Lança (+1 acerto e +1 alcance), Chicote (segundo alvo com metade dos Passos de Dano e -2 Passos) ou Escudo (+2 RD).",
     "category": "Estrutural • Postura"
   },
   {
@@ -470,7 +497,10 @@
     "ck": 8,
     "cm": 2,
     "effect": "Exige Arsenal Orgânico. Mantenha duas formas, mas bônus equivalentes não somam. Troque uma delas no início do turno.",
-    "category": "Estrutural • Postura"
+    "category": "Estrutural • Postura",
+    "requires": [
+      "arsenal-organico"
+    ]
   },
   {
     "id": "gume-perfurante",
@@ -491,7 +521,7 @@
     "cb": 6,
     "ck": 3,
     "cm": 1,
-    "effect": "Declare antes do ataque e remova 2 dados de dano. Se causar dano, reduza a RD do alvo em 2 contra o próximo ataque que ele receber.",
+    "effect": "Declare antes do ataque e remova 2 Passos de Dano. Se causar dano, reduza a RD do alvo em 2 contra o próximo ataque que ele receber.",
     "category": "Ofensivo • Controle"
   },
   {
@@ -535,7 +565,7 @@
     "cb": 12,
     "ck": 6,
     "cm": 2,
-    "effect": "Gaste 5 RC depois de um ataque normal para gerar o único ataque adicional do turno, com metade dos dados e sem efeitos de ao acertar.",
+    "effect": "Gaste 5 RC depois de um ataque normal para gerar o único ataque adicional do turno, com metade dos Passos de Dano e sem efeitos de ao acertar.",
     "category": "Ofensivo • Ataque adicional"
   },
   {
@@ -546,7 +576,7 @@
     "cb": 12,
     "ck": 6,
     "cm": 2,
-    "effect": "Após Bloquear ou Esquivar completamente um ataque corpo a corpo, gaste 5 RC para fazer o único ataque adicional do turno contra o agressor, com metade dos dados.",
+    "effect": "Após Bloquear ou Esquivar completamente um ataque corpo a corpo, gaste 5 RC para fazer o único ataque adicional do turno contra o agressor, com metade dos Passos de Dano.",
     "category": "Ofensivo • Reação"
   },
   {
@@ -557,7 +587,7 @@
     "cb": 12,
     "ck": 6,
     "cm": 2,
-    "effect": "Sacrifique um ataque normal ainda disponível. Adicione metade dos dados básicos dele a um único ataque. Custos, crítico e gatilhos são resolvidos uma vez.",
+    "effect": "Sacrifique um ataque normal ainda disponível. Adicione metade dos Passos de Dano básicos dele a um único ataque. Custos, crítico e gatilhos são resolvidos uma vez.",
     "category": "Ofensivo • Condensação"
   },
   {
@@ -579,7 +609,7 @@
     "cb": 10,
     "ck": 5,
     "cm": 1,
-    "effect": "Ataques consecutivos no mesmo alvo acumulam +1 dado de dano, máximo +3. Errar ou trocar de alvo remove tudo; máximo 2 acúmulos por turno.",
+    "effect": "Ataques consecutivos no mesmo alvo acumulam +1 Passo de Dano, máximo +3. Errar ou trocar de alvo remove tudo; máximo 2 acúmulos por turno.",
     "category": "Ofensivo • Ritmo"
   },
   {
@@ -590,7 +620,7 @@
     "cb": 12,
     "ck": 6,
     "cm": 1,
-    "effect": "Contra alvo com 1/4 ou menos da Vida, o primeiro ataque do turno recebe +4 dados de dano. Não ativa contra figurantes irrelevantes criados para alimentar o efeito.",
+    "effect": "Contra alvo com 1/4 ou menos da Vida, o primeiro ataque do turno recebe +4 Passos de Dano. Não ativa contra figurantes irrelevantes criados para alimentar o efeito.",
     "category": "Ofensivo • Execução"
   },
   {
@@ -646,7 +676,10 @@
     "ck": 4,
     "cm": 1,
     "effect": "Exige I. +2 RD adicional.",
-    "category": "Defensivo • Passivo"
+    "category": "Defensivo • Passivo",
+    "requires": [
+      "couraca-kakuja-i"
+    ]
   },
   {
     "id": "couraca-kakuja-iii",
@@ -657,7 +690,10 @@
     "ck": 5,
     "cm": 1,
     "effect": "Exige II. +2 RD adicional.",
-    "category": "Defensivo • Passivo"
+    "category": "Defensivo • Passivo",
+    "requires": [
+      "couraca-kakuja-ii"
+    ]
   },
   {
     "id": "couraca-kakuja-iv",
@@ -668,7 +704,10 @@
     "ck": 6,
     "cm": 1,
     "effect": "Exige III. +2 RD adicional.",
-    "category": "Defensivo • Passivo"
+    "category": "Defensivo • Passivo",
+    "requires": [
+      "couraca-kakuja-iii"
+    ]
   },
   {
     "id": "tecido-reforcado-i",
@@ -690,7 +729,10 @@
     "ck": 4,
     "cm": 1,
     "effect": "Exige I. +6 Dureza adicional.",
-    "category": "Defensivo • Dureza"
+    "category": "Defensivo • Dureza",
+    "requires": [
+      "tecido-reforcado-i"
+    ]
   },
   {
     "id": "escudo-instintivo",
@@ -777,7 +819,7 @@
     "cb": 10,
     "ck": 5,
     "cm": 1,
-    "effect": "Uma vez por turno, ao zerar dano corpo a corpo com RD/Bloqueio, cause metade dos dados básicos da Kakuja ao agressor. Não crita nem ativa efeitos.",
+    "effect": "Uma vez por turno, ao zerar dano corpo a corpo com RD/Bloqueio, cause metade dos Passos de Dano básicos da Kakuja ao agressor. Não crita nem ativa efeitos.",
     "category": "Defensivo • Retaliação"
   },
   {
@@ -788,7 +830,7 @@
     "cb": 12,
     "ck": 6,
     "cm": 2,
-    "effect": "Ao reduzir dano, armazene até metade do Grau como Carga. No próximo ataque, consuma tudo como dados de dano. Uma carga por vez.",
+    "effect": "Ao reduzir dano, armazene até metade do Grau como Carga. No próximo ataque, consuma tudo como Passos de Dano. Uma carga por vez.",
     "category": "Defensivo • Conversão"
   },
   {
@@ -822,7 +864,10 @@
     "ck": 5,
     "cm": 1,
     "effect": "Escolha uma propriedade elemental comprada. +3 RD contra ela e +1 dado no primeiro teste por cena para resistir ao efeito associado.",
-    "category": "Defensivo • Elemental"
+    "category": "Defensivo • Elemental",
+    "requires": [
+      "infusao-elemental"
+    ]
   },
   {
     "id": "vesicula-de-rc-i",
@@ -844,7 +889,10 @@
     "ck": 5,
     "cm": 0,
     "effect": "Exige I. A Reserva aumenta em +4 RC.",
-    "category": "Biológico • Reserva"
+    "category": "Biológico • Reserva",
+    "requires": [
+      "vesicula-de-rc-i"
+    ]
   },
   {
     "id": "vesicula-de-rc-iii",
@@ -855,7 +903,10 @@
     "ck": 6,
     "cm": 0,
     "effect": "Exige II. A Reserva aumenta em +4 RC.",
-    "category": "Biológico • Reserva"
+    "category": "Biológico • Reserva",
+    "requires": [
+      "vesicula-de-rc-ii"
+    ]
   },
   {
     "id": "metabolismo-eficiente",
@@ -888,7 +939,10 @@
     "ck": 5,
     "cm": 1,
     "effect": "Exige I. A cura passa a 4 Vida por turno. Não soma com Regeneração Anormal; use a maior.",
-    "category": "Biológico • Regeneração"
+    "category": "Biológico • Regeneração",
+    "requires": [
+      "cicatrizacao-de-combate-i"
+    ]
   },
   {
     "id": "reconstrucao-de-membros",
@@ -1020,7 +1074,10 @@
     "ck": 5,
     "cm": 1,
     "effect": "Exige Infusão. O bônus sobe para +6 dano e libera o Condutor elevado. O teto de dano fixo da Kakuja continua valendo.",
-    "category": "Elemental • Núcleo"
+    "category": "Elemental • Núcleo",
+    "requires": [
+      "infusao-elemental"
+    ]
   },
   {
     "id": "nucleo-duplo",
@@ -1031,7 +1088,10 @@
     "ck": 5,
     "cm": 1,
     "effect": "Compre uma segunda propriedade. Escolha qual está ativa no início do turno; elas não funcionam juntas.",
-    "category": "Elemental • Núcleo"
+    "category": "Elemental • Núcleo",
+    "requires": [
+      "infusao-elemental"
+    ]
   },
   {
     "id": "reacao-hibrida",
@@ -1042,7 +1102,10 @@
     "ck": 8,
     "cm": 2,
     "effect": "Exige Núcleo Duplo. Uma vez por turno, gaste 4 RC para aplicar dois Condutores no mesmo ataque. O dano elemental não duplica.",
-    "category": "Elemental • Convergência"
+    "category": "Elemental • Convergência",
+    "requires": [
+      "nucleo-duplo"
+    ]
   },
   {
     "id": "nucleo-trino",
@@ -1053,7 +1116,10 @@
     "ck": 9,
     "cm": 2,
     "effect": "Exige Núcleo Duplo. Compre terceira propriedade e troque a ativa sem Ação uma vez por turno. Ainda apenas uma fica ativa.",
-    "category": "Elemental • Núcleo"
+    "category": "Elemental • Núcleo",
+    "requires": [
+      "nucleo-duplo"
+    ]
   },
   {
     "id": "projetil-elemental",
@@ -1064,7 +1130,10 @@
     "ck": 3,
     "cm": 1,
     "effect": "Ataque elemental alcança +1 espaço além do alcance normal. Gaste 2 RC por disparo.",
-    "category": "Elemental • Distância"
+    "category": "Elemental • Distância",
+    "requires": [
+      "infusao-elemental"
+    ]
   },
   {
     "id": "manto-elemental",
@@ -1075,7 +1144,10 @@
     "ck": 4,
     "cm": 1,
     "effect": "Uma vez por rodada, quem causar dano corpo a corpo em você sofre o dano fixo da Infusão. Não aplica Condutor.",
-    "category": "Elemental • Defesa"
+    "category": "Elemental • Defesa",
+    "requires": [
+      "infusao-elemental"
+    ]
   },
   {
     "id": "rastro-elemental",
@@ -1086,7 +1158,10 @@
     "ck": 3,
     "cm": 1,
     "effect": "Depois de mover-se, gaste 3 RC para deixar 1 espaço perigoso até o próximo turno. Entrar nele causa 3 dano, uma vez por criatura.",
-    "category": "Elemental • Terreno"
+    "category": "Elemental • Terreno",
+    "requires": [
+      "infusao-elemental"
+    ]
   },
   {
     "id": "mina-organica",
@@ -1097,7 +1172,10 @@
     "ck": 4,
     "cm": 1,
     "effect": "Gaste uma Ação e 3 RC para plantar uma mina. Quando acionada, usa sua MD, causa +3 dano fixo e Condutor básico em 1 alvo.",
-    "category": "Elemental • Armadilha"
+    "category": "Elemental • Armadilha",
+    "requires": [
+      "infusao-elemental"
+    ]
   },
   {
     "id": "propulsao-elemental",
@@ -1108,7 +1186,10 @@
     "ck": 4,
     "cm": 1,
     "effect": "Ao ativar a Infusão, mova 1 espaço. Uma vez por rodada, ao aplicar Condutor, pode pagar 2 RC para mover 1 espaço.",
-    "category": "Elemental • Mobilidade"
+    "category": "Elemental • Mobilidade",
+    "requires": [
+      "infusao-elemental"
+    ]
   },
   {
     "id": "explosao-elemental",
@@ -1118,8 +1199,11 @@
     "cb": 10,
     "ck": 5,
     "cm": 2,
-    "effect": "Gaste 6 RC ao acertar. Área de 1 espaço, +2 Passos; alvos secundários recebem metade dos dados e apenas o Condutor básico.",
-    "category": "Elemental • Área"
+    "effect": "Gaste 6 RC ao acertar. Área de 1 espaço, +2 Passos; alvos secundários recebem metade dos Passos de Dano e apenas o Condutor básico.",
+    "category": "Elemental • Área",
+    "requires": [
+      "infusao-elemental"
+    ]
   },
   {
     "id": "feixe-concentrado",
@@ -1129,8 +1213,11 @@
     "cb": 12,
     "ck": 6,
     "cm": 2,
-    "effect": "Gaste uma Ação carregando e 8 RC. Até o próximo turno, ataque em linha com +4 dados e +2 Passos; não combina com condensação.",
-    "category": "Elemental • Explosão"
+    "effect": "Gaste uma Ação carregando e 8 RC. Até o próximo turno, ataque em linha com +6 Passos de Dano; não combina com condensação.",
+    "category": "Elemental • Explosão",
+    "requires": [
+      "infusao-elemental"
+    ]
   },
   {
     "id": "armadura-elemental",
@@ -1141,7 +1228,10 @@
     "ck": 5,
     "cm": 2,
     "effect": "+3 RD contra a propriedade escolhida. Ao bloquear totalmente, aplique Condutor básico ao agressor, uma vez por turno.",
-    "category": "Elemental • Defesa"
+    "category": "Elemental • Defesa",
+    "requires": [
+      "infusao-elemental"
+    ]
   },
   {
     "id": "carcere-elemental",
@@ -1152,7 +1242,10 @@
     "ck": 6,
     "cm": 2,
     "effect": "Depois de acertar, gaste 6 RC. O alvo testa Vigor; em falha fica preso e usa Movimento para tentar sair. Não funciona em rodadas consecutivas.",
-    "category": "Elemental • Controle"
+    "category": "Elemental • Controle",
+    "requires": [
+      "infusao-elemental"
+    ]
   },
   {
     "id": "onda-de-choque",
@@ -1163,7 +1256,10 @@
     "ck": 5,
     "cm": 2,
     "effect": "Gaste 5 RC. Cone curto, um teste por alvo, dano com -1 Passo e Condutor básico. Uma rolagem de dano para todos.",
-    "category": "Elemental • Área"
+    "category": "Elemental • Área",
+    "requires": [
+      "infusao-elemental"
+    ]
   },
   {
     "id": "tempestade-de-rc",
@@ -1174,7 +1270,10 @@
     "ck": 8,
     "cm": 3,
     "effect": "Gaste 12 RC. Por 2 turnos, uma área de 2 espaços causa 3 dano no início do turno e aplica Condutor básico após teste de defesa. Uma vez por cena.",
-    "category": "Elemental • Domínio"
+    "category": "Elemental • Domínio",
+    "requires": [
+      "infusao-elemental"
+    ]
   },
   {
     "id": "canhao-de-nucleo",
@@ -1184,8 +1283,11 @@
     "cb": 18,
     "ck": 9,
     "cm": 3,
-    "effect": "Gaste 12 RC e sacrifique Movimento. Um ataque recebe +8 dados e +3 Passos; depois a Infusão desliga até o próximo turno.",
-    "category": "Elemental • Finalizador"
+    "effect": "Gaste 12 RC e sacrifique Movimento. Um ataque recebe +11 Passos de Dano; depois a Infusão desliga até o próximo turno.",
+    "category": "Elemental • Finalizador",
+    "requires": [
+      "infusao-elemental"
+    ]
   },
   {
     "id": "revestimento-total",
@@ -1196,7 +1298,10 @@
     "ck": 7,
     "cm": 2,
     "effect": "O Condutor pode ser aplicado por ataque corpo a corpo, defesa ou movimento, mas no máximo uma vez por turno no total.",
-    "category": "Elemental • Versatilidade"
+    "category": "Elemental • Versatilidade",
+    "requires": [
+      "infusao-elemental"
+    ]
   },
   {
     "id": "dominio-elemental",
@@ -1206,8 +1311,12 @@
     "cb": 24,
     "ck": 12,
     "cm": 4,
-    "effect": "Uma vez por sessão, gaste 20 RC. Por 3 turnos, área de 3 espaços; +4 dados de dano, Condutor elevado e +2 RD. Ao fim, perca 10 RC e a Infusão não ativa por 2 turnos.",
-    "category": "Elemental • Finalizador"
+    "effect": "Uma vez por sessão, gaste 20 RC. Por 3 turnos, área de 3 espaços; +4 Passos de Dano, Condutor elevado e +2 RD. Ao fim, perca 10 RC e a Infusão não ativa por 2 turnos.",
+    "category": "Elemental • Finalizador",
+    "requires": [
+      "infusao-elemental",
+      "potencia-elemental"
+    ]
   },
   {
     "id": "farpas-de-contencao",
@@ -1415,7 +1524,7 @@
     "cb": 6,
     "ck": 3,
     "cm": 1,
-    "effect": "+1 espaço de alcance e +2 dados no primeiro disparo do turno se você não estiver agarrado.",
+    "effect": "+1 espaço de alcance e +2 Passos de Dano no primeiro disparo do turno se você não estiver agarrado.",
     "category": "Ukaku • Distância"
   },
   {
@@ -1459,7 +1568,7 @@
     "cb": 12,
     "ck": 6,
     "cm": 2,
-    "effect": "Depois de voar 2 espaços em linha, gaste 6 RC: ataque corpo a corpo com +3 dados e +2 Passos; mova 1 espaço depois.",
+    "effect": "Depois de voar 2 espaços em linha, gaste 6 RC: ataque corpo a corpo com +5 Passos de Dano; mova 1 espaço depois.",
     "category": "Ukaku • Explosão"
   },
   {
@@ -1470,7 +1579,7 @@
     "cb": 14,
     "ck": 7,
     "cm": 2,
-    "effect": "Carregue com uma Ação e 8 RC. Próximo disparo: +4 acerto, +6 dados e +1 Passo. Não combina com condensação.",
+    "effect": "Carregue com uma Ação e 8 RC. Próximo disparo: +4 acerto e +7 Passos de Dano. Não combina com condensação.",
     "category": "Ukaku • Explosão"
   },
   {
@@ -1492,7 +1601,7 @@
     "cb": 20,
     "ck": 10,
     "cm": 3,
-    "effect": "Uma vez por turno, gaste 5 RC para o único ataque adicional, com metade dos dados, sem gatilhos ou novos ataques.",
+    "effect": "Uma vez por turno, gaste 5 RC para o único ataque adicional, com metade dos Passos de Dano, sem gatilhos ou novos ataques.",
     "category": "Ukaku • Ataque adicional"
   },
   {
@@ -1536,7 +1645,7 @@
     "cb": 10,
     "ck": 5,
     "cm": 1,
-    "effect": "Quando atingido por golpe contundente, o agressor testa Vigor; falha causa metade dos seus dados básicos Koukaku. Uma vez por turno por agressor.",
+    "effect": "Quando atingido por golpe contundente, o agressor testa Vigor; falha causa metade dos seus Passos de Dano básicos Koukaku. Uma vez por turno por agressor.",
     "category": "Koukaku • Retaliação"
   },
   {
@@ -1569,7 +1678,7 @@
     "cb": 16,
     "ck": 8,
     "cm": 2,
-    "effect": "No início do turno: Sabre +3 acerto; Machado +5 dano; Escudo +4 RD; Lança +2 acerto e +1 alcance. Uma forma por vez.",
+    "effect": "No início do turno: Sabre +3 acerto; Machado +5 Passos de Dano; Escudo +4 RD; Lança +2 acerto e +1 alcance. Uma forma por vez.",
     "category": "Koukaku • Postura"
   },
   {
@@ -1580,7 +1689,7 @@
     "cb": 20,
     "ck": 10,
     "cm": 3,
-    "effect": "Uma vez por turno, gaste 5 RC para aumentar RD contra um golpe em metade dos dados base de Vigor. Se zerar o dano, recupere 2 RC.",
+    "effect": "Uma vez por turno, gaste 5 RC para aumentar RD contra um golpe em metade do Vigor base. Se zerar o dano, recupere 2 RC.",
     "category": "Koukaku • Defesa"
   },
   {
@@ -1602,7 +1711,7 @@
     "cb": 8,
     "ck": 4,
     "cm": 1,
-    "effect": "Reserve apêndices para ataque: +2 dados de dano. Enquanto ativo, -2 RD contra o próximo golpe antes do seu turno.",
+    "effect": "Reserve apêndices para ataque: +2 Passos de Dano. Enquanto ativo, -2 RD contra o próximo golpe antes do seu turno.",
     "category": "Rinkaku • Postura"
   },
   {
@@ -1635,7 +1744,7 @@
     "cb": 10,
     "ck": 5,
     "cm": 1,
-    "effect": "Ao perder uma cauda, gaste 5 RC para regenerá-la e fazer o único ataque adicional do turno com -1 acerto e metade dos dados.",
+    "effect": "Ao perder uma cauda, gaste 5 RC para regenerá-la e fazer o único ataque adicional do turno com -1 acerto e metade dos Passos de Dano.",
     "category": "Rinkaku • Regeneração"
   },
   {
@@ -1657,7 +1766,7 @@
     "cb": 18,
     "ck": 9,
     "cm": 3,
-    "effect": "Gaste 12 RC por 3 turnos: +4 dados de dano, +2 acerto e a primeira cauda destruída por turno regenera de graça. Ao fim, perca 10 RC.",
+    "effect": "Gaste 12 RC por 3 turnos: +4 Passos de Dano, +2 acerto e a primeira cauda destruída por turno regenera de graça. Ao fim, perca 10 RC.",
     "category": "Rinkaku • Transformação"
   },
   {
@@ -1679,7 +1788,7 @@
     "cb": 8,
     "ck": 4,
     "cm": 1,
-    "effect": "No início do turno escolha Ataque (+2 dados de dano), Defesa (+2 RD) ou Mobilidade (+2 Esquiva).",
+    "effect": "No início do turno escolha Ataque (+2 Passos de Dano), Defesa (+2 RD) ou Mobilidade (+2 Esquiva).",
     "category": "Bikaku • Postura"
   },
   {
@@ -1745,7 +1854,7 @@
     "cb": 16,
     "ck": 8,
     "cm": 2,
-    "effect": "Posturas passam a +4 dano, +4 RD ou +4 Esquiva. Por 5 RC, mantenha duas até o próximo turno, usando tetos normais.",
+    "effect": "Posturas passam a +4 Passos de Dano, +4 RD ou +4 Esquiva. Por 5 RC, mantenha duas até o próximo turno, usando tetos normais.",
     "category": "Bikaku • Postura"
   },
   {
@@ -1756,7 +1865,7 @@
     "cb": 20,
     "ck": 10,
     "cm": 3,
-    "effect": "Uma vez por sessão, 3 turnos: escolha duas adaptações por turno entre +5 dano, +3 acerto, +5 RD, +3 Esquiva ou +1 alcance. Não repita a dupla seguida.",
+    "effect": "Uma vez por sessão, 3 turnos: escolha duas adaptações por turno entre +5 Passos de Dano, +3 acerto, +5 RD, +3 Esquiva ou +1 alcance. Não repita a dupla seguida.",
     "category": "Bikaku • Transformação"
   },
   {
@@ -1778,7 +1887,7 @@
     "cb": 18,
     "ck": 9,
     "cm": 3,
-    "effect": "Ukaku + Koukaku. Ação e 10 RC: próximo disparo +6 acerto, +8 dados, +2 Passos e ignora 2 RD. Não combina com condensação.",
+    "effect": "Ukaku + Koukaku. Ação e 10 RC: o próximo disparo recebe +6 acerto, +10 Passos de Dano e ignora 2 RD. Não combina com condensação.",
     "category": "Ukaku + Koukaku"
   },
   {
@@ -1789,7 +1898,7 @@
     "cb": 18,
     "ck": 9,
     "cm": 3,
-    "effect": "Ukaku + Rinkaku. Ao regenerar Vida ou cauda, próximo disparo recebe +3 dados. Uma vez por turno; perder cauda cria explosão de metade dos dados.",
+    "effect": "Ukaku + Rinkaku. Ao regenerar Vida ou cauda, próximo disparo recebe +3 Passos de Dano. Uma vez por turno; perder cauda cria explosão de metade dos Passos de Dano.",
     "category": "Ukaku + Rinkaku"
   },
   {
@@ -1800,7 +1909,7 @@
     "cb": 22,
     "ck": 11,
     "cm": 4,
-    "effect": "Ukaku + Rinkaku. Gaste 15 RC por 2 turnos; sofrer dano, perder cauda ou regenerar gera Carga, máximo 5; cada Carga +1 dado. Somem ao fim.",
+    "effect": "Ukaku + Rinkaku. Gaste 15 RC por 2 turnos; sofrer dano, perder cauda ou regenerar gera Carga, máximo 5; cada Carga concede +1 Passo de Dano. Somem ao fim.",
     "category": "Ukaku + Rinkaku"
   },
   {
@@ -1811,7 +1920,7 @@
     "cb": 12,
     "ck": 6,
     "cm": 2,
-    "effect": "Ukaku + Bikaku. Ao atacar de direção diferente da anterior: +2 acerto e +2 dados. Não acumula.",
+    "effect": "Ukaku + Bikaku. Ao atacar de direção diferente da anterior: +2 acerto e +2 Passos de Dano. Não acumula.",
     "category": "Ukaku + Bikaku"
   },
   {
@@ -1822,7 +1931,7 @@
     "cb": 20,
     "ck": 10,
     "cm": 3,
-    "effect": "Ukaku + Bikaku. Mover antes de atacar gera Vetor, máximo 5. Consuma 5: +5 acerto, +5 dados, +2 Passos e ignora metade da RD.",
+    "effect": "Ukaku + Bikaku. Mover antes de atacar gera Vetor, máximo 5. Consuma 5: receba +5 acerto, +7 Passos de Dano e ignore metade da RD.",
     "category": "Ukaku + Bikaku"
   },
   {
@@ -1844,7 +1953,7 @@
     "cb": 22,
     "ck": 11,
     "cm": 4,
-    "effect": "Koukaku + Rinkaku. 20 RC, 3 turnos: +5 RD, +3 dados e primeira cauda destruída por turno regenera. Depois, -6 RD por 2 turnos.",
+    "effect": "Koukaku + Rinkaku. 20 RC, 3 turnos: +5 RD, +3 Passos de Dano e primeira cauda destruída por turno regenera. Depois, -6 RD por 2 turnos.",
     "category": "Koukaku + Rinkaku"
   },
   {
@@ -1855,7 +1964,7 @@
     "cb": 12,
     "ck": 6,
     "cm": 2,
-    "effect": "Koukaku + Bikaku. +1 alcance para arma Koukaku; ataques de oportunidade +2 acerto e +3 dados.",
+    "effect": "Koukaku + Bikaku. +1 alcance para arma Koukaku; ataques de oportunidade +2 acerto e +3 Passos de Dano.",
     "category": "Koukaku + Bikaku"
   },
   {
@@ -1866,7 +1975,7 @@
     "cb": 22,
     "ck": 11,
     "cm": 4,
-    "effect": "Koukaku + Bikaku. 3 turnos: +4 RD, +2 acerto; primeira defesa corpo a corpo total por turno gera ataque adicional com metade dos dados.",
+    "effect": "Koukaku + Bikaku. 3 turnos: +4 RD, +2 acerto; primeira defesa corpo a corpo total por turno gera ataque adicional com metade dos Passos de Dano.",
     "category": "Koukaku + Bikaku"
   },
   {
@@ -1877,7 +1986,7 @@
     "cb": 22,
     "ck": 11,
     "cm": 4,
-    "effect": "Rinkaku + Bikaku. 3 turnos: +2 caudas, +3 dados, +2 defesa e +1 alcance. Primeiro erro inimigo na rodada permite ataque adicional com metade dos dados.",
+    "effect": "Rinkaku + Bikaku. 3 turnos: +2 caudas, +3 Passos de Dano, +2 defesa e +1 alcance. Primeiro erro inimigo na rodada permite ataque adicional com metade dos Passos de Dano.",
     "category": "Rinkaku + Bikaku"
   },
   {
@@ -1888,7 +1997,7 @@
     "cb": 30,
     "ck": 15,
     "cm": 5,
-    "effect": "Quatro tipos. Uma vez por sessão, 20 RC por 3 turnos: +3 acerto, +4 dados, +4 RD, +2 Esquiva e +1 alcance. Depois, -20 RC e Kakuja desativa por 2 turnos.",
+    "effect": "Quatro tipos. Uma vez por sessão, 20 RC por 3 turnos: +3 acerto, +4 Passos de Dano, +4 RD, +2 Esquiva e +1 alcance. Depois, -20 RC e Kakuja desativa por 2 turnos.",
     "category": "Quimera quádrupla"
   },
   {
@@ -1910,7 +2019,7 @@
     "cb": 16,
     "ck": 8,
     "cm": 3,
-    "effect": "Por 8 RC e 3 turnos: +4 RD; sempre que zerar dano, ganhe 1 Carga, máximo 3; consuma no ataque como dados.",
+    "effect": "Por 8 RC e 3 turnos: +4 RD; sempre que zerar dano, ganhe 1 Carga, máximo 3; consuma no ataque como Passos de Dano.",
     "category": "Evolução • Fortaleza"
   },
   {
@@ -1943,7 +2052,7 @@
     "cb": 20,
     "ck": 10,
     "cm": 4,
-    "effect": "Por 10 RC e 3 turnos: +3 Passos, +3 dados e alcance +1. Não pode usar ataque adicional enquanto durar.",
+    "effect": "Por 10 RC e 3 turnos: +6 Passos de Dano e alcance +1. Não pode usar ataque adicional enquanto durar.",
     "category": "Evolução • Predador"
   },
   {
@@ -1976,7 +2085,7 @@
     "cb": 20,
     "ck": 10,
     "cm": 4,
-    "effect": "Por 10 RC e 3 turnos: no início do turno escolha dois entre +3 acerto, +4 dados, +4 RD, +2 Esquiva e +1 alcance. Não repita a dupla seguida.",
+    "effect": "Por 10 RC e 3 turnos: no início do turno escolha dois entre +3 acerto, +4 Passos de Dano, +4 RD, +2 Esquiva e +1 alcance. Não repita a dupla seguida.",
     "category": "Evolução • Metamorfose"
   },
   {
@@ -1987,7 +2096,7 @@
     "cb": 22,
     "ck": 11,
     "cm": 4,
-    "effect": "Uma vez por sessão: 15 RC, +8 dados, +5 Passos e ignora metade da RD. Depois, RD Kakuja = 0 e Movimento reduzido em 1 por 3 turnos.",
+    "effect": "Uma vez por sessão: 15 RC, +13 Passos de Dano e ignora metade da RD. Depois, RD Kakuja = 0 e Movimento reduzido em 1 por 3 turnos.",
     "category": "Finalizador • Corpo a corpo"
   },
   {
@@ -1998,7 +2107,7 @@
     "cb": 22,
     "ck": 11,
     "cm": 4,
-    "effect": "Uma vez por sessão: carregue uma Ação, 15 RC; linha longa, +10 dados, +4 Passos. Depois, não use ataque à distância por 2 turnos.",
+    "effect": "Uma vez por sessão: carregue uma Ação, 15 RC; linha longa, +14 Passos de Dano. Depois, não use ataque à distância por 2 turnos.",
     "category": "Finalizador • Distância"
   },
   {
@@ -2042,7 +2151,7 @@
     "cb": 26,
     "ck": 13,
     "cm": 5,
-    "effect": "Por 15 RC e 3 turnos: +3 acerto, +3 defesa e, uma vez por turno, escolha +4 dados, ignorar 4 RD ou mover 1 após atacar.",
+    "effect": "Por 15 RC e 3 turnos: +3 acerto, +3 defesa e, uma vez por turno, escolha +4 Passos de Dano, ignorar 4 RD ou mover 1 após atacar.",
     "category": "Evolução • Adaptação"
   },
   {
@@ -2053,7 +2162,7 @@
     "cb": 30,
     "ck": 15,
     "cm": 5,
-    "effect": "Uma vez por sessão: 20 RC; ataque todos os inimigos em 2 espaços com +10 dados e +6 Passos. Um teste e um dano. Depois, Kakuja desativa por 2 turnos.",
+    "effect": "Uma vez por sessão: 20 RC; ataque todos os inimigos em 2 espaços com +16 Passos de Dano. Um teste e um dano. Depois, Kakuja desativa por 2 turnos.",
     "category": "Finalizador • Área"
   },
   {
@@ -2064,7 +2173,7 @@
     "cb": 30,
     "ck": 15,
     "cm": 5,
-    "effect": "Uma vez por sessão: 20 RC; +12 dados, +6 Passos, +4 acerto e ignora metade da RD. Depois, RD = 0 por 5 turnos.",
+    "effect": "Uma vez por sessão: 20 RC; +18 Passos de Dano, +4 acerto e ignora metade da RD. Depois, RD = 0 por 5 turnos.",
     "category": "Finalizador • Corpo a corpo"
   },
   {
@@ -2075,7 +2184,7 @@
     "cb": 30,
     "ck": 15,
     "cm": 6,
-    "effect": "Por 20 RC e 3 turnos: +6 Passos, +6 dados, +5 RD, +2 acerto e +1 alcance. Ao fim, perca 20 RC e receba +2 Fome.",
+    "effect": "Por 20 RC e 3 turnos: +12 Passos de Dano, +5 RD, +2 acerto e +1 alcance. Ao fim, perca 20 RC e receba +2 Fome.",
     "category": "Evolução • Grau 14"
   },
   {
@@ -2097,7 +2206,7 @@
     "cb": 30,
     "ck": 15,
     "cm": 6,
-    "effect": "Por 20 RC e 3 turnos, escolha dois por turno: +4 dados, +3 Esquiva, +3 acerto, +5 RD, +1 alcance ou primeira cura +25%. Não repita a dupla. Ao fim, +2 Fome.",
+    "effect": "Por 20 RC e 3 turnos, escolha dois por turno: +4 Passos de Dano, +3 Esquiva, +3 acerto, +5 RD, +1 alcance ou primeira cura +25%. Não repita a dupla. Ao fim, +2 Fome.",
     "category": "Evolução • Grau 14"
   },
   {
@@ -2108,7 +2217,7 @@
     "cb": 30,
     "ck": 15,
     "cm": 6,
-    "effect": "Uma vez por sessão: 25 RC; ataque único no teto +14 Passos da Kakuja, +14 dados, +5 acerto e ignora metade da RD. Depois, RC vai a 0 e a Kakuja encerra.",
+    "effect": "Uma vez por sessão: 25 RC; ataque único no teto +28 Passos da Kakuja, +5 acerto e ignora metade da RD. Depois, RC vai a 0 e a Kakuja encerra.",
     "category": "Finalizador • Grau 14"
   }
 ]

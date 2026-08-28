@@ -156,10 +156,10 @@ export const perks: Perk[] = [
   perk("mestres-espadas", "Mestres das Espadas", "Força", 6, "Use uma Reação para um segundo golpe com metade dos Passos; se ambos acertarem, o alvo perde a Reação.", { attribute: "forca", min: 6 }),
   perk("brutamontes", "Brutamontes", "Força", 6, "Ao superar a MD em 2 acertos num golpe físico, empurre o alvo 1 espaço sem outra Ação.", { attribute: "forca", min: 6 }),
   perk("arremessador", "Arremessador", "Força", 6, "Armas arremessadas e objetos improvisados usam Força e recebem +2 Passos de Dano.", { attribute: "forca", min: 6 }),
-  perk("soco-atordoante", "Soco Atordoante", "Força", 6, "Duas vezes por descanso, imponha teste de Controle MD 5; em falha, -2 dados e -3 Passos no próximo dano.", { attribute: "forca", min: 7 }),
+  perk("soco-atordoante", "Soco Atordoante", "Força", 6, "Duas vezes por descanso, imponha teste de Controle MD 5; em falha, -5 Passos no próximo dano.", { attribute: "forca", min: 7 }),
   perk("forca-minotauro", "Força de Minotauro", "Força", 8, "Duas vezes por descanso, realize um Ato Colossal; os Passos extras são iguais aos acertos.", { attribute: "forca", min: 8 }),
-  perk("lenda-dragao", "Lenda do Dragão", "Força", 8, "Uma vez por turno, um ataque físico direto recebe +1d12 de dano fixo.", { attribute: "forca", min: 9 }),
-  perk("skadoosh", "Skadoosh", "Força", 15, "Uma vez por sessão, em condição dramática, dobre os dados básicos de dano e receba +3 Passos.", { attribute: "forca", min: 10 }),
+  perk("lenda-dragao", "Lenda do Dragão", "Força", 8, "Uma vez por turno, um ataque físico direto recebe +1 Passo de Dano.", { attribute: "forca", min: 9 }),
+  perk("skadoosh", "Skadoosh", "Força", 15, "Uma vez por sessão, em condição dramática, receba +4 Passos de Dano. A antiga duplicação do dado básico foi convertida em +1 Passo, somado aos +3 Passos originais.", { attribute: "forca", min: 10 }),
 
   perk("imunidade-natural", "Imunidade Natural", "Vigor", 3, "Imune a doenças e +1 dado contra venenos e toxinas.", { attribute: "vigor", min: 1 }),
   perk("pele-dura", "Pele Dura", "Vigor", 3, "Receba RD igual à metade do Vigor.", { attribute: "vigor", min: 2 }),
@@ -184,11 +184,11 @@ export const perks: Perk[] = [
   perk("mira-paciente", "Mira Paciente", "Precisão", 4, "Use uma Ação observando um alvo; o próximo ataque contra ele recebe +2 dados de acerto.", { attribute: "precisao", min: 4 }),
   perk("mira-cirurgica", "Mira Cirúrgica", "Precisão", 6, "Duas vezes por descanso, um ataque longo em ponto vital ignora RD.", { attribute: "precisao", min: 5 }),
   perk("olho-cacador", "Olho do Caçador", "Precisão", 6, "Duas vezes por descanso, marque um alvo: +1 dado e +2 Passos contra ele pela cena.", { attribute: "precisao", min: 6 }),
-  perk("entre-costelas", "Entre as Costelas", "Precisão", 6, "Uma vez por rodada, remova 2 dados de dano para receber +1 dado de acerto.", { attribute: "precisao", min: 6 }),
+  perk("entre-costelas", "Entre as Costelas", "Precisão", 6, "Uma vez por rodada, remova 2 Passos de Dano para receber +1 dado de acerto.", { attribute: "precisao", min: 6 }),
   perk("ricochete", "Ricochete", "Precisão", 6, "Reduza em 2 dados penalidades por cobertura e permita ataques indiretos quando a geometria comportar.", { attribute: "precisao", min: 6 }),
   perk("pistoleiro", "O Pistoleiro", "Precisão", 6, "Uma vez por turno, escolha Ricochete, Disparo Abrangente ou Ataque Duplo.", { attribute: "precisao", min: 7 }),
-  perk("disparo-alma", "Disparo da Alma", "Precisão", 8, "Após 2 turnos sem errar, os próximos 2 ataques recebem +2 dados, +3 Passos e ignoram RD.", { attribute: "precisao", min: 8 }),
-  perk("protocolo-coelhos", "Protocolo dos Coelhos", "Precisão", 10, "Sacrifique os demais ataques normais e concentre o dano em um golpe com +1 Modificador de Acerto.", { attribute: "precisao", min: 9 }),
+  perk("disparo-alma", "Disparo da Alma", "Precisão", 8, "Após 2 turnos sem errar, os próximos 2 ataques recebem +5 Passos de Dano e ignoram RD.", { attribute: "precisao", min: 8 }),
+  perk("protocolo-coelhos", "Protocolo dos Coelhos", "Precisão", 10, "Sacrifique os demais ataques normais e concentre os Passos de Dano em um golpe com +1 Modificador de Acerto.", { attribute: "precisao", min: 9 }),
   perk("apenas-atiro", "“Apenas atiro, para qualquer inimigo que vejo.”", "Precisão", 15, "Sacrifique até 2 ataques normais; para cada um, um ataque restante acerta automaticamente e causa metade dos Passos.", { attribute: "precisao", min: 10 }),
 
   perk("passo-silencioso", "Passo Silencioso", "Agilidade", 3, "Ignore obstáculos leves e superfícies barulhentas em Furtividade.", { attribute: "agilidade", min: 1 }),
@@ -203,8 +203,8 @@ export const perks: Perk[] = [
   perk("intocavel", "Intocável", "Agilidade", 6, "A primeira Esquiva de cada rodada recebe +2 dados.", { attribute: "agilidade", min: 6 }),
   perk("evasao-suprema", "Evasão Suprema", "Agilidade", 6, "Com 3 ou mais sucessos na Esquiva, negue completamente o dano físico.", { attribute: "agilidade", min: 7 }),
   perk("corpo-lamina", "Corpo de Lâmina", "Agilidade", 8, "Após 3 turnos consecutivos em ritmo, receba +2 dados de acerto e +3 Passos.", { attribute: "agilidade", min: 8 }),
-  perk("wally-like", "Wally Like", "Agilidade", 10, "No dano de Kagune ou Quinque, some metade dos dados base de Agilidade e metade dos de Precisão; limite igual à Agilidade base.", { attribute: "agilidade", min: 9 }),
-  perk("ceifador", "Ceifador", "Agilidade", 15, "Ataques furtivos ou de oportunidade recebem +8 dados de dano uma vez por turno; +2 dados permanentes de Esquiva.", { attribute: "agilidade", min: 10 }),
+  perk("wally-like", "Wally Like", "Agilidade", 10, "No dano de Kagune ou Quinque, some metade da Agilidade base e metade da Precisão base em Passos de Dano; limite igual à Agilidade base.", { attribute: "agilidade", min: 9 }),
+  perk("ceifador", "Ceifador", "Agilidade", 15, "Ataques furtivos ou de oportunidade recebem +8 Passos de Dano uma vez por turno; +2 dados permanentes de Esquiva.", { attribute: "agilidade", min: 10 }),
 
   perk("memoria-fotografica", "Memória Fotográfica", "Raciocínio", 3, "Uma vez por sessão, o Narrador relembra informação que o personagem já possuía.", { attribute: "raciocinio", min: 1 }),
   perk("observador-frio-rac", "Observador Frio", "Raciocínio", 3, "+1 dado para entender intenções, manipulações e blefes.", { attribute: "raciocinio", min: 2 }),
@@ -260,7 +260,7 @@ export const perks: Perk[] = [
   perk("autocontrole-absoluto", "Autocontrole Absoluto", "Controle", 6, "Uma vez por Descanso Longo, negue o impulso da Fome por uma cena ou evite uma Mácula.", { attribute: "controle", min: 6 }),
   perk("respira", "Respira.", "Controle", 6, "Uma vez por descanso, use uma Ação para remover até 2 dados de penalidade mental durante a cena.", { attribute: "controle", min: 6 }),
   perk("instinto-acorrentado", "Instinto Acorrentado", "Controle", 6, "Ao falhar contra um impulso, você ainda escolhe como executá-lo, sem negar a consequência principal.", { attribute: "controle", min: 6 }),
-  perk("foco-letal", "Foco Letal", "Controle", 6, "Duas vezes por descanso, converta até 3 dados de dano em +2 Passos cada antes do acerto.", { attribute: "controle", min: 7 }),
+  perk("foco-letal", "Foco Letal", "Controle", 6, "Duas vezes por descanso, converta até 3 Passos de Dano em +2 Passos cada antes do acerto.", { attribute: "controle", min: 7 }),
   perk("alma-estavel", "Alma Estável", "Controle", 8, "Só sofra Quebra depois de a Sanidade ficar negativa em duas ocasiões.", { attribute: "controle", min: 8 }),
   perk("inabalavel", "Inabalável", "Controle", 15, "Uma vez por sessão, reduza pela metade uma perda de Sanidade; uma vez a cada duas sessões, impeça uma nova Mácula.", { attribute: "controle", min: 9 }),
   perk("frio-neve", "Frio como a Neve", "Controle", 8, "+2 dados permanentes em testes de Controle.", { attribute: "controle", min: 10 }),
@@ -274,6 +274,8 @@ export interface Drawback {
   description: string;
   species?: SpeciesId[];
   targetAttribute?: boolean;
+  maxRank?: number;
+  uniqueTargets?: boolean;
 }
 
 export const drawbacks: Drawback[] = [
@@ -295,7 +297,7 @@ export const drawbacks: Drawback[] = [
   { id: "miseravel", name: "Miserável", credit: [3, 4, 5], description: "Dificuldade crescente de obter ou manter dinheiro." },
   { id: "desgarrado", name: "Desgarrado", credit: 3, description: "Você não possui moradia estável." },
   { id: "mente-fragil", name: "Mente Frágil", credit: 6, description: "Ganhe uma Mácula e reduza pela metade a Sanidade Máxima." },
-  { id: "desabilidade", name: "Desabilidade", credit: 5, description: "Escolha um Atributo: ele não pode passar de 4. Uma vez por Atributo.", targetAttribute: true },
+  { id: "desabilidade", name: "Desabilidade", credit: 5, description: "Escolha um Atributo por compra: ele não pode passar de 4. Uma vez por Atributo.", targetAttribute: true, maxRank: attributeKeys.length, uniqueTargets: true },
 ];
 
 export interface KaguneEffect {
@@ -309,6 +311,12 @@ export interface KaguneEffect {
   requirement?: string;
   description: string;
   targetAttribute?: boolean;
+  rankCap?: "grade";
+  repeatCost?: number;
+  levelCostStart?: number;
+  levelCostStep?: number;
+  requiresEffects?: { id: string; minRank?: number }[];
+  minPassiveEffects?: number;
 }
 
 const effect = (
@@ -323,15 +331,15 @@ const effect = (
 ): KaguneEffect => ({ id, name, family, cost, maxRank, type, description, ...options });
 
 export const kaguneEffects: KaguneEffect[] = [
-  effect("aumentar-dano", "Aumentar Dano", "Geral", 5, 4, "Passivo", "+1 Modificador de Dano por nível; uma compra por Grau."),
-  effect("aumentar-passos", "Aumentar Passos de Dano", "Geral", [3, 5], 2, "Passivo", "+1 Passo de Dano por nível.", { costMode: "choice" }),
+  effect("aumentar-dano", "Aumentar Dano", "Geral", 5, 4, "Passivo", "+1 Modificador de Dano por nível; teto atual igual a Grau/2 + 1.", { rankCap: "grade" }),
+  effect("aumentar-passos", "Aumentar Passos de Dano", "Geral", 3, 2, "Passivo", "+1 Passo de Dano por nível. Cada nova compra custa 3 PE a mais: 3, 6, 9, 12, 15...; teto atual igual a Grau/2 + 1.", { rankCap: "grade", levelCostStart: 3, levelCostStep: 3 }),
   effect("aumentar-distancia", "Aumentar Distância", "Geral", 3, 2, "Passivo", "+1 grau de alcance por nível. Koukaku pode comprar duas vezes."),
-  effect("couraca-revestida", "Couraça Revestida", "Geral", 5, 6, "Passivo", "+1 RD por nível."),
-  effect("regeneracao-anormal", "Regeneração Anormal", "Geral", 3, 6, "Passivo · Biológico", "Cura passiva; ao atingir o limite da regra, perca 2 RC ou receba 1 Fome."),
+  effect("couraca-revestida", "Couraça Revestida", "Geral", 5, 6, "Passivo", "+1 RD por nível; teto atual igual a Grau/2 + 1.", { rankCap: "grade" }),
+  effect("regeneracao-anormal", "Regeneração Anormal", "Geral", 3, 6, "Passivo · Biológico", "Cura passiva por nível, somada ao bônus de Grau; teto atual igual a Grau/2 + 1. Ao atingir o limite da regra, perca 2 RC ou receba 1 Fome.", { rankCap: "grade" }),
   effect("defesa-habil", "Defesa Hábil", "Geral", 3, 1, "Ativo · 2 RC", "Como Reação, reduza dano em metade do Grau."),
   effect("empurrao", "Empurrão", "Geral", 3, 3, "Ativo · 2 RC", "Arremesse o alvo; níveis ampliam distância e dano de colisão."),
-  effect("aumentar-acerto", "Aumentar Acerto", "Geral", 5, 6, "Passivo", "Cada compra pode elevar em +1 o resultado de um dado específico. A cada 3 compras, consolide +1 no modificador ++ dos testes com Kagune."),
-  effect("efeitos-alternativos", "Efeitos Alternativos", "Geral", 3, 1, "Ativo", "Mantenha dois efeitos passivos alternáveis; trocar custa 1 Ação.", { requirement: "Pré-requisitos dos dois passivos" }),
+  effect("aumentar-acerto", "Aumentar Acerto", "Geral", 5, 6, "Passivo", "Cada compra pode elevar em +1 o resultado de um dado específico. A cada 3 compras, consolide +1 no modificador ++ dos testes com Kagune. Teto atual igual a Grau/2 + 1.", { rankCap: "grade" }),
+  effect("efeitos-alternativos", "Efeitos Alternativos", "Geral", 3, 1, "Ativo", "Mantenha dois efeitos passivos alternáveis; trocar custa 1 Ação.", { requirement: "Possuir dois outros efeitos passivos compatíveis", minPassiveEffects: 2 }),
   effect("aprimoramentos-corporais", "Aprimoramentos Corporais", "Geral", 5, 2, "Passivo · Biológico", "Com a Kagune ativa, +1 no Atributo Físico escolhido por nível; pode superar o limite.", { targetAttribute: true }),
   effect("mudanca-forma", "Mudança de Forma", "Geral", 3, 4, "Ativo · 4 RC", "Remodele a Kagune; conceda dados e, ofensivamente, Passos conforme o nível."),
   effect("cura-rc", "Cura de RC", "Geral", 5, 2, "Ativo · Biológico", "Injete RC em um aliado e acelere recuperação mediante Reação e teste do Atributo Principal."),
@@ -339,11 +347,11 @@ export const kaguneEffects: KaguneEffect[] = [
 
   effect("distancia-superior", "Aumentar Distância Superior", "Ukaku", 3, 2, "Passivo", "+1 grau de distância por nível."),
   effect("cristalizacao", "Cristalização", "Ukaku", 3, 3, "Ativo · Biológico", "Cristais ofensivos; amplie Passos e disparos conforme o nível."),
-  effect("cristalizacao-potencializada", "Cristalização Potencializada", "Ukaku", 5, 2, "Passivo", "+2 dano à Cristalização por nível.", { requirement: "Cristalização N1" }),
+  effect("cristalizacao-potencializada", "Cristalização Potencializada", "Ukaku", 5, 2, "Passivo", "+2 no Modificador de Dano da Cristalização por nível.", { requirement: "Cristalização N1", requiresEffects: [{ id: "cristalizacao", minRank: 1 }] }),
   effect("criar-arma", "Criar Arma", "Ukaku", 5, 2, "Ativo · 4 RC", "Transforme a Ukaku em arma curta; +1 Passo por nível."),
-  effect("arma-cristalizada", "Arma Cristalizada", "Ukaku", 3, 1, "Passivo · 4 RC", "Cristalize a arma no impacto e adicione dano da Cristalização.", { requirement: "Criar Arma + Cristalização" }),
+  effect("arma-cristalizada", "Arma Cristalizada", "Ukaku", 3, 1, "Passivo · 4 RC", "Cristalize a arma no impacto e adicione o Modificador de Dano da Cristalização.", { requirement: "Criar Arma N1 + Cristalização N1", requiresEffects: [{ id: "criar-arma", minRank: 1 }, { id: "cristalizacao", minRank: 1 }] }),
   effect("adicionar-elemento", "Adicionar Elemento", "Ukaku", 6, 2, "Ativo · 2 RC + 1/turno", "Fogo, Raio ou Gelo; +3 dano no N1 e +6 no N2."),
-  effect("tiros-explosivos", "Tiros Explosivos", "Ukaku", 3, 2, "Passivo · 2 RC", "Explosão em área: N1 +1 Passo; N2 +2 Passos e área maior.", { requirement: "Cristalização N2" }),
+  effect("tiros-explosivos", "Tiros Explosivos", "Ukaku", 3, 2, "Passivo · 2 RC", "Explosão em área: N1 +1 Passo; N2 +2 Passos e área maior.", { requirement: "Cristalização N2", requiresEffects: [{ id: "cristalizacao", minRank: 2 }] }),
   effect("dispersao-cristais", "Dispersão de Cristais", "Ukaku", 5, 2, "Passivo · 2 RC", "Escolha cortina, nuvem cortante ou estilhaço direcionado."),
   effect("esquiva-pena", "Esquiva de Pena", "Ukaku", 3, 1, "Passivo", "+1 dado em Agilidade para Esquiva quando for alvo."),
   effect("asas-anjo", "Asas de Anjo", "Ukaku", 5, 1, "Ativo · 2 RC", "Voo com velocidade igual ao Deslocamento Base."),
@@ -352,11 +360,11 @@ export const kaguneEffects: KaguneEffect[] = [
   effect("forma-versatil", "Forma Versátil", "Koukaku", 5, 3, "Ativo · Biológico · 4 RC", "Escudo: +1 RD por nível e metade dos Passos bônus vira RD. Lâmina: +1 Passo por nível e metade da RD da Kagune é convertida em Passos na proporção de 2 RD para 1 Passo. Quinques podem comprar este efeito."),
   effect("alterar-aparencia", "Alterar Aparência", "Koukaku", [3, 6], 2, "Ativo · Biológico", "Altere voz, face e corpo; o custo de RC cresce com a complexidade.", { costMode: "choice" }),
   effect("koukaku-fragmentavel", "Koukaku Fragmentável", "Koukaku", 3, 3, "Ativo · 1 Ação + 2 RC", "Crie fragmentos-armadilha que atacam e prendem o alvo."),
-  effect("clones-aco", "Clones de Aço", "Koukaku", 8, 3, "Ativo · 6 RC/clone", "Cada compra aumenta o máximo de clones até 3.", { requirement: "Koukaku Fragmentável N1" }),
+  effect("clones-aco", "Clones de Aço", "Koukaku", 8, 3, "Ativo · 6 RC/clone", "Cada compra aumenta o máximo de clones até 3.", { requirement: "Koukaku Fragmentável N1", requiresEffects: [{ id: "koukaku-fragmentavel", minRank: 1 }] }),
   effect("bloqueio-ferro", "Bloqueio de Ferro", "Koukaku", 3, 1, "Passivo", "+1 dado em Vigor para Bloqueio."),
 
   effect("regeneracao-superior", "Regeneração Anormal Superior", "Rinkaku", [3, 8, 15, 25], 4, "Passivo · Biológico", "Cure 1/6, 1/4 ou 1/2 dos PV; N4 permite cura total por 6 RC.", { costMode: "choice" }),
-  effect("multiplas-caudas", "Múltiplas Caudas", "Rinkaku", 3, 4, "Passivo · Biológico", "Cada nível cria +1 cauda, chegando a 5 no N4 com a cauda inicial. Cada cauda usa o dano padrão da Kagune com −2 Passos; a quantidade de caudas não adiciona dados ou Passos artificiais à fórmula individual. No N4, +1 Modificador de Acerto. Dureza −1 por nível."),
+  effect("multiplas-caudas", "Múltiplas Caudas", "Rinkaku", 3, 4, "Passivo · Biológico", "Cada nível cria +1 cauda, chegando a 5 no N4 com a cauda inicial. Cada tentáculo usa o dano padrão da Kagune com −2 Passos. Se vários acertarem, multiplique cada grupo de dados e o Modificador de Dano pela quantidade de acertos. No N4, +1 Modificador de Acerto. Dureza −1 por nível."),
   effect("contra-ataque", "Contra Ataque", "Rinkaku", 3, 1, "Ativo · 2 RC", "Uma vez por rodada, contra-golpeie com -2 dados para superar o ataque."),
   effect("construto-dividido", "Construto Dividido", "Rinkaku", 3, 1, "Ativo · 2 RC", "Crie um construto de cena com dureza igual à metade do Grau."),
 
@@ -377,6 +385,13 @@ export interface Evolution {
   description: string;
   kaguneTypes?: KaguneFamily[];
   minKaguneTypes?: number;
+  maxRank?: number;
+  attributeRequirements?: Partial<Record<AttributeKey, number>>;
+  requiresEffects?: { id: string; minRank?: number }[];
+  requiresEvolutions?: string[];
+  requiresKakuja?: "incomplete" | "complete";
+  requiresLowSanity?: boolean;
+  narrativeRequirement?: string;
 }
 
 const evolution = (id: string, name: string, cost: number, grade: number, family: Evolution["family"], description: string, requirement?: string, options: Partial<Evolution> = {}): Evolution => ({ id, name, cost, grade, family, description, requirement, ...options });
@@ -384,48 +399,48 @@ const evolution = (id: string, name: string, cost: number, grade: number, family
 export const evolutions: Evolution[] = [
   evolution("forma-especial", "Forma Especial", 8, 6, "Geral", "Defina com o Narrador uma propriedade coerente do Kakuhou. Fragmentos ofensivos: máximo 5, cada adicional sofre -1 Passo e -1 Modificador de Acerto."),
   evolution("imortal", "Imortal", 20, 6, "Geral", "Ao sofrer golpe fatal, gaste 10 RC e fique com 1 Vida, uma vez por rodada; não impede destruição do cérebro ou condições vitais específicas."),
-  evolution("monstro", "Monstro", 10, 6, "Geral", "Na Kakuja Incompleta, manifeste uma característica da forma Completa; Sanidade Máxima -5 e Fome fixada em 9.", "Kakuja Incompleta"),
-  evolution("washuu-oculto", "???", 8, 6, "Geral", "O efeito permanece oculto até sua revelação narrativa.", "Washuu"),
+  evolution("monstro", "Monstro", 10, 6, "Geral", "Na Kakuja Incompleta, manifeste uma característica da forma Completa; Sanidade Máxima -5 e Fome fixada em 9.", "Kakuja Incompleta", { requiresKakuja: "incomplete" }),
+  evolution("washuu-oculto", "???", 8, 6, "Geral", "O efeito permanece oculto até sua revelação narrativa.", "Washuu confirmado pelo Narrador", { narrativeRequirement: "Washuu" }),
   evolution("kakuhou-passivo", "Kakuhou Passivo", 5, 6, "Geral", "Mantenha Vantagens passivas da Kagune sem manifestá-la; não concede efeitos que exigem exteriorização física."),
-  evolution("anjo", "Anjo", 5, 6, "Ukaku", "Com Ukaku ativa, tenha voo verdadeiro com deslocamento aéreo normal.", "Agilidade 4; Força 2"),
+  evolution("anjo", "Anjo", 5, 6, "Ukaku", "Com Ukaku ativa, tenha voo verdadeiro com deslocamento aéreo normal.", "Agilidade 4; Força 2", { attributeRequirements: { agilidade: 4, forca: 2 } }),
   evolution("fenix", "Assim como uma Fênix", 10, 6, "Ukaku", "Uma vez por sessão, consuma todo o RC (mínimo 10) para sobreviver com 1 Vida; Kagune desativa e Fome +2."),
   evolution("adaptacao", "Adaptação", 15, 6, "Koukaku", "Ao defender, role 1d5; no 5, aplique RD e depois reduza pela metade o dano restante."),
   evolution("perda-peso", "Perda de Peso", 8, 6, "Koukaku", "Enquanto ativa, reduza a RD da Koukaku em 6, mínimo 0; ataques recebem +2 Passos e o Bloqueio soma metade da Agilidade base em dados. Em crítico de Bloqueio, 1d6: com 6, faça um ataque comum adicional, uma vez por rodada."),
   evolution("mestre-armas", "Mestre das Armas", 8, 6, "Koukaku", "Na configuração ofensiva, golpes recebem +2 Passos de Dano."),
-  evolution("multiplas-caudas-plus", "Múltiplas Caudas +", 8, 6, "Rinkaku", "Cada compra cria uma cauda permanente e amplia dano; cada cauda adicional pode atacar por 2 RC.", "Máximo 3 compras"),
+  evolution("multiplas-caudas-plus", "Múltiplas Caudas +", 8, 6, "Rinkaku", "Cada compra cria uma cauda permanente. N1 concede +1 Passo de Dano; N2 mantém +1 Passo total; N3 eleva o bônus total para +2 Passos. Cada cauda adicional pode atacar por 2 RC.", "Máximo 3 compras", { maxRank: 3 }),
   evolution("axolote", "Regeneração do Axolote", 10, 6, "Rinkaku", "Uma vez por turno, gaste 6 RC para regenerar todos os membros perdidos; não recupera Vida."),
   evolution("custo-beneficio", "Custo-Benefício", 10, 6, "Bikaku", "Efeitos comuns de outros tipos não custam +2 PE e podem chegar ao nível máximo."),
-  evolution("ferreiro-guerra", "Ferreiro da Guerra", 10, 8, "Ukaku", "No corpo a corpo, some metade de Força ou Agilidade base em dados de dano."),
+  evolution("ferreiro-guerra", "Ferreiro da Guerra", 10, 8, "Ukaku", "No corpo a corpo, some metade de Força ou Agilidade base em Passos de Dano."),
   evolution("anjo-morte", "Anjo da Morte", 15, 8, "Ukaku", "Ao derrotar uma ameaça real, recupere 2 RC; máximo 4 RC por turno."),
   evolution("coruka", "Assim como uma certa Coruka", 15, 8, "Ukaku", "Resistência Ukaku passa de x0,5 para x0,8 e para x1,1 em Kakuja."),
-  evolution("metalico", "Metálico", 10, 8, "Koukaku", "Ao receber impacto contundente, o atacante falha em Vigor e sofre metade dos dados básicos de dano Koukaku."),
-  evolution("lanca-ceus", "Lança que Devora Céus", 15, 8, "Koukaku", "Sacrifique RD e 10 RC: +10 dados de dano e +2 acerto; depois, Kagune indisponível e RD 0 por 5 turnos."),
+  evolution("metalico", "Metálico", 10, 8, "Koukaku", "Ao receber impacto contundente, o atacante falha em Vigor e sofre metade dos Passos de Dano básicos da Koukaku."),
+  evolution("lanca-ceus", "Lança que Devora Céus", 15, 8, "Koukaku", "Sacrifique RD e 10 RC: +10 Passos de Dano e +2 acerto; depois, Kagune indisponível e RD 0 por 5 turnos."),
   evolution("sabor-kakuja", "Sabor Kakuja", 20, 8, "Koukaku", "Mantenha modos ofensivo e defensivo juntos por 5 RC para ativar e 3 RC por turno."),
   evolution("hidra-faminta", "Hidra Faminta", 10, 8, "Rinkaku", "Quando uma cauda for destruída, gaste 5 RC para regenerá-la e atacar com -1 dado; uma vez por turno."),
   evolution("carne-recusa", "Carne que se Recusa a Morrer", 15, 8, "Rinkaku", "Uma vez por sessão, gaste 20 RC para ficar com 1 HP e dobre a regeneração por 2 turnos."),
-  evolution("mil-pernas", "Mil Pernas da Centopeia", 20, 8, "Rinkaku", "Por 15 RC e 3 turnos: +2 caudas, +2 dados de dano, um alvo extra e -2 Resistência."),
-  evolution("predador-perfeito", "Predador Perfeito", 10, 8, "Bikaku", "Escolha postura por turno: Ataque +2 dano, Defesa +2 RD ou Mobilidade +2 Esquiva."),
+  evolution("mil-pernas", "Mil Pernas da Centopeia", 20, 8, "Rinkaku", "Por 15 RC e 3 turnos: +2 caudas, +2 Passos de Dano, um alvo extra e -2 Resistência."),
+  evolution("predador-perfeito", "Predador Perfeito", 10, 8, "Bikaku", "Escolha postura por turno: Ataque +2 Passos de Dano, Defesa +2 RD ou Mobilidade +2 Esquiva."),
   evolution("cauda-escorpiao", "Cauda do Escorpião", 15, 8, "Bikaku", "Uma vez por turno, ao acertar e gastar 5 RC: ignore metade da RD, ganhe +2 acerto ou mire sem penalidade."),
   evolution("um-contra-cem", "Um Contra Cem", 20, 8, "Bikaku", "Uma vez por sessão, por 3 turnos, acumule Adaptação contra ações ofensivas e converta em acerto, Esquiva ou dano."),
   evolution("asas-horizonte", "Asas que Tocam o Horizonte", 12, 10, "Ukaku", "+2 dados de acerto à distância e +50% alcance máximo; o bônus não vale além do alcance normal."),
-  evolution("chuva-carmesim", "Chuva Carmesim", 18, 10, "Ukaku", "A cada 3 turnos, gaste 15 RC para uma área com +4 dados de dano; no turno seguinte, -2 dados de dano."),
+  evolution("chuva-carmesim", "Chuva Carmesim", 18, 10, "Ukaku", "A cada 3 turnos, gaste 15 RC para uma área com +4 Passos de Dano; no turno seguinte, -2 Passos de Dano."),
   evolution("predador-ceus", "Predador dos Céus", 25, 10, "Ukaku", "Ataques consecutivos em alta velocidade acumulam acerto e dano até +4/+4."),
   evolution("montanha", "Montanha Inamovível", 12, 10, "Koukaku", "Cada turno imóvel concede +2 RD, até +6; mover mais da metade remove tudo."),
   evolution("forca-irresistivel", "Força Irresistível", 18, 10, "Koukaku", "Após dano passar pela RD, gaste 8 RC; falha de Vigor contra Força arremessa e remove Reação."),
-  evolution("arsenal-vivo", "Arsenal Vivo", 25, 10, "Koukaku", "Escolha por turno: Espada +3 acerto, Martelo +5 dano, Escudo +4 RD ou Lança +2 acerto e alcance."),
+  evolution("arsenal-vivo", "Arsenal Vivo", 25, 10, "Koukaku", "Escolha por turno: Espada +3 acerto, Martelo +5 Passos de Dano, Escudo +4 RD ou Lança +2 acerto e alcance."),
   evolution("oito-caminhos", "Oito Caminhos", 12, 10, "Rinkaku", "Reserve uma cauda não usada para +2 Esquiva ou +2 RD contra um ataque."),
   evolution("canibalismo-celular", "Canibalismo Celular", 18, 10, "Rinkaku", "Destrua até 2 caudas por turno para recuperar Vida e RC; elas não regeneram naturalmente por 2 turnos."),
-  evolution("continua-crescendo", "Aquilo que Continua Crescendo", 25, 10, "Rinkaku", "Caudas destruídas por inimigos geram Crescimento; cada ponto dá +1 dado de dano e 5 pontos regeneram todas."),
+  evolution("continua-crescendo", "Aquilo que Continua Crescendo", 25, 10, "Rinkaku", "Caudas destruídas por inimigos geram Crescimento; cada ponto dá +1 Passo de Dano e 5 pontos regeneram todas."),
   evolution("sem-ponto-cego", "Não Existe Ponto Cego", 12, 10, "Bikaku", "Ignore penalidades defensivas por costas e flancos; +2 dados contra ataques de oportunidade."),
   evolution("contra-ataque-perfeito", "Contra-Ataque Perfeito", 18, 10, "Bikaku", "Ao superar completamente ataque corpo a corpo, gaste 5 RC para ataque adicional com +2 acerto."),
-  evolution("mestre-nada", "Mestre de Nada, Monstro em Tudo", 25, 10, "Bikaku", "Posturas viram Ataque +4 dano, Defesa +4 RD, Mobilidade +4 Esquiva; 5 RC mantém duas."),
+  evolution("mestre-nada", "Mestre de Nada, Monstro em Tudo", 25, 10, "Bikaku", "Posturas viram Ataque +4 Passos de Dano, Defesa +4 RD, Mobilidade +4 Esquiva; 5 RC mantém duas."),
   evolution("serafim-carmesim", "Serafim Carmesim", 20, 12, "Ukaku", "Uma vez por turno, gaste 5 RC para disparo adicional com metade do dano; não gera novos ataques."),
-  evolution("mil-penas", "Mil Penas, Uma Morte", 30, 12, "Ukaku", "Uma vez por sessão, condense golpes por 2 turnos; cada sacrifício dá +2 dano e +1 acerto; depois perca 30 RC."),
-  evolution("fortaleza-carne", "Fortaleza de Carne", 20, 12, "Koukaku", "Uma vez por turno, gaste 5 RC e aumente a RD do golpe em metade dos dados de Vigor."),
-  evolution("lanca-deus", "A Lança que Perfurou Deus", 30, 12, "Koukaku", "Uma vez por sessão, sacrifique RD e 20 RC: +15 dano, +4 acerto e ignore metade da RD; depois RD 0 por 5 turnos.", "Lança que Devora Céus"),
+  evolution("mil-penas", "Mil Penas, Uma Morte", 30, 12, "Ukaku", "Uma vez por sessão, condense golpes por 2 turnos; cada sacrifício dá +2 Passos de Dano e +1 acerto; depois perca 30 RC."),
+  evolution("fortaleza-carne", "Fortaleza de Carne", 20, 12, "Koukaku", "Uma vez por turno, gaste 5 RC e aumente a RD do golpe em metade do Vigor base."),
+  evolution("lanca-deus", "A Lança que Perfurou Deus", 30, 12, "Koukaku", "Uma vez por sessão, sacrifique RD e 20 RC: +15 Passos de Dano, +4 acerto e ignore metade da RD; depois RD 0 por 5 turnos.", "Lança que Devora Céus", { requiresEvolutions: ["lanca-ceus"] }),
   evolution("nao-consigo-morrer", "Não Consigo Morrer", 20, 12, "Rinkaku", "Uma vez por sessão, ao chegar a 0 HP, permaneça consciente por 2 turnos; se não terminar acima de 0, caia."),
-  evolution("centopeia", "Centopeia", 30, 12, "Rinkaku", "Uma vez por sessão, por 3 turnos: +4 dano, +2 acerto, +2 Esquiva, regeneração de cauda e ataque extra por 10 RC.", "Mil Pernas da Centopeia; Sanidade baixa"),
+  evolution("centopeia", "Centopeia", 30, 12, "Rinkaku", "Uma vez por sessão, por 3 turnos: +4 Passos de Dano, +2 acerto, +2 Esquiva, regeneração de cauda e ataque extra por 10 RC.", "Mil Pernas da Centopeia; Sanidade em metade ou menos", { requiresEvolutions: ["mil-pernas"], requiresLowSanity: true }),
   evolution("ja-vi", "Já Vi Isso Antes", 20, 12, "Bikaku", "Repetições da mesma técnica melhoram a defesa: +2, +4 e depois +6 dados."),
-  evolution("evolucao-convergente", "Evolução Convergente", 30, 12, "Bikaku", "Uma vez por sessão, por 3 turnos, escolha duas adaptações por turno e acumule dano quando inimigos errarem.", "Um Contra Cem"),
+  evolution("evolucao-convergente", "Evolução Convergente", 30, 12, "Bikaku", "Uma vez por sessão, por 3 turnos, escolha duas adaptações por turno e acumule Passos de Dano quando inimigos errarem.", "Um Contra Cem", { requiresEvolutions: ["um-contra-cem"] }),
   ...expansionEvolutions,
 ];

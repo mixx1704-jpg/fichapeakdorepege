@@ -466,9 +466,14 @@ textarea { resize: vertical; }
 .catalog-card > p { flex: 1; margin: 0; color: var(--muted); font-size: 10px; line-height: 1.52; }
 .requirement { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--line); color: var(--muted); font-size: 9px; }
 .requirement em { padding: 3px 6px; border-radius: 99px; color: var(--wine); background: var(--wine-soft); font-style: normal; }
+.requirement-confirm { display: flex; align-items: center; gap: 8px; margin-top: 10px; padding: 9px 10px; border: 1px dashed var(--line); border-radius: 8px; color: var(--muted); font-size: 9px; cursor: pointer; }
+.requirement-confirm input { accent-color: var(--wine); }
+.requirement-confirm:has(input:checked) { color: var(--ink); border-style: solid; border-color: var(--wine); background: var(--wine-soft); }
 .target-select { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 9px; }
 .target-select span { color: var(--muted); font-size: 9px; }
 .target-select select { height: 30px; padding: 0 25px 0 8px; border: 1px solid var(--line); border-radius: 6px; background: #fff; font-size: 9px; }
+.target-stack { display: grid; gap: 6px; margin-top: 9px; }
+.target-stack .target-select { margin-top: 0; }
 .card-actions { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 12px; }
 .card-actions.solo { justify-content: flex-end; }
 .card-actions > button { min-width: 88px; height: 33px; padding: 0 12px; border-radius: 6px; font-size: 9px; font-weight: 750; }
@@ -479,7 +484,7 @@ textarea { resize: vertical; }
 .rank-control { display: flex; align-items: center; overflow: hidden; border: 1px solid var(--line); border-radius: 6px; background: #fff; }
 .rank-control button { width: 28px; height: 31px; border: 0; background: transparent; }
 .rank-control button:hover:not(:disabled) { color: var(--wine); background: var(--wine-soft); }
-.rank-control span { min-width: 34px; border-right: 1px solid var(--line); border-left: 1px solid var(--line); text-align: center; font-size: 9px; font-weight: 800; line-height: 31px; }
+.rank-control span { min-width: 48px; border-right: 1px solid var(--line); border-left: 1px solid var(--line); text-align: center; font-size: 9px; font-weight: 800; line-height: 31px; }
 
 .custom-perks { display: grid; gap: 4px; }
 .maneuver-section { display: grid; gap: 4px; }
@@ -629,6 +634,9 @@ textarea { resize: vertical; }
 .kakuja-techniques span { display: grid; gap: 4px; }
 .kakuja-techniques b { color: var(--ink); font-size: 9px; }
 .kakuja-techniques small { color: var(--muted); font-size: 8px; line-height: 1.45; }
+.kakuja-techniques .technique-stack { display: grid; grid-template-columns: 1fr 58px auto; align-items: center; gap: 7px; margin-top: 4px; }
+.kakuja-techniques .technique-stack i, .kakuja-techniques .technique-stack em { color: var(--muted); font-size: 7px; font-style: normal; }
+.kakuja-techniques .technique-stack input { width: 100%; padding: 5px 6px; border: 1px solid var(--line); border-radius: 5px; color: var(--ink); background: var(--panel); font-size: 8px; }
 .kakuja-issues { padding: 16px 18px; border: 1px solid rgba(127,23,38,.3); border-radius: 10px; color: #73414a; background: var(--kakuja-soft); }
 .kakuja-issues strong { color: var(--kakuja); font-size: 10px; }
 .kakuja-issues ul { margin: 8px 0 0; padding-left: 18px; font-size: 9px; line-height: 1.7; }

@@ -18,7 +18,7 @@ type Props = {
   grade: number;
   species: string;
   vigor: number;
-  kaguneNaturalSteps: number;
+  kaguneSteps: number;
   kaguneFamilies: string[];
   state: KakujaState;
   onChange: (next: KakujaState) => void;
@@ -27,11 +27,15 @@ type Props = {
 type Calculation = {
   mode: "passive" | "toggle";
   steps?: number;
-  dice?: number;
   modifier?: number;
+  accuracy?: number;
   rd?: number;
   durability?: number;
   reserve?: number;
+  stepsPerStack?: number;
+  stackMax?: number | "halfGrade";
+  stackLabel?: string;
+  activeLabel?: string;
 };
 
 type CheckProps = {
@@ -48,11 +52,11 @@ function Switch({ checked, disabled, onCheckedChange }: CheckProps) {
   return <input className="kakuja-switch" type="checkbox" role="switch" checked={checked} disabled={disabled} onChange={(event) => onCheckedChange(event.target.checked)} />;
 }
 
-const calculations: Record<string, Calculation> = {
+export const calculations: Record<string, Calculation> = {
   "compactacao-predatoria": { mode: "passive", rd: -2 },
-  "massa-ampliada-i": { mode: "passive", dice: 2 },
-  "massa-ampliada-ii": { mode: "passive", dice: 4 },
-  "colosso-de-rc": { mode: "passive", steps: 1, dice: 4 },
+  "massa-ampliada-i": { mode: "passive", steps: 2 },
+  "massa-ampliada-ii": { mode: "passive", steps: 4 },
+  "colosso-de-rc": { mode: "passive", steps: 5 },
   "corpo-integral": { mode: "passive", durability: 4 },
   "mandibula-predatoria": { mode: "toggle", steps: 2 },
   "placas-retrateis": { mode: "toggle", rd: 2 },
@@ -62,13 +66,16 @@ const calculations: Record<string, Calculation> = {
   "potencia-predatoria-iv": { mode: "passive", steps: 1 },
   "potencia-predatoria-v": { mode: "passive", steps: 1 },
   "potencia-predatoria-vi": { mode: "passive", steps: 1 },
-  "massa-de-impacto": { mode: "passive", dice: 2 },
-  "mira-organica": { mode: "passive", modifier: 1 },
+  "massa-de-impacto": { mode: "passive", steps: 2 },
+  "mira-organica": { mode: "passive", accuracy: 1 },
+  "arsenal-organico": { mode: "toggle", steps: 3, accuracy: -1, activeLabel: "Arsenal Orgânico — Martelo" },
+  "ruptura-organica": { mode: "toggle", steps: -2 },
   "golpe-de-cerco": { mode: "toggle", steps: 2 },
   "varredura-monstruosa": { mode: "toggle", steps: -2 },
   "tremor-de-carne": { mode: "toggle", steps: -2 },
   "golpe-colossal": { mode: "toggle", steps: 4 },
-  "execucao-predatoria": { mode: "toggle", dice: 4 },
+  "cacada-crescente": { mode: "toggle", stepsPerStack: 1, stackMax: 3, stackLabel: "Acúmulos" },
+  "execucao-predatoria": { mode: "toggle", steps: 4 },
   "impacto-carniceiro": { mode: "toggle", steps: 3 },
   "couraca-kakuja-i": { mode: "passive", rd: 2 },
   "couraca-kakuja-ii": { mode: "passive", rd: 2 },
@@ -79,78 +86,63 @@ const calculations: Record<string, Calculation> = {
   "armadura-adaptativa": { mode: "toggle", rd: 2 },
   "fortaleza-imovel": { mode: "toggle", rd: 4 },
   "barreira-elemental": { mode: "toggle", rd: 3 },
+  "armazenar-impacto": { mode: "toggle", stepsPerStack: 1, stackMax: "halfGrade", stackLabel: "Carga" },
   "vesicula-de-rc-i": { mode: "passive", reserve: 4 },
   "vesicula-de-rc-ii": { mode: "passive", reserve: 4 },
   "vesicula-de-rc-iii": { mode: "passive", reserve: 4 },
   "infusao-elemental": { mode: "toggle", modifier: 3 },
   "potencia-elemental": { mode: "toggle", modifier: 3 },
   "explosao-elemental": { mode: "toggle", steps: 2 },
-  "feixe-concentrado": { mode: "toggle", steps: 2, dice: 4 },
-  "canhao-de-nucleo": { mode: "toggle", steps: 3, dice: 8 },
-  "dominio-elemental": { mode: "toggle", dice: 4, rd: 2 },
-  "artilharia-alada": { mode: "toggle", dice: 2 },
+  "feixe-concentrado": { mode: "toggle", steps: 6 },
+  "canhao-de-nucleo": { mode: "toggle", steps: 11 },
+  "dominio-elemental": { mode: "toggle", steps: 4, rd: 2 },
+  "artilharia-alada": { mode: "toggle", steps: 2 },
   "chuva-de-cristais": { mode: "toggle", steps: -2 },
-  "mergulho-rubro": { mode: "toggle", steps: 2, dice: 3 },
-  "railgun-organico": { mode: "toggle", steps: 1, dice: 6, modifier: 4 },
+  "mergulho-rubro": { mode: "toggle", steps: 5 },
+  "onda-de-choque": { mode: "toggle", steps: -1 },
+  "railgun-organico": { mode: "toggle", steps: 7, accuracy: 4 },
   "cidadele-de-carne": { mode: "passive", rd: 3 },
   "cidadela-de-carne": { mode: "passive", rd: 3 },
-  "arma-de-cerco": { mode: "passive", steps: 2, modifier: -1 },
+  "arma-de-cerco": { mode: "passive", steps: 2, accuracy: -1 },
   "montanha-inamovivel": { mode: "toggle", rd: 6 },
-  "caudas-ofensivas": { mode: "passive", dice: 2, rd: -2 },
+  "arsenal-do-carrasco": { mode: "toggle", steps: 5, activeLabel: "Arsenal do Carrasco — Machado" },
+  "caudas-ofensivas": { mode: "passive", steps: 2, rd: -2 },
   "guarda-de-hidra": { mode: "toggle", rd: 2 },
-  "centopeia": { mode: "toggle", dice: 4, modifier: 2 },
-  "predador-perfeito": { mode: "toggle", dice: 2 },
-  "lamina-adaptativa": { mode: "toggle", steps: 2, modifier: 1 },
-  "mestre-de-nada": { mode: "toggle", dice: 4 },
+  "centopeia": { mode: "toggle", steps: 4, accuracy: 2 },
+  "predador-perfeito": { mode: "toggle", steps: 2 },
+  "lamina-adaptativa": { mode: "toggle", steps: 2, accuracy: 1 },
+  "mestre-de-nada": { mode: "toggle", steps: 4 },
+  "evolucao-convergente": { mode: "toggle", steps: 5, activeLabel: "Evolução Convergente — adaptação de dano" },
   "bombardeiro-couracado": { mode: "toggle", rd: 3 },
-  "railgun-de-tungstenio": { mode: "toggle", steps: 2, dice: 8, modifier: 6 },
-  "fenix-centopeia": { mode: "toggle", dice: 3 },
-  "predador-de-angulo-morto": { mode: "toggle", dice: 2, modifier: 2 },
-  "linha-de-execucao": { mode: "toggle", steps: 2, dice: 5, modifier: 5 },
+  "railgun-de-tungstenio": { mode: "toggle", steps: 10, accuracy: 6 },
+  "fenix-centopeia": { mode: "toggle", steps: 3 },
+  "predador-de-angulo-morto": { mode: "toggle", steps: 2, accuracy: 2 },
+  "linha-de-execucao": { mode: "toggle", steps: 7, accuracy: 5 },
   "fortaleza-ambulante": { mode: "passive", rd: 1 },
-  "leviata-imortal": { mode: "toggle", dice: 3, rd: 5 },
-  "cavaleiro-escarlate": { mode: "toggle", rd: 4, modifier: 2 },
-  "orochi": { mode: "toggle", dice: 3 },
-  "quimera-absoluta": { mode: "toggle", dice: 4, rd: 4, modifier: 3 },
-  "rei-das-feras": { mode: "toggle", steps: 2, modifier: 2 },
-  "bastiao-devorador": { mode: "toggle", rd: 4 },
+  "leviata-imortal": { mode: "toggle", steps: 3, rd: 5 },
+  "lanca-escorpionica": { mode: "toggle", steps: 3, accuracy: 2 },
+  "cavaleiro-escarlate": { mode: "toggle", rd: 4, accuracy: 2 },
+  "orochi": { mode: "toggle", steps: 3 },
+  "tempestade-de-carne": { mode: "toggle", stepsPerStack: 1, stackMax: 5, stackLabel: "Cargas" },
+  "quimera-absoluta": { mode: "toggle", steps: 4, rd: 4, accuracy: 3 },
+  "rei-das-feras": { mode: "toggle", steps: 2, accuracy: 2 },
+  "bastiao-devorador": { mode: "toggle", rd: 4, stepsPerStack: 1, stackMax: 3, stackLabel: "Cargas consumidas" },
   "enxame-faminto": { mode: "toggle", steps: -2 },
   "muda-adaptativa": { mode: "toggle", rd: 2 },
-  "tirano-de-guerra": { mode: "toggle", steps: 3, dice: 3 },
+  "tirano-de-guerra": { mode: "toggle", steps: 6 },
   "fortaleza-que-anda": { mode: "toggle", rd: 6 },
-  "arsenal-de-cem-formas": { mode: "toggle", dice: 4 },
-  "impacto-de-exterminio": { mode: "toggle", steps: 5, dice: 8 },
-  "canhao-do-kakuhou": { mode: "toggle", steps: 4, dice: 10 },
-  "avatar-da-fome": { mode: "toggle", steps: 4, modifier: 4 },
+  "arsenal-de-cem-formas": { mode: "toggle", steps: 4 },
+  "impacto-de-exterminio": { mode: "toggle", steps: 13 },
+  "canhao-do-kakuhou": { mode: "toggle", steps: 14 },
+  "avatar-da-fome": { mode: "toggle", steps: 4, accuracy: 4 },
   "leviata-absoluto": { mode: "toggle", rd: 8 },
-  "predador-absoluto": { mode: "toggle", dice: 4, modifier: 3 },
-  "ruina-de-cem-membros": { mode: "toggle", steps: 6, dice: 10 },
-  "golpe-que-rasga-o-ceu": { mode: "toggle", steps: 6, dice: 12, modifier: 4 },
-  "calamidade-ambulante": { mode: "toggle", steps: 6, dice: 6, rd: 5, modifier: 2 },
+  "predador-absoluto": { mode: "toggle", steps: 4, accuracy: 3 },
+  "ruina-de-cem-membros": { mode: "toggle", steps: 16 },
+  "golpe-que-rasga-o-ceu": { mode: "toggle", steps: 18, accuracy: 4 },
+  "calamidade-ambulante": { mode: "toggle", steps: 12, rd: 5, accuracy: 2 },
   "forma-dragao": { mode: "toggle", steps: 4 },
-  "o-monstro-nao-escolheu": { mode: "toggle", dice: 4 },
-  "fim-da-cacada": { mode: "toggle", steps: 14, dice: 14, modifier: 5 },
-};
-
-const prerequisites: Record<string, string> = {
-  "morfologia-alternativa-ii": "morfologia-alternativa-i",
-  "potencia-predatoria-ii": "potencia-predatoria-i",
-  "potencia-predatoria-iii": "potencia-predatoria-ii",
-  "potencia-predatoria-iv": "potencia-predatoria-iii",
-  "potencia-predatoria-v": "potencia-predatoria-iv",
-  "potencia-predatoria-vi": "potencia-predatoria-v",
-  "arsenal-vivo-superior": "arsenal-organico",
-  "couraca-kakuja-ii": "couraca-kakuja-i",
-  "couraca-kakuja-iii": "couraca-kakuja-ii",
-  "couraca-kakuja-iv": "couraca-kakuja-iii",
-  "tecido-reforcado-ii": "tecido-reforcado-i",
-  "vesicula-de-rc-ii": "vesicula-de-rc-i",
-  "vesicula-de-rc-iii": "vesicula-de-rc-ii",
-  "cicatrizacao-de-combate-ii": "cicatrizacao-de-combate-i",
-  "potencia-elemental": "infusao-elemental",
-  "nucleo-duplo": "infusao-elemental",
-  "reacao-hibrida": "nucleo-duplo",
-  "nucleo-trino": "nucleo-duplo",
+  "o-monstro-nao-escolheu": { mode: "toggle", steps: 4 },
+  "fim-da-cacada": { mode: "toggle", steps: 28, accuracy: 5 },
 };
 
 const familySections: Record<string, string> = {
@@ -168,16 +160,20 @@ function capForGrade(grade: number) {
   return kakujaCaps[capGrade];
 }
 
-function formatDamage(steps: number, extraDice: number, modifier: number) {
+function formatDamage(steps: number, modifier: number) {
   const safeSteps = Math.max(0, Math.floor(steps));
   const fullD12 = Math.floor(safeSteps / 5);
   const remainder = safeSteps % 5;
   const sides = [4, 6, 8, 10, 12][remainder];
   const groups = new Map<number, number>();
   if (fullD12) groups.set(12, fullD12);
-  groups.set(sides, (groups.get(sides) || 0) + 1 + Math.floor(extraDice));
+  groups.set(sides, (groups.get(sides) || 0) + 1);
   const dice = [...groups.entries()].filter(([, count]) => count > 0).sort((a, b) => b[0] - a[0]).map(([side, count]) => `${count}d${side}`).join("+") || "1d4";
   return `${dice}${modifier > 0 ? `+${modifier}` : modifier < 0 ? modifier : ""}`;
+}
+
+export function calculateKakujaSteps(kaguneSteps: number, moduleSteps: number, advantageSteps: number) {
+  return Math.max(0, Math.floor(Math.max(0, kaguneSteps)) + moduleSteps + advantageSteps);
 }
 
 function requiredFamilies(module: KakujaModule) {
@@ -194,7 +190,7 @@ function actualCost(module: KakujaModule | KakujaCustomModule, dominant: boolean
   return dominant ? Math.max(1, Math.ceil(Math.max(1, cb - 3) / 2)) : Math.ceil(cb / 2);
 }
 
-export function KakujaPanel({ grade, species, vigor, kaguneNaturalSteps, kaguneFamilies, state, onChange }: Props) {
+export function KakujaPanel({ grade, species, vigor, kaguneSteps, kaguneFamilies, state, onChange }: Props) {
   const [activeTab, setActiveTab] = useState("painel");
   const [search, setSearch] = useState("");
   const [section, setSection] = useState("Todos");
@@ -242,9 +238,12 @@ export function KakujaPanel({ grade, species, vigor, kaguneNaturalSteps, kaguneF
   };
 
   const moduleRequirementMet = (module: KakujaModule) => {
-    const prerequisite = prerequisites[module.id];
-    return !prerequisite || selectedSet.has(prerequisite);
+    return (module.requires || []).every((id) => selectedSet.has(id));
   };
+
+  const missingModuleRequirements = (module: KakujaModule) => (module.requires || [])
+    .filter((id) => !selectedSet.has(id))
+    .map((id) => kakujaModules.find((item) => item.id === id)?.name || id);
 
   const instabilityRaw = state.selectedInstabilities.reduce((total, id) => total + (kakujaInstabilities.find((item) => item.id === id)?.credit || 0), 0);
   const instabilityCap = grade >= 10 ? 4 : grade >= 8 ? 3 : 2;
@@ -260,31 +259,37 @@ export function KakujaPanel({ grade, species, vigor, kaguneNaturalSteps, kaguneF
   const profileCM = activeModules.reduce((total, item) => total + item.cm, 0) + activeCustomModules.reduce((total, item) => total + item.cm, 0);
   const allowedCM = cap.cm + (state.overload ? 2 : 0);
   const profileLimit = selectedSet.has("morfologia-alternativa-ii") ? 3 : selectedSet.has("morfologia-alternativa-i") ? 2 : 1;
+  const calculationStackMax = (item: Calculation) => item.stackMax === "halfGrade" ? Math.floor(grade / 2) : (item.stackMax || 0);
+  const effectiveActiveModules = activeModules.filter((module) => {
+    if (module.id === "massa-ampliada-i") return !activeIds.includes("massa-ampliada-ii") && !activeIds.includes("colosso-de-rc");
+    if (module.id === "massa-ampliada-ii") return !activeIds.includes("colosso-de-rc");
+    return true;
+  });
 
-  const calculation = activeModules.reduce((total, module) => {
+  const calculation = effectiveActiveModules.reduce((total, module) => {
     const item = calculations[module.id];
     if (!item || (item.mode === "toggle" && !state.activeTechniques.includes(module.id))) return total;
+    const stackMax = calculationStackMax(item);
+    const stacks = stackMax > 0 ? clamp(state.techniqueStacks[module.id] || 0, 0, stackMax) : 0;
     return {
-      steps: total.steps + (item.steps || 0),
-      dice: total.dice + (item.dice || 0),
+      steps: total.steps + (item.steps || 0) + stacks * (item.stepsPerStack || 0),
       modifier: total.modifier + (item.modifier || 0),
+      accuracy: total.accuracy + (item.accuracy || 0),
       rd: total.rd + (item.rd || 0),
       durability: total.durability + (item.durability || 0),
       reserve: total.reserve + (item.reserve || 0),
       burst: total.burst || item.mode === "toggle",
     };
-  }, { steps: 0, dice: 0, modifier: 0, rd: 0, durability: 0, reserve: 0, burst: false });
+  }, { steps: 0, modifier: 0, accuracy: 0, rd: 0, durability: 0, reserve: 0, burst: false });
 
   const stepsCap = calculation.burst ? cap.burstSteps : cap.passiveSteps;
-  const diceCap = calculation.burst ? cap.burstDice : cap.passiveDice;
   const moduleSteps = Math.min(stepsCap, Math.max(-stepsCap, calculation.steps));
-  const moduleDice = Math.min(diceCap, Math.max(-diceCap, calculation.dice));
   const moduleRD = Math.min(cap.rd, Math.max(-cap.rd, calculation.rd));
-  const initialSteps = Math.floor(Math.max(0, kaguneNaturalSteps) / 3);
-  const totalSteps = Math.max(0, initialSteps + moduleSteps + state.advantageSteps);
-  const totalDice = moduleDice + state.advantageDice;
+  const initialSteps = Math.floor(Math.max(0, kaguneSteps));
+  const totalSteps = calculateKakujaSteps(initialSteps, moduleSteps, state.advantageSteps);
   const totalModifier = 2 + calculation.modifier + state.advantageModifier;
-  const damage = formatDamage(totalSteps, totalDice, totalModifier);
+  const totalAccuracy = calculation.accuracy + state.advantageAccuracy;
+  const damage = formatDamage(totalSteps, totalModifier);
   const rd = Math.max(0, 2 + moduleRD + state.advantageRD);
   const typeMultiplier = kaguneFamilies[0] === "Koukaku" ? 1.5 : kaguneFamilies[0] === "Ukaku" ? (selectedSet.has("blindagem-cristalina") ? 0.8 : 0.5) : 1;
   let durability = Math.floor((vigor + grade + spent + calculation.durability) * typeMultiplier);
@@ -302,6 +307,10 @@ export function KakujaPanel({ grade, species, vigor, kaguneNaturalSteps, kaguneF
     remaining < 0 ? `O repertório excede o orçamento em ${Math.abs(remaining)} PE-K.` : "",
     profileCM > allowedCM ? `O Perfil ativo usa ${profileCM} CM; o limite atual é ${allowedCM}.` : "",
     activeModules.filter((item) => item.section.startsWith("18.")).length > 1 ? "Somente uma Evolução de Kakuja pode ficar ativa no mesmo Perfil." : "",
+    ...state.selectedModules.filter((id) => {
+      const item = kakujaModules.find((candidate) => candidate.id === id);
+      return item ? !moduleRequirementMet(item) : false;
+    }).map((id) => `Pré-requisito pendente em ${kakujaModules.find((item) => item.id === id)?.name || id}.`),
     instabilityRaw > instabilityCap ? `Instabilidades somam ${instabilityRaw} PE-K, mas o Grau permite reembolso máximo de ${instabilityCap}.` : "",
   ].filter(Boolean);
 
@@ -312,15 +321,35 @@ export function KakujaPanel({ grade, species, vigor, kaguneNaturalSteps, kaguneF
   const patch = (next: Partial<KakujaState>) => onChange({ ...state, ...next });
   const togglePurchased = (module: KakujaModule) => {
     if (selectedSet.has(module.id)) {
+      const removed = new Set([module.id]);
+      let expanded = true;
+      while (expanded) {
+        expanded = false;
+        for (const id of state.selectedModules) {
+          const candidate = kakujaModules.find((item) => item.id === id);
+          if (candidate?.requires?.some((requirement) => removed.has(requirement)) && !removed.has(id)) {
+            removed.add(id);
+            expanded = true;
+          }
+        }
+      }
       patch({
-        selectedModules: state.selectedModules.filter((id) => id !== module.id),
-        activeTechniques: state.activeTechniques.filter((id) => id !== module.id),
-        profiles: state.profiles.map((profile) => ({ ...profile, moduleIds: profile.moduleIds.filter((id) => id !== module.id) })),
+        selectedModules: state.selectedModules.filter((id) => !removed.has(id)),
+        activeTechniques: state.activeTechniques.filter((id) => !removed.has(id)),
+        techniqueStacks: Object.fromEntries(Object.entries(state.techniqueStacks).filter(([id]) => !removed.has(id))),
+        profiles: state.profiles.map((profile) => ({ ...profile, moduleIds: profile.moduleIds.filter((id) => !removed.has(id)) })),
+        ...(removed.has("infusao-elemental") ? { selectedElements: [], activeElement: "" } : {}),
       });
       return;
     }
     if (!moduleAllowed(module) || !moduleRequirementMet(module)) return;
-    patch({ selectedModules: [...state.selectedModules, module.id] });
+    const targetProfileId = activeProfile?.id || state.profiles[0]?.id;
+    patch({
+      selectedModules: [...state.selectedModules, module.id],
+      profiles: state.profiles.map((profile) => profile.id === targetProfileId && !profile.moduleIds.includes(module.id)
+        ? { ...profile, moduleIds: [...profile.moduleIds, module.id] }
+        : profile),
+    });
   };
 
   const toggleProfileModule = (profileId: string, moduleId: string, custom = false) => {
@@ -356,7 +385,7 @@ export function KakujaPanel({ grade, species, vigor, kaguneNaturalSteps, kaguneF
 
   return <div className="kakuja-shell">
     <section className="kakuja-hero">
-      <div><span>Sistema modular exclusivo</span><h2>{state.name || "Kakuja sem epíteto"}</h2><p>A Kakuja tem repertório, Perfis, CM, Dureza, reserva e dano próprios. Ela não herda efeitos nem multiplicadores diretos da Kagune.</p></div>
+      <div><span>Sistema modular exclusivo</span><h2>{state.name || "Kakuja sem epíteto"}</h2><p>A Kakuja usa os Passos atuais da Kagune como base. Seus módulos, Perfis, CM, Dureza e reserva continuam sendo calculados separadamente.</p></div>
       <label className="kakuja-active"><Switch checked={state.active && awakened} disabled={!awakened} onCheckedChange={(checked) => patch({ active: checked })} /><b>{state.active && awakened ? "Manifestada" : "Retraída"}</b></label>
     </section>
 
@@ -398,16 +427,16 @@ export function KakujaPanel({ grade, species, vigor, kaguneNaturalSteps, kaguneF
         <section className="kakuja-combat section-block">
           <div className="kakuja-damage-card">
             <div><span>Dano da Kakuja</span><strong>{damage}</strong><button type="button" onClick={() => navigator.clipboard?.writeText(damage)}>Copiar</button></div>
-            <dl><div><dt>Base independente</dt><dd>{initialSteps} Passos</dd></div><div><dt>Módulos</dt><dd>{moduleSteps >= 0 ? "+" : ""}{moduleSteps} Passos / {moduleDice >= 0 ? "+" : ""}{moduleDice} dados</dd></div><div><dt>Vantagens</dt><dd>{state.advantageSteps >= 0 ? "+" : ""}{state.advantageSteps} Passos / {state.advantageDice >= 0 ? "+" : ""}{state.advantageDice} dados</dd></div><div><dt>RD total</dt><dd>{rd}</dd></div></dl>
-            <p><b>Regra aplicada:</b> {kaguneNaturalSteps} Passos naturais da Kagune ÷ 3 = {initialSteps}. Melhorias diretas, evoluções e multiplicadores da Kagune não entram.</p>
+            <dl><div><dt>Base da Kagune</dt><dd>{initialSteps} Passos</dd></div><div><dt>Módulos ativos</dt><dd>{moduleSteps >= 0 ? "+" : ""}{moduleSteps} Passos</dd></div><div><dt>Vantagens</dt><dd>{state.advantageSteps >= 0 ? "+" : ""}{state.advantageSteps} Passos</dd></div><div><dt>Acerto ativo</dt><dd>{totalAccuracy >= 0 ? "+" : ""}{totalAccuracy}</dd></div><div><dt>RD total</dt><dd>{rd}</dd></div></dl>
+            <p><b>Regra aplicada:</b> a Kakuja começa com os mesmos {initialSteps} Passos de Dano atuais da Kagune. Depois são somados os módulos manifestados no Perfil ativo e os bônus de Vantagens.</p>
           </div>
           <div className="kakuja-advantage-box">
             <div><span>Bônus de Vantagens</span><strong>Aplicação separada</strong></div>
             <p>Preencha somente bônus vindos de Vantagens que estejam ativos. Eles entram depois dos tetos próprios da Kakuja.</p>
             <div className="field-grid two">
               <label className="field"><span>Passos</span><input type="number" value={state.advantageSteps} onChange={(event) => patch({ advantageSteps: clamp(Number(event.target.value), -30, 30) })} /></label>
-              <label className="field"><span>Dados</span><input type="number" value={state.advantageDice} onChange={(event) => patch({ advantageDice: clamp(Number(event.target.value), -30, 30) })} /></label>
-              <label className="field"><span>Modificador</span><input type="number" value={state.advantageModifier} onChange={(event) => patch({ advantageModifier: clamp(Number(event.target.value), -30, 30) })} /></label>
+              <label className="field"><span>Acerto</span><input type="number" value={state.advantageAccuracy} onChange={(event) => patch({ advantageAccuracy: clamp(Number(event.target.value), -30, 30) })} /></label>
+              <label className="field"><span>Mod. de dano</span><input type="number" value={state.advantageModifier} onChange={(event) => patch({ advantageModifier: clamp(Number(event.target.value), -30, 30) })} /></label>
               <label className="field"><span>RD</span><input type="number" value={state.advantageRD} onChange={(event) => patch({ advantageRD: clamp(Number(event.target.value), -30, 30) })} /></label>
             </div>
           </div>
@@ -415,7 +444,10 @@ export function KakujaPanel({ grade, species, vigor, kaguneNaturalSteps, kaguneF
 
         {activeModules.some((item) => calculations[item.id]?.mode === "toggle") && <section className="section-block">
           <div className="kakuja-section-title"><div><span>Cena atual</span><h3>Técnicas e condições ativas</h3></div><small>Somente itens do Perfil ativo aparecem aqui.</small></div>
-          <div className="kakuja-techniques">{activeModules.filter((item) => calculations[item.id]?.mode === "toggle").map((item) => <label key={item.id} className={state.activeTechniques.includes(item.id) ? "active" : ""}><Checkbox checked={state.activeTechniques.includes(item.id)} onCheckedChange={(checked) => patch({ activeTechniques: checked ? [...state.activeTechniques, item.id] : state.activeTechniques.filter((id) => id !== item.id) })} /><span><b>{item.name}</b><small>{item.effect}</small></span></label>)}</div>
+          <div className="kakuja-techniques">{activeModules.filter((item) => calculations[item.id]?.mode === "toggle").map((item) => {
+            const config = calculations[item.id]; const active = state.activeTechniques.includes(item.id); const stackMax = calculationStackMax(config);
+            return <label key={item.id} className={active ? "active" : ""}><Checkbox checked={active} onCheckedChange={(checked) => patch({ activeTechniques: checked ? [...state.activeTechniques, item.id] : state.activeTechniques.filter((id) => id !== item.id), techniqueStacks: checked ? state.techniqueStacks : { ...state.techniqueStacks, [item.id]: 0 } })} /><span><b>{config.activeLabel || item.name}</b><small>{item.effect}</small>{stackMax > 0 && <span className="technique-stack"><i>{config.stackLabel || "Acúmulos"}</i><input type="number" min={0} max={stackMax} disabled={!active} value={state.techniqueStacks[item.id] || 0} onChange={(event) => patch({ techniqueStacks: { ...state.techniqueStacks, [item.id]: clamp(Number(event.target.value), 0, stackMax) } })} /><em>máx. {stackMax}</em></span>}</span></label>;
+          })}</div>
         </section>}
 
         {issues.length > 0 && <section className="kakuja-issues"><strong>Verificações pendentes</strong><ul>{issues.map((issue) => <li key={issue}>{issue}</li>)}</ul></section>}
@@ -425,11 +457,11 @@ export function KakujaPanel({ grade, species, vigor, kaguneNaturalSteps, kaguneF
         <section className="catalog-toolbar kakuja-toolbar"><label className="search-field"><span>⌕</span><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Buscar nome, efeito ou categoria" /></label><select value={section} onChange={(event) => setSection(event.target.value)}>{sections.map((item) => <option key={item}>{item}</option>)}</select></section>
         <div className="catalog-summary"><span>{filteredModules.length} módulos documentados nesta seleção</span><strong>{state.selectedModules.length} comprados · {spent} PE-K</strong></div>
         <section className="catalog-grid kakuja-module-grid">{filteredModules.map((item) => {
-          const purchased = selectedSet.has(item.id); const allowed = moduleAllowed(item); const requirement = moduleRequirementMet(item); const foreign = moduleIsForeign(item); const cost = actualCost(item, dominant, foreign);
+          const purchased = selectedSet.has(item.id); const allowed = moduleAllowed(item); const requirement = moduleRequirementMet(item); const missing = missingModuleRequirements(item); const foreign = moduleIsForeign(item); const cost = actualCost(item, dominant, foreign);
           return <article key={item.id} className={`catalog-card kakuja-module-card ${purchased ? "selected" : ""} ${!allowed || !requirement ? "unavailable" : ""}`}>
             <div className="catalog-card-top"><span>{item.section.replace(/^\d+\.\s*/, "")}</span><b>{cost} PE-K</b></div><h3>{item.name}</h3><p>{item.effect}</p>
             <div className="kakuja-card-meta"><span>Grau {item.grade}+</span><span>{item.cm} CM</span><span>CB {item.cb} / CK {item.ck}</span></div>
-            <div className="requirement">{item.category}{foreign && <em>Bikaku estrangeiro: +2 CB</em>}{grade < item.grade && <em>Exige Grau {item.grade}</em>}{!allowed && grade >= item.grade && <em>Tipo incompatível</em>}{!requirement && <em>Pré-requisito pendente</em>}</div>
+            <div className="requirement">{item.category}{foreign && <em>Bikaku estrangeiro: +2 CB</em>}{grade < item.grade && <em>Exige Grau {item.grade}</em>}{!allowed && grade >= item.grade && <em>Tipo incompatível</em>}{missing.map((name) => <em key={name}>Falta: {name}</em>)}{purchased && <em>{activeIds.includes(item.id) ? "Aplicado no Perfil ativo" : "Comprado; manifeste na aba Perfis"}</em>}</div>
             <div className="card-actions solo"><button type="button" className={purchased ? "remove" : "add"} disabled={!purchased && (!allowed || !requirement || !awakened)} onClick={() => togglePurchased(item)}>{purchased ? "Remover" : "Comprar"}</button></div>
           </article>;
         })}</section>
