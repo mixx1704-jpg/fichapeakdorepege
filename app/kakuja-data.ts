@@ -11,6 +11,8 @@ export type KakujaModule = {
   effect: string;
   category: string;
   requires?: string[];
+  requiresFamilies?: string[];
+  minFamilies?: number;
 };
 
 export type KakujaCustomModule = {
@@ -138,6 +140,7 @@ export const authorialAdjustments = [
 export const universalKakujaRules = [
   { title: "Base de dano", text: "A Kakuja começa com os mesmos Passos de Dano atuais da Kagune. Depois, módulos do Perfil ativo e Vantagens alteram o cálculo próprio da Kakuja; Dureza, reserva, CM e técnicas continuam separados." },
   { title: "Ataques adicionais", text: "No máximo um por turno; metade dos Passos de Dano, mínimo 0. Não critica, não ativa efeitos ao acertar, não recupera RC, não vira área e não gera outro ataque." },
+  { title: "Janela ofensiva", text: "Todos os geradores de ataque adicional disputam a mesma janela entre o início de um turno e o início do próximo. Comprar vários geradores oferece opções, nunca uma cadeia de golpes." },
   { title: "Perfis e CM", text: "Módulos comprados formam o repertório permanente. Cada Perfil manifesta apenas o que cabe na CM do Grau; trocar durante a cena exige uma mutação própria." },
   { title: "Condições fortes", text: "Paralisia, perda de Ação, supressão de Reação ou imobilização total exigem teste contra a MD do Ghoul, custam RC e não travam o mesmo alvo em rodadas consecutivas." },
   { title: "Elementos", text: "Somente um dano elemental e um Condutor afetam o mesmo ataque. Núcleo Duplo permite alternar; Reação Híbrida permite dois Condutores sem duplicar o dano." },

@@ -123,6 +123,22 @@ test("Kakuja starts with the full current Kagune Steps and applies module bonuse
   assert.equal(kakujaRules.calculateKakujaSteps(1, -4, 0), 0);
 });
 
+test("Kakuja durability adds normal Kakuhou durability before instability", () => {
+  assert.equal(kakujaRules.calculateKakujaDurability(151, 80, false), 231);
+  assert.equal(kakujaRules.calculateKakujaDurability(151, 80, true), 173);
+});
+
+test("regeneration keeps Superior N4 at half Life per turn", () => {
+  assert.deepEqual(rules.calculateRegeneration(38, 14, 0, 4), {
+    normalBase: 0,
+    normal: 0,
+    superior: 19,
+    perTurn: 19,
+  });
+  assert.equal(rules.calculateRegeneration(38, 14, 3, 0).perTurn, 19);
+  assert.equal(rules.calculateRegeneration(38, 14, 4, 4).perTurn, 21);
+});
+
 test("migrates purchased Kakuja modules into an empty active Profile", () => {
   const migrated = rules.normalizeCharacter({
     kakuja: {
@@ -195,6 +211,19 @@ test("Kakuja module catalog declares chains and elemental prerequisites", async 
   for (const item of modules.filter((module) => module.section === "11. Técnicas elementais")) {
     assert.ok(item.requires?.includes("infusao-elemental"), `${item.name} must require Infusão Elemental`);
   }
+});
+
+test("includes all 28 offensive Kakuja modules with their hard requirements", async () => {
+  const modules = JSON.parse(await readFile(path.join(root, "app/kakuja-modules.json"), "utf8"));
+  const extras = modules.filter((item) => /^(19|20|21|22)\./.test(item.section));
+  const byId = new Map(extras.map((item) => [item.id, item]));
+
+  assert.equal(extras.length, 28);
+  assert.deepEqual(byId.get("dupla-salva").requiresFamilies, ["Ukaku"]);
+  assert.deepEqual(byId.get("reversao-perfeita").requires, ["duelo-absoluto"]);
+  assert.equal(byId.get("alternancia-quimerica").minFamilies, 2);
+  assert.equal(byId.get("motor-de-carnificina").cb, 22);
+  assert.match(byId.get("membro-de-reserva").effect, /metade dos Passos de Dano/);
 });
 
 test("removes extra damage-die language and separates Kakuja accuracy from damage", async () => {

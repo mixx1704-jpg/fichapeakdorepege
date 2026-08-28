@@ -19,6 +19,7 @@ type Props = {
   species: string;
   vigor: number;
   kaguneSteps: number;
+  kaguneDurability: number;
   kaguneFamilies: string[];
   state: KakujaState;
   onChange: (next: KakujaState) => void;
@@ -177,6 +178,7 @@ export function calculateKakujaSteps(kaguneSteps: number, moduleSteps: number, a
 }
 
 function requiredFamilies(module: KakujaModule) {
+  if (module.requiresFamilies?.length) return module.requiresFamilies;
   if (module.section === "17. Convergências Quiméricas") {
     if (module.id === "quimera-absoluta") return ["Ukaku", "Koukaku", "Rinkaku", "Bikaku"];
     return ["Ukaku", "Koukaku", "Rinkaku", "Bikaku"].filter((family) => module.category.includes(family));
@@ -190,7 +192,12 @@ function actualCost(module: KakujaModule | KakujaCustomModule, dominant: boolean
   return dominant ? Math.max(1, Math.ceil(Math.max(1, cb - 3) / 2)) : Math.ceil(cb / 2);
 }
 
-export function KakujaPanel({ grade, species, vigor, kaguneSteps, kaguneFamilies, state, onChange }: Props) {
+export function calculateKakujaDurability(kaguneDurability: number, ownDurability: number, fragile: boolean) {
+  const combined = Math.max(1, Math.floor(kaguneDurability) + Math.floor(ownDurability));
+  return fragile ? Math.max(1, Math.floor(combined * 0.75)) : combined;
+}
+
+export function KakujaPanel({ grade, species, vigor, kaguneSteps, kaguneDurability, kaguneFamilies, state, onChange }: Props) {
   const [activeTab, setActiveTab] = useState("painel");
   const [search, setSearch] = useState("");
   const [section, setSection] = useState("Todos");
@@ -214,19 +221,20 @@ export function KakujaPanel({ grade, species, vigor, kaguneSteps, kaguneFamilies
   const activeModules = activeIds.map((id) => kakujaModules.find((item) => item.id === id)).filter(Boolean) as KakujaModule[];
   const activeCustomModules = activeCustomIds.map((id) => state.customModules.find((item) => item.id === id)).filter(Boolean) as KakujaCustomModule[];
 
-  const foreignSelected = state.selectedModules.filter((id) => {
-    const item = kakujaModules.find((candidate) => candidate.id === id);
-    const family = item ? familySections[item.section] : "";
-    return Boolean(family && !familySet.has(family));
-  });
-
   const moduleIsForeign = (module: KakujaModule) => {
+    if (module.requiresFamilies?.length === 1) return !familySet.has(module.requiresFamilies[0]);
     const family = familySections[module.section];
     return Boolean(family && !familySet.has(family));
   };
 
+  const foreignSelected = state.selectedModules.filter((id) => {
+    const item = kakujaModules.find((candidate) => candidate.id === id);
+    return item ? moduleIsForeign(item) : false;
+  });
+
   const moduleAllowed = (module: KakujaModule) => {
     if (grade < module.grade) return false;
+    if (module.minFamilies && familySet.size < module.minFamilies) return false;
     const required = requiredFamilies(module);
     if (!required.length) {
       if (module.id === "simetria-quimerica" && familySet.size < 2) return false;
@@ -292,9 +300,8 @@ export function KakujaPanel({ grade, species, vigor, kaguneSteps, kaguneFamilies
   const damage = formatDamage(totalSteps, totalModifier);
   const rd = Math.max(0, 2 + moduleRD + state.advantageRD);
   const typeMultiplier = kaguneFamilies[0] === "Koukaku" ? 1.5 : kaguneFamilies[0] === "Ukaku" ? (selectedSet.has("blindagem-cristalina") ? 0.8 : 0.5) : 1;
-  let durability = Math.floor((vigor + grade + spent + calculation.durability) * typeMultiplier);
-  if (state.selectedInstabilities.includes("carapaca-fragil")) durability = Math.floor(durability * 0.75);
-  durability = Math.max(1, durability);
+  const ownDurability = Math.max(1, Math.floor((vigor + grade + spent + calculation.durability) * typeMultiplier));
+  const durability = calculateKakujaDurability(kaguneDurability, ownDurability, state.selectedInstabilities.includes("carapaca-fragil"));
   const controlMD = Math.ceil(grade / 2) + (state.selectedInstabilities.includes("mente-rachada") ? 1 : 0) + (state.overload ? Math.max(1, profileCM - cap.cm) : 0);
   const activationCost = Math.max(2, 4 - (selectedSet.has("metabolismo-eficiente") && state.activationsSinceRest === 0 ? 2 : 0));
   const nextHunger = (state.activationsSinceRest > 0 ? 2 : 0) + (state.selectedInstabilities.includes("fome-anormal") ? 1 : 0) + (state.overload ? 1 : 0);
@@ -419,7 +426,7 @@ export function KakujaPanel({ grade, species, vigor, kaguneSteps, kaguneFamilies
           <article><span>Estado</span><strong>{complete ? "Completa" : awakened ? "Incompleta" : "Adormecida"}</strong><small>{complete && !state.selectedInstabilities.includes("mente-rachada") ? "Sem teste quando usada sozinha" : `Controle MD ${controlMD}`}</small></article>
           <article><span>Orçamento</span><strong>{remaining} PE-K</strong><small>{spent} gastos de {budget} disponíveis</small></article>
           <article><span>Perfil ativo</span><strong>{profileCM}/{allowedCM} CM</strong><small>{activeProfile?.name || "Perfil 1"}</small></article>
-          <article><span>Dureza própria</span><strong>{durability}</strong><small>(Vigor + Grau + PE pagos) × {typeMultiplier}</small></article>
+          <article><span>Dureza total da Kakuja</span><strong>{durability}</strong><small>{kaguneDurability} da Kakuhou + {ownDurability} própria{state.selectedInstabilities.includes("carapaca-fragil") ? " −25%" : ""}</small></article>
           <article><span>Reserva Kakuja</span><strong>{state.currentReserve}/{reserveMax} RC</strong><small>Separada do RC da Kagune</small></article>
           <article><span>Próxima ativação</span><strong>{activationCost} RC</strong><small>+{nextHunger} Fome adicional</small></article>
         </div>
@@ -461,7 +468,7 @@ export function KakujaPanel({ grade, species, vigor, kaguneSteps, kaguneFamilies
           return <article key={item.id} className={`catalog-card kakuja-module-card ${purchased ? "selected" : ""} ${!allowed || !requirement ? "unavailable" : ""}`}>
             <div className="catalog-card-top"><span>{item.section.replace(/^\d+\.\s*/, "")}</span><b>{cost} PE-K</b></div><h3>{item.name}</h3><p>{item.effect}</p>
             <div className="kakuja-card-meta"><span>Grau {item.grade}+</span><span>{item.cm} CM</span><span>CB {item.cb} / CK {item.ck}</span></div>
-            <div className="requirement">{item.category}{foreign && <em>Bikaku estrangeiro: +2 CB</em>}{grade < item.grade && <em>Exige Grau {item.grade}</em>}{!allowed && grade >= item.grade && <em>Tipo incompatível</em>}{missing.map((name) => <em key={name}>Falta: {name}</em>)}{purchased && <em>{activeIds.includes(item.id) ? "Aplicado no Perfil ativo" : "Comprado; manifeste na aba Perfis"}</em>}</div>
+            <div className="requirement">{item.category}{foreign && <em>Bikaku estrangeiro: +2 CB</em>}{grade < item.grade && <em>Exige Grau {item.grade}</em>}{item.minFamilies && familySet.size < item.minFamilies && <em>Exige {item.minFamilies} tipos reais de Kakuhou</em>}{!allowed && grade >= item.grade && !(item.minFamilies && familySet.size < item.minFamilies) && <em>Tipo incompatível</em>}{missing.map((name) => <em key={name}>Falta: {name}</em>)}{purchased && <em>{activeIds.includes(item.id) ? "Aplicado no Perfil ativo" : "Comprado; manifeste na aba Perfis"}</em>}</div>
             <div className="card-actions solo"><button type="button" className={purchased ? "remove" : "add"} disabled={!purchased && (!allowed || !requirement || !awakened)} onClick={() => togglePurchased(item)}>{purchased ? "Remover" : "Comprar"}</button></div>
           </article>;
         })}</section>

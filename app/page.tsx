@@ -314,6 +314,19 @@ export function multiplyDamage(expression: string, multiplier: number) {
   return `${dice}${modifier > 0 ? `+${modifier}` : modifier < 0 ? modifier : ""}`;
 }
 
+export function calculateRegeneration(maxLife: number, grade: number, normalRank: number, superiorRank: number) {
+  const normalBase = normalRank > 0 ? 1 + (normalRank - 1) * 2 : 0;
+  const normal = normalRank > 0 ? normalBase + grade : 0;
+  const superior = superiorRank === 1
+    ? Math.ceil(maxLife / 6)
+    : superiorRank === 2
+      ? Math.ceil(maxLife / 4)
+      : superiorRank >= 3
+        ? Math.ceil(maxLife / 2)
+        : 0;
+  return { normalBase, normal, superior, perTurn: Math.max(normal, superior) };
+}
+
 const humanSurchargeIds = new Set([
   "terapeuta", "atante-medicina", "determinado-salvar", "apostador", "arma-favorita",
   "paciente", "nunca-prostra", "corpo-pesado", "corpo-leve", "frio-calculista",
@@ -817,11 +830,12 @@ export default function Home() {
     const durabilityMultiplier = sheet.kaguneType === "Ukaku" ? 0.5 : sheet.kaguneType === "Koukaku" ? 1.5 : 1;
     const kaguneDurability = sheet.weaponKind === "kagune" ? Math.max(1, Math.floor(rawKaguneDurability * durabilityMultiplier) - multipleTailsRank) : 0;
     const normalRegenerationRank = sheet.effects["regeneracao-anormal"]?.rank || 0;
-    const normalRegeneration = normalRegenerationRank > 0 ? 1 + (normalRegenerationRank - 1) * 2 : 0;
     const superiorRegenerationRank = sheet.effects["regeneracao-superior"]?.rank || 0;
-    const superiorRegeneration = superiorRegenerationRank === 1 ? Math.ceil(maxLife / 6) : superiorRegenerationRank === 2 ? Math.ceil(maxLife / 4) : superiorRegenerationRank === 3 ? Math.ceil(maxLife / 2) : superiorRegenerationRank >= 4 ? maxLife : 0;
+    const regenerationValues = calculateRegeneration(maxLife, sheet.grade, normalRegenerationRank, superiorRegenerationRank);
+    const normalRegeneration = regenerationValues.normal;
+    const superiorRegeneration = regenerationValues.superior;
     const regenerationSkill = Math.max(normalRegeneration, superiorRegeneration);
-    const regeneration = regenerationSkill > 0 ? regenerationSkill + sheet.grade : 0;
+    const regeneration = regenerationValues.perTurn;
     const blockBonus = (sheet.perks["corpo-pesado"] ? 1 : 0) + (sheet.effects["bloqueio-ferro"] && sheet.kaguneActive ? 1 : 0);
     const dodgeBonus = (sheet.perks["corpo-leve"] ? 1 : 0) + (sheet.effects["esquiva-pena"] && sheet.kaguneActive ? 1 : 0) + (sheet.perks["cem-por-cento"] ? 1 : 0) + (sheet.perks.ceifador ? 2 : 0);
     const blockTest = formatTest((activeAttributes.vigor === 0 ? 2 : activeAttributes.vigor) + permanentDice.vigor + sheet.extraDice.vigor + blockBonus, Math.floor(activeAttributes.vigor / 2), activeAttributes.vigor === 0);
@@ -1182,7 +1196,7 @@ export default function Home() {
                 <div className="weapon-metrics">{sheet.weaponKind === "kagune" ? <><Stat label="Teste principal" value={derived.kaguneTest} mono onCopy={() => copyTest(derived.kaguneTest, "kagune")} copied={copied === "kagune"} /><Stat label="Atributo principal" value={attributeLabels[derived.primaryAttribute]} /><Stat label="RC máximo" value={derived.maxRC} /><Stat label="Verba gratuita" value={`${derived.freeKaguneBudget} PE`} /></> : <><Stat label="Verba de criação" value={`${8 + sheet.sourceGhoulGrade} PE`} /><Stat label="Investido" value={`${derived.actualEffectPE} PE`} /><Stat label="Ativos" value={sheet.weaponKind === "quinque" ? "Sacrificam dados" : "Conforme efeito"} /><Stat label="Efeitos" value={Object.keys(sheet.effects).length} /></>}</div>
                 {sheet.weaponKind === "kagune" && sheet.species === "ghoul-dominante" && <div className="hit-rule"><strong>RC do Ghoul Dominante</strong><span>4 base + {derived.activeAttributes.vigor} Vigor + {derived.actualEffectPE} PE de efeitos + {derived.effectLevelCount} níveis + {derived.evolutionPE} PE de evoluções + {derived.evolutionLevelCount} evoluções + {derived.kagunePerksPE} PE de Vantagens Quimera + {derived.kagunePerkLevelCount} compras + {derived.quimeraCost} da configuração{sheet.customBonuses.rc ? ` + ${sheet.customBonuses.rc} ajuste` : ""} = <b>{derived.maxRC} RC</b>.</span></div>}
                 {sheet.weaponKind === "kagune" && sheet.species !== "ghoul-dominante" && <div className="hit-rule"><strong>Cálculo de RC</strong><span>4 base + {derived.activeAttributes.vigor} Vigor + {derived.nominalEffectPE} em efeitos + {derived.nominalEvolutionPE} em evoluções + {derived.kagunePerksPE} em Vantagens Quimera + {derived.quimeraCost} da configuração{sheet.customBonuses.rc ? ` + ${sheet.customBonuses.rc} ajuste` : ""} = <b>{derived.maxRC} RC</b>.</span></div>}
-                {sheet.weaponKind === "kagune" && <div className="hit-rule"><strong>Dureza e regeneração</strong><span>Dureza: ({derived.activeAttributes.vigor} Vigor + {derived.kaguneInvestmentPE} PE investidos) × {derived.durabilityMultiplier}{derived.multipleTailsRank > 0 ? ` − ${derived.multipleTailsRank} de Múltiplas Caudas` : ""} = <b>{derived.kaguneDurability}</b>. Regeneração: {derived.regenerationSkill} da melhor skill + Grau {sheet.grade} = <b>{derived.regeneration}</b> por turno.</span></div>}
+                {sheet.weaponKind === "kagune" && <div className="hit-rule"><strong>Dureza e regeneração</strong><span>Dureza: ({derived.activeAttributes.vigor} Vigor + {derived.kaguneInvestmentPE} PE investidos) × {derived.durabilityMultiplier}{derived.multipleTailsRank > 0 ? ` − ${derived.multipleTailsRank} de Múltiplas Caudas` : ""} = <b>{derived.kaguneDurability}</b>. Regeneração comum: {derived.normalRegeneration || 0}{derived.normalRegeneration ? ` (base + Grau ${sheet.grade})` : ""}; Superior passiva: {derived.superiorRegeneration || 0}. Aplica-se a maior: <b>{derived.regeneration}</b> por turno. O N4 Superior mantém 1/2 da Vida por turno; a cura total é uma ação de 6 RC.</span></div>}
                 {derived.increaseHitRank > 0 && <div className="hit-rule"><strong>Aumentar Acerto N{derived.increaseHitRank}</strong><span>{Math.floor(derived.increaseHitRank / 3) > 0 ? `+${Math.floor(derived.increaseHitRank / 3)} no modificador ++. ` : ""}{derived.looseHitAdjustments > 0 ? `${derived.looseHitAdjustments} ${derived.looseHitAdjustments === 1 ? "compra permite" : "compras permitem"} elevar um dado específico em +1 após a rolagem.` : "Todas as compras estão consolidadas no ++."}</span></div>}</>}
             </section>
             <section className="section-block damage-calculator"><SectionTitle kicker="Cálculo automático" title="Passos de dano" /><p className="section-help">Atributos, vantagens, desvantagens e melhorias permanentes já entram no valor. Ative abaixo apenas o que estiver valendo neste golpe.</p><div className="damage-grid">
@@ -1207,6 +1221,7 @@ export default function Home() {
               species={sheet.species}
               vigor={derived.permanentAttributes.vigor}
               kaguneSteps={derived.kaguneSteps}
+              kaguneDurability={derived.kaguneDurability}
               kaguneFamilies={[...kaguneFamiliesForSheet(sheet)]}
               state={sheet.kakuja}
               onChange={(kakuja) => patchSheet({ kakuja })}
