@@ -60,11 +60,11 @@ export type KakujaState = {
 export const kakujaModules = rawModules as KakujaModule[];
 
 export const kakujaCaps = {
-  6: { cm: 6, passiveSteps: 3, burstSteps: 6, rd: 6 },
-  8: { cm: 8, passiveSteps: 4, burstSteps: 8, rd: 8 },
-  10: { cm: 10, passiveSteps: 5, burstSteps: 10, rd: 10 },
-  12: { cm: 12, passiveSteps: 6, burstSteps: 12, rd: 12 },
-  14: { cm: 14, passiveSteps: 8, burstSteps: 14, rd: 14 },
+  6: { cm: 16, passiveSteps: 3, burstSteps: 6, rd: 6 },
+  8: { cm: 18, passiveSteps: 4, burstSteps: 8, rd: 8 },
+  10: { cm: 20, passiveSteps: 5, burstSteps: 10, rd: 10 },
+  12: { cm: 22, passiveSteps: 6, burstSteps: 12, rd: 12 },
+  14: { cm: 24, passiveSteps: 8, burstSteps: 14, rd: 14 },
 } as const;
 
 export const kakujaInstabilities = [
@@ -141,7 +141,7 @@ export const universalKakujaRules = [
   { title: "Base de dano", text: "A Kakuja começa com os mesmos Passos de Dano atuais da Kagune. Depois, módulos do Perfil ativo e Vantagens alteram o cálculo próprio da Kakuja; Dureza, reserva, CM e técnicas continuam separados." },
   { title: "Ataques adicionais", text: "No máximo um por turno; metade dos Passos de Dano, mínimo 0. Não critica, não ativa efeitos ao acertar, não recupera RC, não vira área e não gera outro ataque." },
   { title: "Janela ofensiva", text: "Todos os geradores de ataque adicional disputam a mesma janela entre o início de um turno e o início do próximo. Comprar vários geradores oferece opções, nunca uma cadeia de golpes." },
-  { title: "Perfis e CM", text: "Módulos comprados formam o repertório permanente. Cada Perfil manifesta apenas o que cabe na CM do Grau; trocar durante a cena exige uma mutação própria." },
+  { title: "Perfis e CM", text: "Módulos comprados formam o repertório permanente. Cada Perfil possui CM igual ao Grau + 10; trocar durante a cena exige uma mutação própria." },
   { title: "Condições fortes", text: "Paralisia, perda de Ação, supressão de Reação ou imobilização total exigem teste contra a MD do Ghoul, custam RC e não travam o mesmo alvo em rodadas consecutivas." },
   { title: "Elementos", text: "Somente um dano elemental e um Condutor afetam o mesmo ataque. Núcleo Duplo permite alternar; Reação Híbrida permite dois Condutores sem duplicar o dano." },
   { title: "Regeneração", text: "Curas fixas podem somar. Multiplicadores não: use apenas o maior. Regeneração de membros, cura total e prevenção de morte não recebem multiplicador." },

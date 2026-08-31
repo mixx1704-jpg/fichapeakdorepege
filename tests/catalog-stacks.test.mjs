@@ -56,6 +56,58 @@ test("charges Aumentar Passos in the 3, 6, 9, 12, 15 progression", () => {
   assert.deepEqual(rules.incrementalCosts(item, 5), [3, 6, 9, 12, 15]);
 });
 
+test("uses the exact PE requirements for every Grade promotion", () => {
+  assert.deepEqual(
+    rules.gradeProgression.map((step) => [step.from, step.to, step.requiredPE]),
+    [
+      [2, 4, 10],
+      [4, 6, 20],
+      [6, 8, 30],
+      [8, 10, 40],
+      [10, 12, 50],
+      [12, 14, 60],
+    ],
+  );
+  assert.equal(rules.gradeRequirementFor(4), 20);
+  assert.equal(rules.gradeRequirementFor(14), 0);
+  assert.equal(rules.cumulativeGradePE(6), 30);
+  assert.equal(rules.cumulativeGradePE(14), 210);
+});
+
+test("migrates old progression values to the corrected automatic Grade grant", () => {
+  const migrated = rules.normalizeCharacter({ grade: 10, progressPE: 7 }, 4);
+  assert.equal(migrated.earnedPE, 0);
+  assert.equal(migrated.progressPE, 7);
+  assert.equal(rules.progressionPEFor(migrated), 107);
+
+  const migratedV5 = rules.normalizeCharacter({ grade: 10, earnedPE: 147, progressPE: 17 }, 5);
+  assert.equal(migratedV5.earnedPE, 117);
+  assert.equal(rules.progressionPEFor(migratedV5), 117);
+
+  const current = rules.normalizeCharacter({ grade: 10, earnedPE: 147, progressPE: 17 }, 6);
+  assert.equal(current.earnedPE, 147);
+  assert.equal(rules.progressionPEFor(current), 147);
+});
+
+test("registers earned PE and resets only Grade progress after promotion", () => {
+  const started = { grade: 4, earnedPE: 35, progressPE: 15, marker: "preserved" };
+  const rewarded = rules.registerEarnedPE(started, 7);
+  assert.deepEqual(rewarded, { grade: 4, earnedPE: 42, progressPE: 22, marker: "preserved" });
+
+  const promoted = rules.advanceGradeIfReady(rewarded);
+  assert.deepEqual(promoted, { grade: 6, earnedPE: 42, progressPE: 0, marker: "preserved" });
+  assert.equal(rules.advanceGradeIfReady({ grade: 6, progressPE: 29 }).grade, 6);
+});
+
+test("applies Grade PE automatically without double-counting registered gains", () => {
+  assert.equal(rules.progressionPEFor({ grade: 10, earnedPE: 0, progressPE: 0 }), 100);
+  assert.equal(rules.progressionPEFor({ grade: 10, earnedPE: 105, progressPE: 5 }), 105);
+  assert.equal(rules.progressionPEFor({ grade: 10, earnedPE: 118, progressPE: 5 }), 118);
+
+  const rewarded = rules.registerEarnedPE({ grade: 10, earnedPE: 0, progressPE: 0 }, 7);
+  assert.deepEqual(rewarded, { grade: 10, earnedPE: 107, progressPE: 7 });
+});
+
 test("keeps finite staged effects at their own limits", () => {
   const cristalizacao = data.kaguneEffects.find((item) => item.id === "cristalizacao");
   const multiplasCaudas = data.kaguneEffects.find((item) => item.id === "multiplas-caudas");
@@ -224,6 +276,15 @@ test("includes all 28 offensive Kakuja modules with their hard requirements", as
   assert.equal(byId.get("alternancia-quimerica").minFamilies, 2);
   assert.equal(byId.get("motor-de-carnificina").cb, 22);
   assert.match(byId.get("membro-de-reserva").effect, /metade dos Passos de Dano/);
+});
+
+test("sets Kakuja CM to Grade plus 10", async () => {
+  const kakujaData = await vite.ssrLoadModule("/app/kakuja-data.ts");
+  assert.equal(kakujaData.kakujaCaps[6].cm, 16);
+  assert.equal(kakujaData.kakujaCaps[8].cm, 18);
+  assert.equal(kakujaData.kakujaCaps[10].cm, 20);
+  assert.equal(kakujaData.kakujaCaps[12].cm, 22);
+  assert.equal(kakujaData.kakujaCaps[14].cm, 24);
 });
 
 test("removes extra damage-die language and separates Kakuja accuracy from damage", async () => {

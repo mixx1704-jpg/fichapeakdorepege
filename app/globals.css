@@ -90,7 +90,8 @@ textarea { resize: vertical; }
 .app-shell[data-theme="dark"] .damage-card,
 .app-shell[data-theme="dark"] .damage-controls input,
 .app-shell[data-theme="dark"] .damage-controls select,
-.app-shell[data-theme="dark"] .damage-counters input { color: var(--ink); background: #211f1c; }
+.app-shell[data-theme="dark"] .damage-counters input,
+.app-shell[data-theme="dark"] .pe-gain-row input { color: var(--ink); background: #211f1c; }
 .app-shell[data-theme="dark"] .custom-resource-bonuses input,
 .app-shell[data-theme="dark"] .custom-attribute-bonuses input,
 .app-shell[data-theme="dark"] .versatile-form-panel select,
@@ -352,14 +353,34 @@ textarea { resize: vertical; }
 .inline-controls input[type="number"] { width: 100%; height: 36px; padding: 0 10px; border: 1px solid var(--line); border-radius: 6px; background: #fff; }
 .check-row { display: flex; align-items: center; gap: 8px; min-height: 36px; color: var(--muted); font-size: 10px; }
 .check-row input { accent-color: var(--wine); }
-.grade-progress { display: grid; gap: 8px; margin-top: 15px; padding: 13px; border: 1px solid var(--line); border-radius: 8px; background: var(--wine-soft); }
-.grade-progress > div:first-child { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-.grade-progress > div:first-child span { color: var(--muted); font-size: 10px; font-weight: 700; }
-.grade-progress > div:first-child strong { color: var(--wine); font-size: 11px; }
-.grade-progress .meter { height: 5px; overflow: hidden; border-radius: 99px; background: color-mix(in srgb, var(--line) 72%, transparent); }
-.grade-progress .meter i { display: block; height: 100%; border-radius: inherit; background: var(--wine); transition: width .25s ease; }
-.grade-progress small { color: var(--ink); font-size: 10px; }
-.grade-progress em { color: var(--muted); font-size: 9px; font-style: normal; }
+.grade-progress { display: grid; gap: 11px; margin-top: 15px; padding: 15px; border: 1px solid color-mix(in srgb, var(--wine) 26%, var(--line)); border-radius: 10px; background: var(--wine-soft); }
+.grade-progress-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.grade-progress-head span { color: var(--muted); font-size: 9px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
+.grade-progress-head strong { color: var(--wine); font-family: Georgia, "Times New Roman", serif; font-size: 15px; }
+.grade-progress-values { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.grade-progress-values b { font-size: 18px; }
+.grade-progress-values small { color: var(--muted); font-size: 10px; }
+.grade-progress-meter { height: 8px; overflow: hidden; border-radius: 99px; background: color-mix(in srgb, var(--line) 72%, transparent); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--line) 48%, transparent); }
+.grade-progress-meter i { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--wine-dark), var(--wine)); transition: width .25s ease; }
+.pe-gain-row { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 8px; align-items: end; }
+.pe-gain-row label { display: grid; gap: 5px; }
+.pe-gain-row label span { color: var(--muted); font-size: 9px; font-weight: 750; letter-spacing: .1em; text-transform: uppercase; }
+.pe-gain-row input { width: 100%; height: 38px; padding: 0 10px; border: 1px solid var(--line); border-radius: 7px; background: var(--surface-strong); }
+.pe-gain-row button, .grade-up-button { min-height: 38px; padding: 0 13px; border: 1px solid var(--wine); border-radius: 7px; color: #fff; background: var(--wine); font-size: 10px; font-weight: 800; }
+.pe-gain-row button:disabled { opacity: .42; }
+.grade-progress-note { color: var(--muted); font-size: 9px; line-height: 1.45; }
+.grade-up-button { width: 100%; min-height: 42px; border-color: var(--line-strong); color: var(--muted); background: color-mix(in srgb, var(--surface) 68%, transparent); }
+.grade-up-button.ready { border-color: var(--green); color: #fff; background: var(--green); box-shadow: 0 8px 22px color-mix(in srgb, var(--green) 20%, transparent); }
+.grade-up-button:disabled { opacity: .72; }
+.grade-requirements { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 5px; padding-top: 2px; }
+.grade-requirements span { display: grid; gap: 2px; padding: 7px; border: 1px solid color-mix(in srgb, var(--line) 76%, transparent); border-radius: 6px; background: color-mix(in srgb, var(--surface) 60%, transparent); }
+.grade-requirements b { color: var(--muted); font-size: 9px; }
+.grade-requirements small { color: var(--faint); font-size: 8px; }
+.grade-requirements span.current { border-color: var(--wine); background: color-mix(in srgb, var(--wine) 8%, var(--surface)); }
+.grade-requirements span.current b, .grade-requirements span.current small { color: var(--wine); }
+.grade-requirements span.completed { border-color: color-mix(in srgb, var(--green) 45%, var(--line)); }
+.grade-requirements span.completed b, .grade-requirements span.completed small { color: var(--green); }
+.grade-max-message { margin: 0; color: var(--muted); font-size: 10px; line-height: 1.5; }
 .ability-text { margin: 0; font-family: Georgia, "Times New Roman", serif; font-size: 18px; line-height: 1.55; }
 .rule-note { margin-top: 20px; padding: 13px 14px; border-left: 2px solid var(--wine); color: var(--muted); background: var(--wine-soft); font-size: 11px; line-height: 1.5; }
 .rule-note b { color: var(--ink); }
@@ -800,6 +821,9 @@ textarea { resize: vertical; }
   .resource-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
   .stat-strip { grid-template-columns: repeat(2, minmax(0,1fr)); }
   .summary-columns { gap: 12px; }
+  .grade-requirements { grid-template-columns: repeat(2, minmax(0,1fr)); }
+  .pe-gain-row { grid-template-columns: 1fr; }
+  .pe-gain-row button { min-height: 42px; }
   .formula-rule { flex-wrap: wrap; justify-content: flex-start; gap: 12px; }
   .formula-rule > div { min-width: 40%; }
   .attribute-grid { grid-template-columns: 1fr; }

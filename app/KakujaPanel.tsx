@@ -475,7 +475,7 @@ export function KakujaPanel({ grade, species, vigor, kaguneSteps, kaguneDurabili
       </div>}
 
       {activeTab === "perfis" && <div className="kakuja-tab-content" role="tabpanel">
-        <section className="kakuja-profile-intro"><div><span>CM do Grau</span><strong>{cap.cm}</strong></div><p>Comprar adiciona ao repertório. Marcar em um Perfil manifesta o módulo. Sem Morfologia Alternativa, apenas o primeiro Perfil pode ser escolhido na cena.</p></section>
+        <section className="kakuja-profile-intro"><div><span>CM · Grau + 10</span><strong>{cap.cm}</strong></div><p>Comprar adiciona ao repertório. Marcar em um Perfil manifesta o módulo. Sem Morfologia Alternativa, apenas o primeiro Perfil pode ser escolhido na cena.</p></section>
         <div className="kakuja-profiles">{state.profiles.map((profile, index) => {
           const profileModules = profile.moduleIds.map((id) => kakujaModules.find((item) => item.id === id)).filter(Boolean) as KakujaModule[];
           const profileCustom = profile.customModuleIds.map((id) => state.customModules.find((item) => item.id === id)).filter(Boolean) as KakujaCustomModule[];
