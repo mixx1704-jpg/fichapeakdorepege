@@ -55,17 +55,24 @@ export type KakujaState = {
   advantageModifier: number;
   advantageRD: number;
   techniqueStacks: Record<string, number>;
+  techniqueOptions: Record<string, string[]>;
 };
 
 export const kakujaModules = rawModules as KakujaModule[];
 
 export const kakujaCaps = {
-  6: { cm: 16, passiveSteps: 3, burstSteps: 6, rd: 6 },
-  8: { cm: 18, passiveSteps: 4, burstSteps: 8, rd: 8 },
-  10: { cm: 20, passiveSteps: 5, burstSteps: 10, rd: 10 },
-  12: { cm: 22, passiveSteps: 6, burstSteps: 12, rd: 12 },
-  14: { cm: 24, passiveSteps: 8, burstSteps: 14, rd: 14 },
+  6: { cm: 36, passiveSteps: 3, burstSteps: 6, rd: 6 },
+  8: { cm: 38, passiveSteps: 4, burstSteps: 8, rd: 8 },
+  10: { cm: 40, passiveSteps: 5, burstSteps: 10, rd: 10 },
+  12: { cm: 42, passiveSteps: 6, burstSteps: 12, rd: 12 },
+  14: { cm: 44, passiveSteps: 8, burstSteps: 14, rd: 14 },
 } as const;
+
+export function calculateKakujaCM(grade: number, investedPE: number) {
+  const safeGrade = Math.max(0, Math.floor(Number.isFinite(grade) ? grade : 0));
+  const safeInvestment = Math.max(0, Math.floor(Number.isFinite(investedPE) ? investedPE : 0));
+  return 30 + safeGrade + Math.floor(safeInvestment / 10) * 2;
+}
 
 export const kakujaInstabilities = [
   { id: "fome-anormal", name: "Fome Anormal", credit: 2, effect: "Cada ativação de Kakuja concede +1 Fome além de qualquer outra fonte." },
@@ -141,7 +148,7 @@ export const universalKakujaRules = [
   { title: "Base de dano", text: "A Kakuja começa com os mesmos Passos de Dano atuais da Kagune. Depois, módulos do Perfil ativo e Vantagens alteram o cálculo próprio da Kakuja; Dureza, reserva, CM e técnicas continuam separados." },
   { title: "Ataques adicionais", text: "No máximo um por turno; metade dos Passos de Dano, mínimo 0. Não critica, não ativa efeitos ao acertar, não recupera RC, não vira área e não gera outro ataque." },
   { title: "Janela ofensiva", text: "Todos os geradores de ataque adicional disputam a mesma janela entre o início de um turno e o início do próximo. Comprar vários geradores oferece opções, nunca uma cadeia de golpes." },
-  { title: "Perfis e CM", text: "Módulos comprados formam o repertório permanente. Cada Perfil possui CM igual ao Grau + 10; trocar durante a cena exige uma mutação própria." },
+  { title: "Perfis e CM", text: "Módulos comprados formam o repertório permanente. Cada Perfil possui 30 CM base +1 por Grau e +2 CM a cada 10 PE comuns investidos na Kakuja; trocar durante a cena exige uma mutação própria." },
   { title: "Condições fortes", text: "Paralisia, perda de Ação, supressão de Reação ou imobilização total exigem teste contra a MD do Ghoul, custam RC e não travam o mesmo alvo em rodadas consecutivas." },
   { title: "Elementos", text: "Somente um dano elemental e um Condutor afetam o mesmo ataque. Núcleo Duplo permite alternar; Reação Híbrida permite dois Condutores sem duplicar o dano." },
   { title: "Regeneração", text: "Curas fixas podem somar. Multiplicadores não: use apenas o maior. Regeneração de membros, cura total e prevenção de morte não recebem multiplicador." },
@@ -179,5 +186,6 @@ export function blankKakujaState(): KakujaState {
     advantageModifier: 0,
     advantageRD: 0,
     techniqueStacks: {},
+    techniqueOptions: {},
   };
 }

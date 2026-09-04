@@ -650,14 +650,30 @@ textarea { resize: vertical; }
 .kakuja-section-title h3 { margin: 5px 0 0; color: var(--ink); font-family: Georgia, "Times New Roman", serif; font-size: 22px; font-weight: 500; }
 .kakuja-section-title > small { max-width: 360px; color: var(--muted); font-size: 8px; line-height: 1.45; text-align: right; }
 .kakuja-techniques { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 7px; }
-.kakuja-techniques label { display: flex; align-items: flex-start; gap: 9px; padding: 11px; border: 1px solid var(--line); border-radius: 8px; cursor: pointer; }
-.kakuja-techniques label.active { border-color: rgba(127,23,38,.4); background: var(--kakuja-soft); }
+.kakuja-techniques > article { display: grid; gap: 9px; padding: 11px; border: 1px solid var(--line); border-radius: 8px; }
+.kakuja-techniques > article.active { border-color: rgba(127,23,38,.4); background: var(--kakuja-soft); }
+.kakuja-techniques .technique-main { display: flex; align-items: flex-start; gap: 9px; cursor: pointer; }
 .kakuja-techniques span { display: grid; gap: 4px; }
 .kakuja-techniques b { color: var(--ink); font-size: 9px; }
 .kakuja-techniques small { color: var(--muted); font-size: 8px; line-height: 1.45; }
 .kakuja-techniques .technique-stack { display: grid; grid-template-columns: 1fr 58px auto; align-items: center; gap: 7px; margin-top: 4px; }
 .kakuja-techniques .technique-stack i, .kakuja-techniques .technique-stack em { color: var(--muted); font-size: 7px; font-style: normal; }
 .kakuja-techniques .technique-stack input { width: 100%; padding: 5px 6px; border: 1px solid var(--line); border-radius: 5px; color: var(--ink); background: var(--panel); font-size: 8px; }
+.kakuja-techniques .technique-option-select { display: grid; gap: 5px; padding-top: 8px; border-top: 1px solid var(--line); }
+.kakuja-techniques .technique-option-select > span, .kakuja-techniques .technique-options > span { color: var(--muted); font-size: 7px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
+.kakuja-techniques .technique-option-select select { width: 100%; min-height: 34px; padding: 6px 8px; border: 1px solid var(--line); border-radius: 6px; color: var(--ink); background: var(--panel); font-size: 8px; }
+.kakuja-techniques .technique-options { display: grid; gap: 6px; padding-top: 8px; border-top: 1px solid var(--line); }
+.kakuja-techniques .technique-options label { display: flex; align-items: center; gap: 7px; cursor: pointer; }
+.kakuja-additional-card { display: grid; gap: 12px; border-color: rgba(127,23,38,.32); }
+.kakuja-additional-card > div { display: grid; grid-template-columns: 1fr auto auto; align-items: center; gap: 12px; }
+.kakuja-additional-card > div span { color: var(--muted); font-size: 8px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
+.kakuja-additional-card > div strong { color: var(--kakuja); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 22px; }
+.kakuja-additional-card > div button { padding: 7px 9px; border: 1px solid var(--line); border-radius: 6px; color: var(--ink); background: var(--panel); font-size: 8px; }
+.kakuja-additional-card dl { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); margin: 0; }
+.kakuja-additional-card dl div { display: grid; gap: 3px; padding: 9px; border: 1px solid var(--line); }
+.kakuja-additional-card dt { color: var(--muted); font-size: 8px; }
+.kakuja-additional-card dd { margin: 0; color: var(--ink); font-size: 10px; font-weight: 800; }
+.kakuja-additional-card p { margin: 0; color: var(--muted); font-size: 8px; line-height: 1.5; }
 .kakuja-issues { padding: 16px 18px; border: 1px solid rgba(127,23,38,.3); border-radius: 10px; color: #73414a; background: var(--kakuja-soft); }
 .kakuja-issues strong { color: var(--kakuja); font-size: 10px; }
 .kakuja-issues ul { margin: 8px 0 0; padding-left: 18px; font-size: 9px; line-height: 1.7; }
@@ -860,6 +876,9 @@ textarea { resize: vertical; }
   .kakuja-metric-grid { grid-template-columns: 1fr; }
   .kakuja-damage-card > div:first-child { grid-template-columns: 1fr auto; }
   .kakuja-damage-card > div:first-child span { grid-column: 1 / -1; }
+  .kakuja-additional-card > div { grid-template-columns: 1fr auto; }
+  .kakuja-additional-card > div span { grid-column: 1 / -1; }
+  .kakuja-additional-card dl { grid-template-columns: 1fr; }
   .kakuja-toolbar { align-items: stretch; flex-direction: column; }
   .kakuja-toolbar select { width: 100%; min-width: 0; }
   .kakuja-profile-head { align-items: stretch; flex-direction: column; }

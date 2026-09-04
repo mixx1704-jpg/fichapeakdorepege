@@ -271,6 +271,7 @@ export function normalizeCharacter(input: Partial<CharacterSheet>, sourceVersion
       selectedElements: input.kakuja?.selectedElements || [],
       activeTechniques: input.kakuja?.activeTechniques || [],
       techniqueStacks: input.kakuja?.techniqueStacks || {},
+      techniqueOptions: input.kakuja?.techniqueOptions || {},
       customModules: input.kakuja?.customModules || [],
       profiles: normalizedKakujaProfiles,
     },
@@ -1316,6 +1317,7 @@ export default function Home() {
               grade={sheet.grade}
               species={sheet.species}
               vigor={derived.permanentAttributes.vigor}
+              maxLife={derived.maxLife}
               kaguneSteps={derived.kaguneSteps}
               kaguneDurability={derived.kaguneDurability}
               kaguneFamilies={[...kaguneFamiliesForSheet(sheet)]}
