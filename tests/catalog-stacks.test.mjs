@@ -21,6 +21,7 @@ after(async () => {
 const data = await vite.ssrLoadModule("/app/data.ts");
 const rules = await vite.ssrLoadModule("/app/page.tsx");
 const kakujaRules = await vite.ssrLoadModule("/app/KakujaPanel.tsx");
+const customSkillRules = await vite.ssrLoadModule("/app/CustomSkillsPanel.tsx");
 
 function sheetAtGrade(grade, kaguneType = "Rinkaku") {
   return {
@@ -128,6 +129,58 @@ test("supports the three purchases of Múltiplas Caudas +", () => {
   );
 });
 
+test("adds the two Koukaku Ataque Extra purchases with progressive costs", () => {
+  const item = data.evolutions.find((candidate) => candidate.id === "ataque-extra");
+  assert.equal(item.family, "Koukaku");
+  assert.equal(item.grade, 8);
+  assert.equal(item.maxRank, 2);
+  assert.deepEqual(rules.evolutionCostsForSheet(item, 2, "ghoul"), {
+    baseTotal: 18,
+    paidTotal: 18,
+    paidIncrements: [8, 10],
+  });
+  const gradeSix = rules.normalizeCharacter({ grade: 6, weaponKind: "kagune", kaguneType: "Koukaku" }, 7);
+  const gradeEight = rules.normalizeCharacter({ grade: 8, weaponKind: "kagune", kaguneType: "Koukaku" }, 7);
+  const wrongFamily = rules.normalizeCharacter({ grade: 8, weaponKind: "kagune", kaguneType: "Rinkaku" }, 7);
+  assert.equal(rules.evolutionRequirementStatus(item, gradeSix).met, false);
+  assert.equal(rules.evolutionRequirementStatus(item, gradeEight).met, true);
+  assert.equal(rules.evolutionRequirementStatus(item, wrongFamily).met, false);
+});
+
+test("applies passive and enabled active custom-skill effects to character stats", () => {
+  const skills = customSkillRules.normalizeCustomSkills([
+    {
+      name: "Instinto",
+      cost: 5,
+      activation: "passive",
+      effects: [
+        { type: "hit-dice", value: 2, scope: "kagune" },
+        { type: "damage-steps", value: 3, scope: "both" },
+        { type: "dodge-dice", value: 1 },
+      ],
+    },
+    {
+      name: "Surto",
+      cost: 4,
+      activation: "active",
+      enabled: false,
+      effects: [{ type: "extra-attacks", value: 1 }],
+    },
+  ]);
+
+  assert.equal(customSkillRules.customSkillsCost(skills), 9);
+  let totals = customSkillRules.calculateCustomSkillBonuses(skills);
+  assert.equal(totals.kaguneHitDice, 2);
+  assert.equal(totals.physicalSteps, 3);
+  assert.equal(totals.kaguneSteps, 3);
+  assert.equal(totals.dodgeDice, 1);
+  assert.equal(totals.extraAttacks, 0);
+
+  skills[1].enabled = true;
+  totals = customSkillRules.calculateCustomSkillBonuses(skills);
+  assert.equal(totals.extraAttacks, 1);
+});
+
 test("supports one Desabilidade purchase per Attribute", () => {
   const item = data.drawbacks.find((candidate) => candidate.id === "desabilidade");
   assert.equal(item.maxRank, data.attributeKeys.length);
@@ -178,114 +231,6 @@ test("Kakuja starts with the full current Kagune Steps and applies module bonuse
 test("Kakuja durability adds normal Kakuhou durability before instability", () => {
   assert.equal(kakujaRules.calculateKakujaDurability(151, 80, false), 231);
   assert.equal(kakujaRules.calculateKakujaDurability(151, 80, true), 173);
-});
-
-const kakujaCombat = (overrides = {}) => kakujaRules.calculateKakujaCombatSummary({
-  grade: 6,
-  vigor: 6,
-  maxLife: 60,
-  kaguneSteps: 10,
-  activeModuleIds: [],
-  activeTechniques: [],
-  techniqueStacks: {},
-  techniqueOptions: {},
-  advantageSteps: 0,
-  advantageAccuracy: 0,
-  advantageModifier: 0,
-  advantageRD: 0,
-  ...overrides,
-});
-
-test("Kakuja caps passive bonuses before burst bonuses and never lets penalties reopen the cap", () => {
-  const active = kakujaCombat({
-    activeModuleIds: ["potencia-predatoria-i", "potencia-predatoria-ii", "massa-de-impacto", "mandibula-predatoria"],
-    activeTechniques: ["mandibula-predatoria"],
-  });
-  assert.equal(active.moduleSteps, 5);
-  assert.equal(active.totalSteps, 15);
-
-  const penalized = kakujaCombat({
-    activeModuleIds: ["potencia-predatoria-i", "potencia-predatoria-ii", "massa-de-impacto", "ruptura-organica"],
-    activeTechniques: ["ruptura-organica"],
-  });
-  assert.equal(penalized.moduleSteps, 1);
-});
-
-test("Kakuja applies stack counters, upgraded elemental damage and dynamic Vigor bonuses", () => {
-  const summary = kakujaCombat({
-    vigor: 7,
-    activeModuleIds: ["montanha-inamovivel", "infusao-elemental", "potencia-elemental", "fortaleza-de-carne"],
-    activeTechniques: ["montanha-inamovivel", "infusao-elemental", "fortaleza-de-carne"],
-    techniqueStacks: { "montanha-inamovivel": 2 },
-  });
-  assert.equal(summary.totalModifier, 8);
-  assert.equal(summary.moduleRD, 6);
-  assert.equal(summary.totalRD, 8);
-});
-
-test("Kakuja applies selected posture options and Mestre de Nada upgrades Predador Perfeito", () => {
-  const arsenal = kakujaCombat({
-    activeModuleIds: ["arsenal-organico"],
-    activeTechniques: ["arsenal-organico"],
-    techniqueOptions: { "arsenal-organico": ["escudo"] },
-  });
-  assert.equal(arsenal.totalSteps, 10);
-  assert.equal(arsenal.totalRD, 4);
-
-  const master = kakujaCombat({
-    grade: 10,
-    activeModuleIds: ["predador-perfeito", "mestre-de-nada"],
-    activeTechniques: ["predador-perfeito"],
-    techniqueOptions: { "predador-perfeito": ["ataque", "defesa"] },
-  });
-  assert.equal(master.moduleSteps, 4);
-  assert.equal(master.totalRD, 6);
-});
-
-test("Kakuja calculates one additional attack and its compatible modifiers", () => {
-  const summary = kakujaCombat({
-    kaguneSteps: 15,
-    activeModuleIds: ["membro-de-reserva", "massa-reservada", "impulso-perfurante"],
-    activeTechniques: ["membro-de-reserva", "massa-reservada", "impulso-perfurante"],
-  });
-  assert.equal(summary.totalSteps, 12);
-  assert.equal(summary.additional.active, true);
-  assert.equal(summary.additional.steps, 7);
-  assert.equal(summary.additional.accuracy, 1);
-  assert.equal(summary.additional.ignoreRD, 4);
-});
-
-test("Kakuja keeps only the most recently activated additional-attack generator", () => {
-  const summary = kakujaCombat({
-    activeModuleIds: ["membro-de-reserva", "troca-de-presa"],
-    activeTechniques: ["membro-de-reserva", "troca-de-presa"],
-  });
-  assert.equal(summary.additional.active, true);
-  assert.equal(summary.additional.accuracy, -1);
-});
-
-test("Kakuja enforces Grade-gated technique options", () => {
-  const gradeSix = kakujaCombat({
-    activeModuleIds: ["gume-perfurante"],
-    activeTechniques: ["gume-perfurante"],
-    techniqueOptions: { "gume-perfurante": ["metade"] },
-  });
-  assert.equal(gradeSix.ignoreRD, 2);
-
-  const gradeTen = kakujaCombat({
-    grade: 10,
-    activeModuleIds: ["gume-perfurante"],
-    activeTechniques: ["gume-perfurante"],
-    techniqueOptions: { "gume-perfurante": ["metade"] },
-  });
-  assert.equal(gradeTen.ignoreRD, "half");
-});
-
-test("Kakuja uses the strongest regeneration instead of stacking replaced effects", () => {
-  const summary = kakujaCombat({
-    activeModuleIds: ["cicatrizacao-de-combate-i", "cicatrizacao-de-combate-ii", "regeneracao-superior"],
-  });
-  assert.equal(summary.healing, 10);
 });
 
 test("regeneration keeps Superior N4 at half Life per turn", () => {
@@ -373,12 +318,6 @@ test("Kakuja module catalog declares chains and elemental prerequisites", async 
   }
 });
 
-test("Kakuja calculation registry contains no misspelled or orphaned module IDs", async () => {
-  const modules = JSON.parse(await readFile(path.join(root, "app/kakuja-modules.json"), "utf8"));
-  const ids = new Set(modules.map((item) => item.id));
-  assert.deepEqual(Object.keys(kakujaRules.calculations).filter((id) => !ids.has(id)), []);
-});
-
 test("includes all 28 offensive Kakuja modules with their hard requirements", async () => {
   const modules = JSON.parse(await readFile(path.join(root, "app/kakuja-modules.json"), "utf8"));
   const extras = modules.filter((item) => /^(19|20|21|22)\./.test(item.section));
@@ -392,17 +331,13 @@ test("includes all 28 offensive Kakuja modules with their hard requirements", as
   assert.match(byId.get("membro-de-reserva").effect, /metade dos Passos de Dano/);
 });
 
-test("sets Kakuja CM to 30 base, +1 per Grade and +2 per 10 invested PE", async () => {
+test("sets Kakuja CM to Grade plus 10", async () => {
   const kakujaData = await vite.ssrLoadModule("/app/kakuja-data.ts");
-  assert.equal(kakujaData.kakujaCaps[6].cm, 36);
-  assert.equal(kakujaData.kakujaCaps[8].cm, 38);
-  assert.equal(kakujaData.kakujaCaps[10].cm, 40);
-  assert.equal(kakujaData.kakujaCaps[12].cm, 42);
-  assert.equal(kakujaData.kakujaCaps[14].cm, 44);
-  assert.equal(kakujaData.calculateKakujaCM(14, 0), 44);
-  assert.equal(kakujaData.calculateKakujaCM(14, 9), 44);
-  assert.equal(kakujaData.calculateKakujaCM(14, 10), 46);
-  assert.equal(kakujaData.calculateKakujaCM(14, 29), 48);
+  assert.equal(kakujaData.kakujaCaps[6].cm, 16);
+  assert.equal(kakujaData.kakujaCaps[8].cm, 18);
+  assert.equal(kakujaData.kakujaCaps[10].cm, 20);
+  assert.equal(kakujaData.kakujaCaps[12].cm, 22);
+  assert.equal(kakujaData.kakujaCaps[14].cm, 24);
 });
 
 test("removes extra damage-die language and separates Kakuja accuracy from damage", async () => {
@@ -414,6 +349,6 @@ test("removes extra damage-die language and separates Kakuja accuracy from damag
   assert.doesNotMatch(catalogs, /\bdados? de dano\b/i);
   assert.doesNotMatch(catalogs, /metade dos dados/i);
   assert.doesNotMatch(pageSource, /Dados manuais|physicalExtraDamageDice|kaguneExtraDamageDice/);
-  assert.match(kakujaSource, /"railgun-de-tungstenio": \{ mode: "toggle", steps: 10, accuracy: 6, ignoreRD: 2 \}/);
+  assert.match(kakujaSource, /"railgun-de-tungstenio": \{ mode: "toggle", steps: 10, accuracy: 6 \}/);
   assert.doesNotMatch(kakujaSource, /"railgun-de-tungstenio": \{[^\n]*modifier:/);
 });

@@ -386,6 +386,7 @@ export interface Evolution {
   kaguneTypes?: KaguneFamily[];
   minKaguneTypes?: number;
   maxRank?: number;
+  rankCosts?: number[];
   attributeRequirements?: Partial<Record<AttributeKey, number>>;
   requiresEffects?: { id: string; minRank?: number }[];
   requiresEvolutions?: string[];
@@ -416,6 +417,7 @@ export const evolutions: Evolution[] = [
   evolution("metalico", "Metálico", 10, 8, "Koukaku", "Ao receber impacto contundente, o atacante falha em Vigor e sofre metade dos Passos de Dano básicos da Koukaku."),
   evolution("lanca-ceus", "Lança que Devora Céus", 15, 8, "Koukaku", "Sacrifique RD e 10 RC: +10 Passos de Dano e +2 acerto; depois, Kagune indisponível e RD 0 por 5 turnos."),
   evolution("sabor-kakuja", "Sabor Kakuja", 20, 8, "Koukaku", "Mantenha modos ofensivo e defensivo juntos por 5 RC para ativar e 3 RC por turno."),
+  evolution("ataque-extra", "Ataque Extra", 8, 8, "Koukaku", "Cada compra concede +1 ataque extra. Pode ser comprada duas vezes.", "Koukaku; máximo 2 compras", { maxRank: 2, rankCosts: [8, 10], kaguneTypes: ["Koukaku"] }),
   evolution("hidra-faminta", "Hidra Faminta", 10, 8, "Rinkaku", "Quando uma cauda for destruída, gaste 5 RC para regenerá-la e atacar com -1 dado; uma vez por turno."),
   evolution("carne-recusa", "Carne que se Recusa a Morrer", 15, 8, "Rinkaku", "Uma vez por sessão, gaste 20 RC para ficar com 1 HP e dobre a regeneração por 2 turnos."),
   evolution("mil-pernas", "Mil Pernas da Centopeia", 20, 8, "Rinkaku", "Por 15 RC e 3 turnos: +2 caudas, +2 Passos de Dano, um alvo extra e -2 Resistência."),
