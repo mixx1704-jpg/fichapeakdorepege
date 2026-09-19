@@ -333,7 +333,7 @@ const effect = (
 export const kaguneEffects: KaguneEffect[] = [
   effect("aumentar-dano", "Aumentar Dano", "Geral", 5, 4, "Passivo", "+1 Modificador de Dano por nível; teto atual igual a Grau/2 + 1.", { rankCap: "grade" }),
   effect("aumentar-passos", "Aumentar Passos de Dano", "Geral", 3, 2, "Passivo", "+1 Passo de Dano por nível. Cada nova compra custa 3 PE a mais: 3, 6, 9, 12, 15...; teto atual igual a Grau/2 + 1.", { rankCap: "grade", levelCostStart: 3, levelCostStep: 3 }),
-  effect("aumentar-distancia", "Aumentar Distância", "Geral", 3, 2, "Passivo", "+1 grau de alcance por nível. Koukaku pode comprar duas vezes."),
+  effect("aumentar-distancia", "Aumentar Distância", "Geral", 3, 4, "Passivo", "+1 metro de alcance por nível. Limite 4; Koukaku, 2. Alcance: 1 m + nível + bônus (Koukaku: 0 m + nível + bônus)."),
   effect("couraca-revestida", "Couraça Revestida", "Geral", 5, 6, "Passivo", "+1 RD por nível; teto atual igual a Grau/2 + 1.", { rankCap: "grade" }),
   effect("regeneracao-anormal", "Regeneração Anormal", "Geral", 3, 6, "Passivo · Biológico", "Cura passiva por nível, somada ao bônus de Grau; teto atual igual a Grau/2 + 1. Ao atingir o limite da regra, perca 2 RC ou receba 1 Fome.", { rankCap: "grade" }),
   effect("defesa-habil", "Defesa Hábil", "Geral", 3, 1, "Ativo · 2 RC", "Como Reação, reduza dano em metade do Grau."),

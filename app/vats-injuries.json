@@ -1,0 +1,174 @@
+{
+  "blood": [
+    [
+      "Sangramento Leve",
+      "corte profundo ou perfuração pequena.",
+      "1d4/turno na região."
+    ],
+    [
+      "Sangramento Grave",
+      "artéria, ferida enorme ou membro quase arrancado.",
+      "1d6/turno e -1d físico."
+    ],
+    [
+      "Hemorragia",
+      "perda de sangue absurda, interna ou externa.",
+      "1d8/turno e -1 RC/turno."
+    ]
+  ],
+  "arm": [
+    [
+      "Braço Ferido",
+      "músculo ou tendão danificado.",
+      "-1d com aquele braço."
+    ],
+    [
+      "Braço Quebrado",
+      "osso rompido ou articulação destruída.",
+      "-2d e força limitada."
+    ],
+    [
+      "Braço Destruído",
+      "arrancado, triturado ou inutilizado.",
+      "não usa o braço."
+    ],
+    [
+      "Mão Destruída",
+      "mão esmagada, cortada ou sem dedos úteis.",
+      "não segura nem manipula."
+    ]
+  ],
+  "leg": [
+    [
+      "Perna Ferida",
+      "dano que atrapalha apoio e corrida.",
+      "-1d em mobilidade."
+    ],
+    [
+      "Perna Quebrada",
+      "osso rompido ou articulação destruída.",
+      "1/2 movimento e -2d Esquiva."
+    ],
+    [
+      "Perna Destruída",
+      "arrancada ou esmagada.",
+      "rasteja; -3d Esquiva."
+    ]
+  ],
+  "torso": [
+    [
+      "Costelas Quebradas",
+      "impacto pesado no tórax.",
+      "testes de Vigor em esforço; pancada no torso +1 Passo."
+    ],
+    [
+      "Tórax Esmagado",
+      "peito comprimido ou caixa torácica colapsada.",
+      "pode perder Reação e sofrer dano extra."
+    ],
+    [
+      "Pulmão Perfurado",
+      "perfuração relevante do pulmão.",
+      "-2d em esforço."
+    ],
+    [
+      "Dois Pulmões Comprometidos",
+      "ambos danificados.",
+      "-3d e limita ações extras."
+    ],
+    [
+      "Estômago Destruído",
+      "abdômen aberto, rasgado ou esmagado.",
+      "-2 RC/turno; regeneração mais cara."
+    ],
+    [
+      "Órgãos Destruídos",
+      "fígado, rins, intestinos etc. destruídos.",
+      "-1d físico e regeneração +1 RC."
+    ],
+    [
+      "Coluna Danificada",
+      "trauma vertebral sem ruptura completa.",
+      "-2d Agilidade e menos movimento."
+    ],
+    [
+      "Coluna Quebrada",
+      "ruptura grave da coluna.",
+      "pernas não funcionam."
+    ]
+  ],
+  "head": [
+    [
+      "Mandíbula Destruída",
+      "deslocada, esmagada ou arrancada.",
+      "não morde nem fala direito."
+    ],
+    [
+      "Um Olho Destruído",
+      "perda funcional de um olho.",
+      "-1d visão/acerto visual."
+    ],
+    [
+      "Cego",
+      "ambos os olhos inutilizados.",
+      "penalidades severas de visão."
+    ],
+    [
+      "Ouvido Rompido",
+      "tímpano ou estrutura auditiva danificada.",
+      "-1d auditivo."
+    ],
+    [
+      "Surdo",
+      "ambos os ouvidos inutilizados.",
+      "não percebe som normalmente."
+    ],
+    [
+      "Atordoado",
+      "pancada, explosão ou choque momentâneo.",
+      "-2d no próximo teste."
+    ],
+    [
+      "Concussão",
+      "golpe relevante na cabeça.",
+      "-1d mental; risco de Atordoado."
+    ]
+  ],
+  "global": [
+    [
+      "Empalado",
+      "objeto atravessou e prendeu o corpo.",
+      "-2d Esquiva; não se afasta."
+    ],
+    [
+      "Esmagado",
+      "preso sob peso ou contra parede.",
+      "não se move; -2d ações móveis."
+    ],
+    [
+      "Arremessado",
+      "foi lançado com força.",
+      "colisão + Caído conforme distância."
+    ],
+    [
+      "Caído",
+      "perdeu apoio e foi ao chão.",
+      "corpo a corpo contra ele +1d; Esquiva -1d."
+    ],
+    [
+      "Sub-Vivo",
+      "dano que mataria um humano, mas a biologia ainda segura.",
+      "-2d físicos; regeneração +1 RC."
+    ],
+    [
+      "Colapsado",
+      "o corpo ainda vive, mas mal funciona.",
+      "1 Ação/turno, sem Reação."
+    ],
+    [
+      "Exaurido de RC",
+      "chegou a 0 RC enquanto dependia disso para se manter.",
+      "sem regeneração ativa e sem técnicas de RC."
+    ]
+  ]
+}
