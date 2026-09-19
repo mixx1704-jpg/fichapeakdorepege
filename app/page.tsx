@@ -110,6 +110,7 @@ type CharacterSheet = {
   currentLife: number;
   currentSanity: number;
   currentRC: number;
+  reactionEnemyBonus: boolean;
   hunger: number;
   instinct: number;
   anchors: { name: string; bond: string }[];
@@ -139,6 +140,10 @@ export const gradeProgression = [
   { from: 10, to: 12, requiredPE: 50 },
   { from: 12, to: 14, requiredPE: 60 },
 ] as const;
+
+export function reactionsPerRound(agility: number, grade: number, enemyBonus = false) {
+  return 4 + agility / 4 + grade / 4 + (enemyBonus ? 3 : 0);
+}
 
 export function gradeRequirementFor(grade: number) {
   return gradeProgression.find((step) => step.from === grade)?.requiredPE || 0;
@@ -215,7 +220,7 @@ function newCharacter(name = "Novo personagem"): CharacterSheet {
     perks: {}, customPerks: [], customSkills: [], drawbacks: {}, weaponKind: "nenhum", kaguneName: "", kaguneType: "Rinkaku",
     kaguneSecondType: "", kaguneThirdType: "", kaguneFourthType: "", kaguneActive: false, quinxFrame: 2, sourceGhoulGrade: 2,
     effects: {}, selectedEvolutions: [], confirmedRequirements: {}, extraPE: 0, earnedPE: 0, progressPE: 0, includeGradePE: false,
-    currentLife: 0, currentSanity: 0, currentRC: 0, hunger: 0, instinct: 0,
+    currentLife: 0, currentSanity: 0, currentRC: 0, reactionEnemyBonus: false, hunger: 0, instinct: 0,
     anchors: [{ name: "", bond: "" }, { name: "", bond: "" }, { name: "", bond: "" }],
     appearance: "", history: "", personality: "", kaguneDescription: "", notes: "", conditions: "",
     inventory: [], damageContext: blankDamageContext(), vats: blankVats(), customBonuses: { distance: 0, hp: 0, rc: 0, sanity: 0, attributes: blankAttributeMap() },
@@ -254,6 +259,7 @@ export function normalizeCharacter(input: Partial<CharacterSheet>, sourceVersion
   return {
     ...base, ...input, id: input.id || base.id,
     vats: normalizeVats(input.vats),
+    reactionEnemyBonus: input.reactionEnemyBonus === true,
     earnedPE: normalizedEarnedPE,
     progressPE: normalizedProgressPE,
     baseAttributes: { ...base.baseAttributes, ...(input.baseAttributes || {}) },
@@ -1298,7 +1304,7 @@ export default function Home() {
             </section>
             <section className="section-block"><SectionTitle kicker="Estado atual" title="Recursos e parâmetros" aside={<button className="text-button" type="button" onClick={() => patchSheet({ currentLife: derived.maxLife, currentSanity: derived.maxSanity, currentRC: derived.maxRC })}>Preencher máximos</button>} />
               <div className="resource-grid"><ResourceCard label="Vida" current={sheet.currentLife} max={derived.maxLife} tone="life" onChange={(value) => patchSheet({ currentLife: value })} /><ResourceCard label="Sanidade" current={sheet.currentSanity} max={derived.maxSanity} tone="sanity" onChange={(value) => patchSheet({ currentSanity: value })} />{sheet.weaponKind === "kagune" && <ResourceCard label="RC" current={sheet.currentRC} max={derived.maxRC} tone="rc" onChange={(value) => patchSheet({ currentRC: value })} />}{showsHunger && <ResourceCard label="Fome" current={sheet.hunger} max={10} tone="hunger" onChange={(value) => patchSheet({ hunger: value })} />}{showsInstinct && <ResourceCard label="Carga instintiva" current={sheet.instinct} max={10} tone="instinct" onChange={(value) => patchSheet({ instinct: value })} />}</div>
-              <div className="stat-strip"><Stat label="RD" value={derived.rd} />{sheet.weaponKind === "kagune" && <Stat label="Alcance da Kagune" value={`${derived.distance} m`} />}{sheet.weaponKind === "kagune" && <Stat label="Dureza da Kagune" value={derived.kaguneDurability} />}{sheet.weaponKind === "kagune" && <Stat label="Regeneração / turno" value={derived.regeneration} />}<Stat label="Deslocamento" value={`${derived.movement} ${derived.movement === 1 ? "espaço" : "espaços"}`} /><Stat label="Carga" value={derived.carrying} />{hasDetermination && <Stat label="Determinação" value={derived.determination} />}<Stat label="Bloqueio" value={derived.blockTest} mono onCopy={() => copyTest(derived.blockTest, "block")} copied={copied === "block"} /><Stat label="Esquiva" value={derived.dodgeTest} mono onCopy={() => copyTest(derived.dodgeTest, "dodge")} copied={copied === "dodge"} /></div>
+              <div className="stat-strip"><button type="button" className="stat copyable" aria-pressed={sheet.reactionEnemyBonus} title={`${sheet.reactionEnemyBonus ? "Desativar" : "Ativar"} +3 reações: mais de 10 vezes o número de inimigos`} onClick={() => patchSheet({ reactionEnemyBonus: !sheet.reactionEnemyBonus })}><span>Reações por Rodada</span><strong>{reactionsPerRound(derived.activeAttributes.agilidade, sheet.grade, sheet.reactionEnemyBonus).toLocaleString("pt-BR")}</strong></button><Stat label="RD" value={derived.rd} />{sheet.weaponKind === "kagune" && <Stat label="Alcance da Kagune" value={`${derived.distance} m`} />}{sheet.weaponKind === "kagune" && <Stat label="Dureza da Kagune" value={derived.kaguneDurability} />}{sheet.weaponKind === "kagune" && <Stat label="Regeneração / turno" value={derived.regeneration} />}<Stat label="Deslocamento" value={`${derived.movement} ${derived.movement === 1 ? "espaço" : "espaços"}`} /><Stat label="Carga" value={derived.carrying} />{hasDetermination && <Stat label="Determinação" value={derived.determination} />}<Stat label="Bloqueio" value={derived.blockTest} mono onCopy={() => copyTest(derived.blockTest, "block")} copied={copied === "block"} /><Stat label="Esquiva" value={derived.dodgeTest} mono onCopy={() => copyTest(derived.dodgeTest, "dodge")} copied={copied === "dodge"} /></div>
               <div className="custom-resource-bonuses"><span>Ajustes adicionais da mesa</span><div><Field label="Distância adicional (m)"><input type="number" step="0.5" value={sheet.customBonuses.distance} onChange={(event) => patchCustomBonuses({ distance: Number(event.target.value) || 0 })} /></Field><Field label="Vida adicional"><input type="number" value={sheet.customBonuses.hp} onChange={(event) => patchCustomBonuses({ hp: Number(event.target.value) || 0 })} /></Field><Field label="RC adicional"><input type="number" value={sheet.customBonuses.rc} onChange={(event) => patchCustomBonuses({ rc: Number(event.target.value) || 0 })} /></Field><Field label="Sanidade adicional"><input type="number" value={sheet.customBonuses.sanity} onChange={(event) => patchCustomBonuses({ sanity: Number(event.target.value) || 0 })} /></Field></div></div>
             </section>
             <div className="vats-entry"><div><span>MONITOR CORPORAL</span><strong>{Object.values(sheet.vats.body).filter(r=>r.damage>0||r.effects.length||r.destroyed).length} / 6 regiões afetadas</strong><small>Vida regional é independente da Vida geral, como no VATS original.</small></div><button type="button" onClick={()=>setTab("vats")}>Abrir VATS ↗</button></div><section className="summary-columns">

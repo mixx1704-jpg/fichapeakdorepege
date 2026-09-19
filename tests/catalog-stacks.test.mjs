@@ -20,6 +20,15 @@ after(async () => {
 
 const data = await vite.ssrLoadModule("/app/data.ts");
 const rules = await vite.ssrLoadModule("/app/page.tsx");
+
+test("reactions apply the stated fractions and optional enemy bonus", () => {
+  assert.equal(rules.reactionsPerRound(8, 12), 9);
+  assert.equal(rules.reactionsPerRound(8, 12, true), 12);
+  assert.equal(rules.reactionsPerRound(3, 6), 6.25);
+  assert.equal(rules.reactionsPerRound(0, 2), 4.5);
+  assert.equal(rules.normalizeCharacter({}, 7).reactionEnemyBonus, false);
+  assert.equal(rules.normalizeCharacter({ reactionEnemyBonus: true }, 7).reactionEnemyBonus, true);
+});
 const kakujaRules = await vite.ssrLoadModule("/app/KakujaPanel.tsx");
 const customSkillRules = await vite.ssrLoadModule("/app/CustomSkillsPanel.tsx");
 
