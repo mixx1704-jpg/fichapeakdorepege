@@ -7,6 +7,32 @@ const {blankVats,normalizeVats,kaguneRange,penalties,passivePreview,vatsAction}=
 const {effectMaximum}=await vite.ssrLoadModule('/app/page.tsx');
 const {kaguneEffects}=await vite.ssrLoadModule('/app/data.ts');
 const cfg={maxLife:20,maxRC:40,rc:40,hunger:1,vigor:4,baseVigor:4,grade:4,regeneration:5,regenLevel:1,superior:0,cells:false,kami:false,hasKagune:true,durability:10,tails:2,powers:[],rd:2,movement:1,dodgeTest:'4d8++2>>5',blockTest:'4d8++2>>5'};
+test('nova sessão e novo combate não carregam cobrança de cura anterior',()=>{
+ for(const type of ['session','combat']){
+  const v=blankVats();v.meter=20;v.healedTurn=1;v.rcSpent=8;v.body.head.damage=10;v.fleshUsed=true;
+  const r=vatsAction(v,cfg,{type});
+  assert.equal(r.vats.meter,0);assert.equal(r.vats.rcSpent,0);assert.equal(r.vats.healedTurn,0);
+  assert.equal(r.vats.body.head.damage,10);assert.equal(r.currentRC,40);
+  assert.equal(r.vats.fleshUsed,type==='combat');
+  const healed=vatsAction(r.vats,cfg,{type:'passive'});
+  assert.equal(healed.currentRC,40);assert.equal(healed.vats.meter,5);
+ }
+});
+test('multiplicador extra altera cura efetiva e persiste sem permitir duas curas no turno',()=>{
+ for(const [multiplier,amount] of [[.5,2],[1,5],[2,10],[3,15]]){
+  let v=blankVats();v.body.head.damage=20;
+  v=vatsAction(v,cfg,{type:'passive-multiplier',amount:multiplier}).vats;
+  assert.equal(passivePreview(v,cfg).amount,amount);
+  assert.equal(normalizeVats(JSON.parse(JSON.stringify(v))).passiveMultiplier,multiplier);
+  const healed=vatsAction(v,cfg,{type:'passive'});
+  assert.equal(healed.vats.body.head.damage,20-amount);
+  const changed=vatsAction(healed.vats,cfg,{type:'passive-multiplier',amount:3});
+  assert.equal(vatsAction(changed.vats,cfg,{type:'passive'}).vats.body.head.damage,20-amount);
+ }
+ assert.equal(normalizeVats({}).passiveMultiplier,1);
+ assert.equal(normalizeVats({passiveMultiplier:-2}).passiveMultiplier,0);
+ assert.equal(normalizeVats({passiveMultiplier:'bad'}).passiveMultiplier,1);
+});
 test('alcance normal, Koukaku, bônus e limites de compra',()=>{
  assert.equal(kaguneRange('Rinkaku',4,0),5);assert.equal(kaguneRange('Koukaku',2,3),5);assert.equal(kaguneRange('Ukaku',0,-10),0);
  for(const [type,cap]of [['Ukaku',4],['Rinkaku',4],['Bikaku',4],['Koukaku',2]]) assert.equal(effectMaximum(kaguneEffects.find(e=>e.id==='aumentar-distancia'),{grade:2,kaguneType:type,selectedEvolutions:[]}),cap);

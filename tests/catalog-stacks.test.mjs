@@ -20,6 +20,8 @@ after(async () => {
 
 const data = await vite.ssrLoadModule("/app/data.ts");
 const rules = await vite.ssrLoadModule("/app/page.tsx");
+const kakujaRules = await vite.ssrLoadModule("/app/KakujaPanel.tsx");
+const customSkillRules = await vite.ssrLoadModule("/app/CustomSkillsPanel.tsx");
 
 test("reactions apply the stated fractions and optional enemy bonus", () => {
   assert.equal(rules.reactionsPerRound(8, 12), 9);
@@ -29,8 +31,6 @@ test("reactions apply the stated fractions and optional enemy bonus", () => {
   assert.equal(rules.normalizeCharacter({}, 7).reactionEnemyBonus, false);
   assert.equal(rules.normalizeCharacter({ reactionEnemyBonus: true }, 7).reactionEnemyBonus, true);
 });
-const kakujaRules = await vite.ssrLoadModule("/app/KakujaPanel.tsx");
-const customSkillRules = await vite.ssrLoadModule("/app/CustomSkillsPanel.tsx");
 
 function sheetAtGrade(grade, kaguneType = "Rinkaku") {
   return {
@@ -242,15 +242,15 @@ test("Kakuja durability adds normal Kakuhou durability before instability", () =
   assert.equal(kakujaRules.calculateKakujaDurability(151, 80, true), 173);
 });
 
-test("regeneration keeps Superior N4 at half Life per turn", () => {
+test("regeneration adds Grade once to normal and Superior healing", () => {
   assert.deepEqual(rules.calculateRegeneration(38, 14, 0, 4), {
     normalBase: 0,
     normal: 0,
-    superior: 19,
-    perTurn: 19,
+    superior: 33,
+    perTurn: 33,
   });
   assert.equal(rules.calculateRegeneration(38, 14, 3, 0).perTurn, 19);
-  assert.equal(rules.calculateRegeneration(38, 14, 4, 4).perTurn, 21);
+  assert.equal(rules.calculateRegeneration(38, 14, 4, 4).perTurn, 33);
 });
 
 test("migrates purchased Kakuja modules into an empty active Profile", () => {

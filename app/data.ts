@@ -363,7 +363,7 @@ export const kaguneEffects: KaguneEffect[] = [
   effect("clones-aco", "Clones de Aço", "Koukaku", 8, 3, "Ativo · 6 RC/clone", "Cada compra aumenta o máximo de clones até 3.", { requirement: "Koukaku Fragmentável N1", requiresEffects: [{ id: "koukaku-fragmentavel", minRank: 1 }] }),
   effect("bloqueio-ferro", "Bloqueio de Ferro", "Koukaku", 3, 1, "Passivo", "+1 dado em Vigor para Bloqueio."),
 
-  effect("regeneracao-superior", "Regeneração Anormal Superior", "Rinkaku", [3, 8, 15, 25], 4, "Passivo · Biológico", "Cure 1/6, 1/4 ou 1/2 dos PV; N4 permite cura total por 6 RC.", { costMode: "choice" }),
+  effect("regeneracao-superior", "Regeneração Anormal Superior", "Rinkaku", [3, 8, 15, 25], 4, "Passivo · Biológico", "Cure 1/6, 1/4 ou 1/2 dos PV + Grau; N4 permite cura total por 6 RC.", { costMode: "choice" }),
   effect("multiplas-caudas", "Múltiplas Caudas", "Rinkaku", 3, 4, "Passivo · Biológico", "Cada nível cria +1 cauda, chegando a 5 no N4 com a cauda inicial. Cada tentáculo usa o dano padrão da Kagune com −2 Passos. Se vários acertarem, multiplique cada grupo de dados e o Modificador de Dano pela quantidade de acertos. No N4, +1 Modificador de Acerto. Dureza −1 por nível."),
   effect("contra-ataque", "Contra Ataque", "Rinkaku", 3, 1, "Ativo · 2 RC", "Uma vez por rodada, contra-golpeie com -2 dados para superar o ataque."),
   effect("construto-dividido", "Construto Dividido", "Rinkaku", 3, 1, "Ativo · 2 RC", "Crie um construto de cena com dureza igual à metade do Grau."),

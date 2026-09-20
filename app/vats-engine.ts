@@ -5,13 +5,15 @@ export type RegionId = typeof regions[number][0];
 export const injuryGroups: Record<string, string[][]> = injuries;
 export const injuryByName = Object.fromEntries(Object.values(injuryGroups).flat().map(x => [x[0], x]));
 export type BodyRegion = { damage: number; destroyed: boolean; effects: string[] };
-export type VatsState = { turn: number; body: Record<RegionId, BodyRegion>; global: string[]; meter: number; healedTurn: number; kakuhouUntil: number; parts: { damage: number; ready: number; sacrificedUntil: number }[]; log: string[]; rcSpent: number; fleshUntil: number; fleshUsed: boolean; centipedeUntil: number; centipedeUsed: boolean; freeTailTurn: number; hydraTurn: number; axolotlTurn: number; fortressTurn: number; fortressBonus: number; sacrifices: number; growth: number; breathe: number; secondWind: boolean; angel: number };
-export const blankVats = (): VatsState => ({ turn:1, body:Object.fromEntries(regions.map(([id]) => [id,{damage:0,destroyed:false,effects:[]}])) as unknown as VatsState['body'],global:[],meter:0,healedTurn:0,kakuhouUntil:0,parts:[],log:[],rcSpent:0,fleshUntil:0,fleshUsed:false,centipedeUntil:0,centipedeUsed:false,freeTailTurn:0,hydraTurn:0,axolotlTurn:0,fortressTurn:0,fortressBonus:0,sacrifices:0,growth:0,breathe:0,secondWind:false,angel:0 });
+export type VatsState = { turn: number; passiveMultiplier: number; body: Record<RegionId, BodyRegion>; global: string[]; meter: number; healedTurn: number; kakuhouUntil: number; parts: { damage: number; ready: number; sacrificedUntil: number }[]; log: string[]; rcSpent: number; fleshUntil: number; fleshUsed: boolean; centipedeUntil: number; centipedeUsed: boolean; freeTailTurn: number; hydraTurn: number; axolotlTurn: number; fortressTurn: number; fortressBonus: number; sacrifices: number; growth: number; breathe: number; secondWind: boolean; angel: number };
+export const blankVats = (): VatsState => ({ turn:1, passiveMultiplier:1, body:Object.fromEntries(regions.map(([id]) => [id,{damage:0,destroyed:false,effects:[]}])) as unknown as VatsState['body'],global:[],meter:0,healedTurn:0,kakuhouUntil:0,parts:[],log:[],rcSpent:0,fleshUntil:0,fleshUsed:false,centipedeUntil:0,centipedeUsed:false,freeTailTurn:0,hydraTurn:0,axolotlTurn:0,fortressTurn:0,fortressBonus:0,sacrifices:0,growth:0,breathe:0,secondWind:false,angel:0 });
+export const normalizePassiveMultiplier = (value: unknown) => value == null || !Number.isFinite(Number(value)) ? 1 : Math.max(0, Number(value));
 const positive = (v: unknown) => Math.max(0, Number.isFinite(Number(v)) ? Number(v) : 0);
 export function normalizeVats(input?: Partial<VatsState>): VatsState {
  const base=blankVats(); if(!input || typeof input!=='object') return base;
  for(const key of Object.keys(base) as (keyof VatsState)[]) if(typeof base[key]==='number') (base as unknown as Record<string,unknown>)[key]=positive(input[key] ?? base[key]);
  base.turn=Math.max(1,Math.floor(base.turn));
+ base.passiveMultiplier=normalizePassiveMultiplier(input.passiveMultiplier);
  for(const [id] of regions){const r=input.body?.[id]; base.body[id]={damage:positive(r?.damage),destroyed:!!r?.destroyed,effects:Array.isArray(r?.effects)?r.effects.filter(e=>typeof e==='string'&&injuryByName[e]):[]};}
  base.global=Array.isArray(input.global)?input.global.filter(e=>injuryGroups.global.some(x=>x[0]===e)):[];
  base.parts=Array.isArray(input.parts)?input.parts.slice(0,50).map(p=>({damage:positive(p.damage),ready:positive(p.ready),sacrificedUntil:positive(p.sacrificedUntil)})):[];
@@ -31,13 +33,19 @@ export function penalties(v:VatsState) {
 export const adjustTest=(test:string,delta:number)=>test.replace(/^\d+d8/,s=>`${Math.max(0,parseInt(s)+delta)}d8`);
 export type VatsConfig={ maxLife:number; maxRC:number; rc:number; hunger:number; vigor:number; baseVigor:number; grade:number; regeneration:number; regenLevel:number; superior:number; cells:boolean; kami:boolean; hasKagune:boolean; durability:number; tails:number; powers:string[]; rd:number; movement:number; dodgeTest:string; blockTest:string; centipedeAllowed?:boolean; tests?:Record<string,string> };
 export type VatsAction={type:string; region?:RegionId; amount?:number; effect?:string; index?:number; enemy?:boolean; reduceRD?:boolean};
-export function passivePreview(v:VatsState,c:VatsConfig) {
+export function passiveRegeneration(v:Pick<VatsState, "turn" | "fleshUntil" | "passiveMultiplier">,c:Pick<VatsConfig, "regeneration" | "cells" | "maxLife" | "grade" | "kami">) {
  const biological=c.regeneration, cells=c.cells?Math.floor(c.maxLife/6)+(biological===0?c.grade:0):0;
- const amount=Math.max(0,Math.floor(biological*(c.kami||v.fleshUntil>v.turn?2:1)+cells));
+ const automaticMultiplier=c.kami||v.fleshUntil>v.turn?2:1;
+ const multiplier=normalizePassiveMultiplier(v.passiveMultiplier);
+ const amount=Math.max(0,Math.floor((biological*automaticMultiplier+cells)*multiplier));
+ return {amount,biological,cells,automaticMultiplier,multiplier};
+}
+export function passivePreview(v:VatsState,c:VatsConfig) {
+ const regeneration=passiveRegeneration(v,c),{amount}=regeneration;
  const total=regions.reduce((s,[id])=>s+(v.body[id].destroyed?0:Math.min(amount,Math.min(c.maxLife,v.body[id].damage))),0);
- const threshold=c.maxLife+c.regenLevel;
+ const threshold=Math.max(1,c.maxLife+c.regenLevel);
  const cost=(c.regenLevel>0?Math.floor((v.meter+total)/threshold)*2:0)+(total?penalties(v).regenCost:0);
- return {amount,total,cost,threshold};
+ return {...regeneration,total,cost,threshold};
 }
 export function vatsAction(source:VatsState,c:VatsConfig,a:VatsAction,roll:(s:number)=>number=s=>Math.floor(Math.random()*s)+1) {
  const v=normalizeVats(source); let rc=Math.min(c.maxRC,positive(c.rc)),hunger=c.hunger;
@@ -49,6 +57,8 @@ export function vatsAction(source:VatsState,c:VatsConfig,a:VatsAction,roll:(s:nu
  for(let i=v.parts.length;i<c.tails;i++)v.parts.push({damage:0,ready:0,sacrificedUntil:0});
  const r=a.region?v.body[a.region]:undefined,amount=positive(a.amount),p=v.parts[a.index??0];
  switch(a.type){
+ case 'passive-multiplier':v.passiveMultiplier=normalizePassiveMultiplier(a.amount);break;
+ case 'combat':v.meter=0;v.healedTurn=0;v.rcSpent=0;log('Novo combate: saldo de cura e gasto de RC zerados. Ferimentos e reserva de RC mantidos.');break;
  case 'damage': if(r){const reduced=Math.max(0,amount-(a.reduceRD?c.rd:0)-v.fortressBonus);const actual=Math.min(c.maxLife,reduced);v.fortressBonus=0;r.damage=Math.min(c.maxLife,r.damage+actual);if(r.damage>=c.maxLife&&a.region!=='head'&&a.region!=='torso')r.destroyed=true;log(`${regions.find(x=>x[0]===a.region)?.[1]}: ${actual} de dano líquido.`);}break;
  case 'heal':if(r&&!r.destroyed){r.damage=Math.max(0,Math.min(c.maxLife,r.damage)-amount);log(`Cura localizada: ${amount} PV.`);}break;
  case 'destroy':if(r){r.destroyed=true;r.damage=c.maxLife;log('Região destruída.');}break;
@@ -74,7 +84,7 @@ export function vatsAction(source:VatsState,c:VatsConfig,a:VatsAction,roll:(s:nu
  case 'angel':if(c.powers.includes('anjo-morte')&&v.angel<4){gain(2);v.angel+=2;log('Abate confirmado: +2 RC.');}break;
  case 'fortress':if(c.powers.includes('fortaleza-carne')&&v.fortressTurn!==v.turn&&spend(5)){v.fortressTurn=v.turn;v.fortressBonus=Math.floor(c.baseVigor/2);log(`Fortaleza de Carne: +${Math.floor(c.baseVigor/2)} RD para este golpe.`);}break;
  case 'rest':v.breathe=0;v.secondWind=false;log('Descanso: usos de Respirar Fundo e Segundo Fôlego renovados.');break;
- case 'session':v.fleshUsed=false;v.centipedeUsed=false;log('Nova sessão: habilidades por sessão renovadas.');break;
+ case 'session':v.fleshUsed=false;v.centipedeUsed=false;v.meter=0;v.healedTurn=0;v.rcSpent=0;log('Nova sessão: habilidades renovadas, saldo de cura e gasto de RC zerados. Ferimentos e reserva de RC mantidos.');break;
  }
  return {vats:v,currentRC:rc,hunger};
 }

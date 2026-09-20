@@ -114,4 +114,59 @@
 @media(max-width:650px){.context-test{grid-template-columns:1fr}.context-test>div{padding:14px}}
 .app-shell[data-theme="dark"] .section-block,.app-shell[data-theme="dark"] .pe-mini{background:var(--surface)}
 .app-shell[data-theme="dark"] .field input,.app-shell[data-theme="dark"] .field select,.app-shell[data-theme="dark"] .field textarea,.app-shell[data-theme="dark"] .character-switcher>select,.app-shell[data-theme="dark"] .custom-resource-bonuses input{background:var(--surface-strong)}
+/* VATS: a field medical dossier, with a stable anatomical index. */
+.vats-heading { border-bottom:3px double var(--line-strong); padding-bottom:26px; }
+.vats-heading h1 { font-size:82px; }
+.vats-grade { display:inline-block; margin-left:12px; padding:3px 8px; border:1px solid var(--line-strong); font:11px ui-monospace,monospace; color:var(--ink); }
+.vats-readings { background:var(--surface); border:1px solid var(--line); }
+.vats-readings>div:first-child { padding-left:22px; border-top:2px solid var(--wine); }
+.vats-readings>div { border-top:2px solid transparent; }
+.vats-readings span { font-size:10px; }
+.vats-readings b { font-size:32px; }
+.vats-layout { border-top:3px solid var(--line-strong); }
+.body-monitor { background:var(--paper); padding:24px; }
+.monitor-caption { gap:16px; line-height:1.6; font-size:10px; padding-bottom:14px; border-bottom:1px solid var(--line); }
+.monitor-caption .monitor-alert { color:var(--wine); text-align:right; }
+.anatomy { display:grid; grid-template-columns:minmax(96px,1fr) minmax(120px,1.7fr) minmax(96px,1fr); grid-template-rows:repeat(3,1fr); column-gap:8px; height:460px; align-items:center; }
+.anatomy svg { position:relative; width:100%; height:100%; left:auto; top:auto; grid-column:2; grid-row:1/4; }
+.vats-page .body-label { position:relative; inset:auto; width:100%; padding:12px 10px; text-align:left; border:1px solid var(--line); background:var(--surface); }
+.vats-page .body-label.selected { border-color:var(--wine); box-shadow:inset 3px 0 var(--wine); }
+.body-label.injured .integrity-bar>i { background:#b89c70; }
+.body-label.critical .integrity-bar>i { background:var(--wine); }
+.body-label>span { font-size:11px; }
+.body-label>strong { font-size:28px; }
+.body-label>small { font-size:10px; line-height:1.6; }
+.label-head { grid-column:1; grid-row:1; }.label-torso { grid-column:3; grid-row:1; }
+.label-armR { grid-column:1; grid-row:2; }.label-armL { grid-column:3; grid-row:2; }
+.label-legR { grid-column:1; grid-row:3; }.label-legL { grid-column:3; grid-row:3; }
+.monitor-legend { font-size:11px; gap:18px; padding-top:16px; border-top:1px solid var(--line); }
+.monitor-footnote { font-size:12px; }
+.region-inspector { padding:28px; border-top:2px solid var(--wine); }
+.region-inspector h2 { font-size:34px; }.region-hp>b { font-size:48px; }
+.vats-page .damage-controls { grid-template-columns:80px 1fr auto; }
+.vats-page .damage-controls button,.vats-check,.effect-picker select,.active-injuries p,.vats-help { font-size:12px; }
+.region-hp>small { font-size:10px; }.vats-check { gap:8px; }
+.vats-details { background:var(--surface); }.vats-details>summary { font-size:15px; padding:20px; }
+.regeneration-panel { border-top:3px solid var(--wine); }
+.regen-settings { display:grid; grid-template-columns:1.2fr 1fr; gap:28px; align-items:center; }
+.regen-settings h2 { margin:12px 0; font:48px/1 ui-monospace,monospace; }.regen-settings h2 small { font:12px Arial,sans-serif; color:var(--muted); }
+.regen-settings p { font-size:12px; line-height:1.8; color:var(--muted); max-width:480px; }
+.regen-grade-bonus { display:inline-block; font:11px/1.6 ui-monospace,monospace; color:var(--wine); }
+.regen-multiplier label { display:flex; align-items:center; justify-content:space-between; gap:12px; font-size:12px; }
+.regen-multiplier input { width:88px; font:20px ui-monospace,monospace; text-align:center; }
+.regen-presets { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:6px; margin-top:12px; }
+.vats-page .regen-presets button { padding:12px 4px; font-size:11px; }
+.regen-presets small { display:block; font:18px ui-monospace,monospace; margin-top:8px; }
+.vats-page .regen-presets button[aria-pressed="true"] { border-color:var(--wine); color:var(--wine); background:var(--wine-soft); }
+.regen-accounting { display:grid; grid-template-columns:repeat(3,1fr); border-block:1px solid var(--line); margin:24px 0 10px; }
+.regen-accounting>div { padding:16px 12px; border-right:1px solid var(--line); }.regen-accounting>div:last-child { border:0; }
+.regen-accounting span { display:block; font-size:11px; color:var(--muted); line-height:1.5; }
+.regen-accounting strong { display:block; margin-top:9px; font:22px ui-monospace,monospace; }
+.vats-footer { border-top:1px solid var(--line); padding-top:20px; font-size:12px; line-height:1.7; flex-wrap:wrap; }
+.vats-footer>span { max-width:430px; }.vats-footer>div { flex-wrap:wrap; }.vats-footer button { font-size:12px; }
+@media(max-width:650px){
+ .vats-heading h1{font-size:62px}.vats-grade{margin:6px 0 0;display:table}.vats-readings{grid-template-columns:1fr 1fr}.vats-readings>div,.vats-readings>div:first-child{padding:14px;border-bottom:1px solid var(--line)}.vats-readings span{font-size:10px}.vats-readings b{font-size:26px}.vats-readings small{font-size:11px}
+ .body-monitor{padding:16px}.anatomy{height:auto;grid-template-columns:1fr 1fr;grid-template-rows:280px repeat(3,auto);gap:10px}.anatomy svg{grid-column:1/-1;grid-row:1;width:100%;height:280px;left:auto}.body-axis{height:280px;top:0}.vats-page .body-label{width:100%;padding:12px}.label-head{grid-column:1;grid-row:2}.label-torso{grid-column:2;grid-row:2}.label-armR{grid-column:1;grid-row:3}.label-armL{grid-column:2;grid-row:3}.label-legR{grid-column:1;grid-row:4}.label-legL{grid-column:2;grid-row:4}
+ .region-inspector{padding:18px}.vats-page .damage-controls{grid-template-columns:68px 1fr auto;gap:6px}.regen-settings{grid-template-columns:1fr;gap:20px}.regen-accounting>div{padding:12px 6px}.regen-accounting strong{font-size:18px}.vats-detail-body{padding:16px}.regen-line>button{width:100%;margin:8px 0}.vats-footer>div{gap:6px}.monitor-caption{font-size:9px}
+}
 @media print{.dossier-heading h1{font-size:30px}.vats-page button,.damage-controls,.effect-picker,.region-minor,.vats-footer{display:none!important}.vats-layout{grid-template-columns:1fr 1fr}.anatomy{height:370px}.vats-page .body-label{display:block!important}.vats-details{break-inside:avoid}}
