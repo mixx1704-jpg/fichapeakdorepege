@@ -1,4 +1,5 @@
 import { combatManeuvers, expansionEvolutions, expansionKaguneEffects, expansionPerks } from "./expansion-data";
+import thousandPerks from "./thousand-perks.json";
 
 export { combatManeuvers };
 
@@ -80,6 +81,16 @@ export type CatalogCategory =
   | "Combate";
 
 export interface Perk {
+  supplement?: boolean;
+  sourceId?: string;
+  sourcePage?: number;
+  chapter?: number;
+  useType?: string;
+  location?: "vantagens" | "kakuhou";
+  organGroup?: string;
+  requiredWeapon?: "kagune" | "quinque" | "arata";
+  requiresKakuja?: boolean;
+  requiresRC?: boolean;
   id: string;
   name: string;
   category: CatalogCategory;
@@ -265,6 +276,7 @@ export const perks: Perk[] = [
   perk("inabalavel", "Inabalável", "Controle", 15, "Uma vez por sessão, reduza pela metade uma perda de Sanidade; uma vez a cada duas sessões, impeça uma nova Mácula.", { attribute: "controle", min: 9 }),
   perk("frio-neve", "Frio como a Neve", "Controle", 8, "+2 dados permanentes em testes de Controle.", { attribute: "controle", min: 10 }),
   ...expansionPerks,
+  ...(thousandPerks as Perk[]),
 ];
 
 export interface Drawback {

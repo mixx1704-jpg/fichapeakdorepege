@@ -23,6 +23,50 @@ const rules = await vite.ssrLoadModule("/app/page.tsx");
 const kakujaRules = await vite.ssrLoadModule("/app/KakujaPanel.tsx");
 const customSkillRules = await vite.ssrLoadModule("/app/CustomSkillsPanel.tsx");
 
+test("all 1000 supplement perks have unique IDs, even grades and correct destinations", () => {
+  const entries = data.perks.filter(p => p.supplement);
+  assert.equal(entries.length, 1000);
+  assert.equal(new Set(data.perks.map(p => p.id)).size, data.perks.length);
+  assert.deepEqual(entries.map(p=>p.sourceId), Array.from({length:1000},(_,i)=>`P${String(i+1).padStart(4,'0')}`));
+  assert.equal(entries.filter(p=>p.location==='vantagens').length,600);
+  assert.equal(entries.filter(p=>p.location==='kakuhou').length,400);
+  for (const p of entries) {
+    assert.equal(p.minGrade % 2,0,p.id);
+    assert.match(p.requirement,new RegExp(`Grau ${p.minGrade}\\+`));
+    assert.equal(p.maxRank,1);
+    assert.ok(p.description.length>20);
+    assert.ok(p.sourcePage>=8 && p.sourcePage<=107);
+    if(p.location==='vantagens') assert.equal(p.category,data.attributeLabels[p.attribute]);
+    else assert.ok(p.organGroup);
+  }
+  assert.equal(entries[0].minGrade,2);
+  assert.equal(entries[3].minGrade,4);
+  assert.equal(entries.find(p=>p.sourceId==='P0203').category,'Raciocínio');
+});
+
+test("supplement purchases enforce grade, organ, species and unlocks at full price", () => {
+  const p=id=>data.perks.find(p=>p.sourceId===id);
+  const base=rules.normalizeCharacter({grade:2,species:'ghoul',weaponKind:'kagune',kaguneType:'Ukaku'},7);
+  const attrs=Object.fromEntries(data.attributeKeys.map(k=>[k,10]));
+  assert.equal(rules.perkRequirementMet(p('P0004'),base,attrs),false);
+  assert.equal(rules.perkRequirementMet(p('P0004'),{...base,grade:4},attrs),true);
+  assert.equal(rules.perkRequirementMet(p('P0501'),base,attrs),true);
+  assert.equal(rules.perkRequirementMet(p('P0551'),base,attrs),false);
+  assert.equal(rules.perkRequirementMet(p('P0501'),{...base,weaponKind:'quinque'},attrs),false);
+  assert.equal(rules.perkRequirementMet(p('P0801'),{...base,weaponKind:'quinque'},attrs),true);
+  assert.equal(rules.perkRequirementMet(p('P0751'),{...base,grade:6},attrs),false);
+  assert.equal(rules.perkRequirementMet(p('P0751'),{...base,grade:6,kakuja:{...base.kakuja,cannibalPE:25}},attrs),true);
+  assert.equal(rules.perkRequirementMet(p('P0751'),{...base,grade:6,species:'quinx',kakuja:{...base.kakuja,cannibalPE:25}},attrs),false);
+  const chimera=data.perks.find(p=>p.supplement&&p.chapter===15&&p.kaguneTypes.length===2);
+  const compatible={...base,grade:14,kaguneType:chimera.kaguneTypes[0],kaguneSecondType:chimera.kaguneTypes[1]};
+  assert.equal(rules.perkRequirementMet(chimera,compatible,attrs),true);
+  assert.equal(rules.perkRequirementMet(chimera,{...compatible,kaguneSecondType:''},attrs),false);
+  assert.equal(rules.perkRequirementMet(chimera,{...compatible,species:'quinx'},attrs),false);
+  for(const species of ['humano','ghoul-dominante','quinx']) assert.equal(rules.perkCostForSheet(chimera,1,{...base,species}),chimera.cost);
+  const saved=rules.normalizeCharacter({...base,perks:{[chimera.id]:{rank:1}}},7);
+  assert.equal(saved.perks[chimera.id].rank,1);
+});
+
 test("reactions apply the stated fractions and optional enemy bonus", () => {
   assert.equal(rules.reactionsPerRound(8, 12), 9);
   assert.equal(rules.reactionsPerRound(8, 12, true), 12);
