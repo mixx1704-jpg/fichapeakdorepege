@@ -18,4 +18,5 @@ if (/<(?:script|link)\b[^>]*(?:src|href)="\.\/assets\//.test(html)) {
 }
 await mkdir(path.join(root, 'outputs'), { recursive: true });
 await writeFile(path.join(root, 'outputs', 'Ficha-Tokyo-Ghoul.html'), html);
+await writeFile(path.join(root, 'Ficha-Tokyo-Ghoul.html'), html);
 console.log('outputs/Ficha-Tokyo-Ghoul.html');
