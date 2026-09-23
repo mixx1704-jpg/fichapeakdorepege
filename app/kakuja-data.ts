@@ -33,6 +33,7 @@ export type KakujaProfile = {
 };
 
 export type KakujaState = {
+  selectedPerks: string[];
   name: string;
   description: string;
   cannibalPE: number;
@@ -167,6 +168,7 @@ export function blankKakujaState(): KakujaState {
     activationsSinceRest: 0,
     currentReserve: 0,
     selectedModules: [],
+    selectedPerks: [],
     selectedInstabilities: [],
     selectedElements: [],
     activeElement: "",

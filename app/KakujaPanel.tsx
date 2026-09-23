@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { KakujaPerksPanel } from "./KakujaPerksPanel";
 import {
   authorialAdjustments,
   authorialBases,
@@ -404,7 +405,7 @@ export function KakujaPanel({ grade, species, vigor, kaguneSteps, kaguneDurabili
 
     <div className="kakuja-tabs">
       <div className="kakuja-tab-list" role="tablist" aria-label="Seções da Kakuja">
-        {[["painel", "Painel"], ["modulos", "Módulos"], ["perfis", "Perfis"], ["elementos", "Elementos"], ["instabilidades", "Instabilidades"], ["autoral", "Autoral"], ["regras", "Regras"]].map(([id, label]) => <button key={id} type="button" role="tab" aria-selected={activeTab === id} className={activeTab === id ? "active" : ""} onClick={() => setActiveTab(id)}>{label}</button>)}
+        {[["painel", "Painel"], ["modulos", "Módulos"], ["perks", "Novas perks"], ["perfis", "Perfis"], ["elementos", "Elementos"], ["instabilidades", "Instabilidades"], ["autoral", "Autoral"], ["regras", "Regras"]].map(([id, label]) => <button key={id} type="button" role="tab" aria-selected={activeTab === id} className={activeTab === id ? "active" : ""} onClick={() => setActiveTab(id)}>{label}</button>)}
       </div>
 
       {activeTab === "painel" && <div className="kakuja-tab-content" role="tabpanel">
@@ -460,6 +461,7 @@ export function KakujaPanel({ grade, species, vigor, kaguneSteps, kaguneDurabili
         {issues.length > 0 && <section className="kakuja-issues"><strong>Verificações pendentes</strong><ul>{issues.map((issue) => <li key={issue}>{issue}</li>)}</ul></section>}
       </div>}
 
+      {activeTab === "perks" && <KakujaPerksPanel state={state} grade={grade} species={species} onChange={onChange}/>}
       {activeTab === "modulos" && <div className="kakuja-tab-content" role="tabpanel">
         <section className="catalog-toolbar kakuja-toolbar"><label className="search-field"><span>⌕</span><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Buscar nome, efeito ou categoria" /></label><select value={section} onChange={(event) => setSection(event.target.value)}>{sections.map((item) => <option key={item}>{item}</option>)}</select></section>
         <div className="catalog-summary"><span>{filteredModules.length} módulos documentados nesta seleção</span><strong>{state.selectedModules.length} comprados · {spent} PE-K</strong></div>

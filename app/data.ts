@@ -410,6 +410,9 @@ export interface Evolution {
 const evolution = (id: string, name: string, cost: number, grade: number, family: Evolution["family"], description: string, requirement?: string, options: Partial<Evolution> = {}): Evolution => ({ id, name, cost, grade, family, description, requirement, ...options });
 
 export const evolutions: Evolution[] = [
+  evolution("revestimento-exoesqueletico", "Revestimento Exoesquelético", 8, 10, "Koukaku", "8 PE por nível, até 8 upgrades. Cada compra aumenta o nível em 1 e concede +5 RD, criando uma carapaça mais durável ao redor dos ossos. No nível 8, o bônus total é +40 RD.", "Koukaku; Grau 10+; máximo 8 upgrades", { maxRank: 8 }),
+  evolution("tentaculos-incessantes", "Tentáculos Incessantes", 10, 10, "Rinkaku", "Você ganha momentum ao atacar por turnos seguidos, começando com 0 dados extras de acerto e chegando a um máximo de +2 dados de acerto ao atacar por dois turnos seguidos.", "Rinkaku; Grau 10+"),
+  evolution("mitose-tentacruel", "Mitose do Tentacruel", 20, 12, "Rinkaku", "Por 2 turnos, você pode aumentar sua quantidade de tentáculos para 2× a capacidade natural máxima. Cada tentáculo extra custa 2 RC; ao criar 4 extras, o custo aumenta para 4 RC, e ao criar 6 extras, para 6 RC por tentáculo. Criar 8 tentáculos extras custa 40 RC no total.", "Rinkaku; Grau 12+"),
   evolution("forma-especial", "Forma Especial", 8, 6, "Geral", "Defina com o Narrador uma propriedade coerente do Kakuhou. Fragmentos ofensivos: máximo 5, cada adicional sofre -1 Passo e -1 Modificador de Acerto."),
   evolution("imortal", "Imortal", 20, 6, "Geral", "Ao sofrer golpe fatal, gaste 10 RC e fique com 1 Vida, uma vez por rodada; não impede destruição do cérebro ou condições vitais específicas."),
   evolution("monstro", "Monstro", 10, 6, "Geral", "Na Kakuja Incompleta, manifeste uma característica da forma Completa; Sanidade Máxima -5 e Fome fixada em 9.", "Kakuja Incompleta", { requiresKakuja: "incomplete" }),

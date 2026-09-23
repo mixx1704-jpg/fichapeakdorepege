@@ -22,6 +22,37 @@ const data = await vite.ssrLoadModule("/app/data.ts");
 const rules = await vite.ssrLoadModule("/app/page.tsx");
 const kakujaRules = await vite.ssrLoadModule("/app/KakujaPanel.tsx");
 const customSkillRules = await vite.ssrLoadModule("/app/CustomSkillsPanel.tsx");
+const kp = await vite.ssrLoadModule("/app/kakuja-perks.ts");
+
+test("Kakuja Parte 1 imports 300 independent perks with valid dependencies", async () => {
+  const kd=await vite.ssrLoadModule('/app/kakuja-data.ts');
+  assert.equal(kp.kakujaPerks.length,300);
+  assert.equal(new Set(kp.kakujaPerks.map(p=>p.category)).size,12);
+  assert.deepEqual(kp.kakujaPerks.map(p=>p.sourceId),Array.from({length:300},(_,i)=>String(i+1).padStart(3,'0')));
+  for(const p of kp.kakujaPerks){
+    assert.equal(p.grade%2,0);assert.equal(p.cm,0);assert.ok(p.cost>0);assert.ok(p.effect.length>30);
+    for(const id of p.requiresModules)assert.ok(kd.kakujaModules.some(m=>m.id===id),id);
+    for(const id of p.requiresElements)assert.ok(kd.kakujaElements.some(e=>e.id===id),id);
+    for(const id of p.requiresPerks||[])assert.ok(kp.kakujaPerks.some(e=>e.id===id),id);
+  }
+});
+
+test("Kakuja perks enforce grade, awakening and elemental prerequisites and save once", () => {
+  const sheet=rules.normalizeCharacter({grade:8,species:'ghoul'},7);
+  const p=kp.kakujaPerks[0];
+  assert.ok(kp.kakujaPerkMissing(p,sheet.kakuja,8,'ghoul').includes('Kakuja desbloqueada'));
+  const ready={...sheet.kakuja,cannibalPE:25,selectedModules:['infusao-elemental'],selectedElements:['fogo']};
+  assert.deepEqual(kp.kakujaPerkMissing(p,ready,8,'ghoul'),[]);
+  assert.ok(kp.kakujaPerkMissing(p,ready,6,'ghoul').length);
+  assert.ok(kp.kakujaPerkMissing(p,ready,8,'quinx').length);
+  assert.ok(kp.kakujaPerkMissing(p,{...ready,selectedElements:[]},8,'ghoul').length);
+  const saved=rules.normalizeCharacter(JSON.parse(JSON.stringify({...sheet,kakuja:{...ready,selectedPerks:[p.id,p.id,'invalid']}})),7);
+  assert.deepEqual(saved.kakuja.selectedPerks,[p.id]);
+  assert.equal(kp.kakujaPerksCost(saved.kakuja.selectedPerks),12);
+  assert.equal(kp.kakujaPerksCost([]),0);
+  assert.deepEqual(sheet.kakuja.selectedPerks,[]);
+  assert.equal(saved.kakuja.extraKakujaPE,0);
+});
 
 test("all 1000 supplement perks have unique IDs, even grades and correct destinations", () => {
   const entries = data.perks.filter(p => p.supplement);
