@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { kakujaPerks, kakujaPerksCost } from "./kakuja-perks";
 import { KakujaPerksPanel } from "./KakujaPerksPanel";
 import {
   authorialAdjustments,
@@ -201,6 +202,7 @@ export function calculateKakujaDurability(kaguneDurability: number, ownDurabilit
 export function KakujaPanel({ grade, species, vigor, kaguneSteps, kaguneDurability, kaguneFamilies, state, onChange }: Props) {
   const [activeTab, setActiveTab] = useState("painel");
   const [search, setSearch] = useState("");
+  const [ownedOnly, setOwnedOnly] = useState(false);
   const [section, setSection] = useState("Todos");
   const [draftBase, setDraftBase] = useState<string>(authorialBases[0].id);
   const [draftAdjustments, setDraftAdjustments] = useState<string[]>([]);
@@ -322,9 +324,9 @@ export function KakujaPanel({ grade, species, vigor, kaguneSteps, kaguneDurabili
     instabilityRaw > instabilityCap ? `Instabilidades somam ${instabilityRaw} PE-K, mas o Grau permite reembolso máximo de ${instabilityCap}.` : "",
   ].filter(Boolean);
 
-  const sections = ["Todos", ...Array.from(new Set(kakujaModules.map((item) => item.section)))];
+  const sections = ["Todos", ...Array.from(new Set([...kakujaModules.map((item) => item.section), ...kakujaPerks.map((item) => item.category)]))];
   const query = search.trim().toLocaleLowerCase("pt-BR");
-  const filteredModules = kakujaModules.filter((item) => (section === "Todos" || item.section === section) && (!query || `${item.name} ${item.category} ${item.effect}`.toLocaleLowerCase("pt-BR").includes(query)));
+  const filteredModules = kakujaModules.filter((item) => (!ownedOnly || selectedSet.has(item.id)) && (section === "Todos" || item.section === section) && (!query || `${item.name} ${item.category} ${item.effect}`.toLocaleLowerCase("pt-BR").includes(query)));
 
   const patch = (next: Partial<KakujaState>) => onChange({ ...state, ...next });
   const togglePurchased = (module: KakujaModule) => {
@@ -405,7 +407,7 @@ export function KakujaPanel({ grade, species, vigor, kaguneSteps, kaguneDurabili
 
     <div className="kakuja-tabs">
       <div className="kakuja-tab-list" role="tablist" aria-label="Seções da Kakuja">
-        {[["painel", "Painel"], ["modulos", "Módulos"], ["perks", "Novas perks"], ["perfis", "Perfis"], ["elementos", "Elementos"], ["instabilidades", "Instabilidades"], ["autoral", "Autoral"], ["regras", "Regras"]].map(([id, label]) => <button key={id} type="button" role="tab" aria-selected={activeTab === id} className={activeTab === id ? "active" : ""} onClick={() => setActiveTab(id)}>{label}</button>)}
+        {[["painel", "Painel"], ["modulos", "Módulos & Perks"], ["perfis", "Perfis"], ["elementos", "Elementos"], ["instabilidades", "Instabilidades"], ["autoral", "Autoral"], ["regras", "Regras"]].map(([id, label]) => <button key={id} type="button" role="tab" aria-selected={activeTab === id} className={activeTab === id ? "active" : ""} onClick={() => setActiveTab(id)}>{label}</button>)}
       </div>
 
       {activeTab === "painel" && <div className="kakuja-tab-content" role="tabpanel">
@@ -461,10 +463,10 @@ export function KakujaPanel({ grade, species, vigor, kaguneSteps, kaguneDurabili
         {issues.length > 0 && <section className="kakuja-issues"><strong>Verificações pendentes</strong><ul>{issues.map((issue) => <li key={issue}>{issue}</li>)}</ul></section>}
       </div>}
 
-      {activeTab === "perks" && <KakujaPerksPanel state={state} grade={grade} species={species} onChange={onChange}/>}
       {activeTab === "modulos" && <div className="kakuja-tab-content" role="tabpanel">
         <section className="catalog-toolbar kakuja-toolbar"><label className="search-field"><span>⌕</span><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Buscar nome, efeito ou categoria" /></label><select value={section} onChange={(event) => setSection(event.target.value)}>{sections.map((item) => <option key={item}>{item}</option>)}</select></section>
-        <div className="catalog-summary"><span>{filteredModules.length} módulos documentados nesta seleção</span><strong>{state.selectedModules.length} comprados · {spent} PE-K</strong></div>
+        <label className="vats-check"><input type="checkbox" checked={ownedOnly} onChange={event => setOwnedOnly(event.target.checked)}/>Somente compradas</label>
+        <div className="catalog-summary"><span>Módulos e perks de Kakuja</span><strong>{state.selectedModules.length + state.selectedPerks.length} compradas · {spent} PE-K · {kakujaPerksCost(state.selectedPerks)} PE</strong></div>
         <section className="catalog-grid kakuja-module-grid">{filteredModules.map((item) => {
           const purchased = selectedSet.has(item.id); const allowed = moduleAllowed(item); const requirement = moduleRequirementMet(item); const missing = missingModuleRequirements(item); const foreign = moduleIsForeign(item); const cost = actualCost(item, dominant, foreign);
           return <article key={item.id} className={`catalog-card kakuja-module-card ${purchased ? "selected" : ""} ${!allowed || !requirement ? "unavailable" : ""}`}>
@@ -473,7 +475,7 @@ export function KakujaPanel({ grade, species, vigor, kaguneSteps, kaguneDurabili
             <div className="requirement">{item.category}{foreign && <em>Bikaku estrangeiro: +2 CB</em>}{grade < item.grade && <em>Exige Grau {item.grade}</em>}{item.minFamilies && familySet.size < item.minFamilies && <em>Exige {item.minFamilies} tipos reais de Kakuhou</em>}{!allowed && grade >= item.grade && !(item.minFamilies && familySet.size < item.minFamilies) && <em>Tipo incompatível</em>}{missing.map((name) => <em key={name}>Falta: {name}</em>)}{purchased && <em>{activeIds.includes(item.id) ? "Aplicado no Perfil ativo" : "Comprado; manifeste na aba Perfis"}</em>}</div>
             <div className="card-actions solo"><button type="button" className={purchased ? "remove" : "add"} disabled={!purchased && (!allowed || !requirement || !awakened)} onClick={() => togglePurchased(item)}>{purchased ? "Remover" : "Comprar"}</button></div>
           </article>;
-        })}</section>
+        })}<KakujaPerksPanel state={state} grade={grade} species={species} onChange={onChange} search={search} category={section} ownedOnly={ownedOnly}/></section>
       </div>}
 
       {activeTab === "perfis" && <div className="kakuja-tab-content" role="tabpanel">
