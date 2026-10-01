@@ -436,3 +436,19 @@ test("removes extra damage-die language and separates Kakuja accuracy from damag
   assert.match(kakujaSource, /"railgun-de-tungstenio": \{ mode: "toggle", steps: 10, accuracy: 6 \}/);
   assert.doesNotMatch(kakujaSource, /"railgun-de-tungstenio": \{[^\n]*modifier:/);
 });
+
+test("Rollem criticals and dynamic weights preserve dice and natural-one failures", async () => {
+  assert.equal(rules.formatTest(10, 5), "10d8!8++5>>7");
+  assert.equal(rules.formatTest(11, 7), "11d8!8++7>>9");
+  assert.equal(rules.formatTest(5, 2), "5d8!8++2>>5");
+  assert.equal(rules.formatTest(0, 0, true), "2d8!8>>5");
+  assert.equal(rules.formatTest(-2, 0), "1d8!8>>5");
+  for (let bonus = 0; bonus <= 20; bonus++) {
+    const weight = Number(rules.formatTest(10, bonus).split(">>")[1]);
+    assert.ok(1 + bonus < weight);
+    assert.ok(weight >= 5);
+    if (bonus >= 3) assert.equal(2 + bonus, weight);
+  }
+  const { adjustTest } = await vite.ssrLoadModule("/app/vats-engine.ts");
+  assert.equal(adjustTest(rules.formatTest(10, 5), -2), "8d8!8++5>>7");
+});
