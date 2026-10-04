@@ -24,6 +24,32 @@ const kakujaRules = await vite.ssrLoadModule("/app/KakujaPanel.tsx");
 const customSkillRules = await vite.ssrLoadModule("/app/CustomSkillsPanel.tsx");
 const kp = await vite.ssrLoadModule("/app/kakuja-perks.ts");
 
+test("Bikaku unlocks three purchases without granting skills and preserves other requirements", () => {
+  const sheet = rules.normalizeCharacter({species:'ghoul',weaponKind:'kagune',kaguneType:'Bikaku',grade:6,selectedEvolutions:['conveniencia-instintiva'],instinctiveChoices:['anjo','fenix','ataque-extra','adaptacao','anjo','taiji'],taijiUses:9},7);
+  assert.deepEqual(sheet.instinctiveChoices,['anjo','fenix','ataque-extra']);
+  assert.deepEqual(sheet.selectedEvolutions,['conveniencia-instintiva']);
+  assert.equal(sheet.taijiUses,5);
+  const phoenix=data.evolutions.find(e=>e.id==='fenix');
+  assert.equal(rules.evolutionRequirementStatus(phoenix,sheet).met,true);
+  assert.equal(rules.evolutionCostsForSheet(phoenix,1,'ghoul').paidTotal,10);
+  assert.equal(rules.evolutionRequirementStatus(phoenix,{...sheet,selectedEvolutions:[]}).met,false);
+  assert.equal(rules.evolutionRequirementStatus(data.evolutions.find(e=>e.id==='anjo'),sheet).met,false);
+  assert.equal(rules.evolutionRequirementStatus(data.evolutions.find(e=>e.id==='ataque-extra'),sheet).met,false);
+  assert.equal(rules.evolutionRequirementStatus(data.evolutions.find(e=>e.id==='ataque-extra'),{...sheet,grade:8}).met,true);
+  const saved=rules.normalizeCharacter(JSON.parse(JSON.stringify(sheet)),7);
+  assert.deepEqual(saved.instinctiveChoices,sheet.instinctiveChoices);
+  for(const id of ['taiji','conveniencia-instintiva']) assert.equal(data.evolutions.find(e=>e.id===id).cost,5);
+});
+
+test("cannibalization adds to PE-K without spending common PE", async () => {
+  const source=await readFile(path.join(root,'app/KakujaPanel.tsx'),'utf8');
+  const expression=source.match(/const budget = (.*);/)[1];
+  const budget=Function('awakened','state','instabilityCredit',`return ${expression}`);
+  assert.equal(budget(true,{cannibalPE:25,extraKakujaPE:0},0),31);
+  assert.equal(budget(true,{cannibalPE:60,extraKakujaPE:4},2),72);
+  assert.equal(budget(false,{cannibalPE:24,extraKakujaPE:0},0),0);
+});
+
 test("Kakuja Parte 1 imports 300 independent perks with valid dependencies", async () => {
   const kd=await vite.ssrLoadModule('/app/kakuja-data.ts');
   assert.equal(kp.kakujaPerks.length,300);

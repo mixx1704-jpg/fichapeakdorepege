@@ -104,6 +104,8 @@ type CharacterSheet = {
   sourceGhoulGrade: number;
   effects: Record<string, RankedChoice>;
   selectedEvolutions: string[];
+  instinctiveChoices: string[];
+  taijiUses: number;
   confirmedRequirements: Record<string, boolean>;
   extraPE: number;
   earnedPE: number;
@@ -221,7 +223,7 @@ function newCharacter(name = "Novo personagem"): CharacterSheet {
     secondPhysicalBonus: "agilidade", artificialDominantBlend: false,
     perks: {}, customPerks: [], customSkills: [], drawbacks: {}, weaponKind: "nenhum", kaguneName: "", kaguneType: "Rinkaku",
     kaguneSecondType: "", kaguneThirdType: "", kaguneFourthType: "", kaguneActive: false, quinxFrame: 2, sourceGhoulGrade: 2,
-    effects: {}, selectedEvolutions: [], confirmedRequirements: {}, extraPE: 0, earnedPE: 0, progressPE: 0, includeGradePE: false,
+    effects: {}, selectedEvolutions: [], instinctiveChoices: [], taijiUses: 0, confirmedRequirements: {}, extraPE: 0, earnedPE: 0, progressPE: 0, includeGradePE: false,
     currentLife: 0, currentSanity: 0, currentRC: 0, reactionEnemyBonus: false, hunger: 0, instinct: 0,
     anchors: [{ name: "", bond: "" }, { name: "", bond: "" }, { name: "", bond: "" }],
     appearance: "", history: "", personality: "", kaguneDescription: "", notes: "", conditions: "",
@@ -268,6 +270,8 @@ export function normalizeCharacter(input: Partial<CharacterSheet>, sourceVersion
     extraDice: { ...base.extraDice, ...(input.extraDice || {}) },
     perks: input.perks || {}, customPerks: input.customPerks || [], customSkills: normalizeCustomSkills(input.customSkills), drawbacks: input.drawbacks || {}, effects: input.effects || {},
     selectedEvolutions: normalizeEvolutionSelections(input.selectedEvolutions || []),
+    instinctiveChoices: normalizeInstinctiveChoices(input.instinctiveChoices),
+    taijiUses: Math.max(0, Math.min(5, Math.floor(Number(input.taijiUses) || 0))),
     confirmedRequirements: input.confirmedRequirements || {},
     anchors: input.anchors?.length ? input.anchors.slice(0, 3) : base.anchors,
     inventory: input.inventory || [],
@@ -496,6 +500,14 @@ export function effectRequirementStatus(item: KaguneEffect, sheet: CharacterShee
   return { met: missing.length === 0, missing };
 }
 
+export function normalizeInstinctiveChoices(value: unknown): string[] {
+  return Array.isArray(value) ? [...new Set(value)].filter((id): id is string => typeof id === "string" && evolutions.some(item => item.id === id && ["Ukaku", "Koukaku", "Rinkaku"].includes(item.family))).slice(0, 3) : [];
+}
+
+export function instinctiveAccess(item: Evolution, sheet: CharacterSheet) {
+  return sheet.weaponKind === "kagune" && kaguneFamiliesForSheet(sheet).has("Bikaku") && sheet.selectedEvolutions.includes("conveniencia-instintiva") && normalizeInstinctiveChoices(sheet.instinctiveChoices).includes(item.id);
+}
+
 export function evolutionRequirementStatus(
   item: Evolution,
   sheet: CharacterSheet,
@@ -505,7 +517,9 @@ export function evolutionRequirementStatus(
   const missing: string[] = [];
   if (sheet.grade < item.grade) missing.push(`Grau ${item.grade}`);
   const families = kaguneFamiliesForSheet(sheet);
-  if (item.kaguneTypes) item.kaguneTypes.filter((family) => !families.has(family)).forEach((family) => missing.push(`Kakuhou ${family}`));
+  const foreignAccess = instinctiveAccess(item, sheet);
+  if (["Ukaku", "Koukaku", "Rinkaku", "Bikaku"].includes(item.family) && !families.has(item.family as KaguneFamily) && !foreignAccess) missing.push(`Kakuhou ${item.family}`);
+  if (item.kaguneTypes) item.kaguneTypes.filter((family) => !families.has(family) && !(foreignAccess && family === item.family)).forEach((family) => missing.push(`Kakuhou ${family}`));
   if (item.minKaguneTypes && families.size < item.minKaguneTypes) missing.push(`${item.minKaguneTypes} tipos de Kakuhou`);
   const attributes = providedAttributes || permanentAttributesForSheet(sheet).permanentAttributes;
   for (const [key, value] of Object.entries(item.attributeRequirements || {})) {
@@ -564,7 +578,7 @@ function pruneStructuralDependencies(sheet: CharacterSheet): CharacterSheet {
       const item = evolutions.find((entry) => entry.id === id);
       const missingEffect = item?.requiresEffects?.some((dependency) => (effects[dependency.id]?.rank || 0) < (dependency.minRank || 1));
       const missingEvolution = item?.requiresEvolutions?.some((dependency) => !evolutionIds.has(dependency));
-      if (missingEffect || missingEvolution) {
+      if (missingEffect || missingEvolution || (item && normalizeInstinctiveChoices(sheet.instinctiveChoices).includes(id) && !kaguneFamiliesForSheet(candidate).has(item.family as KaguneFamily) && !instinctiveAccess(item, candidate))) {
         selectedEvolutions = selectedEvolutions.filter((entry) => entry !== id);
         changed = true;
       }
@@ -611,6 +625,8 @@ export default function Home() {
   const [perkView, setPerkView] = useState<"vantagens" | "desvantagens">("vantagens");
   const [effectSearch, setEffectSearch] = useState("");
   const [effectFamily, setEffectFamily] = useState("Compatíveis");
+  const [taijiFrom, setTaijiFrom] = useState<AttributeKey>("forca");
+  const [taijiTo, setTaijiTo] = useState<AttributeKey>("agilidade");
   const [kakuhouView, setKakuhouView] = useState<"oficiais" | "autorais">("oficiais");
   const [showMenu, setShowMenu] = useState(false);
   const [peGainInput, setPeGainInput] = useState(0);
@@ -1021,7 +1037,7 @@ export default function Home() {
   }, [effectSearch]);
   const filteredEvolutions = useMemo(() => {
     const families = kaguneFamiliesForSheet(sheet);
-    return evolutions.filter((item) => item.family === "Geral" || item.family === "Quimera" || families.has(item.family as KaguneFamily));
+    return evolutions.filter((item) => item.family === "Geral" || item.family === "Quimera" || families.has(item.family as KaguneFamily) || instinctiveAccess(item, sheet) || sheet.selectedEvolutions.includes(item.id));
   }, [sheet]);
 
   const copyTest = async (formula: string, key: string) => {
@@ -1112,7 +1128,7 @@ export default function Home() {
   });
   const updateEvolutionRank = (item: Evolution, delta: number) => updateSheet((current) => {
     const rank = evolutionRank(current.selectedEvolutions, item.id);
-    if (!rank) return current;
+    if (!rank || (delta > 0 && !evolutionRequirementStatus(item, current).met)) return current;
     const nextRank = Math.max(1, Math.min(item.maxRank || 1, rank + delta));
     return pruneStructuralDependencies({
       ...current,
@@ -1274,7 +1290,7 @@ export default function Home() {
     tails: sheet.weaponKind === "kagune" ? Math.max(1, derived.rinkakuTailCount) : 0,
     powers: [...sheet.selectedEvolutions,...Object.keys(sheet.perks)],rd:derived.rd,movement:derived.movement,dodgeTest:derived.dodgeTest,blockTest:derived.blockTest,tests:derived.attributeTests,
   };
-  const actVats = (action: VatsAction) => updateSheet(current => ({...current, ...vatsAction(current.vats, {...vatsConfig,rc:current.currentRC,hunger:current.hunger}, action), ...(action.type === "kakuhou" ? {kaguneActive:false} : {})}));
+  const actVats = (action: VatsAction) => updateSheet(current => ({...current, ...(action.type === "session" ? {taijiUses:0} : {}), ...vatsAction(current.vats, {...vatsConfig,rc:current.currentRC,hunger:current.hunger}, action), ...(action.type === "kakuhou" ? {kaguneActive:false} : {})}));
 
   const navItems: [TabId, string, string][] = [
     ["resumo", "01", "Resumo"],
@@ -1390,6 +1406,15 @@ export default function Home() {
                 const acquired = sheet.perks[item.id]; const eligible = perkRequirementMet(item, sheet, derived.permanentAttributes); const price = perkCostForSheet(item, acquired?.rank || 1, sheet);
                 return <CatalogCard key={item.id} selected={Boolean(acquired)} unavailable={!eligible} tone={item.category.toLocaleLowerCase("pt-BR")}><div className="catalog-card-top"><span>Kakuhou · Quimera</span><b>{price} PE{sheet.species === "ghoul-dominante" ? ` (${rankCost(item.cost, acquired?.rank || 1, item.costMode)} base)` : ""}</b></div><h3>{item.name}</h3><p>{item.description}</p><div className="requirement">{item.requirement || "Disponível"}{sheet.species === "ghoul-dominante" && <em>−3 PE de Kagune Superior</em>}{!eligible && <em>Requisito pendente</em>}</div><div className="card-actions">{acquired && (item.maxRank || 1) > 1 && <RankControl rank={acquired.rank} max={item.maxRank || 1} onDown={() => updatePerkRank(item, -1)} onUp={() => updatePerkRank(item, 1)} />}<button type="button" className={acquired ? "remove" : "add"} disabled={!eligible && !acquired} onClick={() => togglePerk(item)}>{acquired ? "Remover" : "Adicionar"}</button></div></CatalogCard>;
               })}</div></section>}
+              {sheet.weaponKind === "kagune" && kaguneFamiliesForSheet(sheet).has("Bikaku") && sheet.selectedEvolutions.includes("conveniencia-instintiva") && <section className="section-block">
+                <h2>Conveniência Instintiva · {sheet.instinctiveChoices.length}/3 escolhas</h2>
+                <p>Selecione três evoluções de outros tipos. Selecionar não concede a habilidade nem cobra PE: compre cada uma no catálogo abaixo, pagando seu custo e cumprindo os demais requisitos. Para trocar uma escolha comprada, remova primeiro sua compra.</p>
+                <div className="instinctive-table"><table><thead><tr><th>Selecionar</th><th>Evolução</th><th>Tipo</th><th>Custo inicial</th><th>Descrição e requisitos</th></tr></thead><tbody>{evolutions.filter(item => ["Ukaku", "Koukaku", "Rinkaku"].includes(item.family) && (!kaguneFamiliesForSheet(sheet).has(item.family as KaguneFamily) || sheet.instinctiveChoices.includes(item.id))).map(item => {
+                  const chosen = sheet.instinctiveChoices.includes(item.id); const owned = sheet.selectedEvolutions.includes(item.id);
+                  return <tr key={item.id}><td><input type="checkbox" aria-label={`Liberar compra de ${item.name}`} checked={chosen} disabled={owned || (!chosen && sheet.instinctiveChoices.length >= 3)} onChange={() => patchSheet({instinctiveChoices: chosen ? sheet.instinctiveChoices.filter(id => id !== item.id) : [...sheet.instinctiveChoices, item.id]})} /></td><th scope="row">{item.name}<small>{owned ? "Comprada" : chosen ? "Compra liberada" : "Não selecionada"}</small></th><td>{item.family}</td><td>{evolutionCostsForSheet(item, 1, sheet.species).paidTotal} PE</td><td>{item.description}<small>Grau {item.grade}+{item.requirement ? ` · ${item.requirement}` : ""}</small></td></tr>;
+                })}</tbody></table></div>
+              </section>}
+              {sheet.weaponKind === "kagune" && sheet.selectedEvolutions.includes("taiji") && <section className="section-block"><h2>Taiji · {5 - sheet.taijiUses}/5 usos restantes</h2><p>Escolha o teste e o atributo físico que será usado no lugar dele.</p><div className="field-grid four"><Field label="Teste original"><select value={taijiFrom} onChange={event => setTaijiFrom(event.target.value as AttributeKey)}>{physicalAttributes.map(key => <option key={key} value={key}>{attributeLabels[key]}</option>)}</select></Field><Field label="Usar atributo"><select value={taijiTo} onChange={event => setTaijiTo(event.target.value as AttributeKey)}>{physicalAttributes.map(key => <option key={key} value={key}>{attributeLabels[key]}</option>)}</select></Field></div><p>{attributeLabels[taijiFrom]} com {attributeLabels[taijiTo]}: <strong>{derived.attributeTests[taijiTo]}</strong></p><div className="card-actions"><button type="button" disabled={sheet.taijiUses >= 5 || taijiFrom === taijiTo} onClick={() => { patchSheet({taijiUses: Math.min(5, sheet.taijiUses + 1)}); copyTest(derived.attributeTests[taijiTo], "taiji"); }}>{copied === "taiji" ? "Copiado!" : "Usar Taiji e copiar teste"}</button><button type="button" onClick={() => patchSheet({taijiUses: 0})}>Nova sessão · restaurar 5 usos</button></div></section>}
               {sheet.weaponKind === "kagune" && <section id="kakuhou-evolucoes"><div className="attribute-section-head"><div><span>Evoluções na Kakuhou</span><p>Inclui as novas Evoluções Quiméricas da expansão</p></div><strong>{derived.evolutionPE} PE</strong></div><div className="catalog-grid evolutions">{filteredEvolutions.map((item) => { const rank = evolutionRank(sheet.selectedEvolutions, item.id); const selected = rank > 0; const requirementStatus = evolutionRequirementStatus(item, sheet, derived.permanentAttributes, derived.maxSanity); const eligible = requirementStatus.met; const shownRank = Math.max(1, rank); const costs = evolutionCostsForSheet(item, shownRank, sheet.species); const maxCosts = evolutionCostsForSheet(item, item.maxRank || 1, sheet.species); const maxRank = item.maxRank || 1; return <CatalogCard key={item.id} selected={selected} unavailable={!eligible} tone={familyColor(item.family)}><div className="catalog-card-top"><span>{item.family} · Grau {item.grade}+</span><b>{costs.paidTotal} PE{costs.paidTotal !== costs.baseTotal ? ` (${costs.baseTotal} base)` : ""}</b></div><h3>{item.name}</h3><p>{item.description}</p><div className="requirement">{item.requirement || (eligible ? "Disponível" : `Requer Grau ${item.grade}`)}{maxRank > 1 && <em>Custos: {maxCosts.paidIncrements.map((cost, index) => `N${index + 1} ${cost} PE`).join(" · ")}</em>}{sheet.species === "ghoul-dominante" && <em>−3 PE de Kagune Superior por compra</em>}{requirementStatus.missing.map((missing) => <em key={missing}>Falta: {missing}</em>)}</div>{item.narrativeRequirement && !selected && <label className="requirement-confirm"><input type="checkbox" checked={Boolean(sheet.confirmedRequirements[`evolution:${item.id}`])} onChange={(event) => patchSheet({ confirmedRequirements: { ...sheet.confirmedRequirements, [`evolution:${item.id}`]: event.target.checked } })} /><span>Requisito “{item.narrativeRequirement}” confirmado pelo Narrador</span></label>}<div className={`card-actions ${maxRank === 1 ? "solo" : ""}`}>{selected && maxRank > 1 && <RankControl rank={rank} max={maxRank} onDown={() => updateEvolutionRank(item, -1)} onUp={() => updateEvolutionRank(item, 1)} />}<button type="button" className={selected ? "remove" : "add"} disabled={!eligible && !selected} onClick={() => toggleEvolution(item)}>{selected ? "Remover" : "Adicionar"}</button></div></CatalogCard>; })}</div></section>}
             </>}
             <div id="kakuhou-perks">

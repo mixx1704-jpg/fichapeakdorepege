@@ -265,7 +265,7 @@ export function KakujaPanel({ grade, species, vigor, kaguneSteps, kaguneDurabili
   }, 0);
   const customSpent = state.customModules.reduce((total, item) => total + actualCost(item, dominant), 0);
   const spent = modulesSpent + customSpent;
-  const budget = awakened ? 6 + Math.max(0, state.extraKakujaPE) + instabilityCredit : 0;
+  const budget = awakened ? 6 + Math.max(0, state.cannibalPE) + Math.max(0, state.extraKakujaPE) + instabilityCredit : 0;
   const remaining = budget - spent;
   const profileCM = activeModules.reduce((total, item) => total + item.cm, 0) + activeCustomModules.reduce((total, item) => total + item.cm, 0);
   const allowedCM = cap.cm + (state.overload ? 2 : 0);
@@ -414,7 +414,7 @@ export function KakujaPanel({ grade, species, vigor, kaguneSteps, kaguneDurabili
         <section className="section-block kakuja-identity">
           <div className="field-grid four">
             <label className="field"><span>Nome / epíteto</span><input value={state.name} onChange={(event) => patch({ name: event.target.value })} placeholder="A Centopeia Rubra" /></label>
-            <label className="field"><span>PE por canibalização</span><input type="number" min="0" value={state.cannibalPE} onChange={(event) => patch({ cannibalPE: clamp(Number(event.target.value), 0, 999) })} /></label>
+            <label className="field"><span>PE por canibalização → PE-K</span><input type="number" min="0" value={state.cannibalPE} onChange={(event) => patch({ cannibalPE: clamp(Number(event.target.value), 0, 999) })} /></label>
             <label className="field"><span>PE comum investido</span><input type="number" min="0" value={state.extraKakujaPE} onChange={(event) => patch({ extraKakujaPE: clamp(Number(event.target.value), 0, 999) })} /></label>
             <label className="field"><span>Ativações desde descanso</span><input type="number" min="0" value={state.activationsSinceRest} onChange={(event) => patch({ activationsSinceRest: clamp(Number(event.target.value), 0, 99) })} /></label>
           </div>
@@ -427,7 +427,7 @@ export function KakujaPanel({ grade, species, vigor, kaguneSteps, kaguneDurabili
 
         <div className="kakuja-metric-grid">
           <article><span>Estado</span><strong>{complete ? "Completa" : awakened ? "Incompleta" : "Adormecida"}</strong><small>{complete && !state.selectedInstabilities.includes("mente-rachada") ? "Sem teste quando usada sozinha" : `Controle MD ${controlMD}`}</small></article>
-          <article><span>Orçamento</span><strong>{remaining} PE-K</strong><small>{spent} gastos de {budget} disponíveis</small></article>
+          <article><span>Orçamento</span><strong>{remaining} PE-K</strong><small>{spent} gastos de {budget} disponíveis · {state.cannibalPE} por canibalização</small></article>
           <article><span>Perfil ativo</span><strong>{profileCM}/{allowedCM} CM</strong><small>{activeProfile?.name || "Perfil 1"}</small></article>
           <article><span>Dureza total da Kakuja</span><strong>{durability}</strong><small>{kaguneDurability} da Kakuhou + {ownDurability} própria{state.selectedInstabilities.includes("carapaca-fragil") ? " −25%" : ""}</small></article>
           <article><span>Reserva Kakuja</span><strong>{state.currentReserve}/{reserveMax} RC</strong><small>Separada do RC da Kagune</small></article>

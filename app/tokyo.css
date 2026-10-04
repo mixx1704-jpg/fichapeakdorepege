@@ -172,3 +172,5 @@
  .region-inspector{padding:18px}.vats-page .damage-controls{grid-template-columns:68px 1fr auto;gap:6px}.regen-settings{grid-template-columns:1fr;gap:20px}.regen-accounting>div{padding:12px 6px}.regen-accounting strong{font-size:18px}.vats-detail-body{padding:16px}.regen-line>button{width:100%;margin:8px 0}.vats-footer>div{gap:6px}.monitor-caption{font-size:9px}
 }
 @media print{.dossier-heading h1{font-size:30px}.vats-page button,.damage-controls,.effect-picker,.region-minor,.vats-footer{display:none!important}.vats-layout{grid-template-columns:1fr 1fr}.anatomy{height:370px}.vats-page .body-label{display:block!important}.vats-details{break-inside:avoid}}
+
+.instinctive-table{overflow-x:auto;max-height:520px;overflow-y:auto;margin-top:16px}.instinctive-table table{width:100%;border-collapse:collapse;font-size:13px}.instinctive-table th,.instinctive-table td{text-align:left;padding:12px;border-bottom:1px solid #7775;min-width:100px}.instinctive-table td:last-child{min-width:260px}.instinctive-table small{display:block;opacity:.7;margin-top:6px}.instinctive-table input{width:18px;height:18px}
