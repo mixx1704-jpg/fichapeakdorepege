@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
+import { KakujaImageSlot } from "./KakujaImages";
 import { kakujaPerks, kakujaPerksCost } from "./kakuja-perks";
 import { KakujaPerksPanel } from "./KakujaPerksPanel";
 import {
@@ -210,6 +211,8 @@ export function KakujaPanel({ grade, species, vigor, kaguneSteps, kaguneDurabili
   const [draftEffect, setDraftEffect] = useState("");
   const [draftGrade, setDraftGrade] = useState(6);
 
+  const latestState = useRef(state);
+  latestState.current = state;
   const dominant = species === "ghoul-dominante";
   const ghoulSpecies = ["ghoul", "ghoul-dominante", "ghoul-artificial"].includes(species);
   const gradeUnlocked = grade >= 6;
@@ -328,7 +331,7 @@ export function KakujaPanel({ grade, species, vigor, kaguneSteps, kaguneDurabili
   const query = search.trim().toLocaleLowerCase("pt-BR");
   const filteredModules = kakujaModules.filter((item) => (!ownedOnly || selectedSet.has(item.id)) && (section === "Todos" || item.section === section) && (!query || `${item.name} ${item.category} ${item.effect}`.toLocaleLowerCase("pt-BR").includes(query)));
 
-  const patch = (next: Partial<KakujaState>) => onChange({ ...state, ...next });
+  const patch = (next: Partial<KakujaState>) => onChange({ ...latestState.current, ...next });
   const togglePurchased = (module: KakujaModule) => {
     if (selectedSet.has(module.id)) {
       const removed = new Set([module.id]);
@@ -411,6 +414,7 @@ export function KakujaPanel({ grade, species, vigor, kaguneSteps, kaguneDurabili
       </div>
 
       {activeTab === "painel" && <div className="kakuja-tab-content" role="tabpanel">
+        <section className="section-block"><h2>Aparência das formas</h2><p>Guarde uma imagem para cada estágio. As imagens são salvas na ficha e acompanham a exportação.</p><div className="kakuja-image-grid"><KakujaImageSlot label="Kakuja incompleta" value={state.incompleteImage} onChange={incompleteImage => patch({incompleteImage})} /><KakujaImageSlot label="Kakuja completa" value={state.completeImage} onChange={completeImage => patch({completeImage})} /></div></section>
         <section className="section-block kakuja-identity">
           <div className="field-grid four">
             <label className="field"><span>Nome / epíteto</span><input value={state.name} onChange={(event) => patch({ name: event.target.value })} placeholder="A Centopeia Rubra" /></label>

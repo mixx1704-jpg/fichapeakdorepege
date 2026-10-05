@@ -36,6 +36,8 @@ export type KakujaState = {
   selectedPerks: string[];
   name: string;
   description: string;
+  incompleteImage: string;
+  completeImage: string;
   cannibalPE: number;
   extraKakujaPE: number;
   complete: boolean;
@@ -160,6 +162,8 @@ export function blankKakujaState(): KakujaState {
   return {
     name: "",
     description: "",
+    incompleteImage: "",
+    completeImage: "",
     cannibalPE: 0,
     extraKakujaPE: 0,
     complete: false,

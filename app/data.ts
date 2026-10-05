@@ -1,4 +1,5 @@
 import { combatManeuvers, expansionEvolutions, expansionKaguneEffects, expansionPerks } from "./expansion-data";
+import { masteryEvolutions } from "./kakuhou-mastery";
 import thousandPerks from "./thousand-perks.json";
 
 export { combatManeuvers };
@@ -399,6 +400,7 @@ export interface Evolution {
   minKaguneTypes?: number;
   maxRank?: number;
   rankCosts?: number[];
+  rankGrades?: number[];
   attributeRequirements?: Partial<Record<AttributeKey, number>>;
   requiresEffects?: { id: string; minRank?: number }[];
   requiresEvolutions?: string[];
@@ -410,6 +412,7 @@ export interface Evolution {
 const evolution = (id: string, name: string, cost: number, grade: number, family: Evolution["family"], description: string, requirement?: string, options: Partial<Evolution> = {}): Evolution => ({ id, name, cost, grade, family, description, requirement, ...options });
 
 export const evolutions: Evolution[] = [
+  ...masteryEvolutions,
   evolution("conveniencia-instintiva", "Conveniência Instintiva", 5, 2, "Bikaku", "Escolha três evoluções de outros tipos de Kakuhou. A escolha libera apenas a compra: cada evolução ainda exige seu próprio custo em PE e os demais requisitos."),
   evolution("taiji", "Taiji", 5, 2, "Bikaku", "Você ganha equilíbrio em todo seu físico. Cinco vezes por sessão, escolha um atributo físico e faça seu teste usando outro atributo físico, como testar Força com Agilidade."),
   evolution("revestimento-exoesqueletico", "Revestimento Exoesquelético", 8, 10, "Koukaku", "8 PE por nível, até 8 upgrades. Cada compra aumenta o nível em 1 e concede +5 RD, criando uma carapaça mais durável ao redor dos ossos. No nível 8, o bônus total é +40 RD.", "Koukaku; Grau 10+; máximo 8 upgrades", { maxRank: 8 }),
@@ -449,7 +452,7 @@ export const evolutions: Evolution[] = [
   evolution("arsenal-vivo", "Arsenal Vivo", 25, 10, "Koukaku", "Escolha por turno: Espada +3 acerto, Martelo +5 Passos de Dano, Escudo +4 RD ou Lança +2 acerto e alcance."),
   evolution("oito-caminhos", "Oito Caminhos", 12, 10, "Rinkaku", "Reserve uma cauda não usada para +2 Esquiva ou +2 RD contra um ataque."),
   evolution("canibalismo-celular", "Canibalismo Celular", 18, 10, "Rinkaku", "Destrua até 2 caudas por turno para recuperar Vida e RC; elas não regeneram naturalmente por 2 turnos."),
-  evolution("continua-crescendo", "Aquilo que Continua Crescendo", 25, 10, "Rinkaku", "Caudas destruídas por inimigos geram Crescimento; cada ponto dá +1 Passo de Dano e 5 pontos regeneram todas."),
+  evolution("continua-crescendo", "Aquilo que Continua Crescendo", 25, 10, "Rinkaku", "Cada cauda destruída por um inimigo gera 1 Crescimento e +2 Passos de Dano. O limite de Crescimento é sua quantidade máxima atual de caudas. Ao atingir o limite, gaste 4 RC e consuma todos os acúmulos para regenerar todas as caudas. Sacrifícios voluntários não geram Crescimento. A regeneração restaura a integridade das caudas, não os PV do personagem."),
   evolution("sem-ponto-cego", "Não Existe Ponto Cego", 12, 10, "Bikaku", "Ignore penalidades defensivas por costas e flancos; +2 dados contra ataques de oportunidade."),
   evolution("contra-ataque-perfeito", "Contra-Ataque Perfeito", 18, 10, "Bikaku", "Ao superar completamente ataque corpo a corpo, gaste 5 RC para ataque adicional com +2 acerto."),
   evolution("mestre-nada", "Mestre de Nada, Monstro em Tudo", 25, 10, "Bikaku", "Posturas viram Ataque +4 Passos de Dano, Defesa +4 RD, Mobilidade +4 Esquiva; 5 RC mantém duas."),
