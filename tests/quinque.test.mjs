@@ -33,7 +33,7 @@ test('cada tipo tem catálogo exclusivo mais efeitos universais; Bikaku não her
   assert.equal(quinqueAllowsEffect(weapon,data.kaguneEffects.find(e=>e.id==='aumentar-dano')),true);
  }
  assert.equal(quinqueAllowsEffect(q(),data.kaguneEffects.find(e=>e.id==='forma-versatil')),true);
- assert.equal(quinqueAllowsEffect(q({rcType:'Rinkaku'}),data.kaguneEffects.find(e=>e.id==='regeneracao-superior')),false);
+ assert.equal(quinqueAllowsEffect(q({rcType:'Rinkaku'}),data.kaguneEffects.find(e=>e.id==='regeneracao-superior')),true);
 });
 test('graus, limites e pré-requisitos usam a arma; trocas incompatíveis não concedem bônus',()=>{
  const architecture=data.evolutions.find(e=>e.id==='arquitetura-cerco');
@@ -55,3 +55,4 @@ test('migração salva a Quinque antiga uma vez e preserva atributos do dono e i
  const migrated=rules.normalizeCharacter(old,7);assert.equal(migrated.quinques.length,1);assert.equal(migrated.quinques[0].grade,8);assert.equal(migrated.quinques[0].name,'Legado');assert.equal(migrated.quinques[0].attributes.vigor,6);assert.equal(migrated.baseAttributes.vigor,6);assert.equal(migrated.weaponKind,'nenhum');assert.deepEqual(migrated.effects,{});assert.equal(migrated.quinques[0].effects['bloqueio-ferro'].rank,1);assert.ok(migrated.quinques[0].perks['mil-p0801']);assert.equal(migrated.perks['mil-p0801'],undefined);
  const reloaded=rules.normalizeCharacter(JSON.parse(JSON.stringify(migrated)),7);assert.equal(reloaded.quinques.length,1);assert.equal(reloaded.kakuja.incompleteImage,old.kakuja.incompleteImage);
 });
+

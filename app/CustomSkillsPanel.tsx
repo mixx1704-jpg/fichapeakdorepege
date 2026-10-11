@@ -218,7 +218,8 @@ function effectLabel(effect: CustomSkillEffect) {
   return `${effect.value >= 0 ? "+" : ""}${effect.value} ${label}${target ? ` ${target}` : ""}`;
 }
 
-export function CustomSkillsPanel({ skills, onChange }: { skills: CustomSkill[]; onChange: (skills: CustomSkill[]) => void }) {
+export function CustomSkillsPanel({ skills, onChange, targetLabel = "Personagem" }: { targetLabel?: string; skills: CustomSkill[]; onChange: (skills: CustomSkill[]) => void }) {
+  const defenseBonuses = calculateCustomSkillBonuses(skills);
   const totalCost = customSkillsCost(skills);
   const appliedCount = skills.filter((skill) => skill.activation === "passive" || skill.enabled).length;
   const updateSkill = (id: string, patch: Partial<CustomSkill>) => onChange(skills.map((skill) => skill.id === id ? { ...skill, ...patch } : skill));
@@ -235,6 +236,7 @@ export function CustomSkillsPanel({ skills, onChange }: { skills: CustomSkill[];
       <div className="custom-skills-summary"><span><b>{skills.length}</b> habilidades</span><span><b>{appliedCount}</b> aplicadas</span><span><b>{totalCost}</b> PE</span><button type="button" onClick={() => onChange([...skills, newSkill()])}>+ Nova habilidade</button></div>
     </div>
 
+    <div className="section-block compact"><h3>Dados extras de defesa · {targetLabel}</h3><p>Bloqueio: <strong>{defenseBonuses.blockDice >= 0 ? '+' : ''}{defenseBonuses.blockDice} dados</strong> · Esquiva: <strong>{defenseBonuses.dodgeDice >= 0 ? '+' : ''}{defenseBonuses.dodgeDice} dados</strong>. Somados aos testes atuais; habilidades ativas só contam quando ativadas.</p></div>
     {skills.length ? <div className="custom-skill-list">{skills.map((skill, index) => {
       const applied = skill.activation === "passive" || skill.enabled;
       return <article className={`custom-skill-card section-block ${applied ? "applied" : ""}`} key={skill.id}>
@@ -257,7 +259,7 @@ export function CustomSkillsPanel({ skills, onChange }: { skills: CustomSkill[];
             <label className="custom-effect-type"><span>Tipo</span><select value={effect.type} onChange={(event) => updateEffect(skill, effect.id, { type: event.target.value as CustomSkillEffectType })}>{effectOptions.map((option) => <option value={option.value} key={option.value}>{option.label}</option>)}</select></label>
             {configuration === "scope" && <label><span>Aplicar em</span><select value={effect.scope} onChange={(event) => updateEffect(skill, effect.id, { scope: event.target.value as CustomSkillScope })}><option value="kagune">Kagune / arma</option><option value="physical">Ataque físico</option><option value="both">Ambos</option></select></label>}
             {configuration === "attribute" && <label><span>Atributo</span><select value={effect.attribute} onChange={(event) => updateEffect(skill, effect.id, { attribute: event.target.value as AttributeKey })}>{attributeKeys.map((key) => <option value={key} key={key}>{attributeLabels[key]}</option>)}</select></label>}
-            {!configuration && <div className="custom-effect-direct"><span>Aplicação</span><b>Personagem</b></div>}
+            {!configuration && <div className="custom-effect-direct"><span>Aplicação</span><b>{targetLabel}</b></div>}
             <label className="custom-effect-value"><span>Valor</span><input type="number" value={effect.value} onChange={(event) => updateEffect(skill, effect.id, { value: Number(event.target.value) || 0 })} /></label>
             <button type="button" aria-label="Remover modificador" onClick={() => removeEffect(skill, effect.id)}>×</button>
           </div>;

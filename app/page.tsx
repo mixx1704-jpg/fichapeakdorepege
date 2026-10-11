@@ -37,6 +37,7 @@ import {
 } from "./CustomSkillsPanel";
 
 import { masteryBonuses, tailAttackCost, growthBonus } from "./kakuhou-mastery";
+import { KakujaImageSlot } from "./KakujaImages";
 import { QuinquesPanel } from "./QuinquesPanel";
 import { normalizeQuinque, type Quinque } from "./quinque";
 import { VatsPanel } from "./VatsPanel";
@@ -99,6 +100,7 @@ type CharacterSheet = {
   weaponKind: WeaponKind;
   quinques: Quinque[];
   kaguneName: string;
+  kaguneImage: string;
   kaguneType: KaguneFamily;
   kaguneSecondType: KaguneFamily | "";
   kaguneThirdType: KaguneFamily | "";
@@ -225,7 +227,7 @@ function newCharacter(name = "Novo personagem"): CharacterSheet {
     baseAttributes: blankAttributeMap(), extraDice: blankAttributeMap(),
     mentalBonus: "raciocinio", physicalBonus: "forca", secondMentalBonus: "controle",
     secondPhysicalBonus: "agilidade", artificialDominantBlend: false,
-    perks: {}, customPerks: [], customSkills: [], drawbacks: {}, quinques: [], weaponKind: "nenhum", kaguneName: "", kaguneType: "Rinkaku",
+    perks: {}, customPerks: [], customSkills: [], drawbacks: {}, quinques: [], weaponKind: "nenhum", kaguneName: "", kaguneImage: "", kaguneType: "Rinkaku",
     kaguneSecondType: "", kaguneThirdType: "", kaguneFourthType: "", kaguneActive: false, quinxFrame: 2, sourceGhoulGrade: 2,
     effects: {}, selectedEvolutions: [], instinctiveChoices: [], taijiUses: 0, confirmedRequirements: {}, extraPE: 0, earnedPE: 0, progressPE: 0, includeGradePE: false,
     currentLife: 0, currentSanity: 0, currentRC: 0, reactionEnemyBonus: false, hunger: 0, instinct: 0,
@@ -267,6 +269,7 @@ export function normalizeCharacter(input: Partial<CharacterSheet>, sourceVersion
   const normalized: CharacterSheet = {
     ...base, ...input, id: input.id || base.id,
     quinques: Array.isArray(input.quinques) ? input.quinques.map(normalizeQuinque) : [],
+    kaguneImage: typeof input.kaguneImage === "string" ? input.kaguneImage : "",
     vats: normalizeVats(input.vats),
     reactionEnemyBonus: input.reactionEnemyBonus === true,
     earnedPE: normalizedEarnedPE,
@@ -312,7 +315,7 @@ export function normalizeCharacter(input: Partial<CharacterSheet>, sourceVersion
   if (input.weaponKind === "quinque" && !Array.isArray(input.quinques)) {
     const weaponPerks = Object.fromEntries(Object.entries(normalized.perks).filter(([id]) => perks.find(p => p.id === id)?.requiredWeapon === "quinque"));
     normalized.quinques = [normalizeQuinque({
-      name: input.kaguneName || "Quinque importada", rcType: input.kaguneType,
+      image: normalized.kaguneImage, name: input.kaguneName || "Quinque importada", rcType: input.kaguneType,
       grade: input.sourceGhoulGrade || 2, creationGrade: input.sourceGhoulGrade || 2,
       attributes: normalized.baseAttributes, effects: normalized.effects, evolutions: normalized.selectedEvolutions,
       perks: weaponPerks, customSkills: normalized.customSkills,
@@ -327,6 +330,7 @@ export function normalizeCharacter(input: Partial<CharacterSheet>, sourceVersion
     normalized.weaponKind = "nenhum";
     normalized.kaguneActive = false;
     normalized.kaguneName = "";
+    normalized.kaguneImage = "";
     normalized.effects = {};
     normalized.selectedEvolutions = [];
     normalized.customSkills = [];
@@ -1232,95 +1236,7 @@ export default function Home() {
   const showsHunger = derived.species.hasHunger || (sheet.species === "quinx" && sheet.quinxFrame >= 4);
   const showsInstinct = sheet.species === "quinx" && sheet.quinxFrame < 4;
   const hasDetermination = sheet.species === "humano" || sheet.species === "humano-dominante";
-  const damageConditionsFor = (scope: "physical" | "kagune") => {
-    const options: { id: string; label: string; detail: string }[] = [];
-    const add = (available: boolean, id: string, label: string, detail: string) => { if (available) options.push({ id, label, detail }); };
-    add(sheet.archetype === "O Justiceiro", "justiceiro", "Alvo do Justiceiro", "+2 Passos");
-    add(sheet.archetype === "O Hedonista", "hedonista", "Prazer do Hedonista", "+3 Passos");
-    add(Boolean(sheet.perks["golpe-preciso"]), "golpe-preciso", "Golpe Preciso", "+1 Passo por dado convertido");
-    add(Boolean(sheet.perks["equacao-letal"]), "equacao-letal", "Equação Letal", "+2 Passos por dado de acerto convertido");
-    add(Boolean(sheet.perks["quebra-portas"]), "quebra-portas", "Contra estrutura", "+2 Passos");
-    if (scope === "physical") add(Boolean(sheet.perks.skadoosh), "skadoosh", "Skadoosh", "+4 Passos de Dano");
-    add(Boolean(sheet.perks["respiracao-contida"]), "respiracao-contida", "Respiração Contida", "+2 Passos à distância");
-    add(Boolean(sheet.perks["disparo-reflexivo"]), "disparo-reflexivo", "Disparo Reflexivo", "−2 Passos");
-    add(Boolean(sheet.perks["golpe-direcionado"]), "golpe-direcionado", "Golpe Direcionado", "+2 Passos");
-    add(Boolean(sheet.perks["olho-cacador"]), "olho-cacador", "Olho do Caçador", "+2 Passos");
-    add(Boolean(sheet.perks["disparo-alma"]), "disparo-alma", "Disparo da Alma", "+5 Passos");
-    add(Boolean(sheet.perks["entre-costelas"]), "entre-costelas", "Entre as Costelas", "−2 Passos; +1 dado de acerto");
-    add(Boolean(sheet.perks.momentum), "momentum", "Momentum", "+2 Passos corpo a corpo");
-    add(Boolean(sheet.perks["corpo-lamina"]), "corpo-lamina", "Corpo de Lâmina", "+3 Passos");
-    add(Boolean(sheet.perks.adaptabilidade), "adaptabilidade", "Adaptabilidade concluída", "+metade do Raciocínio em Passos");
-    add(Boolean(sheet.perks.fortificador), "fortificador", "Fortificador", "+2 Passos");
-    add(Boolean(sheet.perks["foco-letal"]), "foco-letal", "Foco Letal", "Converte 1 Passo em +2 Passos");
-    add(Boolean(sheet.perks["impacto-cinetico"]), "impacto-cinetico", "Impacto Cinético", "+2 Passos após mover");
-    add(Boolean(sheet.perks["corpo-cerco"]), "corpo-cerco", "Corpo de Cerco", "+3 Passos após Bloqueio total");
-    add(Boolean(sheet.perks["cacador-aberturas"]), "cacador-aberturas", "Caçador de Aberturas", "+2 Passos após erro inimigo");
-    add(Boolean(sheet.perks.oportunista), "oportunista", "Oportunista", "+2 Passos em ataque de oportunidade");
-    add(Boolean(sheet.perks["guarda-agressiva"]), "guarda-agressiva", "Guarda Agressiva", "+2 Passos após Bloqueio total");
-    add(Boolean(sheet.perks["ritmo-combate"]), "ritmo-combate", "Ritmo de Combate", "+1 Passo de Dano");
-    add(Boolean(sheet.perks.carrasco), "carrasco", "Carrasco", "+2 Passos contra alvo com 1/4 da Vida");
-    add(Boolean(sheet.perks["ultimo-homem-pe"]), "ultimo-homem-pe", "Último Homem de Pé", "+2 Passos de Dano");
-    if (scope === "physical") add(Boolean(sheet.perks["lenda-dragao"]), "lenda-dragao", "Lenda do Dragão", "+1 Passo");
-    if (scope === "kagune") {
-      add(Boolean(sheet.effects["mudanca-forma"]), "mudanca-forma", "Mudança de Forma ofensiva", "+1 Passo a cada 2 níveis");
-      add(Boolean(sheet.effects.cristalizacao), "cristalizacao", "Cristalização", "+Passos conforme o nível");
-      add(Boolean(sheet.effects["criar-arma"]), "criar-arma", "Arma criada", "+1 Passo por nível");
-      add(Boolean(sheet.effects["adicionar-elemento"]), "adicionar-elemento", "Elemento ativo", "+3/+6 no dano");
-      add(Boolean(sheet.effects["tiros-explosivos"]), "tiros-explosivos", "Tiros Explosivos", "+1/+2 Passos");
-      add(Boolean(sheet.effects["lamina-cauda-viva"]), "lamina-cauda-viva", "Lâmina de Cauda Viva", "+2 Passos após errar");
-      add(Boolean(sheet.effects["estouro-rc"]), "estouro-rc", "Estouro de RC", "+3 Passos de Dano");
-      add(Boolean(sheet.effects["estouro-rc"]), "estouro-rc-penalidade", "Após Estouro de RC", "−1 Passo de Dano");
-      add(sheet.selectedEvolutions.includes("perda-peso"), "perda-peso", "Perda de Peso", "+2 Passos");
-      add(sheet.selectedEvolutions.includes("mestre-armas"), "mestre-armas", "Mestre das Armas ofensivo", "+2 Passos");
-      add(sheet.selectedEvolutions.includes("multiplas-caudas-plus"), "multiplas-caudas-plus", "Múltiplas Caudas +", "+1/+1/+2 Passos conforme compras");
-      add(sheet.selectedEvolutions.includes("ferreiro-guerra"), "ferreiro-guerra", "Ferreiro da Guerra corpo a corpo", "+metade de Força/Agilidade em Passos");
-      add(sheet.selectedEvolutions.includes("lanca-ceus"), "lanca-ceus", "Lança que Devora Céus", "+10 Passos");
-      add(sheet.selectedEvolutions.includes("mil-pernas"), "mil-pernas", "Mil Pernas", "+2 Passos");
-      add(sheet.selectedEvolutions.includes("predador-perfeito"), "predador-perfeito", "Predador Perfeito — Ataque", "+2 Passos");
-      add(sheet.selectedEvolutions.includes("chuva-carmesim"), "chuva-carmesim", "Chuva Carmesim", "+4 Passos");
-      add(sheet.selectedEvolutions.includes("chuva-carmesim"), "chuva-carmesim-penalidade", "Após Chuva Carmesim", "−2 Passos");
-      add(sheet.selectedEvolutions.includes("predador-ceus"), "predador-ceus", "Predador dos Céus", "+Passos acumulados");
-      add(sheet.selectedEvolutions.includes("arsenal-vivo"), "arsenal-vivo", "Arsenal Vivo — Martelo", "+5 no dano");
-      add(sheet.selectedEvolutions.includes("continua-crescendo"), "continua-crescendo", "Aquilo que Continua Crescendo", "+2 Passos por Crescimento");
-      add(sheet.selectedEvolutions.includes("mestre-nada"), "mestre-nada", "Mestre de Nada — Ataque", "+4 Passos");
-      add(sheet.selectedEvolutions.includes("mil-penas"), "mil-penas", "Mil Penas", "+2 Passos por ataque sacrificado");
-      add(sheet.selectedEvolutions.includes("lanca-deus"), "lanca-deus", "Lança que Perfurou Deus", "+15 Passos");
-      add(sheet.selectedEvolutions.includes("centopeia"), "centopeia", "Centopeia", "+4 Passos");
-      add(Boolean(sheet.perks["wally-like"]), "wally-like", "Wally Like", "+metades de Agilidade e Precisão em Passos");
-      add(Boolean(sheet.perks.ceifador), "ceifador", "Ceifador furtivo/oportunidade", "+8 Passos");
-      add(Boolean(sheet.perks["cristais-tungstenio"]), "cristais-tungstenio", "Cristais de Tungstênio", "+2 Passos");
-      add(Boolean(sheet.perks["railgun-rc"]), "railgun-rc", "Railgun de RC", "+7 Passos");
-      add(Boolean(sheet.perks["ultimo-horizonte"]), "ultimo-horizonte", "Último Horizonte", "+12 Passos");
-      add(Boolean(sheet.perks["hidra-cristalina"]), "hidra-cristalina", "Hidra Cristalina", "+3 Passos");
-      add(Boolean(sheet.perks["muda-penas"]), "muda-penas", "Muda de Penas", "+2 Passos");
-      add(Boolean(sheet.perks["predador-angulo-morto"]), "predador-angulo-morto", "Predador de Ângulo Morto", "+2 Passos");
-      add(Boolean(sheet.perks["mergulho-escarlate"]), "mergulho-escarlate", "Mergulho Escarlate", "+4 Passos");
-      add(Boolean(sheet.perks["tentaculo-blindado"]), "tentaculo-blindado", "Tentáculo Blindado", "+2 Passos");
-      add(Boolean(sheet.perks["carne-mineral"]), "carne-mineral", "Carne Mineral", "+3 RD");
-      add(Boolean(sheet.perks["leviata-imortal"]), "leviata-imortal", "Leviatã Imortal", "+3 Passos e +5 RD");
-      add(Boolean(sheet.perks["postura-dupla"]), "postura-dupla-ataque", "Postura Dupla — Duelo", "+2 Passos");
-      add(Boolean(sheet.perks["postura-dupla"]), "postura-dupla-defesa", "Postura Dupla — Guarda", "+2 RD");
-      add(Boolean(sheet.perks["lanca-escorpionica"]), "lanca-escorpionica", "Lança Escorpiônica", "+2 Passos em oportunidade");
-      add(Boolean(sheet.perks["arsenal-carrasco"]), "arsenal-carrasco-ataque", "Arsenal — Machado", "+4 Passos");
-      add(Boolean(sheet.perks["arsenal-carrasco"]), "arsenal-carrasco-defesa", "Arsenal — Escudo-Cauda", "+3 RD");
-      add(Boolean(sheet.perks["cavaleiro-escarlate"]), "cavaleiro-escarlate-ataque", "Cavaleiro — Oportunidade", "+5 Passos");
-      add(Boolean(sheet.perks["cavaleiro-escarlate"]), "cavaleiro-escarlate-defesa", "Cavaleiro — Defesa", "+4 RD");
-      add(Boolean(sheet.perks["danca-serpentes"]), "danca-serpentes", "Dança das Serpentes", "+2 Passos");
-      add(Boolean(sheet.perks["guarda-hidra"]), "guarda-hidra", "Guarda de Hidra", "+2 RD");
-      add(Boolean(sheet.perks["predador-reacao"]), "predador-reacao", "Predador de Reação", "+3 Passos");
-      add(Boolean(sheet.perks.orochi), "orochi", "Orochi", "+3 Passos");
-      add(Boolean(sheet.perks["serafim-ferro-sangue"]), "serafim-ferro-sangue", "Serafim — Tentáculos", "+3 Passos");
-      add(Boolean(sheet.perks["serafim-ferro-sangue"]), "serafim-ferro-sangue-defesa", "Serafim — Armadura", "+3 RD");
-      add(Boolean(sheet.perks["motor-cerco-celeste"]), "motor-cerco-celeste", "Motor de Cerco — ataque", "+2 Passos");
-      add(Boolean(sheet.perks["motor-cerco-celeste"]), "motor-cerco-celeste-defesa", "Motor de Cerco — defesa", "+2 RD");
-      add(Boolean(sheet.perks["leviata-carne"]), "leviata-carne-ataque", "Leviatã de Carne — ataque", "+2 Passos");
-      add(Boolean(sheet.perks["leviata-carne"]), "leviata-carne-defesa", "Leviatã de Carne — defesa", "+2 RD");
-      add(Boolean(sheet.perks["trindade-predatoria"]), "trindade-predatoria-ataque", "Trindade — Rinkaku", "+2 Passos");
-      add(Boolean(sheet.perks["trindade-predatoria"]), "trindade-predatoria-defesa", "Trindade — Koukaku", "+3 RD");
-      add(Boolean(sheet.perks["quimera-absoluta"]), "quimera-absoluta", "Quimera Absoluta", "+4 Passos e +4 RD");
-    }
-    return options;
-  };
+  const damageConditionsFor = (scope: "physical" | "kagune") => damageConditionsForSheet(sheet, scope);
 
   const vatsConfig: VatsConfig = {
     maxLife: derived.maxLife, maxRC: derived.maxRC, rc: sheet.currentRC, hunger: sheet.hunger,
@@ -1430,6 +1346,7 @@ export default function Home() {
             {kakuhouView === "oficiais" && <>
             <nav className="filter-row" aria-label="Seções de Kakuhou e arma">{[["kakuhou-estrutura", "Estrutura"], ["kakuhou-efeitos", "Efeitos"], ["kakuhou-quimera", "Vantagens Quimera"], ["kakuhou-evolucoes", "Evoluções na Kakuhou"], ["kakuhou-perks", "Perks - Kakuhou & Quinque"]].map(([id, label]) => <button type="button" key={id} onClick={() => document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" })}>{label}</button>)}</nav>
             {sheet.weaponKind === "kagune" && <section className="section-block mastery-summary"><h2>Maestrias da Kakuhou</h2><p>{sheet.kaguneActive ? "Bônus passivos aplicados à ficha enquanto a Kagune está manifestada." : "Manifeste a Kagune para aplicar os bônus passivos comprados."}</p><div className="weapon-metrics"><Stat label="Acerto em cada ataque" value={`+${derived.mastery.hit} dados`} /><Stat label="Passos de Dano" value={`+${derived.mastery.steps}`} /><Stat label="Alcance adicional" value={`+${derived.mastery.range} m`} /><Stat label="Bloqueio / Esquiva" value={`+${derived.mastery.block} / +${derived.mastery.dodge}`} /></div>{derived.mastery.stability > 0 && <p>Guarda Estrutural: +2 dados para resistir a empurrões e derrubadas. Some apenas nesses testes.</p>}{derived.mastery.efficientTailRC && <p>Circuito RC Eficiente: ataque de cauda adicional de 2 RC passa a {derived.tailAttackRC} RC. Não reduz técnicas anexadas ao golpe.</p>}{derived.mastery.movement > 0 && <p>Continuidade Predatória: +1 espaço já aplicado ao Deslocamento. Divida o Movimento disponível antes, entre e depois dos ataques.</p>}</section>}
+            <section className="section-block"><KakujaImageSlot label="Kagune" value={sheet.kaguneImage} onChange={kaguneImage => patchSheet({kaguneImage})} /></section>
             <section id="kakuhou-estrutura" className="weapon-builder section-block"><div className="weapon-head"><div><Field label="Estrutura"><select value={sheet.weaponKind} onChange={(event) => patchSheet({ weaponKind: event.target.value as WeaponKind })}><option value="nenhum">Nenhuma</option><option value="kagune">Kagune / Kakuhou</option><option value="arata">Arata</option></select></Field><Field label="Nome"><input value={sheet.kaguneName} onChange={(event) => patchSheet({ kaguneName: event.target.value })} placeholder="Nome da arma ou Kagune" /></Field></div>{sheet.weaponKind !== "nenhum" && <label className="activation-toggle"><input type="checkbox" checked={sheet.kaguneActive} disabled={sheet.vats.kakuhouUntil > sheet.vats.turn || (sheet.weaponKind === "kagune" && (sheet.currentRC <= 0 || derived.wounds.exhausted))} onChange={(event) => patchSheet({ kaguneActive: event.target.checked })} /><span><i />{sheet.kaguneActive ? "Ativa" : "Inativa"}</span></label>}</div>
               {sheet.weaponKind !== "nenhum" && <><div className="field-grid four"><Field label="Tipo principal"><select value={sheet.kaguneType} onChange={(event) => { const kaguneType = event.target.value as KaguneFamily; patchSheet({ kaguneType, kaguneSecondType: sheet.kaguneSecondType === kaguneType ? "" : sheet.kaguneSecondType, kaguneThirdType: sheet.kaguneThirdType === kaguneType ? "" : sheet.kaguneThirdType, kaguneFourthType: sheet.kaguneFourthType === kaguneType ? "" : sheet.kaguneFourthType }); }}>{["Ukaku", "Koukaku", "Rinkaku", "Bikaku"].map((type) => <option key={type}>{type}</option>)}</select></Field>{sheet.weaponKind === "kagune" && <Field label="Quimera II"><select value={sheet.kaguneSecondType} onChange={(event) => { const kaguneSecondType = event.target.value as KaguneFamily | ""; patchSheet({ kaguneSecondType, kaguneThirdType: kaguneSecondType ? sheet.kaguneThirdType : "", kaguneFourthType: kaguneSecondType ? sheet.kaguneFourthType : "" }); }}><option value="">Nenhum</option>{["Ukaku", "Koukaku", "Rinkaku", "Bikaku"].filter((type) => type !== sheet.kaguneType).map((type) => <option key={type}>{type}</option>)}</select></Field>}{sheet.weaponKind === "kagune" && sheet.kaguneSecondType && <Field label="Quimera III"><select value={sheet.kaguneThirdType} onChange={(event) => { const kaguneThirdType = event.target.value as KaguneFamily | ""; patchSheet({ kaguneThirdType, kaguneFourthType: kaguneThirdType ? sheet.kaguneFourthType : "" }); }}><option value="">Nenhum</option>{["Ukaku", "Koukaku", "Rinkaku", "Bikaku"].filter((type) => type !== sheet.kaguneType && type !== sheet.kaguneSecondType).map((type) => <option key={type}>{type}</option>)}</select></Field>}{sheet.weaponKind === "kagune" && sheet.kaguneThirdType && <Field label="Quimera IV"><select value={sheet.kaguneFourthType} onChange={(event) => patchSheet({ kaguneFourthType: event.target.value as KaguneFamily | "" })}><option value="">Nenhum</option>{["Ukaku", "Koukaku", "Rinkaku", "Bikaku"].filter((type) => type !== sheet.kaguneType && type !== sheet.kaguneSecondType && type !== sheet.kaguneThirdType).map((type) => <option key={type}>{type}</option>)}</select></Field>}{sheet.species === "quinx" && <Field label="Frame"><select value={sheet.quinxFrame} onChange={(event) => patchSheet({ quinxFrame: Number(event.target.value) })}>{[1, 2, 3, 4, 5].map((frame) => <option key={frame}>{frame}</option>)}</select></Field>}{(sheet.weaponKind === "quinque" || sheet.weaponKind === "arata") && <Field label="Grau do Ghoul fonte"><select value={sheet.sourceGhoulGrade} onChange={(event) => patchSheet({ sourceGhoulGrade: Number(event.target.value) })}>{[2, 4, 6, 8, 10, 12, 14].map((grade) => <option key={grade}>{grade}</option>)}</select></Field>}</div>
                 {sheet.vats.kakuhouUntil > sheet.vats.turn && <p className="vats-warning">Kakuhou destruído: Kagune indisponível até o turno {sheet.vats.kakuhouUntil}. Acompanhe na aba VATS.</p>}<div className="weapon-metrics">{sheet.weaponKind === "kagune" ? <><Stat label="Teste principal" value={derived.kaguneTest} mono onCopy={() => copyTest(derived.kaguneTest, "kagune")} copied={copied === "kagune"} /><Stat label="Atributo principal" value={attributeLabels[derived.primaryAttribute]} /><Stat label="Ataques extras" value={derived.extraAttacks} /><Stat label="RC máximo" value={derived.maxRC} /><Stat label="Verba gratuita" value={`${derived.freeKaguneBudget} PE`} /></> : <><Stat label="Verba de criação" value={`${8 + sheet.sourceGhoulGrade} PE`} /><Stat label="Investido" value={`${derived.actualEffectPE + derived.customSkillsPE} PE`} /><Stat label="Ativos" value={sheet.weaponKind === "quinque" ? "Sacrificam dados" : "Conforme efeito"} /><Stat label="Efeitos" value={Object.keys(sheet.effects).length + sheet.customSkills.length} /></>}</div>
@@ -1524,3 +1441,93 @@ function AttributeCard({ attributeKey, sheet, derived, copied, onCopy, onSet, on
   const rawBonus = derived.permanentDice[attributeKey] - skillDice; const formula = derived.attributeTests[attributeKey]; const isPrimary = sheet.weaponKind === "kagune" && derived.primaryAttribute === attributeKey;
   return <article className={`attribute-card ${base > derived.purchasedCap ? "over-cap" : ""}`}><div className="attribute-title"><div><span>{attributeLabels[attributeKey]}</span><p>{attributeDescriptions[attributeKey]}</p></div><b>{attributePurchaseCost(base)} PE</b></div><div className="attribute-value-row"><div className="stepper"><button type="button" onClick={() => onSet(attributeKey, base - 1)} disabled={base <= 0}>−</button><strong>{base}</strong><button type="button" onClick={() => onSet(attributeKey, base + 1)}>+</button></div>{(speciesBonus + acurado + bodyUpgrade + customBonus + skillAttributeBonus) !== 0 && <div className="total-value"><span>Total</span><b>{total}</b></div>}</div><div className="bonus-chips">{speciesBonus > 0 && <span>+{speciesBonus} espécie</span>}{acurado > 0 && <span>+1 Acurado</span>}{bodyUpgrade > 0 && <span>+{bodyUpgrade} Kakuhou</span>}{customBonus !== 0 && <span>{customBonus > 0 ? "+" : ""}{customBonus} mesa</span>}{skillAttributeBonus !== 0 && <span>{skillAttributeBonus > 0 ? "+" : ""}{skillAttributeBonus} autoral</span>}{rawBonus > 0 && <span>+{rawBonus}d8 Vantagem</span>}{skillDice !== 0 && <span>{skillDice > 0 ? "+" : ""}{skillDice}d8 autoral</span>}</div><button className="test-command" type="button" onClick={() => onCopy(formula, attributeKey)}><span>{copied === attributeKey ? "Copiado" : "Teste Rollem"}</span><code>{formula}</code><i>⧉</i></button>{base === 0 && <p className="zero-rule">Atributo 0: role 2d8 e use o menor resultado.</p>}{isPrimary && <button className="test-command kagune" type="button" onClick={() => onCopy(derived.kaguneTest, `${attributeKey}-kagune`)}><span>{copied === `${attributeKey}-kagune` ? "Copiado" : "Com Kagune"}</span><code>{derived.kaguneTest}</code><i>⧉</i></button>}<label className="extra-dice"><span>Dados extras / penalidade</span><div><button type="button" onClick={() => onExtra(attributeKey, sheet.extraDice[attributeKey] - 1)}>−</button><input type="number" value={sheet.extraDice[attributeKey]} onChange={(event) => onExtra(attributeKey, Number(event.target.value) || 0)} /><button type="button" onClick={() => onExtra(attributeKey, sheet.extraDice[attributeKey] + 1)}>+</button></div></label></article>;
 }
+
+export const damageConditionsForSheet = (sheet: CharacterSheet, scope: "physical" | "kagune") => {
+    const options: { id: string; label: string; detail: string }[] = [];
+    const add = (available: boolean, id: string, label: string, detail: string) => { if (available) options.push({ id, label, detail }); };
+    add(sheet.archetype === "O Justiceiro", "justiceiro", "Alvo do Justiceiro", "+2 Passos");
+    add(sheet.archetype === "O Hedonista", "hedonista", "Prazer do Hedonista", "+3 Passos");
+    add(Boolean(sheet.perks["golpe-preciso"]), "golpe-preciso", "Golpe Preciso", "+1 Passo por dado convertido");
+    add(Boolean(sheet.perks["equacao-letal"]), "equacao-letal", "Equação Letal", "+2 Passos por dado de acerto convertido");
+    add(Boolean(sheet.perks["quebra-portas"]), "quebra-portas", "Contra estrutura", "+2 Passos");
+    if (scope === "physical") add(Boolean(sheet.perks.skadoosh), "skadoosh", "Skadoosh", "+4 Passos de Dano");
+    add(Boolean(sheet.perks["respiracao-contida"]), "respiracao-contida", "Respiração Contida", "+2 Passos à distância");
+    add(Boolean(sheet.perks["disparo-reflexivo"]), "disparo-reflexivo", "Disparo Reflexivo", "−2 Passos");
+    add(Boolean(sheet.perks["golpe-direcionado"]), "golpe-direcionado", "Golpe Direcionado", "+2 Passos");
+    add(Boolean(sheet.perks["olho-cacador"]), "olho-cacador", "Olho do Caçador", "+2 Passos");
+    add(Boolean(sheet.perks["disparo-alma"]), "disparo-alma", "Disparo da Alma", "+5 Passos");
+    add(Boolean(sheet.perks["entre-costelas"]), "entre-costelas", "Entre as Costelas", "−2 Passos; +1 dado de acerto");
+    add(Boolean(sheet.perks.momentum), "momentum", "Momentum", "+2 Passos corpo a corpo");
+    add(Boolean(sheet.perks["corpo-lamina"]), "corpo-lamina", "Corpo de Lâmina", "+3 Passos");
+    add(Boolean(sheet.perks.adaptabilidade), "adaptabilidade", "Adaptabilidade concluída", "+metade do Raciocínio em Passos");
+    add(Boolean(sheet.perks.fortificador), "fortificador", "Fortificador", "+2 Passos");
+    add(Boolean(sheet.perks["foco-letal"]), "foco-letal", "Foco Letal", "Converte 1 Passo em +2 Passos");
+    add(Boolean(sheet.perks["impacto-cinetico"]), "impacto-cinetico", "Impacto Cinético", "+2 Passos após mover");
+    add(Boolean(sheet.perks["corpo-cerco"]), "corpo-cerco", "Corpo de Cerco", "+3 Passos após Bloqueio total");
+    add(Boolean(sheet.perks["cacador-aberturas"]), "cacador-aberturas", "Caçador de Aberturas", "+2 Passos após erro inimigo");
+    add(Boolean(sheet.perks.oportunista), "oportunista", "Oportunista", "+2 Passos em ataque de oportunidade");
+    add(Boolean(sheet.perks["guarda-agressiva"]), "guarda-agressiva", "Guarda Agressiva", "+2 Passos após Bloqueio total");
+    add(Boolean(sheet.perks["ritmo-combate"]), "ritmo-combate", "Ritmo de Combate", "+1 Passo de Dano");
+    add(Boolean(sheet.perks.carrasco), "carrasco", "Carrasco", "+2 Passos contra alvo com 1/4 da Vida");
+    add(Boolean(sheet.perks["ultimo-homem-pe"]), "ultimo-homem-pe", "Último Homem de Pé", "+2 Passos de Dano");
+    if (scope === "physical") add(Boolean(sheet.perks["lenda-dragao"]), "lenda-dragao", "Lenda do Dragão", "+1 Passo");
+    if (scope === "kagune") {
+      add(Boolean(sheet.effects["mudanca-forma"]), "mudanca-forma", "Mudança de Forma ofensiva", "+1 Passo a cada 2 níveis");
+      add(Boolean(sheet.effects.cristalizacao), "cristalizacao", "Cristalização", "+Passos conforme o nível");
+      add(Boolean(sheet.effects["criar-arma"]), "criar-arma", "Arma criada", "+1 Passo por nível");
+      add(Boolean(sheet.effects["adicionar-elemento"]), "adicionar-elemento", "Elemento ativo", "+3/+6 no dano");
+      add(Boolean(sheet.effects["tiros-explosivos"]), "tiros-explosivos", "Tiros Explosivos", "+1/+2 Passos");
+      add(Boolean(sheet.effects["lamina-cauda-viva"]), "lamina-cauda-viva", "Lâmina de Cauda Viva", "+2 Passos após errar");
+      add(Boolean(sheet.effects["estouro-rc"]), "estouro-rc", "Estouro de RC", "+3 Passos de Dano");
+      add(Boolean(sheet.effects["estouro-rc"]), "estouro-rc-penalidade", "Após Estouro de RC", "−1 Passo de Dano");
+      add(sheet.selectedEvolutions.includes("perda-peso"), "perda-peso", "Perda de Peso", "+2 Passos");
+      add(sheet.selectedEvolutions.includes("mestre-armas"), "mestre-armas", "Mestre das Armas ofensivo", "+2 Passos");
+      add(sheet.selectedEvolutions.includes("multiplas-caudas-plus"), "multiplas-caudas-plus", "Múltiplas Caudas +", "+1/+1/+2 Passos conforme compras");
+      add(sheet.selectedEvolutions.includes("ferreiro-guerra"), "ferreiro-guerra", "Ferreiro da Guerra corpo a corpo", "+metade de Força/Agilidade em Passos");
+      add(sheet.selectedEvolutions.includes("lanca-ceus"), "lanca-ceus", "Lança que Devora Céus", "+10 Passos");
+      add(sheet.selectedEvolutions.includes("mil-pernas"), "mil-pernas", "Mil Pernas", "+2 Passos");
+      add(sheet.selectedEvolutions.includes("predador-perfeito"), "predador-perfeito", "Predador Perfeito — Ataque", "+2 Passos");
+      add(sheet.selectedEvolutions.includes("chuva-carmesim"), "chuva-carmesim", "Chuva Carmesim", "+4 Passos");
+      add(sheet.selectedEvolutions.includes("chuva-carmesim"), "chuva-carmesim-penalidade", "Após Chuva Carmesim", "−2 Passos");
+      add(sheet.selectedEvolutions.includes("predador-ceus"), "predador-ceus", "Predador dos Céus", "+Passos acumulados");
+      add(sheet.selectedEvolutions.includes("arsenal-vivo"), "arsenal-vivo", "Arsenal Vivo — Martelo", "+5 no dano");
+      add(sheet.selectedEvolutions.includes("continua-crescendo"), "continua-crescendo", "Aquilo que Continua Crescendo", "+2 Passos por Crescimento");
+      add(sheet.selectedEvolutions.includes("mestre-nada"), "mestre-nada", "Mestre de Nada — Ataque", "+4 Passos");
+      add(sheet.selectedEvolutions.includes("mil-penas"), "mil-penas", "Mil Penas", "+2 Passos por ataque sacrificado");
+      add(sheet.selectedEvolutions.includes("lanca-deus"), "lanca-deus", "Lança que Perfurou Deus", "+15 Passos");
+      add(sheet.selectedEvolutions.includes("centopeia"), "centopeia", "Centopeia", "+4 Passos");
+      add(Boolean(sheet.perks["wally-like"]), "wally-like", "Wally Like", "+metades de Agilidade e Precisão em Passos");
+      add(Boolean(sheet.perks.ceifador), "ceifador", "Ceifador furtivo/oportunidade", "+8 Passos");
+      add(Boolean(sheet.perks["cristais-tungstenio"]), "cristais-tungstenio", "Cristais de Tungstênio", "+2 Passos");
+      add(Boolean(sheet.perks["railgun-rc"]), "railgun-rc", "Railgun de RC", "+7 Passos");
+      add(Boolean(sheet.perks["ultimo-horizonte"]), "ultimo-horizonte", "Último Horizonte", "+12 Passos");
+      add(Boolean(sheet.perks["hidra-cristalina"]), "hidra-cristalina", "Hidra Cristalina", "+3 Passos");
+      add(Boolean(sheet.perks["muda-penas"]), "muda-penas", "Muda de Penas", "+2 Passos");
+      add(Boolean(sheet.perks["predador-angulo-morto"]), "predador-angulo-morto", "Predador de Ângulo Morto", "+2 Passos");
+      add(Boolean(sheet.perks["mergulho-escarlate"]), "mergulho-escarlate", "Mergulho Escarlate", "+4 Passos");
+      add(Boolean(sheet.perks["tentaculo-blindado"]), "tentaculo-blindado", "Tentáculo Blindado", "+2 Passos");
+      add(Boolean(sheet.perks["carne-mineral"]), "carne-mineral", "Carne Mineral", "+3 RD");
+      add(Boolean(sheet.perks["leviata-imortal"]), "leviata-imortal", "Leviatã Imortal", "+3 Passos e +5 RD");
+      add(Boolean(sheet.perks["postura-dupla"]), "postura-dupla-ataque", "Postura Dupla — Duelo", "+2 Passos");
+      add(Boolean(sheet.perks["postura-dupla"]), "postura-dupla-defesa", "Postura Dupla — Guarda", "+2 RD");
+      add(Boolean(sheet.perks["lanca-escorpionica"]), "lanca-escorpionica", "Lança Escorpiônica", "+2 Passos em oportunidade");
+      add(Boolean(sheet.perks["arsenal-carrasco"]), "arsenal-carrasco-ataque", "Arsenal — Machado", "+4 Passos");
+      add(Boolean(sheet.perks["arsenal-carrasco"]), "arsenal-carrasco-defesa", "Arsenal — Escudo-Cauda", "+3 RD");
+      add(Boolean(sheet.perks["cavaleiro-escarlate"]), "cavaleiro-escarlate-ataque", "Cavaleiro — Oportunidade", "+5 Passos");
+      add(Boolean(sheet.perks["cavaleiro-escarlate"]), "cavaleiro-escarlate-defesa", "Cavaleiro — Defesa", "+4 RD");
+      add(Boolean(sheet.perks["danca-serpentes"]), "danca-serpentes", "Dança das Serpentes", "+2 Passos");
+      add(Boolean(sheet.perks["guarda-hidra"]), "guarda-hidra", "Guarda de Hidra", "+2 RD");
+      add(Boolean(sheet.perks["predador-reacao"]), "predador-reacao", "Predador de Reação", "+3 Passos");
+      add(Boolean(sheet.perks.orochi), "orochi", "Orochi", "+3 Passos");
+      add(Boolean(sheet.perks["serafim-ferro-sangue"]), "serafim-ferro-sangue", "Serafim — Tentáculos", "+3 Passos");
+      add(Boolean(sheet.perks["serafim-ferro-sangue"]), "serafim-ferro-sangue-defesa", "Serafim — Armadura", "+3 RD");
+      add(Boolean(sheet.perks["motor-cerco-celeste"]), "motor-cerco-celeste", "Motor de Cerco — ataque", "+2 Passos");
+      add(Boolean(sheet.perks["motor-cerco-celeste"]), "motor-cerco-celeste-defesa", "Motor de Cerco — defesa", "+2 RD");
+      add(Boolean(sheet.perks["leviata-carne"]), "leviata-carne-ataque", "Leviatã de Carne — ataque", "+2 Passos");
+      add(Boolean(sheet.perks["leviata-carne"]), "leviata-carne-defesa", "Leviatã de Carne — defesa", "+2 RD");
+      add(Boolean(sheet.perks["trindade-predatoria"]), "trindade-predatoria-ataque", "Trindade — Rinkaku", "+2 Passos");
+      add(Boolean(sheet.perks["trindade-predatoria"]), "trindade-predatoria-defesa", "Trindade — Koukaku", "+3 RD");
+      add(Boolean(sheet.perks["quimera-absoluta"]), "quimera-absoluta", "Quimera Absoluta", "+4 Passos e +4 RD");
+    }
+    return options;
+  };
