@@ -4,6 +4,7 @@ import { normalizeCharacter, calculateCharacter, effectMaximum, effectRequiremen
 
 export type Quinque = {
  id:string; name:string; image:string; rcType:KaguneFamily; grade:number; creationGrade:number; earnedPE:number; progressPE:number; bonusPE:number;
+ attributeBonuses:Record<AttributeKey,number>; attributeDice:Record<AttributeKey,number>;
  attributes:Record<AttributeKey,number>; effects:Record<string,{rank:number;target?:AttributeKey}>; evolutions:string[]; perks:Record<string,{rank:number;target?:AttributeKey}>; customSkills:CustomSkill[];
  hitDice:number; hitModifier:number; damageSteps:number; damageModifier:number; rangeBonus:number; rdOverride:number|null; durabilityOverride:number|null;
  blockDice:number; dodgeDice:number; rdBonus:number; targetKaguneType:KaguneFamily|''; milPenasSacrifices:number; growthPoints:number; predadorCeusStacks:number;
@@ -17,6 +18,8 @@ export function normalizeQuinque(raw:Partial<Quinque>={}):Quinque {
  const selections=(source:Record<string,{rank:number;target?:AttributeKey}>|undefined)=>Object.fromEntries(Object.entries(source||{}).map(([id,item])=>[id,{rank:Math.max(1,Math.floor(num(item?.rank,1))),...(attributeKeys.includes(item?.target as AttributeKey)?{target:item.target}:{})}]));
  const counts=new Map<string,number>();
  return {image:typeof raw.image==='string'?raw.image:'',blockDice:Math.trunc(num(raw.blockDice)),dodgeDice:Math.trunc(num(raw.dodgeDice)),rdBonus:num(raw.rdBonus),targetKaguneType:families.includes(raw.targetKaguneType as KaguneFamily)?raw.targetKaguneType!:'',milPenasSacrifices:Math.max(0,Math.trunc(num(raw.milPenasSacrifices))),growthPoints:Math.max(0,Math.trunc(num(raw.growthPoints))),predadorCeusStacks:Math.max(0,Math.min(4,Math.trunc(num(raw.predadorCeusStacks)))),id:typeof raw.id==='string'&&raw.id?raw.id:crypto.randomUUID(),name:typeof raw.name==='string'?raw.name:'Nova Quinque',rcType:families.includes(raw.rcType!)?raw.rcType!:'Koukaku',grade:grade(raw.grade),creationGrade:grade(raw.creationGrade),earnedPE:Math.max(0,num(raw.earnedPE)),progressPE:Math.max(0,num(raw.progressPE)),bonusPE:num(raw.bonusPE),
+ attributeBonuses:Object.fromEntries(attributeKeys.map(k=>[k,Math.trunc(num(raw.attributeBonuses?.[k]))])) as Record<AttributeKey,number>,
+ attributeDice:Object.fromEntries(attributeKeys.map(k=>[k,Math.trunc(num(raw.attributeDice?.[k]))])) as Record<AttributeKey,number>,
  attributes:Object.fromEntries(attributeKeys.map(k => [k, Math.max(0, Math.min(12, Math.floor(num(raw.attributes?.[k]))))])) as Record<AttributeKey,number>,
  effects:selections(raw.effects),perks:selections(raw.perks),evolutions:(Array.isArray(raw.evolutions)?raw.evolutions:[]).filter(id=>{const item=evolutions.find(e=>e.id===id);const next=(counts.get(id)||0)+1;counts.set(id,next);return item&&next<=(item.maxRank||1);}),customSkills:normalizeCustomSkills(raw.customSkills),
  hitDice:num(raw.hitDice),hitModifier:num(raw.hitModifier),damageSteps:num(raw.damageSteps),damageModifier:num(raw.damageModifier),rangeBonus:num(raw.rangeBonus),rdOverride:override(raw.rdOverride),durabilityOverride:override(raw.durabilityOverride),mode:raw.mode==='attack'||raw.mode==='defense'?raw.mode:'normal',activeEffects:raw.activeEffects||{},confirmedRequirements:raw.confirmedRequirements||{},notes:typeof raw.notes==='string'?raw.notes:''};
@@ -32,7 +35,7 @@ export function quinqueAllowsPerk(q:Quinque,p:Perk) {
  return !p.requiredWeapon||p.requiredWeapon==='quinque'||p.requiredWeapon==='kagune';
 }
 function baseSheet(q:Quinque) {
- return normalizeCharacter({quinques:[],species:'ghoul',weaponKind:'kagune',grade:q.grade,kaguneType:q.rcType,kaguneActive:true,currentRC:999,baseAttributes:q.attributes,effects:q.effects,selectedEvolutions:q.evolutions,confirmedRequirements:q.confirmedRequirements,customSkills:q.customSkills,perks:q.perks,damageContext:{targetKaguneType:q.targetKaguneType,milPenasSacrifices:q.milPenasSacrifices,growthPoints:q.growthPoints,predadorCeusStacks:q.predadorCeusStacks,kaguneExtraRD:q.rdBonus,kaguneExtraSteps:q.damageSteps,kaguneExtraModifier:q.damageModifier,koukakuMode:q.mode,active:q.activeEffects} as never,customBonuses:{distance:q.rangeBonus} as never},7);
+ return normalizeCharacter({quinques:[],species:'ghoul',weaponKind:'kagune',grade:q.grade,kaguneType:q.rcType,kaguneActive:true,currentRC:999,baseAttributes:q.attributes,extraDice:q.attributeDice,effects:q.effects,selectedEvolutions:q.evolutions,confirmedRequirements:q.confirmedRequirements,customSkills:q.customSkills,perks:q.perks,damageContext:{targetKaguneType:q.targetKaguneType,milPenasSacrifices:q.milPenasSacrifices,growthPoints:q.growthPoints,predadorCeusStacks:q.predadorCeusStacks,kaguneExtraRD:q.rdBonus,kaguneExtraSteps:q.damageSteps,kaguneExtraModifier:q.damageModifier,koukakuMode:q.mode,active:q.activeEffects} as never,customBonuses:{distance:q.rangeBonus,attributes:q.attributeBonuses} as never},7);
 }
 export function quinqueEffectMissing(q:Quinque,e:KaguneEffect,rank=1) {
  const s=baseSheet(q);const missing=effectRequirementStatus(e,s).missing;
@@ -49,7 +52,7 @@ export function quinquePerkMissing(q:Quinque,p:Perk) {
  const missing:string[]=[];
  if(!quinqueAllowsPerk(q,p))missing.push('Tipo incompatível');
  const sheet=baseSheet(q);
- if(!perkRequirementMet({...p,requiredWeapon:'kagune'},sheet,q.attributes))missing.push('Pré-requisitos de atributo, Grau ou técnica pendentes');
+ if(!perkRequirementMet({...p,requiredWeapon:'kagune'},sheet,Object.fromEntries(attributeKeys.map(k=>[k,q.attributes[k]+q.attributeBonuses[k]])) as Record<AttributeKey,number>))missing.push('Pré-requisitos de atributo, Grau ou técnica pendentes');
  if(q.grade<(p.minGrade||2))missing.push(`Grau ${p.minGrade}`);
  if(p.requiredEffect&&!q.effects[p.requiredEffect])missing.push('Efeito necessário');
  if(p.requiredEvolution&&!q.evolutions.includes(p.requiredEvolution))missing.push('Evolução necessária');

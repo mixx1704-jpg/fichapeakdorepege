@@ -52,3 +52,17 @@ test('aprimoramentos corporais preservam o atributo escolhido e aplicam cada ní
  assert.equal(calc(restored).activeAttributes.vigor,6);
  assert.equal(calc(restored).activeAttributes.forca,2);
 });
+test('bônus de status e dados extras são independentes, gratuitos e persistentes',()=>{
+ const original=q({attributes:{vigor:4,agilidade:4}});
+ const enhanced=q({...original,attributeBonuses:{vigor:2,agilidade:-1},attributeDice:{vigor:3,agilidade:2}});
+ const base=calc(original),result=calc(enhanced);
+ assert.equal(result.activeAttributes.vigor,6);assert.equal(result.activeAttributes.agilidade,3);
+ assert.equal(result.spent,base.spent);
+ assert.equal(result.kaguneSteps,base.kaguneSteps+1);
+ assert.equal(dice(result.kaguneTest),dice(base.kaguneTest)+5);
+ assert.equal(dice(result.blockTest),dice(base.blockTest)+5);
+ assert.equal(dice(result.dodgeTest),dice(base.dodgeTest)+1);
+ assert.deepEqual(q(JSON.parse(JSON.stringify(enhanced))),enhanced);
+ assert.equal(calc(original).activeAttributes.vigor,4);
+ assert.equal(q().attributeBonuses.vigor,0);assert.equal(q().attributeDice.vigor,0);
+});
