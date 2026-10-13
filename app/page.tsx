@@ -684,7 +684,7 @@ export function calculateCharacter(sheet: CharacterSheet, context: {quinque?:boo
     const naturalTails = Math.max(1, 1 + multipleTailsRank + multipleTailsPlusRank);
     const milPernasActive = sheet.selectedEvolutions.includes('mil-pernas') && sheet.vats.milPernasUntil > sheet.vats.turn;
     const mitosisExtra = sheet.selectedEvolutions.includes('mitose-tentacruel') && sheet.vats.mitosisUntil > sheet.vats.turn ? Math.min(naturalTails,sheet.vats.mitosisCount) : 0;
-    const maximumTails = naturalTails + (milPernasActive ? 2 : 0) + mitosisExtra;
+    const maximumTails = naturalTails + sheet.vats.manualTails + (milPernasActive ? 2 : 0) + mitosisExtra;
     const tails = tailLoadout(sheet.vats.parts,maximumTails,sheet.kaguneActive,sheet.vats.turn,sheet.vats.kakuhouUntil,sheet.selectedEvolutions.includes('oito-caminhos'));
     const tentacleMomentum = sheet.selectedEvolutions.includes('tentaculos-incessantes') && sheet.kaguneActive && sheet.vats.lastTentacleAttackTurn >= sheet.vats.turn-1 ? sheet.vats.tentacleMomentum : 0;
     const damage = sheet.damageContext;

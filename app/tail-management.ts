@@ -14,7 +14,8 @@ export function tailLoadout(parts:TailPart[],capacity:number,manifested:boolean,
  return {available,attacks,reserved,rd:reserved!==undefined&&parts[reserved]?.role==='guard'?2:0,dodge:reserved!==undefined&&parts[reserved]?.role==='dodge'?2:0};
 }
 
-export function tailAttackBudget(attacks:number[],paidTailStart:number,perTailCost:number) {
- const paid=attacks.filter(i=>i>=paidTailStart).length;
- return {paid,free:attacks.length-paid,total:paid*Math.max(1,perTailCost)};
+export function tailAttackBudget(attacks:number[],paidTailStart:number,perTailCost:number,manualStart=Infinity,manualCount=0,manualCost=0) {
+ const costs=attacks.map(i=>i>=manualStart&&i<manualStart+manualCount?Math.max(0,manualCost):i>=paidTailStart?Math.max(1,perTailCost):0);
+ const paid=costs.filter(c=>c>0).length;
+ return {paid,free:attacks.length-paid,total:costs.reduce((a,b)=>a+b,0)};
 }

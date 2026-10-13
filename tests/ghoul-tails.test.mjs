@@ -67,3 +67,18 @@ test('pagamento conjunto usa apenas ataques disponíveis e respeita RC e descont
  assert.equal(vatsAction(v,{...c,hasKagune:false},{type:'tails-attack'}).currentRC,200);
  v.global.push('Exaurido de RC');assert.equal(vatsAction(v,c,{type:'tails-attack'}).currentRC,200);
 });
+
+test('tentáculos manuais persistem, somam dano e cobram custo configurado',()=>{
+ let s=sheet();const original=calc(s);
+ s={...s,...vatsAction(s.vats,config(s),{type:'manual-tails',amount:3})};
+ s={...s,...vatsAction(s.vats,config(s),{type:'manual-tail-cost',amount:4})};
+ s={...s,...vatsAction(s.vats,config(s),{type:'tail-config',index:1,name:'Extra A'})};
+ assert.equal(calc(s).maximumTails,original.maximumTails+3);assert.equal(calc(s).activeTailCount,4);
+ assert.notEqual(calc(s).rinkakuAllTailsDamage,original.rinkakuAllTailsDamage);
+ assert.equal(vatsAction(s.vats,config(s),{type:'tails-attack'}).currentRC,188);
+ assert.equal(vatsAction(s.vats,config(s),{type:'tail-attack',index:1}).currentRC,196);
+ const restored=n(JSON.parse(JSON.stringify(s)),7);assert.equal(restored.vats.manualTails,3);assert.equal(restored.vats.manualTailRC,4);assert.equal(restored.vats.parts[1].name,'Extra A');
+ s={...s,...vatsAction(s.vats,config(s),{type:'manual-tail-cost',amount:0})};assert.equal(vatsAction(s.vats,config(s),{type:'tails-attack'}).currentRC,200);
+ s={...s,...vatsAction(s.vats,config(s),{type:'manual-tails',amount:0})};assert.equal(calc(s).maximumTails,original.maximumTails);
+ assert.equal(normalizeVats({manualTails:100}).manualTails,20);assert.equal(normalizeVats({}).manualTails,0);
+});
