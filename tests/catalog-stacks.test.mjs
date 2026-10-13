@@ -302,7 +302,7 @@ test("Rinkaku multiplies every dice group by the number of tentacles", async () 
   assert.equal(rules.multiplyDamage("5d12+4d10", 8), "40d12+32d10");
   assert.equal(rules.multiplyDamage("1d12+2d8+11", 6), "6d12+12d8+66");
   assert.equal(rules.multiplyDamage("2d12+1d6-3", 4), "8d12+4d6-12");
-  assert.match(source, /multiplyDamage\(rinkakuTailDamage, rinkakuTailCount\)/);
+  assert.match(source, /multiplyDamage\(rinkakuTailDamage, activeTailCount\)/);
   assert.match(source, /Cada grupo de dados e o modificador são multiplicados/);
 });
 

@@ -76,7 +76,7 @@ export function calculateQuinque(q:Quinque) {
  // Manual defense dice stay local to this weapon and stack with authorial skills.
  s.customSkills.push({id:'quinque-defense-adjustments',name:'Ajustes da arma',description:'',cost:0,activation:'passive',enabled:true,effects:[{id:'block',type:'block-dice',value:q.blockDice,scope:'kagune',attribute:'vigor'},{id:'dodge',type:'dodge-dice',value:q.dodgeDice,scope:'kagune',attribute:'agilidade'}]}); const primary:AttributeKey=q.rcType==='Ukaku'?'precisao':q.rcType==='Koukaku'?'vigor':q.rcType==='Rinkaku'?'forca':'agilidade';
  s.customSkills.push({id:'quinque-hit-adjustment',name:'Acerto da arma',description:'',cost:0,activation:'passive',enabled:true,effects:[{id:'hit',type:'hit-dice',value:q.hitDice,scope:'kagune',attribute:primary}]});
- const d=calculateCharacter(s);
+ const d=calculateCharacter(s,{quinque:true});
  const effectPE=Object.entries(q.effects).reduce((n,[id,v])=>{const e=kaguneEffects.find(x=>x.id===id);return n+(e?incrementalCosts(e,v.rank).reduce((a,b)=>a+b,0):0);},0);
  const evolutionPE=[...new Set(q.evolutions)].reduce((n,id)=>{const e=evolutions.find(x=>x.id===id);return n+(e?evolutionCostsForSheet(e,q.evolutions.filter(x=>x===id).length,'ghoul').paidTotal:0);},0);
  const perkPE=Object.entries(q.perks).reduce((n,[id,v])=>{const p=perks.find(x=>x.id===id);return n+(p?rankCost(p.cost,v.rank,p.costMode):0);},0);
