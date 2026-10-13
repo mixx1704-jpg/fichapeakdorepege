@@ -13,3 +13,8 @@ export function tailLoadout(parts:TailPart[],capacity:number,manifested:boolean,
  const reserved=eightPaths?available.find(i=>parts[i]?.role==='guard'||parts[i]?.role==='dodge'):undefined;
  return {available,attacks,reserved,rd:reserved!==undefined&&parts[reserved]?.role==='guard'?2:0,dodge:reserved!==undefined&&parts[reserved]?.role==='dodge'?2:0};
 }
+
+export function tailAttackBudget(attacks:number[],paidTailStart:number,perTailCost:number) {
+ const paid=attacks.filter(i=>i>=paidTailStart).length;
+ return {paid,free:attacks.length-paid,total:paid*Math.max(1,perTailCost)};
+}

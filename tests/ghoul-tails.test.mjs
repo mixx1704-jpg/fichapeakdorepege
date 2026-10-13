@@ -52,3 +52,18 @@ test('correções auditadas: Perda de Peso, Arsenal Vivo e dados sacrificados',(
  assert.equal(dice(active.blockTest)-dice(d.blockTest),4);assert.equal(active.kaguneSteps-d.kaguneSteps,9);assert.equal(active.kaguneDamageModifier,d.kaguneDamageModifier);assert.equal(dice(active.kaguneTest),dice(d.kaguneTest)-2);
  const ukaku=sheet({kaguneType:'Ukaku',selectedEvolutions:['coruka']});assert.equal(calc(ukaku).durabilityMultiplier,.8);
 });
+
+test('pagamento conjunto usa apenas ataques disponíveis e respeita RC e descontos',async()=>{
+ const {tailLoadout,tailAttackBudget}=await vite.ssrLoadModule('/app/tail-management.ts');
+ const v=blankVats();v.parts=Array.from({length:6},()=>({damage:0,ready:0,sacrificedUntil:0}));
+ v.parts[2].enabled=false;v.parts[3].role='guard';v.parts[4].ready=2;
+ const c={...config(sheet()),tails:6,paidTailStart:1};
+ const attacks=tailLoadout(v.parts,6,true,1,0,true).attacks;
+ assert.deepEqual(attacks,[0,1,5]);assert.deepEqual(tailAttackBudget(attacks,1,2),{free:1,paid:2,total:4});
+ const paid=vatsAction(v,c,{type:'tails-attack'});assert.equal(paid.currentRC,196);assert.equal(paid.vats.rcSpent,4);
+ assert.equal(vatsAction(v,{...c,tailAttackRC:1},{type:'tails-attack'}).currentRC,198);
+ assert.equal(vatsAction(v,{...c,rc:3},{type:'tails-attack'}).currentRC,3);
+ assert.equal(vatsAction(v,{...c,kaguneActive:false},{type:'tails-attack'}).currentRC,200);
+ assert.equal(vatsAction(v,{...c,hasKagune:false},{type:'tails-attack'}).currentRC,200);
+ v.global.push('Exaurido de RC');assert.equal(vatsAction(v,c,{type:'tails-attack'}).currentRC,200);
+});
