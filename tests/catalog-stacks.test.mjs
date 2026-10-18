@@ -1,0 +1,493 @@
+import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
+import path from "node:path";
+import test, { after } from "node:test";
+import { fileURLToPath } from "node:url";
+
+import { createServer } from "vite";
+
+const root = fileURLToPath(new URL("..", import.meta.url));
+const vite = await createServer({
+  appType: "custom",
+  configFile: false,
+  root,
+  server: { middlewareMode: true },
+});
+
+after(async () => {
+  await vite.close();
+});
+
+const data = await vite.ssrLoadModule("/app/data.ts");
+const rules = await vite.ssrLoadModule("/app/page.tsx");
+const kakujaRules = await vite.ssrLoadModule("/app/KakujaPanel.tsx");
+const customSkillRules = await vite.ssrLoadModule("/app/CustomSkillsPanel.tsx");
+const kp = await vite.ssrLoadModule("/app/kakuja-perks.ts");
+
+test("Bikaku unlocks three purchases without granting skills and preserves other requirements", () => {
+  const sheet = rules.normalizeCharacter({species:'ghoul',weaponKind:'kagune',kaguneType:'Bikaku',grade:6,selectedEvolutions:['conveniencia-instintiva'],instinctiveChoices:['anjo','fenix','ataque-extra','adaptacao','anjo','taiji'],taijiUses:9},7);
+  assert.deepEqual(sheet.instinctiveChoices,['anjo','fenix','ataque-extra']);
+  assert.deepEqual(sheet.selectedEvolutions,['conveniencia-instintiva']);
+  assert.equal(sheet.taijiUses,5);
+  const phoenix=data.evolutions.find(e=>e.id==='fenix');
+  assert.equal(rules.evolutionRequirementStatus(phoenix,sheet).met,true);
+  assert.equal(rules.evolutionCostsForSheet(phoenix,1,'ghoul').paidTotal,10);
+  assert.equal(rules.evolutionRequirementStatus(phoenix,{...sheet,selectedEvolutions:[]}).met,false);
+  assert.equal(rules.evolutionRequirementStatus(data.evolutions.find(e=>e.id==='anjo'),sheet).met,false);
+  assert.equal(rules.evolutionRequirementStatus(data.evolutions.find(e=>e.id==='ataque-extra'),sheet).met,false);
+  assert.equal(rules.evolutionRequirementStatus(data.evolutions.find(e=>e.id==='ataque-extra'),{...sheet,grade:8}).met,true);
+  const saved=rules.normalizeCharacter(JSON.parse(JSON.stringify(sheet)),7);
+  assert.deepEqual(saved.instinctiveChoices,sheet.instinctiveChoices);
+  for(const id of ['taiji','conveniencia-instintiva']) assert.equal(data.evolutions.find(e=>e.id===id).cost,5);
+});
+
+test("cannibalization adds to PE-K without spending common PE", async () => {
+  const source=await readFile(path.join(root,'app/KakujaPanel.tsx'),'utf8');
+  const expression=source.match(/const budget = (.*);/)[1];
+  const budget=Function('awakened','state','instabilityCredit',`return ${expression}`);
+  assert.equal(budget(true,{cannibalPE:25,extraKakujaPE:0},0),31);
+  assert.equal(budget(true,{cannibalPE:60,extraKakujaPE:4},2),72);
+  assert.equal(budget(false,{cannibalPE:24,extraKakujaPE:0},0),0);
+});
+
+test("Kakuja Parte 1 imports 300 independent perks with valid dependencies", async () => {
+  const kd=await vite.ssrLoadModule('/app/kakuja-data.ts');
+  assert.equal(kp.kakujaPerks.length,300);
+  assert.equal(new Set(kp.kakujaPerks.map(p=>p.category)).size,12);
+  assert.deepEqual(kp.kakujaPerks.map(p=>p.sourceId),Array.from({length:300},(_,i)=>String(i+1).padStart(3,'0')));
+  for(const p of kp.kakujaPerks){
+    assert.equal(p.grade%2,0);assert.equal(p.cm,0);assert.ok(p.cost>0);assert.ok(p.effect.length>30);
+    for(const id of p.requiresModules)assert.ok(kd.kakujaModules.some(m=>m.id===id),id);
+    for(const id of p.requiresElements)assert.ok(kd.kakujaElements.some(e=>e.id===id),id);
+    for(const id of p.requiresPerks||[])assert.ok(kp.kakujaPerks.some(e=>e.id===id),id);
+  }
+});
+
+test("Kakuja perks enforce grade, awakening and elemental prerequisites and save once", () => {
+  const sheet=rules.normalizeCharacter({grade:8,species:'ghoul'},7);
+  const p=kp.kakujaPerks[0];
+  assert.ok(kp.kakujaPerkMissing(p,sheet.kakuja,8,'ghoul').includes('Kakuja desbloqueada'));
+  const ready={...sheet.kakuja,cannibalPE:25,selectedModules:['infusao-elemental'],selectedElements:['fogo']};
+  assert.deepEqual(kp.kakujaPerkMissing(p,ready,8,'ghoul'),[]);
+  assert.ok(kp.kakujaPerkMissing(p,ready,6,'ghoul').length);
+  assert.ok(kp.kakujaPerkMissing(p,ready,8,'quinx').length);
+  assert.ok(kp.kakujaPerkMissing(p,{...ready,selectedElements:[]},8,'ghoul').length);
+  const saved=rules.normalizeCharacter(JSON.parse(JSON.stringify({...sheet,kakuja:{...ready,selectedPerks:[p.id,p.id,'invalid']}})),7);
+  assert.deepEqual(saved.kakuja.selectedPerks,[p.id]);
+  assert.equal(kp.kakujaPerksCost(saved.kakuja.selectedPerks),12);
+  assert.equal(kp.kakujaPerksCost([]),0);
+  assert.deepEqual(sheet.kakuja.selectedPerks,[]);
+  assert.equal(saved.kakuja.extraKakujaPE,0);
+});
+
+test("all 1000 supplement perks have unique IDs, even grades and correct destinations", () => {
+  const entries = data.perks.filter(p => p.supplement);
+  assert.equal(entries.length, 1000);
+  assert.equal(new Set(data.perks.map(p => p.id)).size, data.perks.length);
+  assert.deepEqual(entries.map(p=>p.sourceId), Array.from({length:1000},(_,i)=>`P${String(i+1).padStart(4,'0')}`));
+  assert.equal(entries.filter(p=>p.location==='vantagens').length,600);
+  assert.equal(entries.filter(p=>p.location==='kakuhou').length,400);
+  for (const p of entries) {
+    assert.equal(p.minGrade % 2,0,p.id);
+    assert.match(p.requirement,new RegExp(`Grau ${p.minGrade}\\+`));
+    assert.equal(p.maxRank,1);
+    assert.ok(p.description.length>20);
+    assert.ok(p.sourcePage>=8 && p.sourcePage<=107);
+    if(p.location==='vantagens') assert.equal(p.category,data.attributeLabels[p.attribute]);
+    else assert.ok(p.organGroup);
+  }
+  assert.equal(entries[0].minGrade,2);
+  assert.equal(entries[3].minGrade,4);
+  assert.equal(entries.find(p=>p.sourceId==='P0203').category,'Raciocínio');
+});
+
+test("supplement purchases enforce grade, organ, species and unlocks at full price", () => {
+  const p=id=>data.perks.find(p=>p.sourceId===id);
+  const base=rules.normalizeCharacter({grade:2,species:'ghoul',weaponKind:'kagune',kaguneType:'Ukaku'},7);
+  const attrs=Object.fromEntries(data.attributeKeys.map(k=>[k,10]));
+  assert.equal(rules.perkRequirementMet(p('P0004'),base,attrs),false);
+  assert.equal(rules.perkRequirementMet(p('P0004'),{...base,grade:4},attrs),true);
+  assert.equal(rules.perkRequirementMet(p('P0501'),base,attrs),true);
+  assert.equal(rules.perkRequirementMet(p('P0551'),base,attrs),false);
+  assert.equal(rules.perkRequirementMet(p('P0501'),{...base,weaponKind:'quinque'},attrs),false);
+  assert.equal(rules.perkRequirementMet(p('P0801'),{...base,weaponKind:'quinque'},attrs),true);
+  assert.equal(rules.perkRequirementMet(p('P0751'),{...base,grade:6},attrs),false);
+  assert.equal(rules.perkRequirementMet(p('P0751'),{...base,grade:6,kakuja:{...base.kakuja,cannibalPE:25}},attrs),true);
+  assert.equal(rules.perkRequirementMet(p('P0751'),{...base,grade:6,species:'quinx',kakuja:{...base.kakuja,cannibalPE:25}},attrs),false);
+  const chimera=data.perks.find(p=>p.supplement&&p.chapter===15&&p.kaguneTypes.length===2);
+  const compatible={...base,grade:14,kaguneType:chimera.kaguneTypes[0],kaguneSecondType:chimera.kaguneTypes[1]};
+  assert.equal(rules.perkRequirementMet(chimera,compatible,attrs),true);
+  assert.equal(rules.perkRequirementMet(chimera,{...compatible,kaguneSecondType:''},attrs),false);
+  assert.equal(rules.perkRequirementMet(chimera,{...compatible,species:'quinx'},attrs),false);
+  for(const species of ['humano','ghoul-dominante','quinx']) assert.equal(rules.perkCostForSheet(chimera,1,{...base,species}),chimera.cost);
+  const saved=rules.normalizeCharacter({...base,perks:{[chimera.id]:{rank:1}}},7);
+  assert.equal(saved.perks[chimera.id].rank,1);
+});
+
+test("reactions apply the stated fractions and optional enemy bonus", () => {
+  assert.equal(rules.reactionsPerRound(8, 12), 9);
+  assert.equal(rules.reactionsPerRound(8, 12, true), 12);
+  assert.equal(rules.reactionsPerRound(3, 6), 6.25);
+  assert.equal(rules.reactionsPerRound(0, 2), 4.5);
+  assert.equal(rules.normalizeCharacter({}, 7).reactionEnemyBonus, false);
+  assert.equal(rules.normalizeCharacter({ reactionEnemyBonus: true }, 7).reactionEnemyBonus, true);
+});
+
+function sheetAtGrade(grade, kaguneType = "Rinkaku") {
+  return {
+    grade,
+    kaguneType,
+    kaguneSecondType: "",
+    kaguneThirdType: "",
+    kaguneFourthType: "",
+    selectedEvolutions: [],
+  };
+}
+
+test("uses Grau/2 + 1 for continuously scaling Kagune effects", () => {
+  const ids = [
+    "aumentar-dano",
+    "aumentar-passos",
+    "couraca-revestida",
+    "regeneracao-anormal",
+    "aumentar-acerto",
+  ];
+
+  for (const id of ids) {
+    const item = data.kaguneEffects.find((candidate) => candidate.id === id);
+    assert.ok(item, `missing ${id}`);
+    assert.equal(rules.effectMaximum(item, sheetAtGrade(2)), 2, `${id} at Grau 2`);
+    assert.equal(rules.effectMaximum(item, sheetAtGrade(6)), 4, `${id} at Grau 6`);
+    assert.equal(rules.effectMaximum(item, sheetAtGrade(14)), 8, `${id} at Grau 14`);
+  }
+});
+
+test("charges Aumentar Passos in the 3, 6, 9, 12, 15 progression", () => {
+  const item = data.kaguneEffects.find((candidate) => candidate.id === "aumentar-passos");
+  assert.deepEqual(rules.incrementalCosts(item, 5), [3, 6, 9, 12, 15]);
+});
+
+test("uses the exact PE requirements for every Grade promotion", () => {
+  assert.deepEqual(
+    rules.gradeProgression.map((step) => [step.from, step.to, step.requiredPE]),
+    [
+      [2, 4, 10],
+      [4, 6, 20],
+      [6, 8, 30],
+      [8, 10, 40],
+      [10, 12, 50],
+      [12, 14, 60],
+    ],
+  );
+  assert.equal(rules.gradeRequirementFor(4), 20);
+  assert.equal(rules.gradeRequirementFor(14), 0);
+  assert.equal(rules.cumulativeGradePE(6), 30);
+  assert.equal(rules.cumulativeGradePE(14), 210);
+});
+
+test("migrates old progression values to the corrected automatic Grade grant", () => {
+  const migrated = rules.normalizeCharacter({ grade: 10, progressPE: 7 }, 4);
+  assert.equal(migrated.earnedPE, 0);
+  assert.equal(migrated.progressPE, 7);
+  assert.equal(rules.progressionPEFor(migrated), 107);
+
+  const migratedV5 = rules.normalizeCharacter({ grade: 10, earnedPE: 147, progressPE: 17 }, 5);
+  assert.equal(migratedV5.earnedPE, 117);
+  assert.equal(rules.progressionPEFor(migratedV5), 117);
+
+  const current = rules.normalizeCharacter({ grade: 10, earnedPE: 147, progressPE: 17 }, 6);
+  assert.equal(current.earnedPE, 147);
+  assert.equal(rules.progressionPEFor(current), 147);
+});
+
+test("registers earned PE and resets only Grade progress after promotion", () => {
+  const started = { grade: 4, earnedPE: 35, progressPE: 15, marker: "preserved" };
+  const rewarded = rules.registerEarnedPE(started, 7);
+  assert.deepEqual(rewarded, { grade: 4, earnedPE: 42, progressPE: 22, marker: "preserved" });
+
+  const promoted = rules.advanceGradeIfReady(rewarded);
+  assert.deepEqual(promoted, { grade: 6, earnedPE: 42, progressPE: 0, marker: "preserved" });
+  assert.equal(rules.advanceGradeIfReady({ grade: 6, progressPE: 29 }).grade, 6);
+});
+
+test("applies Grade PE automatically without double-counting registered gains", () => {
+  assert.equal(rules.progressionPEFor({ grade: 10, earnedPE: 0, progressPE: 0 }), 100);
+  assert.equal(rules.progressionPEFor({ grade: 10, earnedPE: 105, progressPE: 5 }), 105);
+  assert.equal(rules.progressionPEFor({ grade: 10, earnedPE: 118, progressPE: 5 }), 118);
+
+  const rewarded = rules.registerEarnedPE({ grade: 10, earnedPE: 0, progressPE: 0 }, 7);
+  assert.deepEqual(rewarded, { grade: 10, earnedPE: 107, progressPE: 7 });
+});
+
+test("keeps finite staged effects at their own limits", () => {
+  const cristalizacao = data.kaguneEffects.find((item) => item.id === "cristalizacao");
+  const multiplasCaudas = data.kaguneEffects.find((item) => item.id === "multiplas-caudas");
+  const couracaSuperior = data.kaguneEffects.find((item) => item.id === "couraca-superior");
+
+  assert.equal(rules.effectMaximum(cristalizacao, sheetAtGrade(14, "Ukaku")), 3);
+  assert.equal(rules.effectMaximum(multiplasCaudas, sheetAtGrade(14, "Rinkaku")), 4);
+  assert.equal(rules.effectMaximum(couracaSuperior, sheetAtGrade(14, "Koukaku")), 7);
+});
+
+test("supports the three purchases of Múltiplas Caudas +", () => {
+  const item = data.evolutions.find((candidate) => candidate.id === "multiplas-caudas-plus");
+  assert.equal(item.maxRank, 3);
+  assert.equal(rules.evolutionRank([item.id, item.id, item.id], item.id), 3);
+  assert.deepEqual(
+    rules.normalizeEvolutionSelections([item.id, item.id, item.id, item.id]),
+    [item.id, item.id, item.id],
+  );
+});
+
+test("adds the two Koukaku Ataque Extra purchases with progressive costs", () => {
+  const item = data.evolutions.find((candidate) => candidate.id === "ataque-extra");
+  assert.equal(item.family, "Koukaku");
+  assert.equal(item.grade, 8);
+  assert.equal(item.maxRank, 2);
+  assert.deepEqual(rules.evolutionCostsForSheet(item, 2, "ghoul"), {
+    baseTotal: 18,
+    paidTotal: 18,
+    paidIncrements: [8, 10],
+  });
+  const gradeSix = rules.normalizeCharacter({ grade: 6, weaponKind: "kagune", kaguneType: "Koukaku" }, 7);
+  const gradeEight = rules.normalizeCharacter({ grade: 8, weaponKind: "kagune", kaguneType: "Koukaku" }, 7);
+  const wrongFamily = rules.normalizeCharacter({ grade: 8, weaponKind: "kagune", kaguneType: "Rinkaku" }, 7);
+  assert.equal(rules.evolutionRequirementStatus(item, gradeSix).met, false);
+  assert.equal(rules.evolutionRequirementStatus(item, gradeEight).met, true);
+  assert.equal(rules.evolutionRequirementStatus(item, wrongFamily).met, false);
+});
+
+test("applies passive and enabled active custom-skill effects to character stats", () => {
+  const skills = customSkillRules.normalizeCustomSkills([
+    {
+      name: "Instinto",
+      cost: 5,
+      activation: "passive",
+      effects: [
+        { type: "hit-dice", value: 2, scope: "kagune" },
+        { type: "damage-steps", value: 3, scope: "both" },
+        { type: "dodge-dice", value: 1 },
+      ],
+    },
+    {
+      name: "Surto",
+      cost: 4,
+      activation: "active",
+      enabled: false,
+      effects: [{ type: "extra-attacks", value: 1 }],
+    },
+  ]);
+
+  assert.equal(customSkillRules.customSkillsCost(skills), 9);
+  let totals = customSkillRules.calculateCustomSkillBonuses(skills);
+  assert.equal(totals.kaguneHitDice, 2);
+  assert.equal(totals.physicalSteps, 3);
+  assert.equal(totals.kaguneSteps, 3);
+  assert.equal(totals.dodgeDice, 1);
+  assert.equal(totals.extraAttacks, 0);
+
+  skills[1].enabled = true;
+  totals = customSkillRules.calculateCustomSkillBonuses(skills);
+  assert.equal(totals.extraAttacks, 1);
+});
+
+test("supports one Desabilidade purchase per Attribute", () => {
+  const item = data.drawbacks.find((candidate) => candidate.id === "desabilidade");
+  assert.equal(item.maxRank, data.attributeKeys.length);
+  assert.equal(item.uniqueTargets, true);
+});
+
+test("Rinkaku multiplies every dice group by the number of tentacles", async () => {
+  const source = await readFile(path.join(root, "app/page.tsx"), "utf8");
+  assert.equal(rules.multiplyDamage("5d12+4d10", 8), "40d12+32d10");
+  assert.equal(rules.multiplyDamage("1d12+2d8+11", 6), "6d12+12d8+66");
+  assert.equal(rules.multiplyDamage("2d12+1d6-3", 4), "8d12+4d6-12");
+  assert.match(source, /multiplyDamage\(rinkakuTailDamage, activeTailCount\)/);
+  assert.match(source, /Cada grupo de dados e o modificador são multiplicados/);
+});
+
+test("migrates legacy damage dice into Steps exactly once", () => {
+  const migrated = rules.normalizeCharacter({
+    damageContext: {
+      physicalExtraSteps: 2,
+      physicalExtraDice: 3,
+      kaguneExtraSteps: 1,
+      kaguneExtraDice: 4,
+      focusLethalDice: 2,
+      multiTailsPlusRank: 3,
+    },
+    kakuja: { advantageSteps: 2, advantageDice: 3 },
+  }, 2);
+
+  assert.equal(migrated.damageContext.physicalExtraSteps, 5);
+  assert.equal(migrated.damageContext.kaguneExtraSteps, 5);
+  assert.equal(migrated.damageContext.focusLethalSteps, 2);
+  assert.equal(migrated.kakuja.advantageSteps, 5);
+  assert.equal("physicalExtraDice" in migrated.damageContext, false);
+  assert.equal("multiTailsPlusRank" in migrated.damageContext, false);
+  assert.equal("advantageDice" in migrated.kakuja, false);
+
+  const normalizedAgain = rules.normalizeCharacter(migrated, 3);
+  assert.equal(normalizedAgain.damageContext.physicalExtraSteps, 5);
+  assert.equal(normalizedAgain.kakuja.advantageSteps, 5);
+});
+
+test("Kakuja starts with the full current Kagune Steps and applies module bonuses", () => {
+  assert.equal(kakujaRules.calculateKakujaSteps(15, 4, 2), 21);
+  assert.equal(kakujaRules.calculateKakujaSteps(5, -2, 0), 3);
+  assert.equal(kakujaRules.calculateKakujaSteps(1, -4, 0), 0);
+});
+
+test("Kakuja durability adds normal Kakuhou durability before instability", () => {
+  assert.equal(kakujaRules.calculateKakujaDurability(151, 80, false), 231);
+  assert.equal(kakujaRules.calculateKakujaDurability(151, 80, true), 173);
+});
+
+test("regeneration adds Grade once to normal and Superior healing", () => {
+  assert.deepEqual(rules.calculateRegeneration(38, 14, 0, 4), {
+    normalBase: 0,
+    normal: 0,
+    superior: 33,
+    perTurn: 33,
+  });
+  assert.equal(rules.calculateRegeneration(38, 14, 3, 0).perTurn, 19);
+  assert.equal(rules.calculateRegeneration(38, 14, 4, 4).perTurn, 33);
+});
+
+test("migrates purchased Kakuja modules into an empty active Profile", () => {
+  const migrated = rules.normalizeCharacter({
+    kakuja: {
+      selectedModules: ["massa-ampliada-i", "potencia-predatoria-i"],
+      profiles: [{ id: "perfil-1", name: "Perfil 1", moduleIds: [], customModuleIds: [] }],
+    },
+  }, 3);
+
+  assert.deepEqual(migrated.kakuja.profiles[0].moduleIds, ["massa-ampliada-i", "potencia-predatoria-i"]);
+  assert.deepEqual(rules.normalizeCharacter(migrated, 4).kakuja.profiles[0].moduleIds, ["massa-ampliada-i", "potencia-predatoria-i"]);
+});
+
+test("hard-gates Kakuhou effects behind their structured prerequisites", () => {
+  const explosiveShots = data.kaguneEffects.find((item) => item.id === "tiros-explosivos");
+  const base = rules.normalizeCharacter({ grade: 8, weaponKind: "kagune", kaguneType: "Ukaku" }, 3);
+
+  assert.deepEqual(rules.effectRequirementStatus(explosiveShots, base).missing, ["Cristalização N2"]);
+  assert.equal(rules.effectRequirementStatus(explosiveShots, {
+    ...base,
+    effects: { cristalizacao: { rank: 1 } },
+  }).met, false);
+  assert.equal(rules.effectRequirementStatus(explosiveShots, {
+    ...base,
+    effects: { cristalizacao: { rank: 2 } },
+  }).met, true);
+});
+
+test("hard-gates Kakuhou evolutions by attributes and prior evolutions", () => {
+  const anjo = data.evolutions.find((item) => item.id === "anjo");
+  const lancaDeus = data.evolutions.find((item) => item.id === "lanca-deus");
+  const centopeia = data.evolutions.find((item) => item.id === "centopeia");
+
+  const ukaku = rules.normalizeCharacter({
+    grade: 6,
+    weaponKind: "kagune",
+    kaguneType: "Ukaku",
+    baseAttributes: { agilidade: 3, forca: 2 },
+  }, 3);
+  assert.equal(rules.evolutionRequirementStatus(anjo, ukaku).met, false);
+  assert.equal(rules.evolutionRequirementStatus(anjo, {
+    ...ukaku,
+    baseAttributes: { ...ukaku.baseAttributes, agilidade: 4 },
+  }).met, true);
+
+  const koukaku = rules.normalizeCharacter({ grade: 12, weaponKind: "kagune", kaguneType: "Koukaku" }, 3);
+  assert.equal(rules.evolutionRequirementStatus(lancaDeus, koukaku).met, false);
+  assert.equal(rules.evolutionRequirementStatus(lancaDeus, {
+    ...koukaku,
+    selectedEvolutions: ["lanca-ceus"],
+  }).met, true);
+
+  const rinkaku = rules.normalizeCharacter({
+    grade: 12,
+    weaponKind: "kagune",
+    kaguneType: "Rinkaku",
+    selectedEvolutions: ["mil-pernas"],
+    currentSanity: 6,
+  }, 3);
+  assert.equal(rules.evolutionRequirementStatus(centopeia, rinkaku).met, false);
+  assert.equal(rules.evolutionRequirementStatus(centopeia, { ...rinkaku, currentSanity: 5 }).met, true);
+});
+
+test("Kakuja module catalog declares chains and elemental prerequisites", async () => {
+  const modules = JSON.parse(await readFile(path.join(root, "app/kakuja-modules.json"), "utf8"));
+  const byId = new Map(modules.map((item) => [item.id, item]));
+
+  assert.deepEqual(byId.get("potencia-predatoria-vi").requires, ["potencia-predatoria-v"]);
+  assert.deepEqual(byId.get("morfologia-alternativa-ii").requires, ["morfologia-alternativa-i"]);
+  assert.deepEqual(byId.get("nucleo-trino").requires, ["nucleo-duplo"]);
+  for (const item of modules.filter((module) => module.section === "11. Técnicas elementais")) {
+    assert.ok(item.requires?.includes("infusao-elemental"), `${item.name} must require Infusão Elemental`);
+  }
+});
+
+test("includes all 28 offensive Kakuja modules with their hard requirements", async () => {
+  const modules = JSON.parse(await readFile(path.join(root, "app/kakuja-modules.json"), "utf8"));
+  const extras = modules.filter((item) => /^(19|20|21|22)\./.test(item.section));
+  const byId = new Map(extras.map((item) => [item.id, item]));
+
+  assert.equal(extras.length, 28);
+  assert.deepEqual(byId.get("dupla-salva").requiresFamilies, ["Ukaku"]);
+  assert.deepEqual(byId.get("reversao-perfeita").requires, ["duelo-absoluto"]);
+  assert.equal(byId.get("alternancia-quimerica").minFamilies, 2);
+  assert.equal(byId.get("motor-de-carnificina").cb, 22);
+  assert.match(byId.get("membro-de-reserva").effect, /metade dos Passos de Dano/);
+});
+
+test("sets Kakuja CM to Grade plus 10", async () => {
+  const kakujaData = await vite.ssrLoadModule("/app/kakuja-data.ts");
+  assert.equal(kakujaData.kakujaCaps[6].cm, 16);
+  assert.equal(kakujaData.kakujaCaps[8].cm, 18);
+  assert.equal(kakujaData.kakujaCaps[10].cm, 20);
+  assert.equal(kakujaData.kakujaCaps[12].cm, 22);
+  assert.equal(kakujaData.kakujaCaps[14].cm, 24);
+});
+
+test("removes extra damage-die language and separates Kakuja accuracy from damage", async () => {
+  const catalogFiles = ["app/data.ts", "app/expansion-data.ts", "app/kakuja-data.ts", "app/kakuja-modules.json"];
+  const catalogs = (await Promise.all(catalogFiles.map((file) => readFile(path.join(root, file), "utf8")))).join("\n");
+  const pageSource = await readFile(path.join(root, "app/page.tsx"), "utf8");
+  const kakujaSource = await readFile(path.join(root, "app/KakujaPanel.tsx"), "utf8");
+
+  assert.doesNotMatch(catalogs, /\bdados? de dano\b/i);
+  assert.doesNotMatch(catalogs, /metade dos dados/i);
+  assert.doesNotMatch(pageSource, /Dados manuais|physicalExtraDamageDice|kaguneExtraDamageDice/);
+  assert.match(kakujaSource, /"railgun-de-tungstenio": \{ mode: "toggle", steps: 10, accuracy: 6 \}/);
+  assert.doesNotMatch(kakujaSource, /"railgun-de-tungstenio": \{[^\n]*modifier:/);
+});
+
+test("Rollem criticals and dynamic weights preserve dice and natural-one failures", async () => {
+  assert.equal(rules.formatTest(10, 5), "10d8!8++5>>7");
+  assert.equal(rules.formatTest(11, 7), "11d8!8++7>>9");
+  assert.equal(rules.formatTest(5, 2), "5d8!8++2>>5");
+  assert.equal(rules.formatTest(0, 0, true), "2d8!8>>5");
+  assert.equal(rules.formatTest(-2, 0), "1d8!8>>5");
+  for (let bonus = 0; bonus <= 20; bonus++) {
+    const weight = Number(rules.formatTest(10, bonus).split(">>")[1]);
+    assert.ok(1 + bonus < weight);
+    assert.ok(weight >= 5);
+    if (bonus >= 3) assert.equal(2 + bonus, weight);
+  }
+  const { adjustTest } = await vite.ssrLoadModule("/app/vats-engine.ts");
+  assert.equal(adjustTest(rules.formatTest(10, 5), -2), "8d8!8++5>>7");
+});
+
+test("Kakuja form bonuses replace the incomplete values and preserve Kagune accuracy syntax", async () => {
+  const {kakujaFormBonuses, kakujaAccuracyTest} = await vite.ssrLoadModule('/app/kakuja-data.ts');
+  assert.deepEqual(kakujaFormBonuses(false), {dice:3, steps:20});
+  assert.deepEqual(kakujaFormBonuses(true), {dice:6, steps:40});
+  assert.equal(kakujaAccuracyTest('12d8!8++4>>6',3),'15d8!8++4>>6');
+  assert.equal(kakujaAccuracyTest('12d8!8++4>>6',6),'18d8!8++4>>6');
+  assert.equal(kakujaRules.calculateKakujaSteps(15,4,2)+kakujaFormBonuses(false).steps,41);
+  assert.equal(kakujaRules.calculateKakujaSteps(15,4,2)+kakujaFormBonuses(true).steps,61);
+  const saved=rules.normalizeCharacter({kakuja:{complete:true,active:true,cannibalPE:60}},7);
+  assert.equal(saved.kakuja.complete,true);
+  assert.equal(saved.kakuja.active,true);
+});

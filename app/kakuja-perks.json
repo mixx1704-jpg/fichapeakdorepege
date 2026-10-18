@@ -1,0 +1,5314 @@
+[
+  {
+    "id": "kakuja-p1-001",
+    "sourceId": "001",
+    "name": "Câmara de Incandescência",
+    "cost": 12,
+    "grade": 8,
+    "cm": 0,
+    "category": "Fogo",
+    "usage": "Passiva · Sem RC; 1x/turno",
+    "requirement": "Kakuja; Infusão de Fogo. Kakuja ativa.",
+    "effect": "Após seu ataque normal de Kakuja causar dano de fogo, ganhe 1 Calor, máximo 3. Antes de outro ataque normal, consuma todo o Calor para receber igual número de Passos de Dano. O recurso desaparece após um turno sem causar fogo.",
+    "sourcePage": 1,
+    "requiresModules": [
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "fogo"
+    ],
+    "minElements": 1
+  },
+  {
+    "id": "kakuja-p1-002",
+    "sourceId": "002",
+    "name": "Garganta de Carvão",
+    "cost": 16,
+    "grade": 10,
+    "cm": 0,
+    "category": "Fogo",
+    "usage": "Técnica · 6 RC; 1x/turno",
+    "requirement": "Kakuja; Infusão de Fogo; ataque à distância. Kakuja ativa.",
+    "effect": "Antes de disparar, reduza o alcance em uma faixa, mínimo Toque. O ataque recebe +3 Passos e ignora 4 RD. Não combina com outro efeito de ignorar RD, Condensação ou Finalizador; custos do disparo continuam sendo pagos.",
+    "sourcePage": 1,
+    "requiresModules": [
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "fogo"
+    ],
+    "minElements": 1
+  },
+  {
+    "id": "kakuja-p1-003",
+    "sourceId": "003",
+    "name": "Sangue de Fornalha",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Fogo",
+    "usage": "Reação · 5 RC; 1x/rodada",
+    "requirement": "Kakuja; Infusão de Fogo. Kakuja ativa.",
+    "effect": "Após sofrer dano corpo a corpo, aqueça a ferida até seu próximo turno. Seu próximo ataque normal contra o agressor recebe +3 dados de acerto; se causar dano, ele sofre dano de fogo igual ao seu Grau no início do turno seguinte, com RD aplicável. Não acumula.",
+    "sourcePage": 1,
+    "requiresModules": [
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "fogo"
+    ],
+    "minElements": 1
+  },
+  {
+    "id": "kakuja-p1-004",
+    "sourceId": "004",
+    "name": "Brasa sob o Calcanhar",
+    "cost": 12,
+    "grade": 8,
+    "cm": 0,
+    "category": "Fogo",
+    "usage": "Técnica · 4 RC; 1x/turno",
+    "requirement": "Kakuja; Infusão de Fogo. Kakuja ativa.",
+    "effect": "Um ataque normal que cause dano marca o chão sob o alvo. Até seu próximo turno, o primeiro movimento voluntário dele exige Agilidade contra sua Precisão; falha causa dano de fogo igual ao Grau, após RD. A marca se apaga após esse teste.",
+    "sourcePage": 1,
+    "requiresModules": [
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "fogo"
+    ],
+    "minElements": 1
+  },
+  {
+    "id": "kakuja-p1-005",
+    "sourceId": "005",
+    "name": "Caminho de Combustão",
+    "cost": 16,
+    "grade": 10,
+    "cm": 0,
+    "category": "Fogo",
+    "usage": "Ação · 7 RC; 1x/cena",
+    "requirement": "Kakuja; Infusão de Fogo. Kakuja ativa.",
+    "effect": "Crie uma trilha de até 6 metros ao alcance, por dois turnos. Cada criatura que entrar voluntariamente testa Agilidade contra sua Precisão; falha sofre seu Grau em dano de fogo, com RD. Máximo uma exposição por criatura/rodada; afeta aliados e não gera Condutores.",
+    "sourcePage": 2,
+    "requiresModules": [
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "fogo"
+    ],
+    "minElements": 1
+  },
+  {
+    "id": "kakuja-p1-006",
+    "sourceId": "006",
+    "name": "Fome da Labareda",
+    "cost": 14,
+    "grade": 10,
+    "cm": 0,
+    "category": "Fogo",
+    "usage": "Passiva · Sem RC; 1x/turno",
+    "requirement": "Kakuja; Infusão de Fogo. Kakuja ativa.",
+    "effect": "Se um inimigo real gastar Ação apagando fogo causado por você, seu próximo ataque normal contra ele recebe +3 dados de acerto até o fim do turno seguinte. Não ativa por fogo aliado, ambiental ou produzido de propósito para alimentar esta perk.",
+    "sourcePage": 2,
+    "requiresModules": [
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "fogo"
+    ],
+    "minElements": 1
+  },
+  {
+    "id": "kakuja-p1-007",
+    "sourceId": "007",
+    "name": "Cadinho de Ossos",
+    "cost": 18,
+    "grade": 12,
+    "cm": 0,
+    "category": "Fogo",
+    "usage": "Ação · 8 RC; 1x/cena",
+    "requirement": "Kakuja; Infusão de Fogo. Kakuja ativa.",
+    "effect": "Por três turnos, escolha no início do seu turno entre +4 RD contra dano físico ou +3 Passos no primeiro ataque normal de fogo. Não pode escolher a mesma opção duas vezes seguidas. Quando terminar, perca 3 RD por um turno.",
+    "sourcePage": 2,
+    "requiresModules": [
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "fogo"
+    ],
+    "minElements": 1
+  },
+  {
+    "id": "kakuja-p1-008",
+    "sourceId": "008",
+    "name": "Corte de Brasão Ardente",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Fogo",
+    "usage": "Técnica · 5 RC; 1x/turno",
+    "requirement": "Kakuja; Infusão de Fogo. Kakuja ativa.",
+    "effect": "Se ferir inimigo já atingido por fogo seu na rodada anterior, o ataque ignora 6 RD. Não recebe Condutor nem outro efeito de ignorar RD nesse golpe. Errar ou atacar outro inimigo rompe a preparação.",
+    "sourcePage": 2,
+    "requiresModules": [
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "fogo"
+    ],
+    "minElements": 1
+  },
+  {
+    "id": "kakuja-p1-009",
+    "sourceId": "009",
+    "name": "Coração de Cinza Viva",
+    "cost": 16,
+    "grade": 10,
+    "cm": 0,
+    "category": "Fogo",
+    "usage": "Passiva · Sem RC; 1x/cena",
+    "requirement": "Kakuja; Infusão de Fogo. Kakuja ativa.",
+    "effect": "Quando um inimigo extinguir sua Infusão de Fogo por efeito hostil, ganhe +3 dados de defesa até o fim do próximo turno. A reativação continua exigindo custos e obedecendo bloqueios; esta perk não permite ignorar supressão.",
+    "sourcePage": 3,
+    "requiresModules": [
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "fogo"
+    ],
+    "minElements": 1
+  },
+  {
+    "id": "kakuja-p1-010",
+    "sourceId": "010",
+    "name": "Chama de Retaguarda",
+    "cost": 12,
+    "grade": 8,
+    "cm": 0,
+    "category": "Fogo",
+    "usage": "Reação · 4 RC; 1x/rodada",
+    "requirement": "Kakuja; Infusão de Fogo. Kakuja ativa.",
+    "effect": "Ao ver aliado ao Toque sofrer ataque corpo a corpo, conceda +3 RD contra o golpe. Se ainda houver dano, o agressor testa Vigor contra seu Controle; falha impõe -2 dados no próximo ataque até seu próximo turno. Sem dano refletido.",
+    "sourcePage": 3,
+    "requiresModules": [
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "fogo"
+    ],
+    "minElements": 1
+  },
+  {
+    "id": "kakuja-p1-011",
+    "sourceId": "011",
+    "name": "Fornalha sem Saída",
+    "cost": 18,
+    "grade": 12,
+    "cm": 0,
+    "category": "Fogo",
+    "usage": "Técnica · 8 RC; 1x/cena",
+    "requirement": "Kakuja; Infusão de Fogo; alvo agarrado por você. Kakuja ativa.",
+    "effect": "Antes de atacar o alvo agarrado, escolha soltar a contenção após o golpe. Receba +5 Passos. Se causar dano, deixe uma queimadura que causa seu Grau em fogo no próximo turno, com RD. Não combina com Finalizador ou outro dano persistente seu.",
+    "sourcePage": 3,
+    "requiresModules": [
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "fogo"
+    ],
+    "minElements": 1
+  },
+  {
+    "id": "kakuja-p1-012",
+    "sourceId": "012",
+    "name": "Mural de Incêndio",
+    "cost": 16,
+    "grade": 10,
+    "cm": 0,
+    "category": "Fogo",
+    "usage": "Ação · 7 RC; 1x/cena",
+    "requirement": "Kakuja; Infusão de Fogo; Parede Orgânica. Kakuja ativa.",
+    "effect": "Crie a Parede pagando também seu custo normal. Por dois turnos, o primeiro inimigo que a ferir corpo a corpo em cada rodada testa Vigor contra seu Controle; falha sofre seu Grau em fogo, com RD. A parede conserva sua Dureza normal.",
+    "sourcePage": 3,
+    "requiresModules": [
+      "parede-organica",
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "fogo"
+    ],
+    "minElements": 1
+  },
+  {
+    "id": "kakuja-p1-013",
+    "sourceId": "013",
+    "name": "Assobio da Caldeira",
+    "cost": 12,
+    "grade": 8,
+    "cm": 0,
+    "category": "Fogo",
+    "usage": "Técnica · 4 RC; 1x/turno",
+    "requirement": "Kakuja; Infusão de Fogo. Kakuja ativa.",
+    "effect": "Ao acertar ataque normal, renuncie ao Condutor. O alvo testa Percepção contra sua Presença; falha sofre -2 dados na próxima defesa contra outro personagem até seu próximo turno. Não aplica medo, perda de Reação ou dano adicional.",
+    "sourcePage": 4,
+    "requiresModules": [
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "fogo"
+    ],
+    "minElements": 1
+  },
+  {
+    "id": "kakuja-p1-014",
+    "sourceId": "014",
+    "name": "Língua de Fogo Curta",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Fogo",
+    "usage": "Técnica · 5 RC; 1x/turno",
+    "requirement": "Kakuja; Infusão de Fogo. Kakuja ativa.",
+    "effect": "Seu ataque normal ao Toque recebe +2 dados de acerto e +2 Passos se você permaneceu imóvel desde o último turno. Após resolver, pode mover 1 faixa usando seu Movimento restante. Sem ataques extras ou movimento gratuito.",
+    "sourcePage": 4,
+    "requiresModules": [
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "fogo"
+    ],
+    "minElements": 1
+  },
+  {
+    "id": "kakuja-p1-015",
+    "sourceId": "015",
+    "name": "Ardor de Perseguição",
+    "cost": 14,
+    "grade": 10,
+    "cm": 0,
+    "category": "Fogo",
+    "usage": "Passiva · Sem RC; 1x/turno",
+    "requirement": "Kakuja; Infusão de Fogo. Kakuja ativa.",
+    "effect": "Depois de uma criatura sofrer dano persistente de fogo seu, ganhe +2 dados no próximo teste para persegui-la e +1 faixa de Movimento usada exclusivamente para aproximar-se dela. Expira no fim do seu próximo turno; não atravessa obstáculos.",
+    "sourcePage": 4,
+    "requiresModules": [
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "fogo"
+    ],
+    "minElements": 1
+  },
+  {
+    "id": "kakuja-p1-016",
+    "sourceId": "016",
+    "name": "Têmpera da Dor",
+    "cost": 16,
+    "grade": 10,
+    "cm": 0,
+    "category": "Fogo",
+    "usage": "Reação · 6 RC; 1x/cena",
+    "requirement": "Kakuja; Infusão de Fogo. Kakuja ativa.",
+    "effect": "Após receber um golpe que retire ao menos um quarto da sua Vida máxima, receba +4 Passos no primeiro ataque normal do próximo turno. Até executá-lo, sua RD diminui 4. Não combina com Finalizador, Condensação ou outra conversão de dano recebido.",
+    "sourcePage": 4,
+    "requiresModules": [
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "fogo"
+    ],
+    "minElements": 1
+  },
+  {
+    "id": "kakuja-p1-017",
+    "sourceId": "017",
+    "name": "Céu de Faíscas Pesadas",
+    "cost": 18,
+    "grade": 12,
+    "cm": 0,
+    "category": "Fogo",
+    "usage": "Técnica · 8 RC; 1x/cena",
+    "requirement": "Kakuja; Infusão de Fogo; ataque à distância. Kakuja ativa.",
+    "effect": "Um disparo normal que cause dano pode espalhar calor a dois inimigos ao Toque do principal. Cada secundário testa Agilidade contra sua Precisão; falha sofre seu Grau em fogo, com RD. Não recebe a expressão herdada, crítico ou Condutor.",
+    "sourcePage": 5,
+    "requiresModules": [
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "fogo"
+    ],
+    "minElements": 1
+  },
+  {
+    "id": "kakuja-p1-018",
+    "sourceId": "018",
+    "name": "Boca de Incêndio",
+    "cost": 14,
+    "grade": 10,
+    "cm": 0,
+    "category": "Fogo",
+    "usage": "Ação · 6 RC; 1x/cena",
+    "requirement": "Kakuja; Infusão de Fogo. Kakuja ativa.",
+    "effect": "Até seu próximo turno, uma passagem de até 6 metros dentro do alcance fica visivelmente superaquecida. O primeiro inimigo que cruzar escolhe perder o Movimento restante ou sofrer seu Grau em fogo, após RD. A escolha não remove sua Ação.",
+    "sourcePage": 5,
+    "requiresModules": [
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "fogo"
+    ],
+    "minElements": 1
+  },
+  {
+    "id": "kakuja-p1-019",
+    "sourceId": "019",
+    "name": "Fogo sob a Couraça",
+    "cost": 18,
+    "grade": 12,
+    "cm": 0,
+    "category": "Fogo",
+    "usage": "Técnica · 7 RC; 1x/turno",
+    "requirement": "Kakuja; Infusão de Fogo. Kakuja ativa.",
+    "effect": "Contra alvo ferido por dois ataques de fogo seus em rodadas diferentes, ignore metade da RD em um ataque normal. Consome esse histórico; não combina com outro redutor de RD nem com Finalizador. Não transfere preparação a outro alvo.",
+    "sourcePage": 5,
+    "requiresModules": [
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "fogo"
+    ],
+    "minElements": 1
+  },
+  {
+    "id": "kakuja-p1-020",
+    "sourceId": "020",
+    "name": "Braseiro de Recuo",
+    "cost": 12,
+    "grade": 8,
+    "cm": 0,
+    "category": "Fogo",
+    "usage": "Reação · 4 RC; 1x/rodada",
+    "requirement": "Kakuja; Infusão de Fogo. Kakuja ativa.",
+    "effect": "Após esquivar completamente, recue 1 faixa usando Movimento disponível. O agressor recebe -3 dados para seguir sua rota antes do próximo turno, devido à cortina quente. Não impede caminho alternativo nem causa dano automático.",
+    "sourcePage": 5,
+    "requiresModules": [
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "fogo"
+    ],
+    "minElements": 1
+  },
+  {
+    "id": "kakuja-p1-021",
+    "sourceId": "021",
+    "name": "Núcleo em Ebulição",
+    "cost": 18,
+    "grade": 12,
+    "cm": 0,
+    "category": "Fogo",
+    "usage": "Ação · 9 RC; 1x/cena",
+    "requirement": "Kakuja; Infusão de Fogo. Kakuja ativa.",
+    "effect": "Por dois turnos, o primeiro ataque normal de fogo recebe +4 Passos, mas sua primeira defesa de cada rodada sofre -2 dados. Não combina com outra transformação temporária ofensiva ou Finalizador. Após terminar, a Infusão desliga por um turno.",
+    "sourcePage": 6,
+    "requiresModules": [
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "fogo"
+    ],
+    "minElements": 1
+  },
+  {
+    "id": "kakuja-p1-022",
+    "sourceId": "022",
+    "name": "Baforada de Ruína",
+    "cost": 20,
+    "grade": 14,
+    "cm": 0,
+    "category": "Fogo",
+    "usage": "Técnica · 10 RC; 1x/cena",
+    "requirement": "Kakuja; Infusão de Fogo; ataque em cone já adquirido. Kakuja ativa.",
+    "effect": "O cone recebe +4 Passos contra o alvo principal. Até dois secundários recebem o dano reduzido previsto no módulo e não sofrem Condutor. Não amplia a área, não repete a base herdada e não combina com outra explosão ou Finalizador.",
+    "sourcePage": 6,
+    "requiresModules": [
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "fogo"
+    ],
+    "minElements": 1
+  },
+  {
+    "id": "kakuja-p1-023",
+    "sourceId": "023",
+    "name": "Cicatriz Incandescente",
+    "cost": 16,
+    "grade": 10,
+    "cm": 0,
+    "category": "Fogo",
+    "usage": "Técnica · 6 RC; 1x/turno",
+    "requirement": "Kakuja; Infusão de Fogo. Kakuja ativa.",
+    "effect": "Se ferir alvo que foi curado desde seu último turno, reduza a próxima cura dele em valor igual ao seu Grau, mínimo zero. O efeito expira após dois turnos do alvo, não acumula e não impede reconstrução de membros.",
+    "sourcePage": 6,
+    "requiresModules": [
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "fogo"
+    ],
+    "minElements": 1
+  },
+  {
+    "id": "kakuja-p1-024",
+    "sourceId": "024",
+    "name": "Coroa de Carvão Partido",
+    "cost": 20,
+    "grade": 14,
+    "cm": 0,
+    "category": "Fogo",
+    "usage": "Reação · 10 RC; 1x/cena",
+    "requirement": "Kakuja; Infusão de Fogo. Kakuja ativa.",
+    "effect": "Quando um golpe quebraria sua Kakuja, ela retrai normalmente, mas uma descarga atinge o agressor se estiver ao Toque. Ele testa Agilidade contra sua Precisão; falha sofre duas vezes seu Grau em fogo, com RD; sucesso sofre metade. Sem Condutor.",
+    "sourcePage": 6,
+    "requiresModules": [
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "fogo"
+    ],
+    "minElements": 1
+  },
+  {
+    "id": "kakuja-p1-025",
+    "sourceId": "025",
+    "name": "Sol de Uma Respiração",
+    "cost": 24,
+    "grade": 14,
+    "cm": 0,
+    "category": "Fogo",
+    "usage": "Técnica · 14 RC; 1x/cena",
+    "requirement": "Kakuja; Infusão de Fogo. Kakuja ativa.",
+    "effect": "Um ataque normal recebe +6 Passos e ignora metade da RD. Após resolver, sua Infusão de Fogo desliga por dois turnos e você perde o Movimento do próximo turno. Não combina com Condensação, Ataque Devastador, outro Finalizador ou técnica ofensiva.",
+    "sourcePage": 7,
+    "requiresModules": [
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "fogo"
+    ],
+    "minElements": 1
+  },
+  {
+    "id": "kakuja-p1-026",
+    "sourceId": "026",
+    "name": "Coroa de Neve Densa",
+    "cost": 12,
+    "grade": 8,
+    "cm": 0,
+    "category": "Gelo",
+    "usage": "Passiva · Sem RC; 1x/turno",
+    "requirement": "Kakuja; Infusão de Gelo. Kakuja ativa.",
+    "effect": "Após seu ataque normal causar dano, ganhe 1 Frio, máximo 3. Antes de defender, consuma todo o Frio para receber igual bônus em dados de Bloqueio. A reserva desaparece ao desligar a Infusão ou após dois turnos sem ferir um inimigo.",
+    "sourcePage": 7,
+    "requiresModules": [
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "gelo"
+    ],
+    "minElements": 1
+  },
+  {
+    "id": "kakuja-p1-027",
+    "sourceId": "027",
+    "name": "Lâmina de Cristal Frio",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Gelo",
+    "usage": "Técnica · 5 RC; 1x/turno",
+    "requirement": "Kakuja; Infusão de Gelo. Kakuja ativa.",
+    "effect": "Se o alvo teve o Movimento reduzido por você desde seu último turno, seu ataque normal recebe +3 Passos e +1 dado de acerto. Não renova a redução de movimento nem aplica outro Condutor nesse golpe.",
+    "sourcePage": 7,
+    "requiresModules": [
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "gelo"
+    ],
+    "minElements": 1
+  },
+  {
+    "id": "kakuja-p1-028",
+    "sourceId": "028",
+    "name": "Geometria do Inverno",
+    "cost": 16,
+    "grade": 10,
+    "cm": 0,
+    "category": "Gelo",
+    "usage": "Ação · 7 RC; 1x/cena",
+    "requirement": "Kakuja; Infusão de Gelo. Kakuja ativa.",
+    "effect": "Crie duas faixas de piso escorregadio, cada uma de 3 metros, ao alcance. Por dois turnos, atravessá-las exige Agilidade contra sua Precisão; falha custa 1 faixa de Movimento adicional. Um teste por criatura/rodada; afeta aliados e não derruba automaticamente.",
+    "sourcePage": 7,
+    "requiresModules": [
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "gelo"
+    ],
+    "minElements": 1
+  },
+  {
+    "id": "kakuja-p1-029",
+    "sourceId": "029",
+    "name": "Estalo da Armadura",
+    "cost": 16,
+    "grade": 10,
+    "cm": 0,
+    "category": "Gelo",
+    "usage": "Técnica · 6 RC; 1x/turno",
+    "requirement": "Kakuja; Infusão de Gelo. Kakuja ativa.",
+    "effect": "Contra proteção rígida atingida por seu gelo na rodada anterior, ignore 6 RD num ataque normal. Se não houver proteção rígida, receba apenas +2 Passos. Escolha antes de rolar; não combina com outro efeito de ignorar RD.",
+    "sourcePage": 8,
+    "requiresModules": [
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "gelo"
+    ],
+    "minElements": 1
+  },
+  {
+    "id": "kakuja-p1-030",
+    "sourceId": "030",
+    "name": "Neve sobre o Punho",
+    "cost": 12,
+    "grade": 8,
+    "cm": 0,
+    "category": "Gelo",
+    "usage": "Técnica · 4 RC; 1x/turno",
+    "requirement": "Kakuja; Infusão de Gelo. Kakuja ativa.",
+    "effect": "Ao causar dano, o alvo testa Vigor contra seu Controle. Falha reduz em 3 o dano fixo do próximo ataque dele; sucesso reduz em 1. Expira no fim do próximo turno do alvo e não reduz Passos ou quantidade de ataques.",
+    "sourcePage": 8,
+    "requiresModules": [
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "gelo"
+    ],
+    "minElements": 1
+  },
+  {
+    "id": "kakuja-p1-031",
+    "sourceId": "031",
+    "name": "Trono de Gelo Curto",
+    "cost": 16,
+    "grade": 10,
+    "cm": 0,
+    "category": "Gelo",
+    "usage": "Ação · 7 RC; 1x/cena",
+    "requirement": "Kakuja; Infusão de Gelo. Kakuja ativa.",
+    "effect": "Fique imóvel até seu próximo turno para receber +6 RD. Se um inimigo causar dano corpo a corpo nesse período, ele sofre -2 dados no próximo teste para afastar-se de você. Essa penalidade expira no fim do turno seguinte dele.",
+    "sourcePage": 8,
+    "requiresModules": [
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "gelo"
+    ],
+    "minElements": 1
+  },
+  {
+    "id": "kakuja-p1-032",
+    "sourceId": "032",
+    "name": "Dentes de Degelo",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Gelo",
+    "usage": "Reação · 5 RC; 1x/rodada",
+    "requirement": "Kakuja; Infusão de Gelo. Kakuja ativa.",
+    "effect": "Ao bloquear completamente um golpe corpo a corpo, seu próximo ataque normal contra o agressor ignora 4 RD até o fim do próximo turno. Se mudar de alvo, perde o benefício. Não concede contra-ataque gratuito.",
+    "sourcePage": 8,
+    "requiresModules": [
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "gelo"
+    ],
+    "minElements": 1
+  },
+  {
+    "id": "kakuja-p1-033",
+    "sourceId": "033",
+    "name": "Prisma de Inverno",
+    "cost": 14,
+    "grade": 10,
+    "cm": 0,
+    "category": "Gelo",
+    "usage": "Ação · 6 RC; 1x/cena",
+    "requirement": "Kakuja; Infusão de Gelo. Kakuja ativa.",
+    "effect": "Crie cobertura com Dureza igual ao seu Grau ao Toque, por dois turnos. Um aliado atrás dela recebe +3 RD contra disparos de uma direção. O primeiro ataque de fogo que atingir a cobertura causa dano dobrado à sua Dureza, não ao aliado.",
+    "sourcePage": 9,
+    "requiresModules": [
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "gelo"
+    ],
+    "minElements": 1
+  },
+  {
+    "id": "kakuja-p1-034",
+    "sourceId": "034",
+    "name": "Pé de Geada Negra",
+    "cost": 12,
+    "grade": 8,
+    "cm": 0,
+    "category": "Gelo",
+    "usage": "Passiva · Sem RC; enquanto ativa",
+    "requirement": "Kakuja; Infusão de Gelo. Kakuja ativa.",
+    "effect": "Ignore penalidades de equilíbrio causadas pelo seu próprio gelo. Uma vez por turno, após atravessar uma área congelada por você, receba +2 dados na próxima Esquiva até seu próximo turno. Não concede imunidade a gelo inimigo.",
+    "sourcePage": 9,
+    "requiresModules": [
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "gelo"
+    ],
+    "minElements": 1
+  },
+  {
+    "id": "kakuja-p1-035",
+    "sourceId": "035",
+    "name": "Sutura Criogênica",
+    "cost": 16,
+    "grade": 10,
+    "cm": 0,
+    "category": "Gelo",
+    "usage": "Reação · 6 RC; 1x/cena",
+    "requirement": "Kakuja; Infusão de Gelo. Kakuja ativa.",
+    "effect": "Após sofrer dano persistente físico, reduza esse pulso em seu Grau, mínimo zero, e suspenda o próximo pulso da mesma fonte. O efeito volta depois se ainda tiver duração. Não cura Vida, não remove veneno e não interrompe dano de outra origem.",
+    "sourcePage": 9,
+    "requiresModules": [
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "gelo"
+    ],
+    "minElements": 1
+  },
+  {
+    "id": "kakuja-p1-036",
+    "sourceId": "036",
+    "name": "Mandíbula de Granizo",
+    "cost": 18,
+    "grade": 12,
+    "cm": 0,
+    "category": "Gelo",
+    "usage": "Técnica · 8 RC; 1x/turno",
+    "requirement": "Kakuja; Infusão de Gelo; alvo agarrado por você. Kakuja ativa.",
+    "effect": "Renuncie a manter o agarrão após seu ataque normal. O golpe ganha +4 Passos; se ferir, o alvo testa Vigor contra sua Força ou perde 1 faixa do próximo Movimento. Não impede Ação e não combina com Finalizador.",
+    "sourcePage": 9,
+    "requiresModules": [
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "gelo"
+    ],
+    "minElements": 1
+  },
+  {
+    "id": "kakuja-p1-037",
+    "sourceId": "037",
+    "name": "Desgaste por Frio",
+    "cost": 14,
+    "grade": 10,
+    "cm": 0,
+    "category": "Gelo",
+    "usage": "Técnica · 5 RC; 1x/turno",
+    "requirement": "Kakuja; Infusão de Gelo. Kakuja ativa.",
+    "effect": "Ao causar dano à Dureza de arma ou Kagune, reduza em 2 os dados do próximo ataque realizado com ela. A penalidade termina após esse ataque ou no fim do próximo turno do portador. Não acumula nem afeta outras armas dele.",
+    "sourcePage": 10,
+    "requiresModules": [
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "gelo"
+    ],
+    "minElements": 1
+  },
+  {
+    "id": "kakuja-p1-038",
+    "sourceId": "038",
+    "name": "Fenda na Geleira",
+    "cost": 16,
+    "grade": 10,
+    "cm": 0,
+    "category": "Gelo",
+    "usage": "Técnica · 6 RC; 1x/turno",
+    "requirement": "Kakuja; Infusão de Gelo. Kakuja ativa.",
+    "effect": "Se um ataque seu ao alvo na rodada anterior foi totalmente absorvido pela RD, seu ataque normal atual recebe +4 Passos. A preparação termina após o golpe, mesmo errando; não repete o dano anterior nem acumula várias rodadas de bloqueio.",
+    "sourcePage": 10,
+    "requiresModules": [
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "gelo"
+    ],
+    "minElements": 1
+  },
+  {
+    "id": "kakuja-p1-039",
+    "sourceId": "039",
+    "name": "Inverno sobre Duas Frentes",
+    "cost": 18,
+    "grade": 12,
+    "cm": 0,
+    "category": "Gelo",
+    "usage": "Ação · 8 RC; 1x/cena",
+    "requirement": "Kakuja; Infusão de Gelo. Kakuja ativa.",
+    "effect": "Por dois turnos, o primeiro Condutor de Gelo aplicado por você pode atingir também um segundo inimigo ao Toque do principal. O secundário testa Vigor contra seu Controle para negar; não recebe dano do ataque nem outros efeitos de acerto.",
+    "sourcePage": 10,
+    "requiresModules": [
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "gelo"
+    ],
+    "minElements": 1
+  },
+  {
+    "id": "kakuja-p1-040",
+    "sourceId": "040",
+    "name": "Luto de Água Fria",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Gelo",
+    "usage": "Reação · 5 RC; 1x/rodada",
+    "requirement": "Kakuja; Infusão de Gelo. Kakuja ativa.",
+    "effect": "Quando fogo hostil remover uma condição de gelo sua, receba +3 dados no próximo ataque normal contra a fonte até seu próximo turno. Não ativa por fogo seu, de aliado cooperativo ou por simples expiração da condição.",
+    "sourcePage": 10,
+    "requiresModules": [
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "gelo"
+    ],
+    "minElements": 1
+  },
+  {
+    "id": "kakuja-p1-041",
+    "sourceId": "041",
+    "name": "Cálice de Geada",
+    "cost": 16,
+    "grade": 10,
+    "cm": 0,
+    "category": "Gelo",
+    "usage": "Passiva · Sem RC; 1x/cena",
+    "requirement": "Kakuja; Infusão de Gelo; Reserva Kakuja. Kakuja ativa.",
+    "effect": "Após gastar pelo menos 12 RC em técnicas de gelo durante a cena, reduza em 4 RC a próxima técnica de gelo, mínimo 2. Não reduz Finalizadores, não recupera RC e não acumula outra redução. Use até o fim do turno seguinte.",
+    "sourcePage": 11,
+    "requiresModules": [
+      "vesicula-de-rc-i",
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "gelo"
+    ],
+    "minElements": 1
+  },
+  {
+    "id": "kakuja-p1-042",
+    "sourceId": "042",
+    "name": "Fronteira Branca",
+    "cost": 18,
+    "grade": 12,
+    "cm": 0,
+    "category": "Gelo",
+    "usage": "Ação · 8 RC; 1x/cena",
+    "requirement": "Kakuja; Infusão de Gelo. Kakuja ativa.",
+    "effect": "Delimite uma zona de 6 metros ao alcance por dois turnos. A primeira criatura que tentar sair a cada rodada testa Vigor contra seu Controle; falha reduz seu Movimento em 1 faixa, mínimo zero. Afeta aliados; ninguém sofre o efeito em rodadas consecutivas.",
+    "sourcePage": 11,
+    "requiresModules": [
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "gelo"
+    ],
+    "minElements": 1
+  },
+  {
+    "id": "kakuja-p1-043",
+    "sourceId": "043",
+    "name": "Agulha do Silêncio Frio",
+    "cost": 14,
+    "grade": 10,
+    "cm": 0,
+    "category": "Gelo",
+    "usage": "Técnica · 5 RC; 1x/turno",
+    "requirement": "Kakuja; Infusão de Gelo; ataque à distância. Kakuja ativa.",
+    "effect": "Contra alvo que não se moveu desde seu último turno, ignore até 3 dados de penalidades de cobertura parcial e receba +2 Passos. Cobertura total continua impedindo o ataque. Não aplica Condutor nesse disparo.",
+    "sourcePage": 11,
+    "requiresModules": [
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "gelo"
+    ],
+    "minElements": 1
+  },
+  {
+    "id": "kakuja-p1-044",
+    "sourceId": "044",
+    "name": "Cota de Neve Rachada",
+    "cost": 16,
+    "grade": 10,
+    "cm": 0,
+    "category": "Gelo",
+    "usage": "Reação · 6 RC; 1x/rodada",
+    "requirement": "Kakuja; Infusão de Gelo. Kakuja ativa.",
+    "effect": "Perca 4 Dureza para ganhar +4 RD contra um golpe, exigindo pelo menos 5 Dureza atual. Se o golpe causar dano, seu próximo teste para escapar de agarrão recebe +3 dados até seu próximo turno. Não combina outra divisão de dano.",
+    "sourcePage": 11,
+    "requiresModules": [
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "gelo"
+    ],
+    "minElements": 1
+  },
+  {
+    "id": "kakuja-p1-045",
+    "sourceId": "045",
+    "name": "Suspensão Cristalina",
+    "cost": 18,
+    "grade": 12,
+    "cm": 0,
+    "category": "Gelo",
+    "usage": "Técnica · 8 RC; 1x/cena",
+    "requirement": "Kakuja; Infusão de Gelo. Kakuja ativa.",
+    "effect": "Ao causar dano, o alvo testa Vigor contra seu Controle. Em falha, seu Movimento fica zerado até o fim do próximo turno; pode gastar Movimento para repetir o teste. Depois de sair, fica imune a esta perk até completar outro turno. Ações e defesas permanecem.",
+    "sourcePage": 12,
+    "requiresModules": [
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "gelo"
+    ],
+    "minElements": 1
+  },
+  {
+    "id": "kakuja-p1-046",
+    "sourceId": "046",
+    "name": "Frio que Cobra Juros",
+    "cost": 18,
+    "grade": 12,
+    "cm": 0,
+    "category": "Gelo",
+    "usage": "Passiva · Sem RC; 1x/turno",
+    "requirement": "Kakuja; Infusão de Gelo. Kakuja ativa.",
+    "effect": "Após inimigo gastar recurso para remover gelo causado por você, ganhe 1 Rachadura, máximo 2. Consuma duas antes de um ataque normal contra ele para ignorar metade da RD. A reserva expira ao fim da cena e não ativa por remoção aliada.",
+    "sourcePage": 12,
+    "requiresModules": [
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "gelo"
+    ],
+    "minElements": 1
+  },
+  {
+    "id": "kakuja-p1-047",
+    "sourceId": "047",
+    "name": "Guarda do Lago Morto",
+    "cost": 18,
+    "grade": 12,
+    "cm": 0,
+    "category": "Gelo",
+    "usage": "Ação · 9 RC; 1x/cena",
+    "requirement": "Kakuja; Infusão de Gelo. Kakuja ativa.",
+    "effect": "Por três turnos, enquanto não se mover mais de 1 faixa, receba +4 RD e +2 dados de Bloqueio. Atacar suspende os dois benefícios até seu próximo turno. Ao encerrar, sua primeira Esquiva sofre -2 dados.",
+    "sourcePage": 12,
+    "requiresModules": [
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "gelo"
+    ],
+    "minElements": 1
+  },
+  {
+    "id": "kakuja-p1-048",
+    "sourceId": "048",
+    "name": "Sepultura de Granizo",
+    "cost": 22,
+    "grade": 14,
+    "cm": 0,
+    "category": "Gelo",
+    "usage": "Técnica · 12 RC; 1x/cena",
+    "requirement": "Kakuja; Infusão de Gelo; Cárcere Elemental. Kakuja ativa.",
+    "effect": "Contra alvo já contido por você, solte a contenção após um ataque normal com +6 Passos. Não reaplica Cárcere, não retira Reação e não combina com Condensação, outro Finalizador ou Ataque Devastador. Depois, Infusão de Gelo desliga por dois turnos.",
+    "sourcePage": 12,
+    "requiresModules": [
+      "carcere-elemental",
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "gelo"
+    ],
+    "minElements": 1
+  },
+  {
+    "id": "kakuja-p1-049",
+    "sourceId": "049",
+    "name": "Último Degelo",
+    "cost": 20,
+    "grade": 14,
+    "cm": 0,
+    "category": "Gelo",
+    "usage": "Reação · 10 RC; 1x/cena",
+    "requirement": "Kakuja; Infusão de Gelo. Kakuja ativa.",
+    "effect": "Quando cair a zero Vida, não evita a queda: forme gelo defensivo até o início do seu próximo turno. Receba +6 RD nesse período e um aliado ao Toque ganha +3 dados numa tentativa de estabilizá-lo. Não ativa se estiver sem RC para pagar.",
+    "sourcePage": 13,
+    "requiresModules": [
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "gelo"
+    ],
+    "minElements": 1
+  },
+  {
+    "id": "kakuja-p1-050",
+    "sourceId": "050",
+    "name": "Horizonte a Zero",
+    "cost": 24,
+    "grade": 14,
+    "cm": 0,
+    "category": "Gelo",
+    "usage": "Técnica · 14 RC; 1x/cena",
+    "requirement": "Kakuja; Infusão de Gelo. Kakuja ativa.",
+    "effect": "Um ataque normal recebe +5 Passos e +4 dados de acerto contra inimigo afetado por gelo seu. Após resolver, você perde o Movimento por dois turnos. Sem Condensação, Ataque Devastador, outro Finalizador ou repetição do dano em área adicional.",
+    "sourcePage": 13,
+    "requiresModules": [
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "gelo"
+    ],
+    "minElements": 1
+  },
+  {
+    "id": "kakuja-p1-051",
+    "sourceId": "051",
+    "name": "Punho de Contrapeso",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Combate físico",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Após bloquear um ataque corpo a corpo, seu próximo ataque normal contra o agressor recebe +3 dados de acerto. O benefício expira ao fim do seu próximo turno e não concede ataque adicional.",
+    "sourcePage": 13,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-052",
+    "sourceId": "052",
+    "name": "Martelo de Vértebras",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Combate físico",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Antes de um ataque normal corpo a corpo, sacrifique todo o Movimento restante para ganhar +4 Passos de Dano. Se errar, sua RD diminui em 3 até o início do próximo turno.",
+    "sourcePage": 13,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-053",
+    "sourceId": "053",
+    "name": "Costela de Alavanca",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Combate físico",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Ao vencer um teste de agarrar, pode deslocar você e o alvo até 2 m, mantendo o agarrão. Não atravessa obstáculos e não move um alvo maior que o dobro do seu tamanho.",
+    "sourcePage": 14,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-054",
+    "sourceId": "054",
+    "name": "Golpe de Retorno Curto",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Combate físico",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Se errar um ataque corpo a corpo, ganhe +4 dados para bloquear o próximo ataque daquele alvo antes do seu próximo turno. O erro não causa dano nem gera outra tentativa de ataque.",
+    "sourcePage": 14,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-055",
+    "sourceId": "055",
+    "name": "Articulação Demolidora",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Combate físico",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Um ataque normal contra objeto, cobertura ou barreira recebe +5 Passos. Contra criaturas, o bônus é +2 Passos. Escolha antes do teste; excesso de dano na cobertura não passa para quem está atrás.",
+    "sourcePage": 14,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-056",
+    "sourceId": "056",
+    "name": "Presa de Pivô",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Combate físico",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Ao acertar em corpo a corpo, troque sua posição com a do alvo se vencer um teste de Força resistido por Força. As duas posições devem estar livres e a até 2 m uma da outra.",
+    "sourcePage": 14,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-057",
+    "sourceId": "057",
+    "name": "Ritmo de Três Punhos",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Combate físico",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Acertos de ataques normais corpo a corpo contra o mesmo alvo em três turnos consecutivos concedem +5 Passos ao terceiro. Errar ou trocar de alvo reinicia a sequência; o terceiro acerto a encerra.",
+    "sourcePage": 15,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-058",
+    "sourceId": "058",
+    "name": "Peso no Cotovelo",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Combate físico",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Ao acertar um ataque normal, pode abrir mão de 2 Passos de Dano para impor -3 dados no próximo bloqueio do alvo até o início do seu próximo turno. A penalidade não acumula consigo.",
+    "sourcePage": 15,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-059",
+    "sourceId": "059",
+    "name": "Agarre de Duas Frentes",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Combate físico",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Enquanto agarrar um inimigo, seus ataques normais contra outro inimigo ao alcance não sofrem penalidade decorrente desse agarrão. Você continua usando o membro necessário para manter a contenção.",
+    "sourcePage": 15,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-060",
+    "sourceId": "060",
+    "name": "Mandíbula de Escora",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Combate físico",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Enquanto estiver com os pés no chão, receba +4 dados para resistir a empurrões e derrubadas. Vencer essa resistência concede +2 Passos ao seu próximo ataque normal até o fim do próximo turno.",
+    "sourcePage": 15,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-061",
+    "sourceId": "061",
+    "name": "Corte de Ângulo Morto",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Combate físico",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Se um aliado estiver em contato corpo a corpo com seu alvo, seu ataque normal ignora 4 pontos de RD provenientes de couraça. Não ignora RD de fontes diferentes nem reduz a RD abaixo de zero.",
+    "sourcePage": 16,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-062",
+    "sourceId": "062",
+    "name": "Abraço de Britadeira",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Combate físico",
+    "usage": "Ação · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Use sua Ação contra uma criatura que você já agarra: dispute Força contra Força. Se vencer, cause dano igual ao dobro do seu Grau, reduzido pela RD. Não aplica efeitos de acerto e mantém o agarrão.",
+    "sourcePage": 16,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-063",
+    "sourceId": "063",
+    "name": "Carga de Ombro Baixo",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Combate físico",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Após avançar pelo menos 3 m em linha reta, um ataque normal recebe +3 Passos. Se causar dano, empurra 2 m mediante vitória em Força contra Força. Colisões não causam dano adicional por esta perk.",
+    "sourcePage": 16,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-064",
+    "sourceId": "064",
+    "name": "Braço de Última Linha",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Combate físico",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Ao atacar alguém que entrou no seu alcance desde seu último turno, receba +3 dados de acerto e +2 Passos. Não concede reação ofensiva nem interrompe o deslocamento do alvo.",
+    "sourcePage": 16,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-065",
+    "sourceId": "065",
+    "name": "Gancho de Reabertura",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Combate físico",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Depois de o alvo bloquear seu ataque, marque a guarda dele até o fim do próximo turno. Seu próximo ataque normal corpo a corpo contra ele ignora 5 RD se ele voltar a bloquear; a marca termina após a tentativa.",
+    "sourcePage": 17,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-066",
+    "sourceId": "066",
+    "name": "Punho de Inércia Presa",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Combate físico",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Ao acertar um alvo que não mudou de posição desde seu último turno, ganhe +4 Passos nesse ataque. O bônus não funciona em alvos inconscientes e não se combina com outro bônus de Passos desta perk.",
+    "sourcePage": 17,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-067",
+    "sourceId": "067",
+    "name": "Joelho de Quebra-Ritmo",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Combate físico",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Um ataque normal que cause dano impõe -2 dados à próxima tentativa do alvo de agarrar ou derrubar alguém até seu próximo turno. Se essa tentativa falhar, você pode se afastar 2 m sem ataque adicional.",
+    "sourcePage": 17,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-068",
+    "sourceId": "068",
+    "name": "Corte sem Arrasto",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Combate físico",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Após causar dano corpo a corpo, mova-se 2 m para uma posição livre ainda ao alcance do alvo. Esse movimento não provoca reação dele, mas pode provocar reações de outros inimigos e não ativa efeitos de deslocamento.",
+    "sourcePage": 17,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-069",
+    "sourceId": "069",
+    "name": "Ancoragem de Tendão",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Combate físico",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Enquanto mantiver um agarrão, receba +4 dados para resistir a ser movido. Se você for movido à força, pode soltar o alvo para reduzir seu próprio deslocamento em até 3 m.",
+    "sourcePage": 18,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-070",
+    "sourceId": "070",
+    "name": "Impacto de Porta Fechada",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Combate físico",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Contra alvo a até 1 m de uma parede sólida, um ataque normal recebe +3 Passos. Se causar dano, você pode cancelar qualquer empurrão desse ataque para receber +3 RD contra esse alvo até o próximo turno.",
+    "sourcePage": 18,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-071",
+    "sourceId": "071",
+    "name": "Cerco de Cotovelos",
+    "cost": 18,
+    "grade": 10,
+    "cm": 0,
+    "category": "Combate físico",
+    "usage": "Ativação livre no gatilho descrito · 6 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Quando dois ou mais inimigos estiverem ao seu alcance corpo a corpo, receba +2 dados para bloquear. Uma vez por turno, acertar um deles concede +2 dados de acerto contra um inimigo diferente no turno seguinte.",
+    "sourcePage": 18,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-072",
+    "sourceId": "072",
+    "name": "Predador de Guarda Alta",
+    "cost": 18,
+    "grade": 10,
+    "cm": 0,
+    "category": "Combate físico",
+    "usage": "Ativação livre no gatilho descrito · 6 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Declare antes de atacar: contra bloqueio, ganhe +4 Passos; contra esquiva, sofra -2 dados de acerto. A escolha vale somente para um ataque normal e não altera a defesa escolhida pelo alvo.",
+    "sourcePage": 18,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-073",
+    "sourceId": "073",
+    "name": "Predador de Guarda Baixa",
+    "cost": 18,
+    "grade": 10,
+    "cm": 0,
+    "category": "Combate físico",
+    "usage": "Ativação livre no gatilho descrito · 6 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Declare antes de atacar: contra esquiva, ganhe +3 dados de acerto; contra bloqueio, perca 2 Passos de Dano. A escolha vale somente para um ataque normal e não impede a defesa escolhida.",
+    "sourcePage": 19,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-074",
+    "sourceId": "074",
+    "name": "Ossada de Aríete",
+    "cost": 24,
+    "grade": 14,
+    "cm": 0,
+    "category": "Combate físico",
+    "usage": "Ativação livre no gatilho descrito · 12 RC; 1x/cena",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Seu ataque normal corpo a corpo ganha +6 Passos, mas você perde 5 RD até o início do próximo turno. Não combina com outro finalizador, Golpe Colossal ou Condensação Muscular.",
+    "sourcePage": 19,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-075",
+    "sourceId": "075",
+    "name": "Duelo de Carne Fechada",
+    "cost": 18,
+    "grade": 10,
+    "cm": 0,
+    "category": "Combate físico",
+    "usage": "Ativação livre no gatilho descrito · 6 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Escolha um inimigo ao alcance. Por dois turnos, seus ataques normais corpo a corpo contra ele recebem +3 Passos, mas seus ataques contra outros alvos perdem 3 dados. O efeito termina se você ficar inconsciente.",
+    "sourcePage": 19,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-076",
+    "sourceId": "076",
+    "name": "Retícula de Sangue",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Combate à distância",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja; Kakuja com ataque à distância. Kakuja ativa.",
+    "effect": "Gaste seu Movimento mirando um alvo visível. Seu próximo ataque normal à distância neste turno recebe +4 dados de acerto. Perde o bônus se você mudar de posição antes de disparar.",
+    "sourcePage": 19,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-077",
+    "sourceId": "077",
+    "name": "Agulha de Parapeito",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Combate à distância",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja; Kakuja com ataque à distância. Kakuja ativa.",
+    "effect": "Ao disparar de trás de cobertura, ignore até 3 dados de penalidade por cobertura parcial do alvo. Não atravessa cobertura total e não aumenta o alcance da Kagune.",
+    "sourcePage": 20,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-078",
+    "sourceId": "078",
+    "name": "Trajetória de Correção",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Combate à distância",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja; Kakuja com ataque à distância. Kakuja ativa.",
+    "effect": "Se errar um ataque normal à distância, seu próximo disparo contra o mesmo alvo recebe +3 dados, desde que ocorra no próximo turno. Errar novamente renova a duração, sem acumular o bônus.",
+    "sourcePage": 20,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-079",
+    "sourceId": "079",
+    "name": "Disparo de Recuo",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Combate à distância",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja; Kakuja com ataque à distância. Kakuja ativa.",
+    "effect": "Depois de resolver um ataque normal à distância, recue até 3 m em linha reta. Esse movimento não provoca reação do alvo, não ativa outras perks de deslocamento e exige um caminho livre.",
+    "sourcePage": 20,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-080",
+    "sourceId": "080",
+    "name": "Prego de Supressão",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Combate à distância",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja; Kakuja com ataque à distância. Kakuja ativa.",
+    "effect": "Um disparo normal que cause dano marca o alvo até seu próximo turno. Se ele sair voluntariamente de sua posição, sofre dano igual ao seu Grau, reduzido pela RD, uma única vez. Ele conhece esse risco.",
+    "sourcePage": 20,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-081",
+    "sourceId": "081",
+    "name": "Mira de Interdição",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Combate à distância",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja; Kakuja com ataque à distância. Kakuja ativa.",
+    "effect": "Escolha uma passagem visível de até 3 m de largura. Até seu próximo turno, receba +4 dados de acerto em seu próximo ataque normal à distância contra quem a atravessou. Não concede disparo adicional.",
+    "sourcePage": 21,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-082",
+    "sourceId": "082",
+    "name": "Estilhaço de Costura",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Combate à distância",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja; Kakuja com ataque à distância. Kakuja ativa.",
+    "effect": "Se o alvo estiver a até 1 m de uma superfície sólida, seu disparo pode prender roupas ou apêndices. Ao causar dano, reduza o Movimento dele em 2 m até o próximo turno; a redução não acumula consigo.",
+    "sourcePage": 21,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-083",
+    "sourceId": "083",
+    "name": "Janela de Atirador",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Combate à distância",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja; Kakuja com ataque à distância. Kakuja ativa.",
+    "effect": "Após um aliado mover uma criatura à força, seu próximo disparo contra ela até o fim do próximo turno recebe +3 dados e ignora 3 RD. O movimento precisa ocorrer dentro de sua linha de visão.",
+    "sourcePage": 21,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-084",
+    "sourceId": "084",
+    "name": "Chuva de Calibres",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Combate à distância",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja; Kakuja com ataque à distância. Kakuja ativa.",
+    "effect": "Antes de disparar, escolha +3 dados de acerto ou +3 Passos de Dano. Se escolher uma opção diferente da usada no turno anterior, acrescente +1 ao bônus escolhido. Máximo de +4.",
+    "sourcePage": 21,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-085",
+    "sourceId": "085",
+    "name": "Bala de Retenção",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Combate à distância",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja; Kakuja com ataque à distância. Kakuja ativa.",
+    "effect": "Você pode adiar o efeito elemental de um disparo que causou dano até o início do seu próximo turno. O dano inicial ocorre normalmente; a aplicação adiada não repete dano nem conta como novo acerto.",
+    "sourcePage": 22,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-086",
+    "sourceId": "086",
+    "name": "Foco de Longa Distância",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Combate à distância",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja; Kakuja com ataque à distância. Kakuja ativa.",
+    "effect": "Contra alvo além da metade do alcance normal de sua arma Kagune, receba +3 Passos de Dano. Dentro de 3 m, sofra -2 dados de acerto enquanto usar esta perk naquele turno.",
+    "sourcePage": 22,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-087",
+    "sourceId": "087",
+    "name": "Perfuração de Cadência Dupla",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Combate à distância",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja; Kakuja com ataque à distância. Kakuja ativa.",
+    "effect": "Dois ataques normais à distância que causem dano ao mesmo alvo em turnos consecutivos permitem ao segundo ignorar 6 RD. O benefício encerra a sequência; efeitos secundários não contam.",
+    "sourcePage": 22,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-088",
+    "sourceId": "088",
+    "name": "Mira do Companheiro Cativo",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Combate à distância",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja; Kakuja com ataque à distância. Kakuja ativa.",
+    "effect": "Contra inimigo que esteja agarrando um aliado, receba +4 dados de acerto. Você não pode usar efeitos em área nesse disparo; acertar não desfaz automaticamente o agarrão.",
+    "sourcePage": 22,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-089",
+    "sourceId": "089",
+    "name": "Linha sem Tremor",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Combate à distância",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja; Kakuja com ataque à distância. Kakuja ativa.",
+    "effect": "Receba +3 dados para resistir a efeitos que deslocariam você enquanto mira. Se resistir, seu próximo disparo até o fim do próximo turno ganha +2 Passos. Não impede dano do ataque recebido.",
+    "sourcePage": 23,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-090",
+    "sourceId": "090",
+    "name": "Fragmento de Aviso",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Combate à distância",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja; Kakuja com ataque à distância. Kakuja ativa.",
+    "effect": "Ao causar dano com disparo, marque o alvo até seu próximo turno. O primeiro aliado que atacar esse alvo recebe +2 dados de acerto; o ataque consome a marca, acertando ou não.",
+    "sourcePage": 23,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-091",
+    "sourceId": "091",
+    "name": "Munição de Pressão",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Combate à distância",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja; Kakuja com ataque à distância. Kakuja ativa.",
+    "effect": "Um disparo normal ignora 5 RD e perde 2 dados de acerto. Declare antes de rolar. Não combina com outro efeito seu que ignore RD no mesmo ataque.",
+    "sourcePage": 23,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-092",
+    "sourceId": "092",
+    "name": "Leque de Segurança",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Combate à distância",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja; Kakuja com ataque à distância. Kakuja ativa.",
+    "effect": "Ao disparar contra inimigo a até 3 m, receba +3 dados de acerto. Se causar dano, você ganha +3 dados para esquivar do próximo ataque dele antes do seu próximo turno.",
+    "sourcePage": 23,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-093",
+    "sourceId": "093",
+    "name": "Vetor de Ricochete",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Combate à distância",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja; Kakuja com ataque à distância. Kakuja ativa.",
+    "effect": "Pode disparar usando uma superfície sólida visível como mudança de direção. Some os dois trechos para medir alcance e sofra -3 dados de acerto. O alvo precisa estar visível por outro meio; não atinge através de paredes.",
+    "sourcePage": 24,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-094",
+    "sourceId": "094",
+    "name": "Respiração de Cerco",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Combate à distância",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja; Kakuja com ataque à distância. Kakuja ativa.",
+    "effect": "Após um turno inteiro sem deslocar-se voluntariamente, seu primeiro disparo normal no turno seguinte recebe +4 Passos. Movimento forçado impede o benefício; apenas mirar não gasta sua Ação.",
+    "sourcePage": 24,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-095",
+    "sourceId": "095",
+    "name": "Cravo de Retaguarda",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Combate à distância",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja; Kakuja com ataque à distância. Kakuja ativa.",
+    "effect": "Contra inimigo que se afastou voluntariamente de um aliado desde seu último turno, seu disparo recebe +3 Passos. O bônus não exige que o inimigo tenha provocado uma reação.",
+    "sourcePage": 24,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-096",
+    "sourceId": "096",
+    "name": "Estilhaço de Reserva",
+    "cost": 18,
+    "grade": 10,
+    "cm": 0,
+    "category": "Combate à distância",
+    "usage": "Ativação livre no gatilho descrito · 6 RC; 1x/turno",
+    "requirement": "Kakuja; Kakuja com ataque à distância. Kakuja ativa.",
+    "effect": "Ao errar um disparo normal, conserve parte da munição orgânica: reduza em 2 RC o custo de sua próxima técnica de disparo até o fim do próximo turno, mínimo 1 RC. Não acumula nem devolve RC.",
+    "sourcePage": 24,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-097",
+    "sourceId": "097",
+    "name": "Flecha de Prioridade",
+    "cost": 18,
+    "grade": 10,
+    "cm": 0,
+    "category": "Combate à distância",
+    "usage": "Ativação livre no gatilho descrito · 6 RC; 1x/turno",
+    "requirement": "Kakuja; Kakuja com ataque à distância. Kakuja ativa.",
+    "effect": "Escolha um alvo visível. Por dois turnos, ignore até 4 dados de penalidade causada por outros combatentes na linha de tiro contra ele. Cobertura sólida e alcance continuam valendo.",
+    "sourcePage": 25,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-098",
+    "sourceId": "098",
+    "name": "Sentença Balística",
+    "cost": 24,
+    "grade": 14,
+    "cm": 0,
+    "category": "Combate à distância",
+    "usage": "Ativação livre no gatilho descrito · 12 RC; 1x/cena",
+    "requirement": "Kakuja; Kakuja com ataque à distância. Kakuja ativa.",
+    "effect": "Um disparo normal recebe +6 Passos e ignora 3 RD. Após disparar, seus ataques à distância perdem 3 dados até o fim do próximo turno. Não combina com finalizadores ou Condensação Muscular.",
+    "sourcePage": 25,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-099",
+    "sourceId": "099",
+    "name": "Câmara de Dupla Mira",
+    "cost": 18,
+    "grade": 10,
+    "cm": 0,
+    "category": "Combate à distância",
+    "usage": "Ativação livre no gatilho descrito · 6 RC; 1x/turno",
+    "requirement": "Kakuja; Kakuja com ataque à distância. Kakuja ativa.",
+    "effect": "Marque dois alvos visíveis. Ao causar dano com um disparo normal em um deles, receba +3 dados contra o outro no próximo turno. Trocar as marcas exige sua Ação; não concede disparos adicionais.",
+    "sourcePage": 25,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-100",
+    "sourceId": "100",
+    "name": "Arsenal de Distâncias",
+    "cost": 18,
+    "grade": 10,
+    "cm": 0,
+    "category": "Combate à distância",
+    "usage": "Ativação livre no gatilho descrito · 6 RC; 1x/turno",
+    "requirement": "Kakuja; Kakuja com ataque à distância. Kakuja ativa.",
+    "effect": "Ao disparar de uma distância que difira em pelo menos 5 m da distância de seu disparo anterior, ganhe +3 Passos. Distâncias são medidas até o alvo atual; só ataques normais em turnos consecutivos contam.",
+    "sourcePage": 25,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-101",
+    "sourceId": "101",
+    "name": "Primeiro Vulto",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Speedblitz",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Se você agir antes do alvo na primeira rodada, seu primeiro ataque normal contra ele recebe +3 dados e +2 Passos. Não concede turno adicional nem modifica iniciativa após o combate começar.",
+    "sourcePage": 26,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-102",
+    "sourceId": "102",
+    "name": "Passada de Ruptura",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Speedblitz",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Após percorrer 6 m no seu turno, seu próximo ataque normal corpo a corpo recebe +3 Passos. Você precisa terminar adjacente ao alvo; teleportes e movimento forçado não contam.",
+    "sourcePage": 26,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-103",
+    "sourceId": "103",
+    "name": "Pulso de Aceleração",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Speedblitz",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Ganhe 4 m de Movimento neste turno. Ao final, perca 2 RD até o início do próximo turno. O deslocamento adicional não pode ser convertido em ataques ou recurso por outra perk.",
+    "sourcePage": 26,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-104",
+    "sourceId": "104",
+    "name": "Vulto de Contratempo",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Speedblitz",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Depois de esquivar com sucesso, mova-se até 3 m. O caminho deve estar livre; esse movimento não provoca reação do agressor nem ativa efeitos que recompensem distância percorrida.",
+    "sourcePage": 26,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-105",
+    "sourceId": "105",
+    "name": "Arrancada em Zigue-Zague",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Speedblitz",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Se mudar de direção ao menos duas vezes durante seu Movimento, receba +3 dados para esquivar de ataques à distância até o início do próximo turno. Cada trecho deve ter pelo menos 2 m.",
+    "sourcePage": 27,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-106",
+    "sourceId": "106",
+    "name": "Pressão de Chegada",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Speedblitz",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Um ataque normal contra alvo que estava a mais de 6 m de você no início do turno recebe +4 dados de acerto. O bônus não vale se o alvo foi trazido até você por outra criatura.",
+    "sourcePage": 27,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-107",
+    "sourceId": "107",
+    "name": "Finta de Aceleração",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Speedblitz",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Antes de mover, escolha um alvo visível. Se terminar do lado oposto dele após contorná-lo por caminho livre, receba +3 Passos no próximo ataque normal contra ele neste turno.",
+    "sourcePage": 27,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-108",
+    "sourceId": "108",
+    "name": "Velocidade Emprestada",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Speedblitz",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Ao acertar um ataque normal, pode reduzir seu dano em 2 Passos para ganhar 3 m de Movimento imediatamente. O movimento extra expira neste turno e não pode gerar recursos ou novos movimentos.",
+    "sourcePage": 27,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-109",
+    "sourceId": "109",
+    "name": "Sombra da Ultrapassagem",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Speedblitz",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Ao sair voluntariamente do alcance de um inimigo, receba +4 dados para se defender da primeira reação ofensiva dele nesse deslocamento. Não impede reações e não vale contra outros inimigos.",
+    "sourcePage": 28,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-110",
+    "sourceId": "110",
+    "name": "Cadência de Arranques",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Speedblitz",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Em turnos consecutivos nos quais percorra ao menos 4 m, ganhe 1 Ímpeto, máximo 3. Consuma tudo antes de um ataque normal para ganhar tantos dados de acerto. Um turno sem essa distância zera Ímpeto.",
+    "sourcePage": 28,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-111",
+    "sourceId": "111",
+    "name": "Freio de Lâmina",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Speedblitz",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Após mover pelo menos 5 m, pode encerrar seu Movimento para ganhar +4 RD contra o próximo ataque corpo a corpo antes do seu próximo turno. Não restaura Movimento já gasto.",
+    "sourcePage": 28,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-112",
+    "sourceId": "112",
+    "name": "Corte de Desaceleração",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Speedblitz",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Um ataque normal feito depois de mover 6 m ignora 4 RD. Depois dele, você não pode se deslocar voluntariamente até o fim do turno, mesmo por outras perks.",
+    "sourcePage": 28,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-113",
+    "sourceId": "113",
+    "name": "Eco de Passos Curtos",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Speedblitz",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Divida seu Movimento disponível em até três trechos antes e depois da sua Ação. Isso não concede deslocamento adicional; cada trecho posterior ao primeiro recebe +2 dados contra tentativas de agarrá-lo durante o percurso.",
+    "sourcePage": 29,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-114",
+    "sourceId": "114",
+    "name": "Rastro de Perseguidor",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Speedblitz",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Escolha um inimigo visível que se moveu no turno anterior. Ao mover em direção à posição atual dele, ganhe até 3 m de deslocamento, utilizáveis somente para aproximar-se.",
+    "sourcePage": 29,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-115",
+    "sourceId": "115",
+    "name": "Ritmo sem Colisão",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Speedblitz",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Durante seu Movimento, atravesse espaços ocupados por aliados dispostos, sem terminar neles. Após atravessar um aliado, ele recebe +2 dados na próxima esquiva antes do início do seu próximo turno.",
+    "sourcePage": 29,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-116",
+    "sourceId": "116",
+    "name": "Ataque de Intervalo",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Speedblitz",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Se o alvo errou um ataque contra você desde seu último turno, seu próximo ataque normal após percorrer 3 m recebe +3 dados. O benefício não cria ataque fora do seu turno.",
+    "sourcePage": 29,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-117",
+    "sourceId": "117",
+    "name": "Passagem Rasante",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Speedblitz",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja; Kakuja; Asas Verdadeiras. Kakuja ativa.",
+    "effect": "Ao percorrer pelo menos 4 m voando e terminar até 2 m do chão, seu ataque normal corpo a corpo recebe +3 Passos. Você continua sujeito a alcance, obstáculos e reações normais.",
+    "sourcePage": 30,
+    "requiresModules": [
+      "asas-verdadeiras"
+    ],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-118",
+    "sourceId": "118",
+    "name": "Arranque de Emergência",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Speedblitz",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Quando um efeito reduzir seu Movimento, ignore até 3 m dessa redução durante seu próximo turno. Não rompe imobilização total, agarrão ou barreiras; dura somente um turno.",
+    "sourcePage": 30,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-119",
+    "sourceId": "119",
+    "name": "Segundo Horizonte",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Speedblitz",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Se terminar seu turno a pelo menos 8 m da posição inicial, receba +3 dados para esquivar até o próximo turno. Conte apenas deslocamento voluntário; movimento forçado não contribui para a distância exigida.",
+    "sourcePage": 30,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-120",
+    "sourceId": "120",
+    "name": "Músculo de Emboscada",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Speedblitz",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Após passar um turno sem atacar, seu primeiro ataque normal depois de avançar 4 m recebe +4 Passos. O benefício expira ao fim desse turno e não acumula por esperar mais tempo.",
+    "sourcePage": 30,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-121",
+    "sourceId": "121",
+    "name": "Desvio de Quina",
+    "cost": 18,
+    "grade": 10,
+    "cm": 0,
+    "category": "Speedblitz",
+    "usage": "Ativação livre no gatilho descrito · 6 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Ao contornar uma cobertura sólida durante seu Movimento, ganhe +3 RD contra o próximo ataque à distância antes do próximo turno. O atacante deve estar do outro lado da cobertura ao ativar.",
+    "sourcePage": 31,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-122",
+    "sourceId": "122",
+    "name": "Ruptura de Ritmo",
+    "cost": 18,
+    "grade": 10,
+    "cm": 0,
+    "category": "Speedblitz",
+    "usage": "Ativação livre no gatilho descrito · 6 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Escolha entre avançar até 4 m ou ganhar +4 dados em uma esquiva atual. Depois, seu Movimento no próximo turno é reduzido em 2 m, mínimo zero. Não concede uma segunda defesa ao mesmo ataque.",
+    "sourcePage": 31,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-123",
+    "sourceId": "123",
+    "name": "Instante Carmesim",
+    "cost": 24,
+    "grade": 14,
+    "cm": 0,
+    "category": "Speedblitz",
+    "usage": "Ativação livre no gatilho descrito · 12 RC; 1x/cena",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Percorra até seu Movimento normal e faça sua Ação normal de ataque com +5 Passos. Esse deslocamento substitui o Movimento do turno. Após a Ação, perca 4 RD até o próximo turno; sem outro finalizador.",
+    "sourcePage": 31,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-124",
+    "sourceId": "124",
+    "name": "Caçada de Posições",
+    "cost": 18,
+    "grade": 10,
+    "cm": 0,
+    "category": "Speedblitz",
+    "usage": "Ativação livre no gatilho descrito · 6 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Se você atacar de um lado diferente do alvo em relação ao turno anterior, ganhe +2 dados e +2 Passos. Precisa contornar por caminho livre; girar no mesmo espaço não conta.",
+    "sourcePage": 31,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-125",
+    "sourceId": "125",
+    "name": "Velocidade de Sobrevivente",
+    "cost": 18,
+    "grade": 10,
+    "cm": 0,
+    "category": "Speedblitz",
+    "usage": "Ativação livre no gatilho descrito · 6 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Quando sua Vida estiver abaixo da metade, ganhe 2 m de Movimento e +2 dados de esquiva. Desative o benefício ao subir para metade da Vida ou mais; não concede ataques extras.",
+    "sourcePage": 32,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-126",
+    "sourceId": "126",
+    "name": "Couraça Sacrificada",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Glass cannon",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Antes de um ataque normal, reduza sua RD em 5, mínimo zero, até seu próximo turno para ganhar +4 Passos. Exige possuir pelo menos 5 RD antes da redução; não pode repetir enquanto durar.",
+    "sourcePage": 32,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-127",
+    "sourceId": "127",
+    "name": "Órgão Exposto",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Glass cannon",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Seu ataque normal recebe +4 dados de acerto; ataques contra você recebem +3 dados até o próximo turno. Declare antes de atacar e mantenha o risco mesmo se errar.",
+    "sourcePage": 32,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-128",
+    "sourceId": "128",
+    "name": "Sangria de Potência",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Glass cannon",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Perca Vida igual ao seu Grau, sem redução, para acrescentar +3 Passos a um ataque normal. Esse custo não ativa efeitos de sofrer dano nem pode ser pago se levar você a zero Vida.",
+    "sourcePage": 32,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-129",
+    "sourceId": "129",
+    "name": "Voto de Uma Defesa",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Glass cannon",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Até seu próximo turno, você não pode bloquear, mas recebe +3 Passos em um ataque normal. Pode esquivar normalmente; declare antes da Ação e não altere a escolha após ver resultados.",
+    "sourcePage": 33,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-130",
+    "sourceId": "130",
+    "name": "Núcleo em Fissura",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Glass cannon",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Ganhe +5 Passos em um ataque normal elemental. Depois dele, sua Infusão Elemental não pode ser usada até o fim do próximo turno. Não combina com outro finalizador ou Condensação Muscular.",
+    "sourcePage": 33,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-131",
+    "sourceId": "131",
+    "name": "Fome de Exatidão",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Glass cannon",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Seu ataque normal perde 3 dados de acerto e ganha +5 Passos. Se errar, não recupera custos. Não combina com outra perk sua que troque dados de acerto por dano no mesmo ataque.",
+    "sourcePage": 33,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-132",
+    "sourceId": "132",
+    "name": "Última Camada",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Glass cannon",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Se sua RD atual for 2 ou menos antes do ataque, ganhe +3 dados e +2 Passos em um ataque normal. Não pode reduzir voluntariamente a RD apenas após declarar esta perk.",
+    "sourcePage": 33,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-133",
+    "sourceId": "133",
+    "name": "Promessa de Ruína",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Glass cannon",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Marque um alvo e receba +4 Passos em ataques normais contra ele por dois turnos. Durante esse período, você não pode receber cura proveniente de suas próprias perks; cura de aliados permanece possível.",
+    "sourcePage": 34,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-134",
+    "sourceId": "134",
+    "name": "Tensão sem Margem",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Glass cannon",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Enquanto abaixo de um quarto da Vida máxima, receba +4 dados em ataques normais. O bônus termina imediatamente ao recuperar Vida acima desse limiar e não concede proteção contra a morte.",
+    "sourcePage": 34,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-135",
+    "sourceId": "135",
+    "name": "Estouro de Reserva",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Glass cannon",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Gaste 10 RC adicionais em um ataque normal para ganhar +5 Passos. Até o fim do próximo turno, não pode recuperar RC por perks. Não combina com finalizadores e não devolve RC ao errar.",
+    "sourcePage": 34,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-136",
+    "sourceId": "136",
+    "name": "Pacto de Curto Alcance",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Glass cannon",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Um ataque normal corpo a corpo recebe +4 Passos. Até seu próximo turno, ataques à distância contra você ignoram 4 pontos de sua RD, mínimo zero. O risco vale mesmo se errar.",
+    "sourcePage": 34,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-137",
+    "sourceId": "137",
+    "name": "Pacto de Linha Aberta",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Glass cannon",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Um ataque normal à distância recebe +4 Passos. Até seu próximo turno, ataques corpo a corpo contra você recebem +3 dados de acerto. Coberturas continuam funcionando normalmente.",
+    "sourcePage": 35,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-138",
+    "sourceId": "138",
+    "name": "Ferida como Mira",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Glass cannon",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Se perdeu ao menos Vida igual ao seu Grau desde seu último turno por dano inimigo, seu primeiro ataque normal recebe +3 dados de acerto e ignora 3 RD. Custos de Vida não contam.",
+    "sourcePage": 35,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-139",
+    "sourceId": "139",
+    "name": "Carga sem Retorno",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Glass cannon",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Um ataque normal recebe +5 Passos se você terminar adjacente a dois inimigos conscientes. Até seu próximo turno, não pode mover-se voluntariamente. Não combina com outros finalizadores.",
+    "sourcePage": 35,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-140",
+    "sourceId": "140",
+    "name": "Fragilidade Calculada",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Glass cannon",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Reduza sua RD em 3 até o próximo turno para ganhar +3 dados nas suas esquivas durante esse período. Exige ao menos 3 RD antes da redução e não acumula consigo.",
+    "sourcePage": 35,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-141",
+    "sourceId": "141",
+    "name": "Vascularização Frenética",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Glass cannon",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Pague Vida igual ao seu Grau, sem redução, para reduzir em 4 RC o custo de uma técnica, mínimo 1 RC. Não gera dano para gatilhos e não pode levar você a zero Vida.",
+    "sourcePage": 36,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-142",
+    "sourceId": "142",
+    "name": "Aposta de Dois Turnos",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Glass cannon",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Seu próximo ataque normal recebe +2 Passos. Se causar dano, seu primeiro ataque no turno seguinte recebe +4 Passos; se errar, sofre -3 dados nesse ataque seguinte. A aposta termina após esse ataque.",
+    "sourcePage": 36,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-143",
+    "sourceId": "143",
+    "name": "Corpo de Vidro Negro",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Glass cannon",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Até seu próximo turno, sua RD passa a zero e um ataque normal seu recebe +6 Passos. Requer RD original de pelo menos 6. Não combina com outros sacrifícios de RD, finalizadores ou Condensação Muscular.",
+    "sourcePage": 36,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-144",
+    "sourceId": "144",
+    "name": "Precisão da Exaustão",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Glass cannon",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Com 10 RC ou menos após pagar a técnica, seu ataque normal ganha +4 dados de acerto. O benefício não reduz o custo e não permite ativar técnicas sem RC suficiente.",
+    "sourcePage": 36,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-145",
+    "sourceId": "145",
+    "name": "Cicatriz sem Recuo",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Glass cannon",
+    "usage": "Reação no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Após sofrer um acerto inimigo, marque o agressor até o fim do seu próximo turno. Seu próximo ataque contra ele ganha +4 Passos, mas você perde o Movimento restante após atacar.",
+    "sourcePage": 37,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-146",
+    "sourceId": "146",
+    "name": "Explosão de Tendões",
+    "cost": 18,
+    "grade": 10,
+    "cm": 0,
+    "category": "Glass cannon",
+    "usage": "Ativação livre no gatilho descrito · 6 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Ganhe 5 m de Movimento e +2 Passos no próximo ataque normal deste turno. No turno seguinte, seu Movimento é zero; deslocamento forçado permanece possível.",
+    "sourcePage": 37,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-147",
+    "sourceId": "147",
+    "name": "Predação Insegura",
+    "cost": 18,
+    "grade": 10,
+    "cm": 0,
+    "category": "Glass cannon",
+    "usage": "Ativação livre no gatilho descrito · 6 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Ao derrotar um inimigo consciente com ataque normal, ganhe +3 Passos no primeiro ataque do turno seguinte. Até lá, sofra -3 dados em defesas. Alvos indefesos e invocações suas não ativam.",
+    "sourcePage": 37,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-148",
+    "sourceId": "148",
+    "name": "Sentença da Carne Frágil",
+    "cost": 24,
+    "grade": 14,
+    "cm": 0,
+    "category": "Glass cannon",
+    "usage": "Ativação livre no gatilho descrito · 12 RC; 1x/cena",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Um ataque normal recebe +7 Passos. Após resolver, perca Vida igual ao dobro do seu Grau, sem redução; pode cair a zero. Sem outro finalizador, Condensação Muscular ou transferência desse custo.",
+    "sourcePage": 37,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-149",
+    "sourceId": "149",
+    "name": "Risco Compartilhado",
+    "cost": 18,
+    "grade": 10,
+    "cm": 0,
+    "category": "Glass cannon",
+    "usage": "Ativação livre no gatilho descrito · 6 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Escolha aliado disposto a até 3 m. Ambos perdem 3 RD até seu próximo turno, mínimo zero; seu próximo ataque normal ganha +4 Passos. Ambos precisam possuir ao menos 3 RD para ativar.",
+    "sourcePage": 38,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-150",
+    "sourceId": "150",
+    "name": "Ruptura de Segurança",
+    "cost": 18,
+    "grade": 10,
+    "cm": 0,
+    "category": "Glass cannon",
+    "usage": "Ativação livre no gatilho descrito · 6 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Por dois turnos, seus ataques normais ignoram 4 RD, mas você sofre +Grau de dano após RD no primeiro acerto inimigo de cada turno. Esse dano adicional não ativa outros gatilhos de dano.",
+    "sourcePage": 38,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-151",
+    "sourceId": "151",
+    "name": "Tendão de Travessia",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Mobilidade",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Ganhe 4 m de deslocamento de escalada neste turno em uma superfície sólida próxima. Deve terminar apoiado; não permite atravessar tetos sem pontos de apoio nem concede ataque adicional.",
+    "sourcePage": 38,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-152",
+    "sourceId": "152",
+    "name": "Gancho de Evacuação",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Mobilidade",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Puxe um aliado disposto a até 6 m para uma posição livre a até 2 m de você. O trajeto deve estar livre; o movimento não provoca reações e não ativa efeitos ofensivos de deslocamento.",
+    "sourcePage": 38,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-153",
+    "sourceId": "153",
+    "name": "Pêndulo Orgânico",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Mobilidade",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Fixe um apêndice em ponto sólido a até 5 m e mova-se até 5 m em arco. O trajeto precisa estar livre e deve terminar em apoio; não aumenta alcance de ataques durante o balanço.",
+    "sourcePage": 39,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-154",
+    "sourceId": "154",
+    "name": "Passo sobre Lâminas",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Mobilidade",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Ignore terreno difícil criado por seus próprios efeitos orgânicos ou elementais durante este turno. Você continua sofrendo qualquer dano desses terrenos e não atravessa barreiras.",
+    "sourcePage": 39,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-155",
+    "sourceId": "155",
+    "name": "Asa de Frenagem",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Mobilidade",
+    "usage": "Reação no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja; Kakuja; Asas Verdadeiras. Kakuja ativa.",
+    "effect": "Ao cair enquanto consciente, reduza em até 6 m a altura considerada para dano de queda e desloque seu ponto de pouso até 3 m, desde que exista espaço livre.",
+    "sourcePage": 39,
+    "requiresModules": [
+      "asas-verdadeiras"
+    ],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-156",
+    "sourceId": "156",
+    "name": "Salto de Resgate",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Mobilidade",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Mova-se até 4 m em direção a um aliado que acabou de sofrer dano. Não intercepta o ataque já resolvido, não provoca reação do agressor e não ativa efeitos de ataque após deslocamento.",
+    "sourcePage": 39,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-157",
+    "sourceId": "157",
+    "name": "Escada de Costelas",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Mobilidade",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Crie apoios numa parede ao alcance por dois turnos. Você e aliados podem escalar até 5 m nela sem teste, salvo sob impedimento externo. Os apoios não sustentam criaturas maiores que você.",
+    "sourcePage": 40,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-158",
+    "sourceId": "158",
+    "name": "Passagem de Ombro",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Mobilidade",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Durante seu Movimento, atravesse o espaço de um inimigo se vencer Força contra Força. Se falhar, pare antes dele. Não causa dano, não remove reações e exige posição livre do outro lado.",
+    "sourcePage": 40,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-159",
+    "sourceId": "159",
+    "name": "Muda de Escape",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Mobilidade",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Ao tentar escapar de agarrão, receba +4 dados no teste normal. Se vencer, mova-se 2 m sem reação do agarrador; deixe uma camada orgânica sem valor defensivo ou ofensivo.",
+    "sourcePage": 40,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-160",
+    "sourceId": "160",
+    "name": "Asas de Retaguarda",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Mobilidade",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja; Kakuja; Asas Verdadeiras. Kakuja ativa.",
+    "effect": "Carregue um aliado disposto do seu tamanho ou menor durante até 4 m de seu deslocamento aéreo. Esse trecho custa o dobro de Movimento e exige terminar em apoio seguro para ambos.",
+    "sourcePage": 40,
+    "requiresModules": [
+      "asas-verdadeiras"
+    ],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-161",
+    "sourceId": "161",
+    "name": "Impulso de Parede",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Mobilidade",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Ao iniciar o turno adjacente a parede sólida, ganhe 3 m de Movimento utilizáveis somente para afastar-se dela. Não acumula com outro ganho desta perk e não permite atravessar obstáculos.",
+    "sourcePage": 41,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-162",
+    "sourceId": "162",
+    "name": "Pouso de Guarda",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Mobilidade",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Após descer voluntariamente pelo menos 3 m e pousar sem sofrer dano, receba +4 RD contra o próximo ataque até seu próximo turno. Não conta quedas provocadas por inimigos.",
+    "sourcePage": 41,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-163",
+    "sourceId": "163",
+    "name": "Rota de Sangue Frio",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Mobilidade",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Escolha uma rota visível de até seu Movimento atual. Durante esse percurso, ignore até 3 m de reduções de Movimento causadas por terreno. Não ignora agarrões, imobilizações ou dano ambiental.",
+    "sourcePage": 41,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-164",
+    "sourceId": "164",
+    "name": "Revezamento Predatório",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Mobilidade",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Troque de lugar com aliado disposto a até 3 m, usando ambos uma Reação. O caminho deve estar livre. Nenhum dos dois ativa efeitos de deslocamento ou ataques com essa troca.",
+    "sourcePage": 41,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-165",
+    "sourceId": "165",
+    "name": "Ponte de Membros",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Mobilidade",
+    "usage": "Ação · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Use sua Ação para estender uma ponte orgânica de até 4 m entre apoios. Dura até seu próximo turno e permite atravessar uma criatura por vez. Você não pode mover-se enquanto a sustenta.",
+    "sourcePage": 42,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-166",
+    "sourceId": "166",
+    "name": "Arraste de Retirada",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Mobilidade",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Ao mover, leve um aliado inconsciente adjacente por até 3 m sem penalidade de carga adicional desta perk. Não protege de reações nem permite levar mais de uma criatura.",
+    "sourcePage": 42,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-167",
+    "sourceId": "167",
+    "name": "Passada de Ancoragem",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Mobilidade",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Após mover-se pelo menos 4 m, receba +4 dados para resistir ao próximo deslocamento forçado até seu próximo turno. Pode optar por aceitar o deslocamento e conservar o benefício para outro efeito.",
+    "sourcePage": 42,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-168",
+    "sourceId": "168",
+    "name": "Trajeto de Fuga Falsa",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Mobilidade",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Mova-se até 3 m para longe de um inimigo e depois até 3 m de volta, gastando Movimento normalmente. Seu próximo ataque normal contra ele recebe +3 dados se ainda estiver ao alcance.",
+    "sourcePage": 42,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-169",
+    "sourceId": "169",
+    "name": "Salto de Cobertura",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Mobilidade",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Ao terminar seu Movimento atrás de cobertura sólida, receba +3 dados no primeiro teste de defesa à distância antes do próximo turno. O benefício termina se abandonar a cobertura voluntariamente.",
+    "sourcePage": 43,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-170",
+    "sourceId": "170",
+    "name": "Linha de Extração",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Mobilidade",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Marque um aliado disposto visível. Até seu próximo turno, ganhe 4 m de Movimento somente ao aproximar-se dele. Terminar adjacente concede ao aliado +2 dados na próxima defesa antes de seu turno.",
+    "sourcePage": 43,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-171",
+    "sourceId": "171",
+    "name": "Propulsão Lateral",
+    "cost": 18,
+    "grade": 10,
+    "cm": 0,
+    "category": "Mobilidade",
+    "usage": "Reação no gatilho descrito · 6 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Ao ser alvo de ataque em área, mova-se até 3 m como parte da sua defesa. Se sair totalmente da área, receba +4 dados no teste defensivo; não evita automaticamente o ataque.",
+    "sourcePage": 43,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-172",
+    "sourceId": "172",
+    "name": "Percurso Vertical",
+    "cost": 18,
+    "grade": 10,
+    "cm": 0,
+    "category": "Mobilidade",
+    "usage": "Ativação livre no gatilho descrito · 6 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Seu Movimento pode incluir até 4 m em parede ou teto neste turno. Deve terminar em apoio válido; caso contrário, cai. O trecho vertical não gera bônus de distância por outras perks.",
+    "sourcePage": 43,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-173",
+    "sourceId": "173",
+    "name": "Marcha de Escolta",
+    "cost": 18,
+    "grade": 10,
+    "cm": 0,
+    "category": "Mobilidade",
+    "usage": "Ativação livre no gatilho descrito · 6 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Enquanto terminar cada deslocamento adjacente ao mesmo aliado, ambos recebem +2 dados contra efeitos de redução de Movimento até seu próximo turno. Não exige que o aliado acompanhe você fora do turno dele.",
+    "sourcePage": 44,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-174",
+    "sourceId": "174",
+    "name": "Estilingue de Carne",
+    "cost": 18,
+    "grade": 10,
+    "cm": 0,
+    "category": "Mobilidade",
+    "usage": "Ação · 6 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Lance um aliado disposto até 6 m para posição visível e livre, usando sua Ação. Ele recebe +3 dados na primeira defesa até o turno dele. Não permite ataque imediato nem causa dano no pouso.",
+    "sourcePage": 44,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-175",
+    "sourceId": "175",
+    "name": "Recuo de Última Porta",
+    "cost": 18,
+    "grade": 10,
+    "cm": 0,
+    "category": "Mobilidade",
+    "usage": "Reação no gatilho descrito · 6 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Quando um inimigo entrar adjacente a você, mova-se até 4 m para um espaço livre. Não cancela a Ação dele nem impede que continue perseguindo se tiver Movimento; não ativa perks ofensivas.",
+    "sourcePage": 44,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-176",
+    "sourceId": "176",
+    "name": "Prego de Fronteira",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Controle de campo",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Ao causar dano com ataque normal, reduza o Movimento do alvo em 3 m até o fim do próximo turno dele, mínimo zero. Não acumula consigo e não impede movimentos concedidos por aliados.",
+    "sourcePage": 44,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-177",
+    "sourceId": "177",
+    "name": "Malha de Corredor",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Controle de campo",
+    "usage": "Ação · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Use sua Ação para criar uma faixa de 6 m por 2 m visível a até 6 m. Por dois turnos, inimigos gastam o dobro do Movimento nela. Não causa dano nem bloqueia visão.",
+    "sourcePage": 45,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-178",
+    "sourceId": "178",
+    "name": "Chamada de Correntes",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Controle de campo",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Após causar dano, puxe o alvo até 3 m se vencer Força contra Força. Pare antes de obstáculos ou outros corpos; não causa dano de colisão nem permite puxar alguém através de paredes.",
+    "sourcePage": 45,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-179",
+    "sourceId": "179",
+    "name": "Âncora de Calcanhar",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Controle de campo",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Marque uma criatura atingida até seu próximo turno. A primeira vez que ela for movida voluntariamente, pode gastar 2 m extras de Movimento ou perder 3 dados no próximo ataque naquele turno.",
+    "sourcePage": 45,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-180",
+    "sourceId": "180",
+    "name": "Cerca de Farpas Curtas",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Controle de campo",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Crie uma linha de 4 m ao alcance por dois turnos. Quem cruzar sofre dano igual ao seu Grau, reduzido pela RD, no máximo uma vez por turno. Aliados também são afetados; a linha não se move.",
+    "sourcePage": 45,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-181",
+    "sourceId": "181",
+    "name": "Mão que Fecha Rotas",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Controle de campo",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Após empurrar ou puxar um alvo com sucesso, escolha uma posição adjacente a ele. Esse espaço custa 3 m extras para entrar até seu próximo turno; não impede ocupação nem acumula consigo.",
+    "sourcePage": 46,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-182",
+    "sourceId": "182",
+    "name": "Prisão com Saída",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Controle de campo",
+    "usage": "Ação · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Use sua Ação e dispute Força contra Força de um alvo ao alcance. Se vencer, o Movimento dele fica zero até o turno seguinte dele; ele pode gastar sua Ação para encerrar o efeito sem teste.",
+    "sourcePage": 46,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-183",
+    "sourceId": "183",
+    "name": "Zona de Hesitação",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Controle de campo",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Escolha círculo de raio 2 m a até 6 m. Até seu próximo turno, o primeiro inimigo que entrar perde 3 dados no próximo ataque. A zona termina ao afetar alguém e não distingue criaturas ocultas.",
+    "sourcePage": 46,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-184",
+    "sourceId": "184",
+    "name": "Arrasto de Flanco",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Controle de campo",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Ao causar dano em corpo a corpo, mova o alvo 2 m lateralmente mediante Força contra Força. Não pode aproximá-lo de um precipício sem oferecer novo teste de resistência com +3 dados.",
+    "sourcePage": 46,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-185",
+    "sourceId": "185",
+    "name": "Teto de Ameaças",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Controle de campo",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Contra criatura voadora até 6 m, use sua Ação e teste Força contra Agilidade. Se vencer, ela desce até 3 m, sem dano de queda causado por esta perk; não remove a capacidade de voar.",
+    "sourcePage": 47,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-186",
+    "sourceId": "186",
+    "name": "Rede de Desarme Parcial",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Controle de campo",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Um ataque normal que cause dano impõe -3 dados ao próximo ataque do alvo com a mesma arma ou membro até seu próximo turno. Não remove armas, Kagune ou acesso a outras ações.",
+    "sourcePage": 47,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-187",
+    "sourceId": "187",
+    "name": "Cerco em Espiral",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Controle de campo",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Após você mover um inimigo à força, um aliado adjacente recebe +3 dados para sua próxima tentativa de agarrá-lo até seu próximo turno. Não concede tentativa imediata nem acumula com outra marca desta perk.",
+    "sourcePage": 47,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-188",
+    "sourceId": "188",
+    "name": "Círculo de Exclusão",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Controle de campo",
+    "usage": "Ação · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Use sua Ação para criar raio de 2 m centrado em você até seu próximo turno. Inimigos recebem -3 dados em tentativas de atravessar seu espaço ou agarrar você. A área acompanha você e não impede aproximação.",
+    "sourcePage": 47,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-189",
+    "sourceId": "189",
+    "name": "Selo de Passagem Estreita",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Controle de campo",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Escolha passagem de até 2 m a até 6 m. Por dois turnos, a primeira criatura que cruzar em cada turno precisa gastar 3 m extras de Movimento. Afeta aliados e não bloqueia visão.",
+    "sourcePage": 48,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-190",
+    "sourceId": "190",
+    "name": "Tendão de Reversão",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Controle de campo",
+    "usage": "Reação no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Quando um alvo resistir ao seu empurrão, receba +4 dados na próxima tentativa de puxá-lo até o fim do próximo turno. O bônus termina após o teste e não transforma falha em sucesso.",
+    "sourcePage": 48,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-191",
+    "sourceId": "191",
+    "name": "Terreno de Caça Lenta",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Controle de campo",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Um alvo que sofrer dano de sua área fica com -2 dados para esquivar do próximo ataque até seu próximo turno. Apenas um alvo por ativação; o benefício termina após a defesa, bem-sucedida ou não.",
+    "sourcePage": 48,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-192",
+    "sourceId": "192",
+    "name": "Cordão de Órbita Curta",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Controle de campo",
+    "usage": "Ação · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Use sua Ação para ligar-se a alvo ao alcance, vencendo Força contra Força. Até seu próximo turno, mover-se para além de 3 m de você custa 3 m extras. Ele pode romper o laço gastando sua Ação.",
+    "sourcePage": 48,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-193",
+    "sourceId": "193",
+    "name": "Puxão de Guarda",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Controle de campo",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Ao causar dano com ataque normal, mova o alvo 1 m para posição livre se vencer Força contra Força. Um aliado que ele estava ameaçando ganha +3 dados na próxima esquiva contra ele.",
+    "sourcePage": 49,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-194",
+    "sourceId": "194",
+    "name": "Silhueta Aprisionada",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Controle de campo",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Contra inimigo já com Movimento reduzido por você, ganhe +3 dados para agarrar. Ao conseguir, remova a redução anterior: a perk facilita a contenção, sem somar dois bloqueios de mobilidade.",
+    "sourcePage": 49,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-195",
+    "sourceId": "195",
+    "name": "Chão de Retaliação",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Controle de campo",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Marque círculo de raio 2 m no chão a até 6 m. Até seu próximo turno, a primeira criatura que empurrar um aliado dentro dele sofre dano igual ao seu Grau após RD. A marca então termina.",
+    "sourcePage": 49,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-196",
+    "sourceId": "196",
+    "name": "Barreira com Frestas",
+    "cost": 18,
+    "grade": 10,
+    "cm": 0,
+    "category": "Controle de campo",
+    "usage": "Ação · 6 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Use sua Ação para formar cobertura parcial de 3 m por dois turnos. Ela concede +3 dados contra disparos que a atravessem, para ambos os lados. Não bloqueia Movimento e desaparece se você desativar Kakuja.",
+    "sourcePage": 49,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-197",
+    "sourceId": "197",
+    "name": "Nó de Quatro Direções",
+    "cost": 18,
+    "grade": 10,
+    "cm": 0,
+    "category": "Controle de campo",
+    "usage": "Ativação livre no gatilho descrito · 6 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Ao acertar alvo cercado por dois aliados seus, reduza o Movimento dele em 4 m até o próximo turno, mínimo zero. Não acumula com outras reduções suas: aplique apenas a maior.",
+    "sourcePage": 50,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-198",
+    "sourceId": "198",
+    "name": "Campo de Decisão",
+    "cost": 18,
+    "grade": 10,
+    "cm": 0,
+    "category": "Controle de campo",
+    "usage": "Ativação livre no gatilho descrito · 6 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Crie raio de 3 m a até 6 m por dois turnos. Cada inimigo que iniciar o turno ali escolhe perder 3 m de Movimento ou sofrer -2 dados em seu primeiro ataque. A escolha é individual e conhecida.",
+    "sourcePage": 50,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-199",
+    "sourceId": "199",
+    "name": "Ruptura da Formação",
+    "cost": 18,
+    "grade": 10,
+    "cm": 0,
+    "category": "Controle de campo",
+    "usage": "Ativação livre no gatilho descrito · 6 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Um ataque normal contra alvo adjacente a dois inimigos seus recebe +3 Passos. Se causar dano, pode empurrá-lo 2 m mediante Força contra Força; os demais não sofrem dano.",
+    "sourcePage": 50,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-200",
+    "sourceId": "200",
+    "name": "Jaula de Um Instante",
+    "cost": 18,
+    "grade": 10,
+    "cm": 0,
+    "category": "Controle de campo",
+    "usage": "Ação · 6 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Use sua Ação contra alvo a até 4 m: Força contra Força. Se vencer, impeça deslocamento voluntário até o início do próximo turno dele. O alvo recebe +4 dados para resistir a esta perk na rodada seguinte.",
+    "sourcePage": 50,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-201",
+    "sourceId": "201",
+    "name": "Escama de Empréstimo",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Suporte e proteção",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Conceda +4 RD a aliado disposto ao alcance até seu próximo turno. Durante esse período, sua própria RD diminui em 2, mínimo zero. Apenas um aliado pode receber sua escama de cada vez.",
+    "sourcePage": 51,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-202",
+    "sourceId": "202",
+    "name": "Filamentos de Socorro",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Suporte e proteção",
+    "usage": "Ação · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Use sua Ação para restaurar Vida igual ao dobro do seu Grau em aliado ao alcance. Cada aliado só pode receber esta cura uma vez por cena; não reconstrói membros nem reverte morte.",
+    "sourcePage": 51,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-203",
+    "sourceId": "203",
+    "name": "Guia de Mira Neural",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Suporte e proteção",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Escolha aliado visível a até 6 m. O próximo ataque normal dele antes do seu próximo turno recebe +3 dados. O bônus termina ao atacar e não acumula com outra aplicação desta perk.",
+    "sourcePage": 51,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-204",
+    "sourceId": "204",
+    "name": "Anteparo de Carne Partilhada",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Suporte e proteção",
+    "usage": "Reação no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Quando aliado adjacente sofrer dano, reduza esse dano em valor igual ao seu Grau e sofra a mesma quantidade sem RD. Não pode reduzir abaixo de zero nem transferir o dano recebido por esta perk.",
+    "sourcePage": 51,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-205",
+    "sourceId": "205",
+    "name": "Pulso de Coragem Orgânica",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Suporte e proteção",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Aliado a até 6 m recebe +4 dados na próxima resistência a medo ou intimidação antes do seu próximo turno. Não encerra automaticamente um efeito já instalado e não remove consequências físicas.",
+    "sourcePage": 52,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-206",
+    "sourceId": "206",
+    "name": "Manto de Retirada",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Suporte e proteção",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Após aliado adjacente falhar um ataque, conceda a ele 3 m de deslocamento imediato. Esse movimento não provoca reação do alvo atacado, exige caminho livre e não ativa efeitos ofensivos de movimento.",
+    "sourcePage": 52,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-207",
+    "sourceId": "207",
+    "name": "Filtro de Sangue Aliado",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Suporte e proteção",
+    "usage": "Ação · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Use sua Ação para permitir a um aliado ao alcance repetir uma resistência contra veneno ou anestésico com +3 dados. Cada efeito pode ser retestado por esta perk apenas uma vez.",
+    "sourcePage": 52,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-208",
+    "sourceId": "208",
+    "name": "Reserva de Fôlego",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Suporte e proteção",
+    "usage": "Ação · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Transfira 4 dos seus RC a um aliado disposto ao alcance, respeitando o máximo dele. Custa sua Ação e não ativa efeitos de recuperar RC. O aliado não pode repassar esses RC por esta perk nesta cena.",
+    "sourcePage": 52,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-209",
+    "sourceId": "209",
+    "name": "Sinal de Abertura",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Suporte e proteção",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Ao acertar um ataque normal, escolha aliado que veja o alvo. O próximo ataque dele contra esse alvo até seu próximo turno ignora 4 RD. A marca termina após a tentativa.",
+    "sourcePage": 53,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-210",
+    "sourceId": "210",
+    "name": "Escolta de Costelas",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Suporte e proteção",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Até seu próximo turno, aliado adjacente recebe +3 dados contra empurrões e agarrões. Se ele se afastar mais de 2 m, o benefício termina. Não concede a você controle sobre o Movimento dele.",
+    "sourcePage": 53,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-211",
+    "sourceId": "211",
+    "name": "Casulo de Estabilização",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Suporte e proteção",
+    "usage": "Ação · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Use sua Ação em aliado a zero Vida ao alcance. Ele recebe +4 dados em seu próximo teste para permanecer vivo ou ser estabilizado, conforme o sistema. Não recupera consciência nem dispensa o teste.",
+    "sourcePage": 53,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-212",
+    "sourceId": "212",
+    "name": "Reflexo Compartilhado",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Suporte e proteção",
+    "usage": "Reação no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Quando você esquivar com sucesso, conceda +3 dados na próxima esquiva de aliado a até 4 m antes do seu próximo turno. O benefício não pode ser transferido e não ativa novas cópias desta perk.",
+    "sourcePage": 53,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-213",
+    "sourceId": "213",
+    "name": "Troca de Dor",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Suporte e proteção",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Aliado disposto a até 3 m reduz em 4 o dano de um ataque após RD; você perde 4 Vida sem redução. Não pode ativar se o custo levar você a zero, nem transferir esse custo novamente.",
+    "sourcePage": 54,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-214",
+    "sourceId": "214",
+    "name": "Mapa de Nervos",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Suporte e proteção",
+    "usage": "Ação · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Use sua Ação para marcar inimigo visível a até 10 m por dois turnos. Aliados a até 6 m de você recebem +2 dados para localizá-lo se ele se ocultar; não enxergam através de paredes.",
+    "sourcePage": 54,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-215",
+    "sourceId": "215",
+    "name": "Abrigo de Um Corpo",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Suporte e proteção",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Enquanto você estiver entre um aliado adjacente e um atirador, o aliado recebe +3 dados de defesa contra esse atirador. Você perde 2 dados em suas esquivas durante o efeito, até seu próximo turno.",
+    "sourcePage": 54,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-216",
+    "sourceId": "216",
+    "name": "Reforço de Empunhadura",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Suporte e proteção",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Aliado ao alcance recebe +4 dados para resistir ao próximo desarme ou ruptura de agarrão até seu próximo turno. Não melhora dano nem permite segurar um objeto que já foi perdido.",
+    "sourcePage": 54,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-217",
+    "sourceId": "217",
+    "name": "Cicatrização por Revezamento",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Suporte e proteção",
+    "usage": "Reação no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Ao receber cura de um aliado, seu próximo ataque normal até o fim do próximo turno ganha +2 Passos. Se causar dano, esse aliado recupera Vida igual ao seu Grau; máximo uma cura por ativação.",
+    "sourcePage": 55,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-218",
+    "sourceId": "218",
+    "name": "Farol de Extração",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Suporte e proteção",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Marque posição livre a até 6 m por dois turnos. Um aliado por turno que terminar ali recebe +3 RD até o início do turno dele. Sair voluntariamente da posição encerra essa RD.",
+    "sourcePage": 55,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-219",
+    "sourceId": "219",
+    "name": "Pulso de Descompressão",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Suporte e proteção",
+    "usage": "Ação · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Use sua Ação para dar +4 dados à próxima tentativa de um aliado a até 4 m escapar de agarrão até seu próximo turno. Se vencer, ele pode mover-se 2 m sem reação do agarrador.",
+    "sourcePage": 55,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-220",
+    "sourceId": "220",
+    "name": "Órgão de Vigília",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Suporte e proteção",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Escolha aliado a até 6 m. Até seu próximo turno, a primeira tentativa de atacá-lo a partir de ocultação recebe -3 dados se você perceber o agressor. Não detecta inimigos automaticamente.",
+    "sourcePage": 55,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-221",
+    "sourceId": "221",
+    "name": "Coroa de Assistência",
+    "cost": 18,
+    "grade": 10,
+    "cm": 0,
+    "category": "Suporte e proteção",
+    "usage": "Ativação livre no gatilho descrito · 6 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Quando usar sua Ação para ajudar um aliado em teste de combate, acrescente +2 dados além do benefício normal da ajuda. Não permite ajudar sem acesso físico ou sensorial à tarefa.",
+    "sourcePage": 56,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-222",
+    "sourceId": "222",
+    "name": "Muralha de Revezamento",
+    "cost": 18,
+    "grade": 10,
+    "cm": 0,
+    "category": "Suporte e proteção",
+    "usage": "Ativação livre no gatilho descrito · 6 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Após bloquear com sucesso, conceda +4 RD a um aliado adjacente contra o próximo ataque antes do seu próximo turno. O benefício não acumula com outra aplicação desta perk e não pode ser concedido a você mesmo.",
+    "sourcePage": 56,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-223",
+    "sourceId": "223",
+    "name": "Sutura de Retorno",
+    "cost": 18,
+    "grade": 10,
+    "cm": 0,
+    "category": "Suporte e proteção",
+    "usage": "Ação · 6 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Cure aliado ao alcance em Vida igual ao seu Grau e mova-o 2 m para posição livre com o consentimento dele, usando sua Ação. Não provoca reações e não ativa efeitos ofensivos de deslocamento.",
+    "sourcePage": 56,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-224",
+    "sourceId": "224",
+    "name": "Convergência de Caçadores",
+    "cost": 18,
+    "grade": 10,
+    "cm": 0,
+    "category": "Suporte e proteção",
+    "usage": "Ativação livre no gatilho descrito · 6 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Escolha dois aliados visíveis a até 6 m. Até seu próximo turno, cada um ganha +2 dados no primeiro ataque contra um alvo que você tenha ferido nesta rodada. Cada benefício termina após a tentativa.",
+    "sourcePage": 56,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-225",
+    "sourceId": "225",
+    "name": "Juramento de Escudo Vivo",
+    "cost": 18,
+    "grade": 10,
+    "cm": 0,
+    "category": "Suporte e proteção",
+    "usage": "Ativação livre no gatilho descrito · 6 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Por dois turnos, um aliado adjacente recebe +5 RD e você sofre -3 dados em ataques. O efeito termina se a distância exceder 2 m; não exige que ele abra mão de suas defesas.",
+    "sourcePage": 57,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-226",
+    "sourceId": "226",
+    "name": "Sinapse de Tempestade",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Eletricidade e magnetismo",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja; Infusão de Eletricidade. Kakuja ativa.",
+    "effect": "Após causar dano elétrico com ataque normal, ganhe +3 dados na próxima esquiva até seu próximo turno. Descargas secundárias não renovam nem acumulam o benefício.",
+    "sourcePage": 57,
+    "requiresModules": [
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "eletricidade"
+    ],
+    "minElements": 1
+  },
+  {
+    "id": "kakuja-p1-227",
+    "sourceId": "227",
+    "name": "Carga de Aproximação",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Eletricidade e magnetismo",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja; Infusão de Eletricidade. Kakuja ativa.",
+    "effect": "Após mover-se 4 m, um ataque normal elétrico recebe +3 Passos. Se errar, sua próxima defesa perde 2 dados até o próximo turno, devido à descarga fora de controle.",
+    "sourcePage": 57,
+    "requiresModules": [
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "eletricidade"
+    ],
+    "minElements": 1
+  },
+  {
+    "id": "kakuja-p1-228",
+    "sourceId": "228",
+    "name": "Arco de Socorro",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Eletricidade e magnetismo",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja; Infusão de Eletricidade. Kakuja ativa.",
+    "effect": "Ao causar dano elétrico, conceda +2 dados no próximo ataque de um aliado a até 3 m do alvo até seu próximo turno. O arco não causa dano ao aliado e não conta como cura ou acerto.",
+    "sourcePage": 57,
+    "requiresModules": [
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "eletricidade"
+    ],
+    "minElements": 1
+  },
+  {
+    "id": "kakuja-p1-229",
+    "sourceId": "229",
+    "name": "Contato de Aterramento",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Eletricidade e magnetismo",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja; Infusão de Eletricidade. Kakuja ativa.",
+    "effect": "Enquanto em contato com chão sólido, receba +5 RD contra eletricidade. Após reduzir dano elétrico dessa maneira, seu próximo ataque normal elétrico ganha +2 Passos até o fim do próximo turno.",
+    "sourcePage": 58,
+    "requiresModules": [
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "eletricidade"
+    ],
+    "minElements": 1
+  },
+  {
+    "id": "kakuja-p1-230",
+    "sourceId": "230",
+    "name": "Condutor de Dois Pontos",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Eletricidade e magnetismo",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja; Infusão de Eletricidade. Kakuja ativa.",
+    "effect": "Ao acertar um alvo com eletricidade, marque-o até seu próximo turno. Seu próximo ataque elétrico contra outro alvo a até 3 m dele recebe +3 dados; não replica dano no primeiro alvo.",
+    "sourcePage": 58,
+    "requiresModules": [
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "eletricidade"
+    ],
+    "minElements": 1
+  },
+  {
+    "id": "kakuja-p1-231",
+    "sourceId": "231",
+    "name": "Falha de Impulso",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Eletricidade e magnetismo",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja; Infusão de Eletricidade. Kakuja ativa.",
+    "effect": "Um ataque normal elétrico que cause dano impõe -3 dados à próxima tentativa do alvo de agarrar até seu próximo turno. Não remove a Ação nem impede outros tipos de ataque.",
+    "sourcePage": 58,
+    "requiresModules": [
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "eletricidade"
+    ],
+    "minElements": 1
+  },
+  {
+    "id": "kakuja-p1-232",
+    "sourceId": "232",
+    "name": "Bateria de Couraça",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Eletricidade e magnetismo",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja; Infusão de Eletricidade. Kakuja ativa.",
+    "effect": "Depois de bloquear um ataque, guarde 1 Carga, máximo 2. Consuma todas antes de um ataque elétrico para receber +2 Passos por Carga. Todas expiram ao passar um turno sem bloquear.",
+    "sourcePage": 58,
+    "requiresModules": [
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "eletricidade"
+    ],
+    "minElements": 1
+  },
+  {
+    "id": "kakuja-p1-233",
+    "sourceId": "233",
+    "name": "Estática de Perímetro",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Eletricidade e magnetismo",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja; Infusão de Eletricidade. Kakuja ativa.",
+    "effect": "Crie raio de 2 m ao redor de você até seu próximo turno. O primeiro inimigo que entrar sofre dano elétrico igual ao seu Grau, reduzido pela RD; a aura então termina e não ativa efeitos de acerto.",
+    "sourcePage": 59,
+    "requiresModules": [
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "eletricidade"
+    ],
+    "minElements": 1
+  },
+  {
+    "id": "kakuja-p1-234",
+    "sourceId": "234",
+    "name": "Agulha de Circuito",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Eletricidade e magnetismo",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja; Infusão de Eletricidade. Kakuja ativa.",
+    "effect": "Um disparo elétrico normal ignora 4 RD se o alvo sofreu dano elétrico seu no turno anterior. Não concede condução automática por água, metal ou outras criaturas.",
+    "sourcePage": 59,
+    "requiresModules": [
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "eletricidade"
+    ],
+    "minElements": 1
+  },
+  {
+    "id": "kakuja-p1-235",
+    "sourceId": "235",
+    "name": "Descarga de Soltura",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Eletricidade e magnetismo",
+    "usage": "Reação no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja; Infusão de Eletricidade. Kakuja ativa.",
+    "effect": "Quando tentar escapar de agarrão, ganhe +3 dados. Se escapar, cause dano elétrico igual ao seu Grau ao agarrador, reduzido pela RD; esse dano não ativa efeitos de acerto.",
+    "sourcePage": 59,
+    "requiresModules": [
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "eletricidade"
+    ],
+    "minElements": 1
+  },
+  {
+    "id": "kakuja-p1-236",
+    "sourceId": "236",
+    "name": "Magneto de Guarda",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Eletricidade e magnetismo",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja; Infusão de Magnetismo. Kakuja ativa.",
+    "effect": "Contra ataque feito com objeto metálico solto do corpo, receba +4 dados para bloquear. Não afeta Kagune apenas por aparência metálica, salvo se a propriedade Metal estiver ativa nela.",
+    "sourcePage": 59,
+    "requiresModules": [
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "magnetismo"
+    ],
+    "minElements": 1
+  },
+  {
+    "id": "kakuja-p1-237",
+    "sourceId": "237",
+    "name": "Puxão de Limalha",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Eletricidade e magnetismo",
+    "usage": "Ação · 4 RC; 1x/turno",
+    "requirement": "Kakuja; Infusão de Magnetismo. Kakuja ativa.",
+    "effect": "Use sua Ação para puxar objeto metálico livre de até 10 kg a até 6 m para sua mão. Contra objeto segurado, exige Força contra Força do portador; falhar não o desloca.",
+    "sourcePage": 60,
+    "requiresModules": [
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "magnetismo"
+    ],
+    "minElements": 1
+  },
+  {
+    "id": "kakuja-p1-238",
+    "sourceId": "238",
+    "name": "Passada Magnética",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Eletricidade e magnetismo",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja; Infusão de Magnetismo. Kakuja ativa.",
+    "effect": "Em superfície metálica, ganhe 3 m de Movimento de escalada e +3 dados para resistir a empurrões até seu próximo turno. Precisa manter contato e não permite voar entre superfícies.",
+    "sourcePage": 60,
+    "requiresModules": [
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "magnetismo"
+    ],
+    "minElements": 1
+  },
+  {
+    "id": "kakuja-p1-239",
+    "sourceId": "239",
+    "name": "Polaridade de Repulsão",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Eletricidade e magnetismo",
+    "usage": "Reação no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja; Infusão de Magnetismo. Kakuja ativa.",
+    "effect": "Ao bloquear arma metálica, pode afastar o atacante 2 m se vencer Força contra Força. Não desarma nem causa dano de colisão; não funciona contra projéteis já resolvidos.",
+    "sourcePage": 60,
+    "requiresModules": [
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "magnetismo"
+    ],
+    "minElements": 1
+  },
+  {
+    "id": "kakuja-p1-240",
+    "sourceId": "240",
+    "name": "Cravo de Polaridade",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Eletricidade e magnetismo",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja; Infusões de Metal e Magnetismo; Núcleo Duplo. Kakuja ativa.",
+    "effect": "Um ataque com Metal que cause dano marca o alvo por dois turnos. Sua próxima tentativa de movê-lo por Magnetismo recebe +4 dados, consumindo a marca. A marca não torna todos os objetos próximos condutores.",
+    "sourcePage": 60,
+    "requiresModules": [
+      "nucleo-duplo",
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "magnetismo",
+      "metal"
+    ],
+    "minElements": 2
+  },
+  {
+    "id": "kakuja-p1-241",
+    "sourceId": "241",
+    "name": "Órbita de Fragmentos",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Eletricidade e magnetismo",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja; Infusão de Magnetismo. Kakuja ativa.",
+    "effect": "Fragmentos metálicos orgânicos orbitam você até seu próximo turno. Receba +4 RD contra o primeiro disparo recebido; depois, a órbita se desfaz. Não intercepta ataques automaticamente nem fere quem se aproxima.",
+    "sourcePage": 61,
+    "requiresModules": [
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "magnetismo"
+    ],
+    "minElements": 1
+  },
+  {
+    "id": "kakuja-p1-242",
+    "sourceId": "242",
+    "name": "Mira de Polarização",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Eletricidade e magnetismo",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja; Infusão de Magnetismo; Cravo de Polaridade; ataque à distância. Kakuja ativa.",
+    "effect": "Contra alvo marcado por seu Cravo de Polaridade, um disparo normal ganha +4 dados e consome a marca. Ainda exige linha de tiro e não curva além de cobertura total.",
+    "sourcePage": 61,
+    "requiresModules": [
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "magnetismo"
+    ],
+    "minElements": 1,
+    "requiresPerks": [
+      "kakuja-p1-240"
+    ]
+  },
+  {
+    "id": "kakuja-p1-243",
+    "sourceId": "243",
+    "name": "Repulsão de Queda",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Eletricidade e magnetismo",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja; Infusão de Magnetismo. Kakuja ativa.",
+    "effect": "Próximo a superfície metálica, reduza em 6 m a altura efetiva de uma queda. Pode pousar até 2 m lateralmente; exige superfície a até 3 m durante a queda e não concede voo.",
+    "sourcePage": 61,
+    "requiresModules": [
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "magnetismo"
+    ],
+    "minElements": 1
+  },
+  {
+    "id": "kakuja-p1-244",
+    "sourceId": "244",
+    "name": "Pulso de Desvio",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Eletricidade e magnetismo",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja; Infusão de Eletricidade. Kakuja ativa.",
+    "effect": "Um ataque elétrico normal que cause dano concede a você +3 dados para resistir ao próximo empurrão antes do próximo turno. A carga se dissipa após o teste, mesmo se você falhar.",
+    "sourcePage": 61,
+    "requiresModules": [
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "eletricidade"
+    ],
+    "minElements": 1
+  },
+  {
+    "id": "kakuja-p1-245",
+    "sourceId": "245",
+    "name": "Circuito de Escolta",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Eletricidade e magnetismo",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja; Infusão de Eletricidade. Kakuja ativa.",
+    "effect": "Escolha aliado disposto ao alcance. Até seu próximo turno, ele recebe +4 RD contra eletricidade. Se essa RD reduzir dano, você recebe +2 dados no próximo ataque elétrico até o fim do turno seguinte.",
+    "sourcePage": 62,
+    "requiresModules": [
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "eletricidade"
+    ],
+    "minElements": 1
+  },
+  {
+    "id": "kakuja-p1-246",
+    "sourceId": "246",
+    "name": "Tempestade Aterrada",
+    "cost": 18,
+    "grade": 10,
+    "cm": 0,
+    "category": "Eletricidade e magnetismo",
+    "usage": "Ativação livre no gatilho descrito · 6 RC; 1x/turno",
+    "requirement": "Kakuja; Infusão de Eletricidade. Kakuja ativa.",
+    "effect": "Um ataque normal elétrico recebe +5 Passos se você não tiver se movido neste turno. Depois, seu Movimento fica zero até o fim do turno. Não combina com finalizadores ou Condensação Muscular.",
+    "sourcePage": 62,
+    "requiresModules": [
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "eletricidade"
+    ],
+    "minElements": 1
+  },
+  {
+    "id": "kakuja-p1-247",
+    "sourceId": "247",
+    "name": "Ímã de Linha Quebrada",
+    "cost": 18,
+    "grade": 10,
+    "cm": 0,
+    "category": "Eletricidade e magnetismo",
+    "usage": "Ativação livre no gatilho descrito · 6 RC; 1x/turno",
+    "requirement": "Kakuja; Infusão de Magnetismo. Kakuja ativa.",
+    "effect": "Ao causar dano magnético contra alvo com Metal ativo, imponha -3 dados no próximo bloqueio dele até seu próximo turno. Não acumula consigo e não afeta esquivas.",
+    "sourcePage": 62,
+    "requiresModules": [
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "magnetismo"
+    ],
+    "minElements": 1
+  },
+  {
+    "id": "kakuja-p1-248",
+    "sourceId": "248",
+    "name": "Relâmpago de Cobrança",
+    "cost": 18,
+    "grade": 10,
+    "cm": 0,
+    "category": "Eletricidade e magnetismo",
+    "usage": "Ativação livre no gatilho descrito · 6 RC; 1x/turno",
+    "requirement": "Kakuja; Infusão de Eletricidade. Kakuja ativa.",
+    "effect": "Marque alvo ferido por eletricidade até seu próximo turno. Se ele acertar você antes disso, sofre dano elétrico igual ao dobro do seu Grau, reduzido pela RD. A marca dispara uma vez e não gera outras marcas.",
+    "sourcePage": 62,
+    "requiresModules": [
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "eletricidade"
+    ],
+    "minElements": 1
+  },
+  {
+    "id": "kakuja-p1-249",
+    "sourceId": "249",
+    "name": "Coração de Alternância",
+    "cost": 18,
+    "grade": 10,
+    "cm": 0,
+    "category": "Eletricidade e magnetismo",
+    "usage": "Ativação livre no gatilho descrito · 6 RC; 1x/turno",
+    "requirement": "Kakuja; Infusões de Eletricidade e Magnetismo; Núcleo Duplo. Kakuja ativa.",
+    "effect": "Depois de alternar entre Eletricidade e Magnetismo por uma capacidade que já possua, ganhe +3 dados no próximo ataque normal neste turno. Não concede a propriedade ausente nem elimina o custo da troca.",
+    "sourcePage": 63,
+    "requiresModules": [
+      "nucleo-duplo",
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "eletricidade",
+      "magnetismo"
+    ],
+    "minElements": 2
+  },
+  {
+    "id": "kakuja-p1-250",
+    "sourceId": "250",
+    "name": "Canhão de Polaridade Viva",
+    "cost": 24,
+    "grade": 14,
+    "cm": 0,
+    "category": "Eletricidade e magnetismo",
+    "usage": "Ativação livre no gatilho descrito · 12 RC; 1x/cena",
+    "requirement": "Kakuja; Infusões de Metal e Magnetismo; Reação Híbrida; ataque à distância. Kakuja ativa.",
+    "effect": "Um disparo normal com Metal e Magnetismo ativos recebe +6 Passos e ignora 3 RD. Após usá-lo, você perde acesso a Magnetismo por dois turnos. Sem outro finalizador ou duplicação de dano.",
+    "sourcePage": 63,
+    "requiresModules": [
+      "reacao-hibrida",
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "magnetismo",
+      "metal"
+    ],
+    "minElements": 2
+  },
+  {
+    "id": "kakuja-p1-251",
+    "sourceId": "251",
+    "name": "Mordida de Corrosão Lenta",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Ácido veneno e resina",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja; Infusão de Ácido. Kakuja ativa.",
+    "effect": "Após causar dano ácido, marque o alvo por dois turnos. Seu próximo ataque normal contra ele ignora 4 RD e consome a marca. A marca não reduz RD contra outros combatentes.",
+    "sourcePage": 63,
+    "requiresModules": [
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "acido"
+    ],
+    "minElements": 1
+  },
+  {
+    "id": "kakuja-p1-252",
+    "sourceId": "252",
+    "name": "Bainha Cáustica",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Ácido veneno e resina",
+    "usage": "Reação no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja; Infusão de Ácido. Kakuja ativa.",
+    "effect": "Quando bloquear um ataque corpo a corpo, o agressor sofre dano ácido igual ao seu Grau, reduzido pela RD. Não danifica equipamento permanentemente nem aplica outros efeitos de acerto.",
+    "sourcePage": 63,
+    "requiresModules": [
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "acido"
+    ],
+    "minElements": 1
+  },
+  {
+    "id": "kakuja-p1-253",
+    "sourceId": "253",
+    "name": "Chuva de Desgaste",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Ácido veneno e resina",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja; Infusão de Ácido. Kakuja ativa.",
+    "effect": "Um ataque em área ácido pode abrir mão de 2 Passos para impor -2 RD por um turno a um único alvo ferido. Essa redução não acumula consigo e não reduz RD abaixo de zero.",
+    "sourcePage": 64,
+    "requiresModules": [
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "acido"
+    ],
+    "minElements": 1
+  },
+  {
+    "id": "kakuja-p1-254",
+    "sourceId": "254",
+    "name": "Solvente de Saída",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Ácido veneno e resina",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja; Infusão de Ácido. Kakuja ativa.",
+    "effect": "Receba +4 dados para romper uma contenção física com ácido. Se vencer, você ganha 2 m de deslocamento sem reação do autor da contenção. Não dissolve barreiras abstratas ou efeitos mentais.",
+    "sourcePage": 64,
+    "requiresModules": [
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "acido"
+    ],
+    "minElements": 1
+  },
+  {
+    "id": "kakuja-p1-255",
+    "sourceId": "255",
+    "name": "Poça de Cobrança",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Ácido veneno e resina",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja; Infusão de Ácido. Kakuja ativa.",
+    "effect": "Crie poça de raio 2 m a até 4 m por dois turnos. A primeira criatura que iniciar o turno nela sofre dano ácido igual ao seu Grau, após RD. Afeta aliados e não aplica efeitos de acerto.",
+    "sourcePage": 64,
+    "requiresModules": [
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "acido"
+    ],
+    "minElements": 1
+  },
+  {
+    "id": "kakuja-p1-256",
+    "sourceId": "256",
+    "name": "Gume de Descasque",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Ácido veneno e resina",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja; Infusão de Ácido. Kakuja ativa.",
+    "effect": "Um ataque ácido normal ignora 6 RD contra alvo com bônus temporário de RD. Sem esse bônus, ignora somente 2 RD. Não remove a fonte defensiva e não acumula com outra penetração sua.",
+    "sourcePage": 64,
+    "requiresModules": [
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "acido"
+    ],
+    "minElements": 1
+  },
+  {
+    "id": "kakuja-p1-257",
+    "sourceId": "257",
+    "name": "Ferida de Solvente",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Ácido veneno e resina",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja; Infusão de Ácido. Kakuja ativa.",
+    "effect": "Um ataque ácido que cause dano reduz em valor igual ao seu Grau a próxima cura recebida pelo alvo até seu próximo turno, mínimo zero. A marca termina após reduzir uma cura e não acumula.",
+    "sourcePage": 65,
+    "requiresModules": [
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "acido"
+    ],
+    "minElements": 1
+  },
+  {
+    "id": "kakuja-p1-258",
+    "sourceId": "258",
+    "name": "Névoa de Resíduo",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Ácido veneno e resina",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja; Infusão de Ácido. Kakuja ativa.",
+    "effect": "Após acertar com ácido, receba +3 dados para esquivar do próximo ataque corpo a corpo daquele alvo até seu próximo turno. O resíduo não causa dano adicional nem afeta outros atacantes.",
+    "sourcePage": 65,
+    "requiresModules": [
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "acido"
+    ],
+    "minElements": 1
+  },
+  {
+    "id": "kakuja-p1-259",
+    "sourceId": "259",
+    "name": "Dose de Caçador",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Ácido veneno e resina",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja; Infusão de Veneno. Kakuja ativa.",
+    "effect": "Ao causar dano com Veneno, marque o alvo até seu próximo turno. Se ele percorrer 4 m voluntariamente, sofre dano igual ao seu Grau, reduzido pela RD, uma única vez. O alvo percebe os sintomas.",
+    "sourcePage": 65,
+    "requiresModules": [
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "veneno"
+    ],
+    "minElements": 1
+  },
+  {
+    "id": "kakuja-p1-260",
+    "sourceId": "260",
+    "name": "Toxina de Mão Pesada",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Ácido veneno e resina",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja; Infusão de Veneno. Kakuja ativa.",
+    "effect": "Um ataque venenoso que cause dano impõe -3 dados na próxima tentativa do alvo de bloquear até seu próximo turno. Não afeta esquivas nem acumula consigo; não paralisa.",
+    "sourcePage": 65,
+    "requiresModules": [
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "veneno"
+    ],
+    "minElements": 1
+  },
+  {
+    "id": "kakuja-p1-261",
+    "sourceId": "261",
+    "name": "Veneno de Fôlego Curto",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Ácido veneno e resina",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja; Infusão de Veneno. Kakuja ativa.",
+    "effect": "Ao causar dano venenoso, reduza o Movimento do alvo em 2 m por dois turnos. Uma nova aplicação renova a duração, sem acumular redução. Imunidade a Veneno impede o efeito.",
+    "sourcePage": 66,
+    "requiresModules": [
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "veneno"
+    ],
+    "minElements": 1
+  },
+  {
+    "id": "kakuja-p1-262",
+    "sourceId": "262",
+    "name": "Dose de Abertura",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Ácido veneno e resina",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja; Infusão de Veneno. Kakuja ativa.",
+    "effect": "Contra alvo que ainda não sofreu seu Veneno nesta cena, um ataque normal venenoso recebe +4 dados. Acertando ou não, esse alvo deixa de ser elegível para esta perk na cena.",
+    "sourcePage": 66,
+    "requiresModules": [
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "veneno"
+    ],
+    "minElements": 1
+  },
+  {
+    "id": "kakuja-p1-263",
+    "sourceId": "263",
+    "name": "Antídoto de Predador",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Ácido veneno e resina",
+    "usage": "Ação · 4 RC; 1x/turno",
+    "requirement": "Kakuja; Infusão de Veneno. Kakuja ativa.",
+    "effect": "Use sua Ação em aliado ao alcance para conceder +5 RD contra dano de veneno por dois turnos. Não remove condições já aplicadas nem cura dano anterior.",
+    "sourcePage": 66,
+    "requiresModules": [
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "veneno"
+    ],
+    "minElements": 1
+  },
+  {
+    "id": "kakuja-p1-264",
+    "sourceId": "264",
+    "name": "Toxina de Equilíbrio",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Ácido veneno e resina",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja; Infusão de Veneno. Kakuja ativa.",
+    "effect": "Um ataque venenoso que cause dano concede +3 dados à próxima tentativa de um aliado derrubar o alvo até seu próximo turno. A marca termina após a tentativa; não derruba automaticamente.",
+    "sourcePage": 66,
+    "requiresModules": [
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "veneno"
+    ],
+    "minElements": 1
+  },
+  {
+    "id": "kakuja-p1-265",
+    "sourceId": "265",
+    "name": "Veneno de Espera",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Ácido veneno e resina",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja; Infusão de Veneno. Kakuja ativa.",
+    "effect": "Após causar dano venenoso, pode atrasar esta perk: no início do seu próximo turno, o alvo sofre dano igual ao seu Grau, reduzido pela RD. A toxina pode ser purgada antes e não ativa efeitos de acerto.",
+    "sourcePage": 67,
+    "requiresModules": [
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "veneno"
+    ],
+    "minElements": 1
+  },
+  {
+    "id": "kakuja-p1-266",
+    "sourceId": "266",
+    "name": "Dose de Contra-Ataque",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Ácido veneno e resina",
+    "usage": "Reação no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja; Infusão de Veneno. Kakuja ativa.",
+    "effect": "Após sofrer dano corpo a corpo, seu próximo ataque normal venenoso contra o agressor recebe +3 Passos até o fim do próximo turno. Não permite atacar fora da sua Ação.",
+    "sourcePage": 67,
+    "requiresModules": [
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "veneno"
+    ],
+    "minElements": 1
+  },
+  {
+    "id": "kakuja-p1-267",
+    "sourceId": "267",
+    "name": "Resina de Calcanhar",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Ácido veneno e resina",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja; Infusão de Resina. Kakuja ativa.",
+    "effect": "Um ataque com Resina que cause dano aumenta em 3 m o custo do próximo deslocamento voluntário do alvo até seu próximo turno. O aumento é pago uma vez e não acumula consigo.",
+    "sourcePage": 67,
+    "requiresModules": [
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "resina"
+    ],
+    "minElements": 1
+  },
+  {
+    "id": "kakuja-p1-268",
+    "sourceId": "268",
+    "name": "Escudo Adesivo",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Ácido veneno e resina",
+    "usage": "Reação no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja; Infusão de Resina. Kakuja ativa.",
+    "effect": "Ao bloquear, ganhe +3 dados se o ataque for corpo a corpo. Se vencer, receba +3 dados na próxima tentativa de agarrar o agressor até o fim do próximo turno.",
+    "sourcePage": 67,
+    "requiresModules": [
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "resina"
+    ],
+    "minElements": 1
+  },
+  {
+    "id": "kakuja-p1-269",
+    "sourceId": "269",
+    "name": "Piso de Resgate",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Ácido veneno e resina",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja; Infusão de Resina. Kakuja ativa.",
+    "effect": "Crie área de raio 2 m a até 4 m por dois turnos. Aliados recebem +4 dados contra empurrões enquanto nela; inimigos gastam o dobro do Movimento. A resina não causa dano.",
+    "sourcePage": 68,
+    "requiresModules": [
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "resina"
+    ],
+    "minElements": 1
+  },
+  {
+    "id": "kakuja-p1-270",
+    "sourceId": "270",
+    "name": "Linha de Costura Viva",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Ácido veneno e resina",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja; Infusão de Resina. Kakuja ativa.",
+    "effect": "Una dois aliados dispostos a até 3 m um do outro por resina durante um turno. Cada um recebe +3 dados contra deslocamento forçado; afastar-se além dessa distância rompe a linha sem dano.",
+    "sourcePage": 68,
+    "requiresModules": [
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "resina"
+    ],
+    "minElements": 1
+  },
+  {
+    "id": "kakuja-p1-271",
+    "sourceId": "271",
+    "name": "Casca de Resina Clara",
+    "cost": 18,
+    "grade": 10,
+    "cm": 0,
+    "category": "Ácido veneno e resina",
+    "usage": "Ativação livre no gatilho descrito · 6 RC; 1x/turno",
+    "requirement": "Kakuja; Infusão de Resina. Kakuja ativa.",
+    "effect": "Conceda a você ou aliado ao alcance +4 RD contra o próximo ataque até seu próximo turno. Depois de absorver o impacto, o protegido perde 2 m de Movimento no próximo turno.",
+    "sourcePage": 68,
+    "requiresModules": [
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "resina"
+    ],
+    "minElements": 1
+  },
+  {
+    "id": "kakuja-p1-272",
+    "sourceId": "272",
+    "name": "Laço de Retenção",
+    "cost": 18,
+    "grade": 10,
+    "cm": 0,
+    "category": "Ácido veneno e resina",
+    "usage": "Ativação livre no gatilho descrito · 6 RC; 1x/turno",
+    "requirement": "Kakuja; Infusão de Resina. Kakuja ativa.",
+    "effect": "Um ataque de Resina que cause dano concede +4 dados à sua próxima tentativa de puxar o alvo até o fim do próximo turno. O laço termina após o teste e não permite puxões sem uma capacidade apropriada.",
+    "sourcePage": 68,
+    "requiresModules": [
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "resina"
+    ],
+    "minElements": 1
+  },
+  {
+    "id": "kakuja-p1-273",
+    "sourceId": "273",
+    "name": "Ácido sob o Verniz",
+    "cost": 18,
+    "grade": 10,
+    "cm": 0,
+    "category": "Ácido veneno e resina",
+    "usage": "Ativação livre no gatilho descrito · 6 RC; 1x/turno",
+    "requirement": "Kakuja; Ácido e Resina; Reação Híbrida. Kakuja ativa.",
+    "effect": "Com Ácido e Resina ativos, um ataque normal pode deixar marca por um turno. O próximo ataque de aliado contra o alvo ignora 5 RD e consome a marca. Não repete seu dano original.",
+    "sourcePage": 69,
+    "requiresModules": [
+      "reacao-hibrida",
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "acido",
+      "resina"
+    ],
+    "minElements": 2
+  },
+  {
+    "id": "kakuja-p1-274",
+    "sourceId": "274",
+    "name": "Toxina em Cápsula",
+    "cost": 18,
+    "grade": 10,
+    "cm": 0,
+    "category": "Ácido veneno e resina",
+    "usage": "Ativação livre no gatilho descrito · 6 RC; 1x/turno",
+    "requirement": "Kakuja; Veneno e Resina; Reação Híbrida. Kakuja ativa.",
+    "effect": "Com Veneno e Resina ativos, um ataque normal que cause dano marca o alvo. A primeira vez que ele romper um agarrão até seu próximo turno, sofre dano venenoso igual ao dobro do seu Grau, após RD.",
+    "sourcePage": 69,
+    "requiresModules": [
+      "reacao-hibrida",
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "veneno",
+      "resina"
+    ],
+    "minElements": 2
+  },
+  {
+    "id": "kakuja-p1-275",
+    "sourceId": "275",
+    "name": "Digestão de Couraças",
+    "cost": 24,
+    "grade": 14,
+    "cm": 0,
+    "category": "Ácido veneno e resina",
+    "usage": "Ativação livre no gatilho descrito · 12 RC; 1x/cena",
+    "requirement": "Kakuja; Infusão de Ácido. Kakuja ativa.",
+    "effect": "Um ataque ácido normal recebe +5 Passos e ignora 4 RD. Depois, sua RD diminui em 4 até o próximo turno, mínimo zero. Não combina com outro finalizador nem outra penetração sua.",
+    "sourcePage": 69,
+    "requiresModules": [
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "acido"
+    ],
+    "minElements": 1
+  },
+  {
+    "id": "kakuja-p1-276",
+    "sourceId": "276",
+    "name": "Vapor de Cobertura",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Reações elementais e adaptação",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja; Fogo e Gelo ativos; Reação Híbrida. Kakuja ativa.",
+    "effect": "Com Fogo e Gelo ativos, após causar dano crie névoa de raio 2 m no alvo até seu próximo turno. Disparos que a atravessem perdem 3 dados, incluindo os seus. A névoa não causa dano.",
+    "sourcePage": 69,
+    "requiresModules": [
+      "reacao-hibrida",
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "fogo",
+      "gelo"
+    ],
+    "minElements": 2
+  },
+  {
+    "id": "kakuja-p1-277",
+    "sourceId": "277",
+    "name": "Têmpera de Cristal",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Reações elementais e adaptação",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja; Fogo e Cristal ativos; Reação Híbrida. Kakuja ativa.",
+    "effect": "Com Fogo e Cristal ativos, após bloquear ganhe +3 Passos no próximo ataque normal até o fim do próximo turno. O cristal se consome ao atacar e não acumula com novas defesas.",
+    "sourcePage": 70,
+    "requiresModules": [
+      "reacao-hibrida",
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "fogo",
+      "cristal"
+    ],
+    "minElements": 2
+  },
+  {
+    "id": "kakuja-p1-278",
+    "sourceId": "278",
+    "name": "Geada Condutora",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Reações elementais e adaptação",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja; Gelo e Eletricidade ativos; Reação Híbrida. Kakuja ativa.",
+    "effect": "Com Gelo e Eletricidade ativos, um ataque normal que cause dano reduz o Movimento do alvo em 2 m e concede +2 dados ao próximo ataque elétrico de aliado contra ele até seu próximo turno.",
+    "sourcePage": 70,
+    "requiresModules": [
+      "reacao-hibrida",
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "gelo",
+      "eletricidade"
+    ],
+    "minElements": 2
+  },
+  {
+    "id": "kakuja-p1-279",
+    "sourceId": "279",
+    "name": "Vento de Incêndio",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Reações elementais e adaptação",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja; Fogo e Vento ativos; Reação Híbrida. Kakuja ativa.",
+    "effect": "Com Fogo e Vento ativos, aumente em 2 m o alcance de um ataque normal, sem ampliar sua área. Depois de causar dano, pode extinguir uma chama sua em vez de aplicar outro efeito elemental.",
+    "sourcePage": 70,
+    "requiresModules": [
+      "reacao-hibrida",
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "fogo",
+      "pressao"
+    ],
+    "minElements": 2
+  },
+  {
+    "id": "kakuja-p1-280",
+    "sourceId": "280",
+    "name": "Vácuo de Cinzas",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Reações elementais e adaptação",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja; Vento e Cinzas ativos; Reação Híbrida. Kakuja ativa.",
+    "effect": "Com Vento e Cinzas ativos, ao se mover deixe área de raio 2 m na posição inicial até seu próximo turno. Quem atacar através dela perde 3 dados; não sufoca nem impede ações.",
+    "sourcePage": 70,
+    "requiresModules": [
+      "reacao-hibrida",
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "pressao",
+      "fumaca"
+    ],
+    "minElements": 2
+  },
+  {
+    "id": "kakuja-p1-281",
+    "sourceId": "281",
+    "name": "Eco de Cristal Partido",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Reações elementais e adaptação",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja; Som e Cristal ativos; Reação Híbrida. Kakuja ativa.",
+    "effect": "Com Som e Cristal ativos, um ataque normal que cause dano impõe -3 dados no próximo teste do alvo para localizar criaturas por audição até seu próximo turno. Não anula outros sentidos.",
+    "sourcePage": 71,
+    "requiresModules": [
+      "reacao-hibrida",
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "cristal",
+      "vibracao"
+    ],
+    "minElements": 2
+  },
+  {
+    "id": "kakuja-p1-282",
+    "sourceId": "282",
+    "name": "Luz sob a Tinta",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Reações elementais e adaptação",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja; Luz e Sombra ativos; Reação Híbrida. Kakuja ativa.",
+    "effect": "Com Luz e Sombra ativos, marque alvo ferido por um turno. Ele não recebe bônus de ocultação contra seu próximo ataque normal, mas cobertura sólida continua funcionando. A marca termina após a tentativa.",
+    "sourcePage": 71,
+    "requiresModules": [
+      "reacao-hibrida",
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "luz",
+      "sombra"
+    ],
+    "minElements": 2
+  },
+  {
+    "id": "kakuja-p1-283",
+    "sourceId": "283",
+    "name": "Prisma de Desvio",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Reações elementais e adaptação",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja; Luz e Cristal ativos; Reação Híbrida. Kakuja ativa.",
+    "effect": "Com Luz e Cristal ativos, receba +4 dados para esquivar de um disparo. Se vencer, um aliado adjacente recebe +2 dados na próxima defesa até seu próximo turno. Não reflete projéteis nem dano.",
+    "sourcePage": 71,
+    "requiresModules": [
+      "reacao-hibrida",
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "cristal",
+      "luz"
+    ],
+    "minElements": 2
+  },
+  {
+    "id": "kakuja-p1-284",
+    "sourceId": "284",
+    "name": "Sombra de Passagem",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Reações elementais e adaptação",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja; Sombra e Vento ativos; Reação Híbrida. Kakuja ativa.",
+    "effect": "Com Sombra e Vento ativos, depois de causar dano mova-se 3 m sem reação do alvo. Esse deslocamento não ativa outras perks e não permite atravessar corpos ou paredes.",
+    "sourcePage": 71,
+    "requiresModules": [
+      "reacao-hibrida",
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "sombra",
+      "pressao"
+    ],
+    "minElements": 2
+  },
+  {
+    "id": "kakuja-p1-285",
+    "sourceId": "285",
+    "name": "Resina Incandescente",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Reações elementais e adaptação",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja; Resina e Fogo ativos; Reação Híbrida. Kakuja ativa.",
+    "effect": "Com Resina e Fogo ativos, um ataque normal que cause dano marca o alvo até seu próximo turno. Ele escolhe perder 3 m de Movimento ou sofrer dano de fogo igual ao seu Grau, após RD; a marca termina.",
+    "sourcePage": 72,
+    "requiresModules": [
+      "reacao-hibrida",
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "fogo",
+      "resina"
+    ],
+    "minElements": 2
+  },
+  {
+    "id": "kakuja-p1-286",
+    "sourceId": "286",
+    "name": "Vidro de Corrosão",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Reações elementais e adaptação",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja; Ácido e Cristal ativos; Reação Híbrida. Kakuja ativa.",
+    "effect": "Com Ácido e Cristal ativos, um ataque normal pode perder 2 Passos para ignorar 6 RD. Não acumula com outra penetração sua e não remove permanentemente armadura ou Kagune.",
+    "sourcePage": 72,
+    "requiresModules": [
+      "reacao-hibrida",
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "acido",
+      "cristal"
+    ],
+    "minElements": 2
+  },
+  {
+    "id": "kakuja-p1-287",
+    "sourceId": "287",
+    "name": "Maresia de Veneno",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Reações elementais e adaptação",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja; Vento e Veneno ativos; Reação Híbrida. Kakuja ativa.",
+    "effect": "Com Vento e Veneno ativos, um ataque normal venenoso ganha 3 m de alcance, mas perde 2 Passos. Não vira área e continua exigindo linha de tiro e um teste de ataque.",
+    "sourcePage": 72,
+    "requiresModules": [
+      "reacao-hibrida",
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "veneno",
+      "pressao"
+    ],
+    "minElements": 2
+  },
+  {
+    "id": "kakuja-p1-288",
+    "sourceId": "288",
+    "name": "Ferro de Inverno",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Reações elementais e adaptação",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja; Metal e Gelo ativos; Reação Híbrida. Kakuja ativa.",
+    "effect": "Com Metal e Gelo ativos, após terminar um turno sem se mover ganhe +4 RD contra o primeiro ataque até seu próximo turno. O benefício termina ao deslocar-se voluntariamente.",
+    "sourcePage": 72,
+    "requiresModules": [
+      "reacao-hibrida",
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "gelo",
+      "metal"
+    ],
+    "minElements": 2
+  },
+  {
+    "id": "kakuja-p1-289",
+    "sourceId": "289",
+    "name": "Pulso de Ressonância",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Reações elementais e adaptação",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja; Metal e Som ativos; Reação Híbrida. Kakuja ativa.",
+    "effect": "Com Metal e Som ativos, um ataque normal contra cobertura recebe +5 Passos. Contra criaturas com bônus temporário de RD, recebe +3 Passos. Não duplica dano entre cobertura e ocupante.",
+    "sourcePage": 73,
+    "requiresModules": [
+      "reacao-hibrida",
+      "infusao-elemental"
+    ],
+    "requiresElements": [
+      "metal",
+      "vibracao"
+    ],
+    "minElements": 2
+  },
+  {
+    "id": "kakuja-p1-290",
+    "sourceId": "290",
+    "name": "Célula de Alternância",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Reações elementais e adaptação",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Após trocar de propriedade elemental usando uma capacidade sua, reduza em 2 RC o custo da próxima técnica dessa propriedade neste turno, mínimo 1 RC. Não barateia a própria troca nem concede propriedade nova.",
+    "sourcePage": 73,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-291",
+    "sourceId": "291",
+    "name": "Memória de Adaptação",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Reações elementais e adaptação",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Depois de sofrer dano elemental, ganhe +4 RD contra essa propriedade até seu próximo turno. Apenas uma propriedade por vez; escolher outra substitui a anterior e não reduz retroativamente o dano recebido.",
+    "sourcePage": 73,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-292",
+    "sourceId": "292",
+    "name": "Morfologia de Emergência",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Reações elementais e adaptação",
+    "usage": "Reação no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Quando uma capacidade sua permitir trocar de forma, a primeira defesa após a troca recebe +3 dados até seu próximo turno. A perk não concede forma, módulo, ação ou troca gratuita.",
+    "sourcePage": 73,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-293",
+    "sourceId": "293",
+    "name": "Reserva de Reconstrução",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Reações elementais e adaptação",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Ao desativar voluntariamente uma técnica sustentada paga com RC, reduza em 3 RC o custo da próxima técnica defensiva até o fim do próximo turno, mínimo 1 RC. Não recebe RC e não acumula descontos.",
+    "sourcePage": 74,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-294",
+    "sourceId": "294",
+    "name": "Economia de Presas",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Reações elementais e adaptação",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Após um turno no qual só usou ataques normais sem técnicas pagas, sua próxima técnica custa 2 RC a menos, mínimo 1 RC. O desconto expira ao fim do próximo turno e não acumula.",
+    "sourcePage": 74,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-295",
+    "sourceId": "295",
+    "name": "Couraça de Duas Leituras",
+    "cost": 14,
+    "grade": 8,
+    "cm": 0,
+    "category": "Reações elementais e adaptação",
+    "usage": "Ativação livre no gatilho descrito · 4 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Escolha corpo a corpo ou distância no início do seu turno. Até o próximo turno, ganhe +4 RD contra a opção escolhida e perca 2 RD contra a outra, mínimo zero. Não afeta dano ambiental.",
+    "sourcePage": 74,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-296",
+    "sourceId": "296",
+    "name": "Membro de Função Trocada",
+    "cost": 18,
+    "grade": 10,
+    "cm": 0,
+    "category": "Reações elementais e adaptação",
+    "usage": "Ativação livre no gatilho descrito · 6 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Sacrifique 2 Passos do seu próximo ataque normal para receber +4 dados em uma tentativa de agarrar ou escapar no mesmo turno. Não concede Ação adicional; o sacrifício expira mesmo se não atacar.",
+    "sourcePage": 74,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-297",
+    "sourceId": "297",
+    "name": "Núcleo de Resposta",
+    "cost": 18,
+    "grade": 10,
+    "cm": 0,
+    "category": "Reações elementais e adaptação",
+    "usage": "Ativação livre no gatilho descrito · 6 RC; 1x/turno",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Após resistir com sucesso a uma condição, ganhe +3 dados para resistir à mesma condição até o fim do próximo turno. Não oferece imunidade e não se ativa com falhas ou custos voluntários.",
+    "sourcePage": 75,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-298",
+    "sourceId": "298",
+    "name": "Ressonância de Três Cores",
+    "cost": 18,
+    "grade": 10,
+    "cm": 0,
+    "category": "Reações elementais e adaptação",
+    "usage": "Ativação livre no gatilho descrito · 6 RC; 1x/turno",
+    "requirement": "Kakuja; Três Infusões Elementais; Núcleo Trino. Kakuja ativa.",
+    "effect": "Após causar dano com três propriedades diferentes em três turnos consecutivos, seu próximo ataque normal ganha +5 Passos. Expira no turno seguinte e encerra a sequência; exige acesso prévio às três propriedades.",
+    "sourcePage": 75,
+    "requiresModules": [
+      "nucleo-trino",
+      "infusao-elemental"
+    ],
+    "requiresElements": [],
+    "minElements": 3
+  },
+  {
+    "id": "kakuja-p1-299",
+    "sourceId": "299",
+    "name": "Ascensão do Arsenal Vivo",
+    "cost": 24,
+    "grade": 14,
+    "cm": 0,
+    "category": "Reações elementais e adaptação",
+    "usage": "Ativação livre no gatilho descrito · 12 RC; 1x/cena",
+    "requirement": "Kakuja. Kakuja ativa.",
+    "effect": "Escolha uma função ao ativar: +3 dados em ataques normais, +4 RD ou +4 m de Movimento. Dura dois turnos. Não pode trocar durante a duração e não concede CM nem módulos.",
+    "sourcePage": 75,
+    "requiresModules": [],
+    "requiresElements": [],
+    "minElements": 0
+  },
+  {
+    "id": "kakuja-p1-300",
+    "sourceId": "300",
+    "name": "Eclipse de Núcleos",
+    "cost": 24,
+    "grade": 14,
+    "cm": 0,
+    "category": "Reações elementais e adaptação",
+    "usage": "Ativação livre no gatilho descrito · 12 RC; 1x/cena",
+    "requirement": "Kakuja; Duas Infusões Elementais; Reação Híbrida. Kakuja ativa.",
+    "effect": "Com duas propriedades elementais ativas por capacidade sua, um ataque normal recebe +6 Passos e aplica um efeito elemental de cada uma que você já possua. Não duplica dano base; depois, ambas desligam por dois turnos. Sem outro finalizador.",
+    "sourcePage": 75,
+    "requiresModules": [
+      "reacao-hibrida",
+      "infusao-elemental"
+    ],
+    "requiresElements": [],
+    "minElements": 2
+  }
+]
