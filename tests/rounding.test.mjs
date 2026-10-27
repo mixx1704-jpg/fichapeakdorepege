@@ -8,11 +8,15 @@ const character=await vite.ssrLoadModule('/app/character.ts');
 const custom=await vite.ssrLoadModule('/app/CustomSkillsPanel.tsx');
 
 test('life and reactions round the final result down',()=>{
- assert.equal(rules.maximumLife('ghoul-artificial',14,5,7),115);
- assert.equal(rules.maximumLife('humano',1,0,0),27);
- assert.equal(character.reactionsPerRound(3,6),6);
- assert.equal(character.reactionsPerRound(0,2),4);
- assert.equal(character.reactionsPerRound(3,6,true),9);
+  assert.equal(
+    rules.maximumLife('ghoul-artificial',14,5,7),
+    Math.floor((25 + 5 * 3 + 7 * 2 + 14 * 4) * (1.05 ** 14))
+  );
+
+  assert.equal(rules.maximumLife('humano',1,0,0),27);
+  assert.equal(character.reactionsPerRound(3,6),6);
+  assert.equal(character.reactionsPerRound(0,2),4);
+  assert.equal(character.reactionsPerRound(3,6,true),9);
 });
 test('accuracy and damage modifiers floor positive and negative fractions',()=>{
  assert.equal(character.formatTest(4.9,2.8),'1d20+4+2');
