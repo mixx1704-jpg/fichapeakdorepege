@@ -32,7 +32,7 @@ export function mentalityDie(species: string, currentSanity: number, maxSanity: 
 export function maximumLife(species: string, level: number, vigor: number, strength: number, bonus = 0) {
   const perLevel: Record<string, number> = { humano: 1, ghoul: 2, "humano-dominante": 3, "ghoul-dominante": 4, "ghoul-artificial": 4, quinx: 2 };
   // Round the final total down; keep the multiplier exact until the calculation is complete.
-  return Math.max(1, Math.floor((25 + vigor * 3 + strength * 2 + level * (perLevel[species] || 1) + bonus) * 105 / 100));
+  return Math.max(1, Math.floor((25 + vigor * 3 + strength * 2 + level * (perLevel[species] || 1) + bonus) * (1.05 ** level)));
 }
 
 export function maximumSanity(level: number, control: number, bonus = 0, fragile = false) {
