@@ -1,0 +1,17 @@
+.custom-skill-image { border:1px solid var(--line); border-radius:7px; padding:12px; }
+.custom-skill-image summary { color:var(--muted); font-size:12px; font-weight:600; cursor:pointer; }
+.custom-skill-image-content { display:flex; align-items:start; gap:16px; margin-top:13px; }
+.custom-skill-image-preview { flex:0 0 180px; height:150px; display:grid; place-items:center; overflow:hidden; border:1px solid var(--line); border-radius:6px; background:var(--surface-strong); }
+.custom-skill-image-preview img { width:100%; height:100%; object-fit:contain; }
+.custom-skill-image-preview p { margin:0; padding:12px; color:var(--muted); font-size:12px; line-height:1.5; }
+.custom-skill-image-controls { flex:1; min-width:0; display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
+.custom-skill-image-upload,.custom-skill-image button { position:relative; padding:9px 12px; border:1px solid var(--line); border-radius:5px; color:var(--ink); background:var(--surface-strong); font-size:12px; cursor:pointer; }
+.custom-skill-image-upload { overflow:hidden; }
+.custom-skill-image-upload input { position:absolute; inset:0; opacity:0; width:100%; cursor:pointer; }
+.custom-skill-image-upload:focus-within { outline:2px solid var(--wine); outline-offset:2px; }
+.custom-skill-image-hint { flex-basis:100%; color:var(--muted); font-size:11px; line-height:1.5; }
+.custom-skill-image-address { display:flex; align-items:end; gap:8px; width:100%; margin-top:3px; }
+.custom-skill-image-address label { flex:1; min-width:0; display:grid; gap:5px; color:var(--muted); font-size:11px; }
+.custom-skill-image-address input { width:100%; min-width:0; height:36px; padding:0 10px; border:1px solid var(--line); border-radius:5px; color:var(--ink); background:var(--surface-strong); font-size:12px; }
+.custom-skill-image-error { flex-basis:100%; margin:0; color:var(--wine); font-size:12px; }
+@media(max-width:640px) { .custom-skill-image-content { flex-direction:column; } .custom-skill-image-preview { width:100%; flex-basis:auto; height:180px; } .custom-skill-image-controls { width:100%; } }

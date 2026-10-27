@@ -184,20 +184,7 @@ test('blood fuel trades whole life for a single-use discount without adding RC o
   assert.equal(fueled.currentLife,100-sacrifice);assert.equal(fueled.currentRC,0);assert.equal(fueled.tactical.credit.amount,credit);
   const next={...fueled,vats:{...fueled.vats,turn:2}};
   assert.strictEqual(apply(next,{type:'use',id:id('drenagem-ferida')},context({currentRC:999})),next);
-  const payable = apply(
-  {
-    ...next,
-    currentRC: Math.max(0, 4 - credit)
-  },
-  {
-    type: 'inputs',
-    patch: {
-      damage: 80,
-      confirmed: true
-    }
-  },
-  context()
-);
+  const payable=apply({...next,currentRC:Math.max(0,4-credit)},{type:'inputs',patch:{damage:80,confirmed:true}},context());
   const drained=apply(payable,{type:'use',id:id('drenagem-ferida')},context());
   assert.equal(drained.currentRC,0);assert.equal(drained.tactical.credit,null);
   assert.equal(drained.currentLife,payable.currentLife+20);

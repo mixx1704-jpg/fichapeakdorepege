@@ -1,6 +1,9 @@
 "use client";
 
 import { attributeKeys, attributeLabels, type AttributeKey } from "./data";
+import { CustomSkillImage } from "./CustomSkillImage";
+import { normalizeCustomSkillImage } from "./custom-skill-images";
+import "./custom-skill-images.css";
 
 export type CustomSkillActivation = "passive" | "active";
 export type CustomSkillScope = "physical" | "kagune" | "both";
@@ -35,6 +38,7 @@ export type CustomSkill = {
   id: string;
   name: string;
   description: string;
+  image?: string;
   cost: number;
   activation: CustomSkillActivation;
   enabled: boolean;
@@ -134,6 +138,7 @@ export function normalizeCustomSkills(value: unknown): CustomSkill[] {
       id: String(source.id || `habilidade-${skillIndex}`),
       name: String(source.name || "Habilidade autoral"),
       description: String(source.description || ""),
+      ...(normalizeCustomSkillImage(source.image) ? { image: normalizeCustomSkillImage(source.image) } : {}),
       cost: Math.max(0, Number(source.cost) || 0),
       activation: source.activation === "active" ? "active" : "passive",
       enabled: source.enabled !== false,
@@ -249,6 +254,7 @@ export function CustomSkillsPanel({ skills, onChange, targetLabel = "Personagem"
           <button className="custom-skill-remove" type="button" aria-label={`Remover ${skill.name}`} onClick={() => removeSkill(skill.id)}>×</button>
         </div>
         <label className="custom-skill-description"><span>Descrição, custo em RC e regras</span><textarea rows={3} value={skill.description} onChange={(event) => updateSkill(skill.id, { description: event.target.value })} placeholder="Descreva ativação, alcance, duração, custo em RC, limites e efeito narrativo..." /></label>
+        <CustomSkillImage name={skill.name} value={skill.image} onChange={image => updateSkill(skill.id, { image })} />
         <div className="custom-skill-state">
           <div><span>{skill.activation === "passive" ? "Passiva" : "Técnica ativa"}</span><strong>{applied ? "Aplicando efeitos" : "Efeitos desligados"}</strong></div>
           {skill.activation === "active" ? <label className="custom-skill-switch"><input type="checkbox" checked={skill.enabled} onChange={(event) => updateSkill(skill.id, { enabled: event.target.checked })} /><span>{skill.enabled ? "Ativada" : "Desativada"}</span></label> : <span className="custom-skill-always">{restrictToKakuja ? "Ao manifestar a Kakuja" : "Sempre aplicada"}</span>}

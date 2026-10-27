@@ -151,20 +151,7 @@ test('hit purchases grant their complete rank as additive accuracy',()=>{
 });
 
 test('life uses all species factors, Vigor, Strength and the requested multiplier',()=>{
-  for (const [species, factor] of Object.entries({
-    humano: 1,
-    ghoul: 2,
-    'humano-dominante': 3,
-    'ghoul-dominante': 4,
-    'ghoul-artificial': 4,
-    quinx: 2
-  })) {
-    assert.equal(
-      rules.maximumLife(species, 10, 4, 6),
-      Math.floor((25 + 12 + 12 + 10 * factor) * (1.05 ** 10))
-    );
-  }
-
+  for(const [species,factor]of Object.entries({humano:1,ghoul:2,'humano-dominante':3,'ghoul-dominante':4,'ghoul-artificial':4,quinx:2}))assert.equal(rules.maximumLife(species,10,4,6),Math.floor((25+12+12+10*factor)*(1.05 ** 10)));
   assert.equal(rules.maximumSanity(20,6),36);
   assert.equal(rules.maximumSanity(20,6,4,true),20);
 });

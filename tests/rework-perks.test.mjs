@@ -219,7 +219,7 @@ test("the actual character receives and loses the Level 20 attribute capstone bo
   const base = sheetRules.calculateCharacter(sheet);
   const capstone = reworkPerks.find(perk => perk.id.startsWith("r26-exp-vigor-") && perk.minGrade === 20);
   const applied = sheetRules.calculateCharacter({ ...sheet, perks: { [capstone.id]: { rank: 1 } } });
-  assert.equal(applied.maxLife - base.maxLife, 530); // +200 escalado por 1.05 elevado a 20 level no Level 20.
+  assert.equal(applied.maxLife - base.maxLife, 530); // +200 before the universal 1.05 ** LEVEL life formula.
   assert.equal(applied.rd - base.rd, 60);
   assert.equal(accuracy(applied.blockTest) - accuracy(base.blockTest), 20);
   assert.equal(applied.physicalSteps - base.physicalSteps, 0);
