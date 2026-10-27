@@ -3,16 +3,16 @@ import test,{after} from 'node:test';
 import {createServer} from 'vite';
 const vite=await createServer({configFile:false,server:{middlewareMode:true,hmr:false}});after(()=>vite.close());
 const qRules=await vite.ssrLoadModule('/app/quinque.ts');
-const rules=await vite.ssrLoadModule('/app/page.tsx');
+const rules=await vite.ssrLoadModule('/app/character.ts');
 const data=await vite.ssrLoadModule('/app/data.ts');
 const {normalizeQuinque,calculateQuinque,quinqueAllowsEffect,quinqueAllowsEvolution,quinqueEffectMissing,quinqueEvolutionMissing}=qRules;
 const q=(patch={})=>normalizeQuinque({rcType:'Koukaku',grade:10,creationGrade:4,attributes:{vigor:8},...patch});
 
-test('Quinque mantém 8 + criação e recebe a progressão completa do próprio Grau',()=>{
+test('Quinque mantém 8 + criação e recebe a progressão completa do próprio Level',()=>{
  for(const [grade,gain] of [[2,0],[4,10],[6,30],[8,60],[10,100],[12,150],[14,210]])assert.equal(calculateQuinque(q({grade,bonusPE:7})).available,8+4+gain+7);
  let weapon=q({grade:2});weapon=rules.registerEarnedPE(weapon,10);
  assert.equal(calculateQuinque(weapon).available,22);
- weapon=rules.advanceGradeIfReady(weapon);assert.equal(weapon.grade,4);assert.equal(weapon.progressPE,0);assert.equal(calculateQuinque(weapon).available,22);
+ weapon=rules.advanceGradeIfReady(weapon);assert.equal(weapon.grade,3);weapon=rules.advanceGradeIfReady(weapon);assert.equal(weapon.grade,4);assert.equal(weapon.progressPE,0);assert.equal(calculateQuinque(weapon).available,22);
 });
 test('atributos, RD, Dureza e PE das armas não alteram o personagem ou outra Quinque',()=>{
  const first=q({name:'A',bonusPE:12,rdOverride:23,durabilityOverride:145}),second=q({name:'B',attributes:{vigor:2}});
@@ -35,7 +35,7 @@ test('cada tipo tem catálogo exclusivo mais efeitos universais; Bikaku não her
  assert.equal(quinqueAllowsEffect(q(),data.kaguneEffects.find(e=>e.id==='forma-versatil')),true);
  assert.equal(quinqueAllowsEffect(q({rcType:'Rinkaku'}),data.kaguneEffects.find(e=>e.id==='regeneracao-superior')),true);
 });
-test('graus, limites e pré-requisitos usam a arma; trocas incompatíveis não concedem bônus',()=>{
+test('levels, limites e pré-requisitos usam a arma; trocas incompatíveis não concedem bônus',()=>{
  const architecture=data.evolutions.find(e=>e.id==='arquitetura-cerco');
  assert.deepEqual(quinqueEvolutionMissing(q({evolutions:['eixo-aco']}),architecture,1),[]);
  assert.ok(quinqueEvolutionMissing(q({evolutions:['eixo-aco']}),architecture,2).length);
@@ -48,7 +48,7 @@ test('graus, limites e pré-requisitos usam a arma; trocas incompatíveis não c
 test('compras e habilidades autorais são cobradas uma vez na arma, sem desconto racial do dono',()=>{
  const weapon=q({evolutions:['eixo-aco','arquitetura-cerco'],effects:{'aumentar-dano':{rank:2}},customSkills:[{id:'own',name:'Ajuste',cost:5,activation:'passive',enabled:true,effects:[{id:'eff',type:'hit-dice',value:2,scope:'kagune',attribute:'vigor'}]}]});
  const d=calculateQuinque(weapon);assert.equal(d.evolutionPE,22);assert.equal(d.customSkillsPE,5);assert.equal(d.spent,d.attributePE+d.effectPE+22+5);
- assert.equal(parseInt(d.kaguneTest),14);
+ assert.match(d.kaguneTest,/^1d20\+14(?:[+-]\d+)*$/);
 });
 test('migração salva a Quinque antiga uma vez e preserva atributos do dono e imagens',()=>{
  const old={id:'old',species:'humano',grade:12,weaponKind:'quinque',kaguneName:'Legado',kaguneType:'Koukaku',sourceGhoulGrade:8,baseAttributes:{vigor:6},effects:{'bloqueio-ferro':{rank:1}},perks:{'mil-p0801':{rank:1}},kakuja:{incompleteImage:'data:image/png;base64,test'}};

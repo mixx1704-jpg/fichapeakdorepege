@@ -1,6 +1,8 @@
 import { combatManeuvers, expansionEvolutions, expansionKaguneEffects, expansionPerks } from "./expansion-data";
 import { masteryEvolutions } from "./kakuhou-mastery";
 import thousandPerks from "./thousand-perks.json";
+import { reworkPerks } from "./rework-perks";
+import { reworkText } from "./rework-rules";
 
 export { combatManeuvers };
 
@@ -45,8 +47,8 @@ export const attributeDescriptions: Record<AttributeKey, string> = {
 
 export const archetypes = [
   { name: "O Protetor", ability: "Como Reação, intercepte um golpe contra um aliado: receba metade do dano, anule a outra metade e armazene o dano recebido para fortalecer um ataque futuro. Um golpe armazenado por vez." },
-  { name: "O Justiceiro", ability: "Contra alguém que feriu você ou cometeu uma injustiça, receba +1 dado de acerto e +2 Passos de Dano." },
-  { name: "O Hedonista", ability: "Quando a ação estiver diretamente ligada ao seu prazer, receba +2 dados ou +3 Passos de Dano." },
+  { name: "O Justiceiro", ability: "Contra alguém que feriu você ou cometeu uma injustiça, receba +1 acerto e +2 Passos de Dano." },
+  { name: "O Hedonista", ability: "Quando a ação estiver diretamente ligada ao seu prazer, receba +2 acertos ou +3 Passos de Dano." },
   { name: "O Idealista", ability: "Ao agir movido por sua convicção, adicione metade do Controle em uma rolagem." },
   { name: "O Mártir", ability: "Receba no lugar de um aliado uma penalidade, dano, perda de item, Mácula ou efeito negativo." },
   { name: "O Sobrevivente", ability: "Guarde o resultado de um dado, rerrole-o e use o resultado guardado para substituir uma rolagem futura. Um resultado armazenado por vez." },
@@ -57,12 +59,12 @@ export const archetypes = [
 ] as const;
 
 export const speciesOptions = [
-  { id: "humano", label: "Humano", lifeBase: 2, cap: 6, creationGrant: 6, subCost: 0, hasKagune: false, hasHunger: false, summary: "+2 Vida Base, +6 PE de criação, +1 Atributo Mental e uma rerrolagem por sessão." },
-  { id: "ghoul", label: "Ghoul", lifeBase: 5, cap: 8, creationGrant: 0, subCost: 0, hasKagune: true, hasHunger: true, summary: "+5 Vida Base, Kakuhou, Kagune, RC e Fome." },
-  { id: "humano-dominante", label: "Híbrido — Humano Dominante", lifeBase: 4, cap: 8, creationGrant: 6, subCost: 6, hasKagune: false, hasHunger: false, summary: "Base humana, +2 em um Atributo Físico e 6 PE para efeitos passivos de Kakuhou." },
-  { id: "ghoul-dominante", label: "Híbrido — Ghoul Dominante", lifeBase: 4, cap: 8, creationGrant: 0, subCost: 8, hasKagune: true, hasHunger: true, summary: "+1 em dois Atributos Físicos diferentes e efeitos de Kagune custam -3 PE (mínimo 1)." },
-  { id: "ghoul-artificial", label: "Ghoul Artificial", lifeBase: 3, cap: 8, creationGrant: 6, subCost: 6, hasKagune: true, hasHunger: true, summary: "Base humana e Ghoul, +1 Mental, +1 Físico, +3 Vida Base, Kakuhou, Kagune, RC e Fome. Pode usar a variação Humano-Dominante sem herdar suas fraquezas." },
-  { id: "quinx", label: "Quinx", lifeBase: 4, cap: 8, creationGrant: 6, subCost: 6, hasKagune: true, hasHunger: false, summary: "+4 Vida Base, Frame, Carga Instintiva e Kagune implantada." },
+  { id: "humano", label: "Humano", lifeBase: 1, cap: 11, creationGrant: 6, subCost: 0, hasKagune: false, hasHunger: false, summary: "+1 Vida por Level, +6 PE de criação, +1 Atributo Mental e uma rerrolagem por sessão." },
+  { id: "ghoul", label: "Ghoul", lifeBase: 2, cap: 11, creationGrant: 0, subCost: 0, hasKagune: true, hasHunger: true, summary: "+2 Vida por Level, Kakuhou, Kagune, RC e Fome. Controle soma em ataque, bloqueio e esquiva." },
+  { id: "humano-dominante", label: "Híbrido — Humano Dominante", lifeBase: 3, cap: 11, creationGrant: 6, subCost: 6, hasKagune: false, hasHunger: false, summary: "+3 Vida por Level, base humana, +2 em um Atributo Físico e 6 PE para efeitos passivos de Kakuhou." },
+  { id: "ghoul-dominante", label: "Híbrido — Ghoul Dominante", lifeBase: 4, cap: 11, creationGrant: 0, subCost: 8, hasKagune: true, hasHunger: true, summary: "+4 Vida por Level, +1 em dois Atributos Físicos diferentes e efeitos de Kagune custam -3 PE (mínimo 1)." },
+  { id: "ghoul-artificial", label: "Ghoul Artificial", lifeBase: 4, cap: 11, creationGrant: 6, subCost: 6, hasKagune: true, hasHunger: true, summary: "Base humana e Ghoul, +1 Mental, +1 Físico, +4 Vida por Level, Kakuhou, Kagune, RC e Fome. Pode usar a variação Humano-Dominante sem herdar suas fraquezas." },
+  { id: "quinx", label: "Quinx", lifeBase: 2, cap: 11, creationGrant: 6, subCost: 6, hasKagune: true, hasHunger: false, summary: "+2 Vida por Level, Frame, Carga Instintiva e Kagune implantada." },
 ] as const;
 
 export type SpeciesId = (typeof speciesOptions)[number]["id"];
@@ -90,6 +92,7 @@ export interface Perk {
   location?: "vantagens" | "kakuhou";
   organGroup?: string;
   requiredWeapon?: "kagune" | "quinque" | "arata";
+  equipmentCompatible?: boolean;
   requiresKakuja?: boolean;
   requiresRC?: boolean;
   id: string;
@@ -110,6 +113,7 @@ export interface Perk {
   minKaguneTypes?: number;
   requiredEffect?: string;
   requiredEvolution?: string;
+  requiredPerk?: string;
 }
 
 const perk = (
@@ -124,6 +128,7 @@ const perk = (
 const ghoulSpecies: SpeciesId[] = ["ghoul", "ghoul-dominante", "ghoul-artificial"];
 
 export const perks: Perk[] = [
+  ...reworkPerks,
   perk("terapeuta", "Terapeuta", "Genérica", 5, "A terapia pode recuperar Sanidade."),
   perk("atante-medicina", "Atante de medicina", "Genérica", 6, "+1 dado em Medicina; toda cura executada recebe +Grau."),
   perk("determinado-salvar", "Determinado a Salvar!", "Genérica", 3, "Permite gastar Determinação para beneficiar outra pessoa."),
@@ -170,8 +175,8 @@ export const perks: Perk[] = [
   perk("arremessador", "Arremessador", "Força", 6, "Armas arremessadas e objetos improvisados usam Força e recebem +2 Passos de Dano.", { attribute: "forca", min: 6 }),
   perk("soco-atordoante", "Soco Atordoante", "Força", 6, "Duas vezes por descanso, imponha teste de Controle MD 5; em falha, -5 Passos no próximo dano.", { attribute: "forca", min: 7 }),
   perk("forca-minotauro", "Força de Minotauro", "Força", 8, "Duas vezes por descanso, realize um Ato Colossal; os Passos extras são iguais aos acertos.", { attribute: "forca", min: 8 }),
-  perk("lenda-dragao", "Lenda do Dragão", "Força", 8, "Uma vez por turno, um ataque físico direto recebe +1 Passo de Dano.", { attribute: "forca", min: 9 }),
-  perk("skadoosh", "Skadoosh", "Força", 15, "Uma vez por sessão, em condição dramática, receba +4 Passos de Dano. A antiga duplicação do dado básico foi convertida em +1 Passo, somado aos +3 Passos originais.", { attribute: "forca", min: 10 }),
+  perk("lenda-dragao", "Lenda do Dragão", "Força", 8, "Uma vez por turno, um ataque físico direto recebe +15 Passos de Dano. Ative a condição Lenda do Dragão somente para esse golpe; não aumenta dano de Kagune/Quinque.", { attribute: "forca", min: 9 }),
+  perk("skadoosh", "Skadoosh", "Força", 15, "Uma vez por sessão, um ataque físico direto recebe +40 Passos de Dano. Ative a condição somente nesse golpe e registre o uso na sessão; não afeta a Kagune/Quinque.", { attribute: "forca", min: 10 }),
 
   perk("imunidade-natural", "Imunidade Natural", "Vigor", 3, "Imune a doenças e +1 dado contra venenos e toxinas.", { attribute: "vigor", min: 1 }),
   perk("pele-dura", "Pele Dura", "Vigor", 3, "Receba RD igual à metade do Vigor.", { attribute: "vigor", min: 2 }),
@@ -351,7 +356,7 @@ export const kaguneEffects: KaguneEffect[] = [
   effect("regeneracao-anormal", "Regeneração Anormal", "Geral", 3, 6, "Passivo · Biológico", "Cura passiva por nível, somada ao bônus de Grau; teto atual igual a Grau/2 + 1. Ao atingir o limite da regra, perca 2 RC ou receba 1 Fome.", { rankCap: "grade" }),
   effect("defesa-habil", "Defesa Hábil", "Geral", 3, 1, "Ativo · 2 RC", "Como Reação, reduza dano em metade do Grau."),
   effect("empurrao", "Empurrão", "Geral", 3, 3, "Ativo · 2 RC", "Arremesse o alvo; níveis ampliam distância e dano de colisão."),
-  effect("aumentar-acerto", "Aumentar Acerto", "Geral", 5, 6, "Passivo", "Cada compra pode elevar em +1 o resultado de um dado específico. A cada 3 compras, consolide +1 no modificador ++ dos testes com Kagune. Teto atual igual a Grau/2 + 1.", { rankCap: "grade" }),
+  effect("aumentar-acerto", "Aumentar Acerto", "Geral", 5, 6, "Passivo", "Cada compra concede +1 acerto aditivo em todos os testes com Kagune ou Quinque. O bônus soma integralmente ao único dado do teste. Teto atual igual a Level/2 + 1.", { rankCap: "grade" }),
   effect("efeitos-alternativos", "Efeitos Alternativos", "Geral", 3, 1, "Ativo", "Mantenha dois efeitos passivos alternáveis; trocar custa 1 Ação.", { requirement: "Possuir dois outros efeitos passivos compatíveis", minPassiveEffects: 2 }),
   effect("aprimoramentos-corporais", "Aprimoramentos Corporais", "Geral", 5, 2, "Passivo · Biológico", "Com a Kagune ativa, +1 no Atributo Físico escolhido por nível; pode superar o limite.", { targetAttribute: true }),
   effect("mudanca-forma", "Mudança de Forma", "Geral", 3, 4, "Ativo · 4 RC", "Remodele a Kagune; conceda dados e, ofensivamente, Passos conforme o nível."),
@@ -466,3 +471,10 @@ export const evolutions: Evolution[] = [
   evolution("evolucao-convergente", "Evolução Convergente", 30, 12, "Bikaku", "Uma vez por sessão, por 3 turnos, escolha duas adaptações por turno e acumule Passos de Dano quando inimigos errarem.", "Um Contra Cem", { requiresEvolutions: ["um-contra-cem"] }),
   ...expansionEvolutions,
 ];
+
+// Historical IDs, prices and requirements remain stable for saved purchases.
+for (const item of [...perks, ...drawbacks, ...kaguneEffects, ...evolutions]) {
+  item.name = reworkText(item.name);
+  item.description = reworkText(item.description);
+  if ("requirement" in item && item.requirement) item.requirement = reworkText(item.requirement);
+}

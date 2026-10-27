@@ -4,23 +4,23 @@ import {createServer} from 'vite';
 const vite=await createServer({configFile:false,server:{middlewareMode:true,hmr:false}});
 after(()=>vite.close());
 const {normalizeQuinque:q,calculateQuinque:calc,quinqueAllowsEffect,quinqueAllowsPerk}=await vite.ssrLoadModule('/app/quinque.ts');
-const {normalizeCharacter,calculateCharacter}=await vite.ssrLoadModule('/app/page.tsx');
+const {normalizeCharacter,calculateCharacter}=await vite.ssrLoadModule('/app/character.ts');
 const {kaguneEffects,perks}=await vite.ssrLoadModule('/app/data.ts');
-const dice=s=>parseInt(s,10);
+const accuracyPool=s=>{assert.match(s,/^1d(?:10|20|30)[+-]\d+/);return Number(s.match(/^1d(?:10|20|30)([+-]\d+)/)[1]);};
 const skill={id:'def',name:'Defesa especial',description:'',cost:4,activation:'active',enabled:true,effects:[{id:'b',type:'block-dice',value:3,scope:'kagune',attribute:'vigor'},{id:'d',type:'dodge-dice',value:2,scope:'kagune',attribute:'agilidade'}]};
-test('autorais somam dados às defesas do personagem e respeitam ativação',()=>{
+test('autorais somam acertos às defesas do personagem e respeitam ativação',()=>{
  const sheet=normalizeCharacter({baseAttributes:{vigor:4,agilidade:3},customSkills:[]},7);
  const base=calculateCharacter(sheet),enabled=calculateCharacter({...sheet,customSkills:[skill]}),disabled=calculateCharacter({...sheet,customSkills:[{...skill,enabled:false}]});
- assert.equal(dice(enabled.blockTest),dice(base.blockTest)+3);
- assert.equal(dice(enabled.dodgeTest),dice(base.dodgeTest)+2);
+ assert.equal(accuracyPool(enabled.blockTest),accuracyPool(base.blockTest)+3);
+ assert.equal(accuracyPool(enabled.dodgeTest),accuracyPool(base.dodgeTest)+2);
  assert.equal(disabled.blockTest,base.blockTest);assert.equal(disabled.dodgeTest,base.dodgeTest);
 });
 test('defesa autoral e ajustes da Quinque acumulam sem contaminar acerto ou outras armas',()=>{
  const base=q({attributes:{vigor:4,agilidade:3}}),before=calc(base);
  const enhanced=calc(q({...base,customSkills:[skill],blockDice:1,dodgeDice:2,hitDice:5}));
- assert.equal(dice(enhanced.blockTest),dice(before.blockTest)+4);
- assert.equal(dice(enhanced.dodgeTest),dice(before.dodgeTest)+4);
- assert.equal(dice(enhanced.kaguneTest),dice(before.kaguneTest)+5);
+ assert.equal(accuracyPool(enhanced.blockTest),accuracyPool(before.blockTest)+4);
+ assert.equal(accuracyPool(enhanced.dodgeTest),accuracyPool(before.dodgeTest)+4);
+ assert.equal(accuracyPool(enhanced.kaguneTest),accuracyPool(before.kaguneTest)+5);
  assert.equal(enhanced.customSkillsPE,4);assert.equal(calc(base).blockTest,before.blockTest);
 });
 test('passos, alvo e técnicas usam os mesmos cálculos de Kakuhou',()=>{
@@ -52,16 +52,16 @@ test('aprimoramentos corporais preservam o atributo escolhido e aplicam cada ní
  assert.equal(calc(restored).activeAttributes.vigor,6);
  assert.equal(calc(restored).activeAttributes.forca,2);
 });
-test('bônus de status e dados extras são independentes, gratuitos e persistentes',()=>{
+test('bônus de status e acertos extras são independentes, gratuitos e persistentes',()=>{
  const original=q({attributes:{vigor:4,agilidade:4}});
  const enhanced=q({...original,attributeBonuses:{vigor:2,agilidade:-1},attributeDice:{vigor:3,agilidade:2}});
  const base=calc(original),result=calc(enhanced);
  assert.equal(result.activeAttributes.vigor,6);assert.equal(result.activeAttributes.agilidade,3);
  assert.equal(result.spent,base.spent);
  assert.equal(result.kaguneSteps,base.kaguneSteps+1);
- assert.equal(dice(result.kaguneTest),dice(base.kaguneTest)+5);
- assert.equal(dice(result.blockTest),dice(base.blockTest)+5);
- assert.equal(dice(result.dodgeTest),dice(base.dodgeTest)+1);
+ assert.equal(accuracyPool(result.kaguneTest),accuracyPool(base.kaguneTest)+5);
+ assert.equal(accuracyPool(result.blockTest),accuracyPool(base.blockTest)+5);
+ assert.equal(accuracyPool(result.dodgeTest),accuracyPool(base.dodgeTest)+1);
  assert.deepEqual(q(JSON.parse(JSON.stringify(enhanced))),enhanced);
  assert.equal(calc(original).activeAttributes.vigor,4);
  assert.equal(q().attributeBonuses.vigor,0);assert.equal(q().attributeDice.vigor,0);

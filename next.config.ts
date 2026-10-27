@@ -14,8 +14,8 @@ const nextConfig: NextConfig = {
         basePath,
         assetPrefix: basePath,
         images: { unoptimized: true },
-        // O conector de banco do host atual não participa da versão estática.
-        typescript: { ignoreBuildErrors: true },
+        // Validate the static application without the alternate Cloudflare host.
+        typescript: { tsconfigPath: "tsconfig.pages.json" },
       }
     : {}),
 };

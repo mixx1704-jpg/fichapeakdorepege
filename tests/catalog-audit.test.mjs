@@ -3,7 +3,7 @@ import test,{after} from 'node:test';
 import {createServer} from 'vite';
 const vite=await createServer({configFile:false,server:{middlewareMode:true,hmr:false}});after(()=>vite.close());
 const data=await vite.ssrLoadModule('/app/data.ts');
-const rules=await vite.ssrLoadModule('/app/page.tsx');
+const rules=await vite.ssrLoadModule('/app/character.ts');
 const {kakujaPerks}=await vite.ssrLoadModule('/app/kakuja-perks.ts');
 const {kakujaModules}=await vite.ssrLoadModule('/app/kakuja-data.ts');
 test('todos os itens dos catálogos mantêm IDs, nomes, descrições e custos válidos',()=>{

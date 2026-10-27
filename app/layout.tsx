@@ -1,25 +1,26 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import "./tokyo.css";
+import "./minimal.css";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://fome-justica-ficha.andrew-junior.chatgpt.site"),
-  title: "Ficha Tokyo Guru - Kakuja",
-  description: "Ficha automática de Fome & Justiça V 2.0 com construção modular completa de Kakuja para personagens de Grau 6+.",
+  metadataBase: new URL("https://mixx1704-jpg.github.io/fichapeakdorepege"),
+  title: "Fome & Justiça — Ficha de personagem",
+  description: "Ficha de Tokyo Ghoul com LEVEL 1 a 20, sistema d20, perks e Kakuja autoral.",
   openGraph: {
-    title: "Ficha Tokyo Guru - Kakuja",
+    title: "Fome & Justiça — Ficha de personagem",
     description: "Ficha automática com atributos, PE, Kakuhou e sistema modular completo de Kakuja.",
-    images: [{ url: "https://fome-justica-ficha.andrew-junior.chatgpt.site/og.png", width: 1200, height: 630, alt: "Fome & Justiça — Ficha de Personagem" }],
+    images: [{ url: "https://mixx1704-jpg.github.io/fichapeakdorepege/og.png", width: 1200, height: 630, alt: "Fome & Justiça — Ficha de Personagem" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Ficha Tokyo Guru - Kakuja",
+    title: "Fome & Justiça — Ficha de personagem",
     description: "Ficha automática com atributos, PE, Kakuhou e sistema modular completo de Kakuja.",
-    images: ["https://fome-justica-ficha.andrew-junior.chatgpt.site/og.png"],
+    images: ["https://mixx1704-jpg.github.io/fichapeakdorepege/og.png"],
   },
   icons: {
-    icon: "/favicon.svg",
-    shortcut: "/favicon.svg",
+    icon: "https://mixx1704-jpg.github.io/fichapeakdorepege/favicon.svg",
+    shortcut: "https://mixx1704-jpg.github.io/fichapeakdorepege/favicon.svg",
   },
 };
 
@@ -34,3 +35,4 @@ export default function RootLayout({
     </html>
   );
 }
+

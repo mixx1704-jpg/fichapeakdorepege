@@ -1,0 +1,11 @@
+'use client';
+import {useState} from 'react';
+import {normalizeKakujaApex,type KakujaApexAction} from './kakuja-apex';
+import type {KakujaState} from './kakuja-data';
+export function KakujaApexPanel({state,onAction}:{state:KakujaState;onAction:(a:KakujaApexAction)=>string|undefined}){
+ const [error,setError]=useState(''),[fallback,setFallback]=useState('');
+ const value=normalizeKakujaApex(state.apex),attack=state.selectedPerks.includes('k20-deus-devorador'),defense=state.selectedPerks.includes('k20-soberano-eterno');
+ if(!attack&&!defense)return null;
+ const act=(a:KakujaApexAction)=>{setError(onAction(a)||'');setFallback('');};
+ return <section className="section-block"><h2>Técnicas supremas da Kakuja</h2><p className="section-help">Deus Devorador amplifica um golpe em até 25%. Soberano Eterno consome reserva para absorver parte de um impacto pós-RD. Cada resolução consome os dados informados e cobra somente da reserva da Kakuja.</p><div className="field-grid two"><label className="field"><span>Dano bruto causado / dano pós-RD recebido</span><input type="number" min={0} value={value.damage} onChange={e=>act({type:'input',patch:{damage:Number(e.target.value)}})}/></label><label className="field"><span>RC da reserva para gastar · 1 a 10</span><input type="number" min={1} max={10} value={value.spend} onChange={e=>act({type:'input',patch:{spend:Number(e.target.value)}})}/></label></div><label className="vats-check"><input type="checkbox" checked={value.confirmed} onChange={e=>act({type:'input',patch:{confirmed:e.target.checked}})}/>Novo golpe confirmado; este dano ainda não usou a técnica</label><div className="card-actions">{attack&&<button onClick={()=>act({type:'attack'})}>Deus Devorador · amplificar golpe</button>}{defense&&<button onClick={()=>act({type:'absorb'})}>Soberano Eterno · absorver impacto</button>}</div>{error&&<p role="status" className="vats-warning">{error}</p>}{value.receipt&&<><p>{value.receipt}</p><button onClick={async()=>{try{await navigator.clipboard.writeText(value.receipt);}catch{setFallback(value.receipt);}}}>Copiar resultado</button></>}{fallback&&<textarea readOnly value={fallback} onFocus={e=>e.currentTarget.select()}/>}</section>;
+}

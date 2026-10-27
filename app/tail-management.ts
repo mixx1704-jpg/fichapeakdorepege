@@ -6,8 +6,10 @@ export function tailAvailability(part:TailPart|undefined, manifested:boolean, tu
  if(part?.enabled===false)return 'Recolhida';
  return 'Disponível';
 }
-export function tailLoadout(parts:TailPart[],capacity:number,manifested:boolean,turn:number,kakuhouUntil:number,eightPaths:boolean) {
+export function tailLoadout(parts:TailPart[],capacity:number,manifested:boolean,turn:number,kakuhouUntil:number,eightPaths:boolean,fused=false) {
  const available=Array.from({length:capacity},(_,i)=>i).filter(i=>tailAvailability(parts[i],manifested,turn,kakuhouUntil)==='Disponível');
+ // Every available part is absorbed, regardless of its saved role. No reserve survives fusion.
+ if(fused)return {available,attacks:available.slice(0,1),reserved:undefined,rd:0,dodge:0};
  const attacks=available.filter(i=>!parts[i]?.role||parts[i].role==='attack');
  // Oito Caminhos reserves one tail for one defense, never stacks per tail.
  const reserved=eightPaths?available.find(i=>parts[i]?.role==='guard'||parts[i]?.role==='dodge'):undefined;
@@ -17,5 +19,6 @@ export function tailLoadout(parts:TailPart[],capacity:number,manifested:boolean,
 export function tailAttackBudget(attacks:number[],paidTailStart:number,perTailCost:number,manualStart=Infinity,manualCount=0,manualCost=0) {
  const costs=attacks.map(i=>i>=manualStart&&i<manualStart+manualCount?Math.max(0,manualCost):i>=paidTailStart?Math.max(1,perTailCost):0);
  const paid=costs.filter(c=>c>0).length;
- return {paid,free:attacks.length-paid,total:costs.reduce((a,b)=>a+b,0)};
+ // Preserve partial per-tail costs until the combined payment is calculated.
+ return {paid,free:attacks.length-paid,total:Math.floor(costs.reduce((a,b)=>a+b,0))};
 }

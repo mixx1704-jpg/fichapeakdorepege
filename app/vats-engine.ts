@@ -1,13 +1,14 @@
 import {tailAvailability,tailLoadout,tailAttackBudget,type TailPart,type TailRole} from './tail-management';
 import injuries from './vats-injuries.json';
+import { curablePhysicalEffects, healingSpecies, healingTechniques, normalizeHealingResult, reconstructableEffects, rollHealing, type HealingResult, type HealingTarget } from './healing';
 
 export const regions = [ ['head','Cabeça','head'], ['torso','Tronco','torso'], ['armL','Braço esquerdo','arm'], ['armR','Braço direito','arm'], ['legL','Perna esquerda','leg'], ['legR','Perna direita','leg'] ] as const;
 export type RegionId = typeof regions[number][0];
 export const injuryGroups: Record<string, string[][]> = injuries;
 export const injuryByName = Object.fromEntries(Object.values(injuryGroups).flat().map(x => [x[0], x]));
 export type BodyRegion = { damage: number; destroyed: boolean; effects: string[] };
-export type VatsState = { manualTails:number; manualTailRC:number; turn: number; passiveMultiplier: number; body: Record<RegionId, BodyRegion>; global: string[]; meter: number; healedTurn: number; kakuhouUntil: number; parts: TailPart[]; milPernasUntil:number; mitosisUntil:number; mitosisCount:number; tentacleMomentum:number; lastTentacleAttackTurn:number; log: string[]; rcSpent: number; fleshUntil: number; fleshUsed: boolean; centipedeUntil: number; centipedeUsed: boolean; freeTailTurn: number; hydraTurn: number; axolotlTurn: number; fortressTurn: number; fortressBonus: number; sacrifices: number; growth: number; breathe: number; secondWind: boolean; angel: number };
-export const blankVats = (): VatsState => ({ manualTails:0,manualTailRC:2,turn:1, milPernasUntil:0,mitosisUntil:0,mitosisCount:0,tentacleMomentum:0,lastTentacleAttackTurn:0, passiveMultiplier:1, body:Object.fromEntries(regions.map(([id]) => [id,{damage:0,destroyed:false,effects:[]}])) as unknown as VatsState['body'],global:[],meter:0,healedTurn:0,kakuhouUntil:0,parts:[],log:[],rcSpent:0,fleshUntil:0,fleshUsed:false,centipedeUntil:0,centipedeUsed:false,freeTailTurn:0,hydraTurn:0,axolotlTurn:0,fortressTurn:0,fortressBonus:0,sacrifices:0,growth:0,breathe:0,secondWind:false,angel:0 });
+export type VatsState = { activeHealTurn:number; rcSuppressedUntil:number; rcRemedyUsed:boolean; healingResult:HealingResult|null; manualTails:number; manualTailRC:number; turn: number; passiveMultiplier: number; body: Record<RegionId, BodyRegion>; global: string[]; meter: number; healedTurn: number; kakuhouUntil: number; parts: TailPart[]; milPernasUntil:number; mitosisUntil:number; mitosisCount:number; tentacleMomentum:number; lastTentacleAttackTurn:number; log: string[]; rcSpent: number; fleshUntil: number; fleshUsed: boolean; centipedeUntil: number; centipedeUsed: boolean; freeTailTurn: number; hydraTurn: number; axolotlTurn: number; fortressTurn: number; fortressBonus: number; sacrifices: number; growth: number; breathe: number; secondWind: boolean; angel: number };
+export const blankVats = (): VatsState => ({ activeHealTurn:0,rcSuppressedUntil:0,rcRemedyUsed:false,healingResult:null,manualTails:0,manualTailRC:2,turn:1, milPernasUntil:0,mitosisUntil:0,mitosisCount:0,tentacleMomentum:0,lastTentacleAttackTurn:0, passiveMultiplier:1, body:Object.fromEntries(regions.map(([id]) => [id,{damage:0,destroyed:false,effects:[]}])) as unknown as VatsState['body'],global:[],meter:0,healedTurn:0,kakuhouUntil:0,parts:[],log:[],rcSpent:0,fleshUntil:0,fleshUsed:false,centipedeUntil:0,centipedeUsed:false,freeTailTurn:0,hydraTurn:0,axolotlTurn:0,fortressTurn:0,fortressBonus:0,sacrifices:0,growth:0,breathe:0,secondWind:false,angel:0 });
 export const normalizePassiveMultiplier = (value: unknown) => value == null || !Number.isFinite(Number(value)) ? 1 : Math.max(0, Number(value));
 const positive = (v: unknown) => Math.max(0, Number.isFinite(Number(v)) ? Number(v) : 0);
 export function normalizeVats(input?: Partial<VatsState>): VatsState {
@@ -16,6 +17,8 @@ export function normalizeVats(input?: Partial<VatsState>): VatsState {
  base.manualTails=Math.min(20,Math.floor(base.manualTails));
  base.tentacleMomentum=Math.min(2,Math.floor(base.tentacleMomentum));
  base.turn=Math.max(1,Math.floor(base.turn));
+ base.activeHealTurn=Math.floor(base.activeHealTurn);base.rcSuppressedUntil=Math.floor(base.rcSuppressedUntil);
+ base.rcRemedyUsed=input.rcRemedyUsed===true;base.healingResult=normalizeHealingResult(input.healingResult);
  base.passiveMultiplier=normalizePassiveMultiplier(input.passiveMultiplier);
  for(const [id] of regions){const r=input.body?.[id]; base.body[id]={damage:positive(r?.damage),destroyed:!!r?.destroyed,effects:Array.isArray(r?.effects)?r.effects.filter(e=>typeof e==='string'&&injuryByName[e]):[]};}
  base.global=Array.isArray(input.global)?input.global.filter(e=>injuryGroups.global.some(x=>x[0]===e)):[];
@@ -24,7 +27,7 @@ export function normalizeVats(input?: Partial<VatsState>): VatsState {
  base.fleshUsed=!!input.fleshUsed; base.centipedeUsed=!!input.centipedeUsed; base.secondWind=!!input.secondWind;
  return base;
 }
-export function kaguneRange(type:string,rank:number,bonus:number) {return Math.max(0,(type==='Koukaku'?0:1)+Math.min(type==='Koukaku'?2:4,positive(rank))+(Number.isFinite(bonus)?bonus:0));}
+export function kaguneRange(type:string,rank:number,bonus:number) {return Math.floor(Math.max(0,(type==='Koukaku'?0:1)+Math.min(type==='Koukaku'?2:4,positive(rank))+(Number.isFinite(bonus)?bonus:0)));}
 export function effectsOf(v:VatsState) {return [...v.global,...regions.flatMap(([id])=>v.body[id].effects)];}
 export function penalties(v:VatsState) {
  const all=effectsOf(v), has=(n:string)=>all.includes(n);
@@ -33,9 +36,16 @@ export function penalties(v:VatsState) {
  const legPenalty=Math.max(...['legL','legR'].map(id=>v.body[id as RegionId].destroyed||v.body[id as RegionId].effects.includes('Perna Destruída')?3:v.body[id as RegionId].effects.includes('Perna Quebrada')?2:0));
  return {physical,mental,agility,dodge:physical+agility-legPenalty-(has('Empalado')?2:0)-(has('Caído')?1:0),effort:has('Dois Pulmões Comprometidos')?-3:has('Pulmão Perfurado')?-2:0,vision:has('Um Olho Destruído')?-1:0,hearing:has('Ouvido Rompido')?-1:0,next:has('Atordoado')?-2:0,regenCost:(has('Órgãos Destruídos')?1:0)+(has('Sub-Vivo')?1:0),movement:has('Coluna Quebrada')||has('Esmagado')||has('Empalado')?0:legPenalty===3?0:legPenalty===2?.5:1,actions:has('Colapsado')?1:null,reaction:!has('Colapsado'),exhausted:has('Exaurido de RC')};
 }
-export const adjustTest=(test:string,delta:number)=>test.replace(/^\d+d8/,s=>`${Math.max(0,parseInt(s)+delta)}d8`);
-export type VatsConfig={ maxLife:number; maxRC:number; rc:number; hunger:number; vigor:number; baseVigor:number; grade:number; regeneration:number; regenLevel:number; superior:number; cells:boolean; kami:boolean; hasKagune:boolean; kaguneActive?:boolean; paidTailStart?:number; tailAttackRC?:number; durability:number; tails:number; naturalTails?:number; powers:string[]; rd:number; movement:number; dodgeTest:string; blockTest:string; centipedeAllowed?:boolean; tests?:Record<string,string> };
-export type VatsAction={type:string; region?:RegionId; amount?:number; effect?:string; index?:number; enabled?:boolean;name?:string;role?:TailRole;notes?:string;cost?:number; enemy?:boolean; reduceRD?:boolean};
+export const adjustTest=(test:string,delta:number)=>{
+ delta=Math.floor(Number.isFinite(delta)?delta:0);
+ if(!delta)return test;
+ // Wounds and temporary bonuses change accuracy, never the single test die.
+ if(/^1d(?:10|20|30)(?=[+-]|$)/.test(test))return `${test}${delta>0?'+':''}${delta}`;
+ return test.replace(/^\d+d8/,s=>`${Math.max(0,parseInt(s)+delta)}d8`);
+};
+export const isRCSuppressed=(v:Pick<VatsState,'rcSuppressedUntil'|'turn'>)=>v.rcSuppressedUntil>v.turn;
+export type VatsConfig={ currentLife?:number; species?:string; maxLife:number; maxRC:number; rc:number; hunger:number; vigor:number; baseVigor:number; grade:number; regeneration:number; regenLevel:number; superior:number; cells:boolean; kami:boolean; hasKagune:boolean; kaguneActive?:boolean; colossoActive?:boolean; paidTailStart?:number; tailAttackRC?:number; durability:number; tails:number; naturalTails?:number; powers:string[]; rd:number; movement:number; dodgeTest:string; blockTest:string; centipedeAllowed?:boolean; tests?:Record<string,string> };
+export type VatsAction={type:string; healingId?:string; healingTarget?:HealingTarget; ally?:boolean; region?:RegionId; amount?:number; effect?:string; index?:number; enabled?:boolean;name?:string;role?:TailRole;notes?:string;cost?:number; enemy?:boolean; reduceRD?:boolean};
 export function passiveRegeneration(v:Pick<VatsState, "turn" | "fleshUntil" | "passiveMultiplier">,c:Pick<VatsConfig, "regeneration" | "cells" | "maxLife" | "grade" | "kami">) {
  const biological=c.regeneration, cells=c.cells?Math.floor(c.maxLife/6)+(biological===0?c.grade:0):0;
  const automaticMultiplier=c.kami||v.fleshUntil>v.turn?2:1;
@@ -45,61 +55,121 @@ export function passiveRegeneration(v:Pick<VatsState, "turn" | "fleshUntil" | "p
 }
 export function passivePreview(v:VatsState,c:VatsConfig) {
  const regeneration=passiveRegeneration(v,c),{amount}=regeneration;
- const total=regions.reduce((s,[id])=>s+(v.body[id].destroyed?0:Math.min(amount,Math.min(c.maxLife,v.body[id].damage))),0);
- const threshold=Math.max(1,c.maxLife+c.regenLevel);
- const cost=(c.regenLevel>0?Math.floor((v.meter+total)/threshold)*2:0)+(total?penalties(v).regenCost:0);
+ // Saved wounds may retain fractions; only whole effective PV can be healed or billed.
+ const total=regions.reduce((s,[id])=>s+(v.body[id].destroyed?0:Math.floor(Math.min(amount,Math.min(c.maxLife,v.body[id].damage)))),0);
+ const threshold=Math.max(1,Math.floor(c.maxLife+c.regenLevel));
+ const cost=(c.regenLevel>0?Math.floor((Math.floor(v.meter)+total)/threshold)*2:0)+(total?penalties(v).regenCost:0);
  return {...regeneration,total,cost,threshold};
 }
 export function vatsAction(source:VatsState,c:VatsConfig,a:VatsAction,roll:(s:number)=>number=s=>Math.floor(Math.random()*s)+1) {
- const v=normalizeVats(source); let rc=Math.min(c.maxRC,positive(c.rc)),hunger=c.hunger;
+ const v=normalizeVats(source); let rc=Math.floor(Math.min(c.maxRC,positive(c.rc))),hunger=Math.floor(positive(c.hunger));
+ let currentLife:number|undefined;
  const log=(s:string)=>{v.log.unshift(`T${v.turn} · ${s}`);v.log=v.log.slice(0,80);};
- const spend=(n:number)=>{if(rc<n||penalties(v).exhausted){log('Ação indisponível: RC insuficiente ou exaustão.');return false;}rc-=n;v.rcSpent+=n;return true;};
- const gain=(n:number)=>{if(v.fleshUntil>v.turn){log('Recuperação de RC bloqueada por Carne que se Recusa.');return;}rc=Math.min(c.maxRC,rc+n);};
- const heal=(n:number)=>{for(const [id] of regions) if(!v.body[id].destroyed) v.body[id].damage=Math.max(0,Math.min(c.maxLife,v.body[id].damage)-n);};
+ // The fused weapon has one attack. Its saved original parts cannot be reused or modified.
+ if(c.colossoActive&&['manual-tails','manual-tail-cost','tail-config','tails-all','tentacle-momentum','mil-pernas','mitosis','part-damage','break','part-regen','hydra','sacrifice','tails-attack','tail-attack','growth'].includes(a.type)){
+  log('Colosso de Carne: desfaça a fusão na aba Kagune para gerenciar ou atacar com partes individuais.');
+  return {vats:v,currentRC:rc,hunger};
+ }
+ const spend=(n:number)=>{n=Math.floor(positive(n));if(rc<n||penalties(v).exhausted||isRCSuppressed(v)){log('Ação indisponível: RC insuficiente, suprimido ou exaustão.');return false;}rc-=n;v.rcSpent=Math.floor(v.rcSpent+n);return true;};
+ const gain=(n:number)=>{if(v.fleshUntil>v.turn){log('Recuperação de RC bloqueada por Carne que se Recusa.');return;}rc=Math.floor(Math.min(c.maxRC,rc+positive(n)));};
+ const heal=(n:number)=>{n=Math.floor(positive(n));for(const [id] of regions) if(!v.body[id].destroyed) v.body[id].damage=Math.floor(Math.max(0,Math.min(c.maxLife,v.body[id].damage)-n));};
  const growthLimit=Math.max(0,Math.floor(c.tails));
  v.growth=Math.min(growthLimit,Math.max(0,Math.floor(v.growth)));
- const breakPart=(index:number,enemy=false)=>{const p=v.parts[index]; if(!p||p.ready||index<0||index>=c.tails)return; p.damage=c.durability;p.ready=v.turn+2; if(enemy&&c.powers.includes('continua-crescendo'))v.growth=Math.min(growthLimit,v.growth+1); if(v.centipedeUntil>v.turn&&v.freeTailTurn!==v.turn){p.damage=0;p.ready=0;v.freeTailTurn=v.turn;log('Centopeia: primeira cauda regenerada gratuitamente.');}else log(`Kagune ${index+1} quebrada; regeneração no turno ${p.ready}.`);};
+ const breakPart=(index:number,enemy=false)=>{const p=v.parts[index]; if(!p||p.ready||index<0||index>=c.tails)return; p.damage=Math.floor(c.durability);p.ready=v.turn+2; if(enemy&&c.powers.includes('continua-crescendo'))v.growth=Math.min(growthLimit,v.growth+1); if(v.centipedeUntil>v.turn&&v.freeTailTurn!==v.turn){p.damage=0;p.ready=0;v.freeTailTurn=v.turn;log('Centopeia: primeira cauda regenerada gratuitamente.');}else log(`Kagune ${index+1} quebrada; regeneração no turno ${p.ready}.`);};
  for(let i=v.parts.length;i<c.tails;i++)v.parts.push({damage:0,ready:0,sacrificedUntil:0});
  const r=a.region?v.body[a.region]:undefined,amount=positive(a.amount),p=v.parts[a.index??0];
  switch(a.type){
+ case 'suppress-rc':v.rcSuppressedUntil=amount>0?v.turn+Math.max(1,Math.floor(amount)):0;log(amount>0?`RC suprimido até T${v.rcSuppressedUntil}; reserva preservada.`:'Supressão de RC removida pela mesa.');break;
+ case 'healing-technique':{
+  const technique=healingTechniques.find(item=>item.id===a.healingId);
+  if(!technique||!c.powers.includes(technique.id)||!healingSpecies.includes(c.species||'')||c.grade<technique.level||c.vigor<(technique.minVigor||0)){log('Técnica curativa indisponível: confira espécie, compra, LEVEL e Vigor.');break;}
+  if(v.activeHealTurn===v.turn){log('A cura ativa deste turno já foi usada. A regeneração automática é independente.');break;}
+  if(technique.kind==='release'&&v.rcRemedyUsed){log('Desbloqueio de RC já usado nesta sessão.');break;}
+  if(technique.kind!=='release'&&(isRCSuppressed(v)||penalties(v).exhausted||rc<technique.rc)){log('Técnica curativa indisponível: RC insuficiente, suprimido ou exaustão.');break;}
+  const ally=a.ally===true,target=a.healingTarget||(a.region?'body':'life');
+  const targetName=target==='life'?'Vida geral':target==='body'?(regions.find(([id])=>id===a.region)?.[1]||'Região corporal'):target==='part'?`Parte ${(a.index??0)+1} da Kagune`:target==='kakuhou'?'Kakuhou':'Supressão de RC';
+  let invalid='';
+  if(technique.kind==='heal'){
+   if(!['life','body'].includes(target))invalid='Escolha Vida geral ou uma região corporal.';
+   else if(!ally&&target==='body'&&(!r||r.destroyed||r.damage<=0))invalid='Escolha uma região ferida não destruída; reconstrução usa outra técnica.';
+   else if(!ally&&target==='life'&&(!Number.isFinite(c.currentLife)||c.currentLife!>=c.maxLife))invalid='A Vida geral está cheia ou indisponível.';
+  }
+  if(technique.kind==='cleanse'){
+   if(!a.effect||!curablePhysicalEffects.includes(a.effect))invalid='Escolha uma condição física curável da lista.';
+   else if(!ally&&!(a.region?r?.effects:v.global)?.includes(a.effect))invalid='A condição escolhida não está nesse alvo.';
+  }
+  if(technique.kind==='rebuild'){
+   if(!['body','part','kakuhou'].includes(target))invalid='Escolha uma região, parte da Kagune ou Kakuhou.';
+   else if(target==='part'&&c.colossoActive&&!ally)invalid='Desfaça a fusão para reconstruir as partes originais.';
+   else if(!ally&&target==='body'&&(!r||(!r.destroyed&&(!a.effect||!reconstructableEffects.includes(a.effect)||!r.effects.includes(a.effect)))))invalid='Escolha uma região destruída ou uma lesão destrutiva presente.';
+   else if(!ally&&target==='part'&&(!p||((a.index??-1)<0)||((a.index??0)>=c.tails)||(!p.ready&&p.sacrificedUntil<=v.turn)))invalid='Escolha uma parte quebrada ou sacrificada da Kagune.';
+   else if(!ally&&target==='kakuhou'&&v.kakuhouUntil<=v.turn)invalid='O Kakuhou já está disponível.';
+  }
+  if(technique.kind==='release'&&!ally&&!isRCSuppressed(v))invalid='Não há supressão de RC ativa para remover.';
+  if(invalid){log(invalid);break;}
+  if(technique.rc>0&&!spend(technique.rc))break;
+  const rolled=rollHealing(technique,roll);let applied=0,removed='',restored='';
+  if(technique.kind==='heal'&&!ally){
+   if(target==='life'){const before=Math.max(0,Math.floor(c.currentLife!));currentLife=Math.min(Math.floor(c.maxLife),before+rolled.total);applied=currentLife-before;}
+   else if(r){const before=Math.floor(r.damage);r.damage=Math.max(0,before-rolled.total);applied=before-r.damage;}
+  }
+  if(technique.kind==='cleanse'){
+   removed=a.effect!;
+   if(!ally){if(a.region&&r)r.effects=r.effects.filter(effect=>effect!==removed);else v.global=v.global.filter(effect=>effect!==removed);}
+  }
+  if(technique.kind==='rebuild'){
+   restored=targetName;
+   if(target==='kakuhou')restored+='; bloqueio encerrado, manifestação manual';
+   if(target==='part'||target==='body'&&(ally?!a.effect:r?.destroyed))restored+='; reconstruído com 1 PV';
+   if(ally&&target==='body'&&a.effect&&reconstructableEffects.includes(a.effect))removed=a.effect;
+   if(!ally&&target==='body'&&r){if(r.destroyed){r.destroyed=false;r.damage=Math.max(0,Math.floor(c.maxLife)-1);r.effects=r.effects.filter(effect=>!reconstructableEffects.includes(effect));}else if(a.effect){removed=a.effect;r.effects=r.effects.filter(effect=>effect!==a.effect);}}
+   if(!ally&&target==='part'&&p){p.ready=0;p.sacrificedUntil=0;p.damage=Math.max(0,Math.floor(c.durability)-1);}
+   if(!ally&&target==='kakuhou')v.kakuhouUntil=0;
+  }
+  if(technique.kind==='release'){v.rcRemedyUsed=true;restored='Fluxo de RC; reserva preservada';if(!ally)v.rcSuppressedUntil=0;}
+  v.activeHealTurn=v.turn;
+  v.healingResult={turn:v.turn,id:technique.id,name:technique.name,...rolled,applied,rcCost:technique.rc,ally,target:targetName,effect:removed,restored};
+  log(`${technique.name}: ${rolled.rolls.length?`${rolled.formula} = ${rolled.total} PV; ${ally?'resultado para aliado':`${applied} PV efetivos`}`:restored||removed}; ${technique.rc} RC.`);
+  break;
+ }
  case 'manual-tails':{const next=Math.min(20,Math.floor(amount)),start=c.naturalTails??1;if(next>v.manualTails)v.parts.splice(start+v.manualTails,0,...Array.from({length:next-v.manualTails},()=>({damage:0,ready:0,sacrificedUntil:0})));else if(next<v.manualTails)v.parts.splice(start+next,v.manualTails-next);v.manualTails=next;break;}
  case 'manual-tail-cost':v.manualTailRC=amount;break;
  case 'tail-config':if(p&&a.index!=null&&a.index>=0&&a.index<c.tails){if(a.name!==undefined)p.name=a.name;if(a.notes!==undefined)p.notes=a.notes;if(a.enabled!==undefined)p.enabled=a.enabled;if(a.role){if(['guard','dodge'].includes(a.role)&&!c.powers.includes('oito-caminhos'))break;if(['guard','dodge'].includes(a.role))v.parts.forEach((other,i)=>{if(i!==a.index&&['guard','dodge'].includes(other.role||''))other.role='utility';});p.role=a.role;}}break;
  case 'tails-all':v.parts.slice(0,c.tails).forEach(p=>p.enabled=a.enabled!==false);break;
- case 'tentacle-momentum':if(c.hasKagune&&c.kaguneActive!==false&&v.kakuhouUntil<=v.turn&&c.powers.includes('tentaculos-incessantes')&&v.parts.slice(0,c.tails).some(p=>tailAvailability(p,true,v.turn,v.kakuhouUntil)==='Disponível'&&(!p.role||p.role==='attack'))&&v.lastTentacleAttackTurn!==v.turn){v.tentacleMomentum=v.lastTentacleAttackTurn===v.turn-1?Math.min(2,v.tentacleMomentum+1):1;v.lastTentacleAttackTurn=v.turn;log(`Tentáculos Incessantes: +${v.tentacleMomentum} dados para os próximos ataques.`);}break;
+ case 'tentacle-momentum':if(c.hasKagune&&c.kaguneActive!==false&&v.kakuhouUntil<=v.turn&&c.powers.includes('tentaculos-incessantes')&&v.parts.slice(0,c.tails).some(p=>tailAvailability(p,true,v.turn,v.kakuhouUntil)==='Disponível'&&(!p.role||p.role==='attack'))&&v.lastTentacleAttackTurn!==v.turn){v.tentacleMomentum=v.lastTentacleAttackTurn===v.turn-1?Math.min(2,v.tentacleMomentum+1):1;v.lastTentacleAttackTurn=v.turn;log(`Tentáculos Incessantes: +${v.tentacleMomentum} acertos para os próximos ataques.`);}break;
  case 'tentacle-reset':v.tentacleMomentum=0;v.lastTentacleAttackTurn=0;break;
  case 'mil-pernas':if(c.hasKagune&&c.kaguneActive!==false&&v.kakuhouUntil<=v.turn&&c.powers.includes('mil-pernas')&&v.milPernasUntil<=v.turn&&spend(15)){v.milPernasUntil=v.turn+3;log('Mil Pernas: +2 caudas e +2 Passos por 3 turnos; −2 Dureza.');}break;
  case 'mitosis':if(c.hasKagune&&c.kaguneActive!==false&&v.kakuhouUntil<=v.turn&&c.powers.includes('mitose-tentacruel')&&v.mitosisUntil<=v.turn&&amount>=1&&amount<=(c.naturalTails??c.tails)&&Number.isFinite(a.cost)&&a.cost!>0&&spend(a.cost!)){v.mitosisUntil=v.turn+2;v.mitosisCount=Math.floor(amount);log(`Mitose: +${v.mitosisCount} caudas por 2 turnos; ${a.cost} RC confirmados pela mesa.`);}break;
  case 'passive-multiplier':v.passiveMultiplier=normalizePassiveMultiplier(a.amount);break;
- case 'combat':v.milPernasUntil=0;v.mitosisUntil=0;v.mitosisCount=0;v.tentacleMomentum=0;v.lastTentacleAttackTurn=0;v.meter=0;v.healedTurn=0;v.rcSpent=0;log('Novo combate: saldo de cura e gasto de RC zerados. Ferimentos e reserva de RC mantidos.');break;
- case 'damage': if(r){const reduced=Math.max(0,amount-(a.reduceRD?c.rd:0)-v.fortressBonus);const actual=Math.min(c.maxLife,reduced);v.fortressBonus=0;r.damage=Math.min(c.maxLife,r.damage+actual);if(r.damage>=c.maxLife&&a.region!=='head'&&a.region!=='torso')r.destroyed=true;log(`${regions.find(x=>x[0]===a.region)?.[1]}: ${actual} de dano líquido.`);}break;
- case 'heal':if(r&&!r.destroyed){r.damage=Math.max(0,Math.min(c.maxLife,r.damage)-amount);log(`Cura localizada: ${amount} PV.`);}break;
- case 'destroy':if(r){r.destroyed=true;r.damage=c.maxLife;log('Região destruída.');}break;
+ case 'combat':v.activeHealTurn=0;v.milPernasUntil=0;v.mitosisUntil=0;v.mitosisCount=0;v.tentacleMomentum=0;v.lastTentacleAttackTurn=0;v.meter=0;v.healedTurn=0;v.rcSpent=0;log('Novo combate: saldo de cura e gasto de RC zerados. Ferimentos e reserva de RC mantidos.');break;
+ case 'damage': if(r){const reduced=Math.floor(Math.max(0,amount-(a.reduceRD?c.rd:0)-v.fortressBonus));const actual=Math.floor(Math.min(c.maxLife,reduced));v.fortressBonus=0;r.damage=Math.floor(Math.min(c.maxLife,r.damage+actual));if(r.damage>=Math.floor(c.maxLife)&&a.region!=='head'&&a.region!=='torso')r.destroyed=true;log(`${regions.find(x=>x[0]===a.region)?.[1]}: ${actual} de dano líquido.`);}break;
+ case 'heal':if(r&&!r.destroyed){r.damage=Math.floor(Math.max(0,Math.min(c.maxLife,r.damage)-Math.floor(amount)));log(`Cura localizada: ${Math.floor(amount)} PV.`);}break;
+ case 'destroy':if(r){r.destroyed=true;r.damage=Math.floor(c.maxLife);log('Região destruída.');}break;
  case 'rebuild':if(r){r.destroyed=false;r.effects=r.effects.filter(e=>!['Braço Destruído','Perna Destruída','Mão Destruída'].includes(e));log('Reconstrução autorizada pela mesa; PV não recuperados.');}break;
- case 'add':if(a.effect&&injuryByName[a.effect]){const list=injuryGroups.global.some(e=>e[0]===a.effect)?v.global:r?.effects;if(list&&!list.includes(a.effect)){const families=[['Sangramento Leve','Sangramento Grave','Hemorragia'],['Braço Ferido','Braço Quebrado','Braço Destruído'],['Perna Ferida','Perna Quebrada','Perna Destruída'],['Pulmão Perfurado','Dois Pulmões Comprometidos'],['Um Olho Destruído','Cego'],['Ouvido Rompido','Surdo'],['Coluna Danificada','Coluna Quebrada']];const family=families.find(f=>f.includes(a.effect!));if(family)for(let i=list.length-1;i>=0;i--)if(family.includes(list[i]))list.splice(i,1);list.push(a.effect);if(r&&['Braço Destruído','Perna Destruída'].includes(a.effect)){r.destroyed=true;r.damage=c.maxLife;}log(`Aplicado: ${a.effect}.`);}}break;
+ case 'add':if(a.effect&&injuryByName[a.effect]){const list=injuryGroups.global.some(e=>e[0]===a.effect)?v.global:r?.effects;if(list&&!list.includes(a.effect)){const families=[['Sangramento Leve','Sangramento Grave','Hemorragia'],['Braço Ferido','Braço Quebrado','Braço Destruído'],['Perna Ferida','Perna Quebrada','Perna Destruída'],['Pulmão Perfurado','Dois Pulmões Comprometidos'],['Um Olho Destruído','Cego'],['Ouvido Rompido','Surdo'],['Coluna Danificada','Coluna Quebrada']];const family=families.find(f=>f.includes(a.effect!));if(family)for(let i=list.length-1;i>=0;i--)if(family.includes(list[i]))list.splice(i,1);list.push(a.effect);if(r&&['Braço Destruído','Perna Destruída'].includes(a.effect)){r.destroyed=true;r.damage=Math.floor(c.maxLife);}log(`Aplicado: ${a.effect}.`);}}break;
  case 'remove':if(a.effect){v.global=v.global.filter(e=>e!==a.effect);if(r)r.effects=r.effects.filter(e=>e!==a.effect);log(`Removido: ${a.effect}.`);}break;
  case 'consume-stun':for(const [id] of regions)v.body[id].effects=v.body[id].effects.filter(e=>e!=='Atordoado');log('Atordoado consumido no teste.');break;
- case 'passive':{if(v.healedTurn===v.turn){log('Regeneração já aplicada neste turno.');break;}const q=passivePreview(v,c);if(!q.total)break;if(spend(q.cost)){heal(q.amount);v.healedTurn=v.turn;if(c.regenLevel)v.meter=(v.meter+q.total)%q.threshold;log(`Regeneração: ${q.total} PV efetivos; ${q.cost} RC; saldo ${v.meter}/${q.threshold} PV.`);}break;}
- case 'turn':{for(const [id,name] of regions){const b=v.body[id];for(const e of b.effects){const die=e==='Sangramento Leve'?4:e==='Sangramento Grave'?6:e==='Hemorragia'?8:0;if(die){const n=roll(die);b.damage=Math.min(c.maxLife,b.damage+n);log(`${name} · ${e}: 1d${die} = ${n} PV.`);}const loss=e==='Hemorragia'?1:e==='Estômago Destruído'?2:0;if(loss){rc=Math.max(0,rc-loss);log(`${e}: −${loss} RC.`);}}if(b.damage>=c.maxLife&&!['head','torso'].includes(id))b.destroyed=true;}v.turn++;if(v.lastTentacleAttackTurn<v.turn-1)v.tentacleMomentum=0;v.sacrifices=0;v.angel=0;log('Início do turno.');if(v.kakuhouUntil&&v.turn>=v.kakuhouUntil){v.kakuhouUntil=0;log('Kakuhou disponível novamente.');}break;}
+ case 'passive':{if(v.healedTurn===v.turn){log('Regeneração já aplicada neste turno.');break;}const q=passivePreview(v,c);if(!q.total)break;if(spend(q.cost)){heal(q.amount);v.healedTurn=v.turn;if(c.regenLevel)v.meter=(Math.floor(v.meter)+q.total)%q.threshold;log(`Regeneração: ${q.total} PV efetivos; ${q.cost} RC; saldo ${v.meter}/${q.threshold} PV.`);}break;}
+ case 'turn':{for(const [id,name] of regions){const b=v.body[id];for(const e of b.effects){const die=e==='Sangramento Leve'?4:e==='Sangramento Grave'?6:e==='Hemorragia'?8:0;if(die){const n=roll(die);b.damage=Math.floor(Math.min(c.maxLife,b.damage+n));log(`${name} · ${e}: 1d${die} = ${n} PV.`);}const loss=e==='Hemorragia'?1:e==='Estômago Destruído'?2:0;if(loss){rc=Math.max(0,rc-loss);log(`${e}: −${loss} RC.`);}}if(b.damage>=c.maxLife&&!['head','torso'].includes(id))b.destroyed=true;}v.turn++;if(v.lastTentacleAttackTurn<v.turn-1)v.tentacleMomentum=0;v.sacrifices=0;v.angel=0;log('Início do turno.');if(v.kakuhouUntil&&v.turn>=v.kakuhouUntil){v.kakuhouUntil=0;log('Kakuhou disponível novamente.');}break;}
  case 'kakuhou':if(c.hasKagune&&v.kakuhouUntil<=v.turn){const n=roll(6);rc=Math.max(0,rc-n);v.kakuhouUntil=v.turn+2;log(`Kakuhou destruído · vazamento 1d6 = ${n} RC · bloqueio até T${v.kakuhouUntil}.`);}break;
- case 'part-damage':if(p&&!p.ready){p.damage=Math.min(c.durability,p.damage+amount);if(p.damage>=c.durability)breakPart(a.index??0,!!a.enemy);else log(`Kagune ${(a.index??0)+1}: −${amount} PV.`);}break;
+ case 'part-damage':if(p&&!p.ready){p.damage=Math.floor(Math.min(c.durability,p.damage+Math.floor(amount)));if(p.damage>=Math.floor(c.durability))breakPart(a.index??0,!!a.enemy);else log(`Kagune ${(a.index??0)+1}: −${Math.floor(amount)} PV.`);}break;
  case 'break':breakPart(a.index??0,!!a.enemy);break;
  case 'part-regen':if(p&&p.ready&&v.turn>=p.ready&&v.turn>=p.sacrificedUntil&&v.turn>=v.kakuhouUntil&&spend(2)){p.damage=0;p.ready=0;p.sacrificedUntil=0;log('Kagune regenerada · 2 RC.');}break;
- case 'hydra':if(c.powers.includes('hidra-faminta')&&p?.ready&&!p.sacrificedUntil&&v.hydraTurn!==v.turn&&v.turn>=v.kakuhouUntil&&spend(5)){p.damage=0;p.ready=0;v.hydraTurn=v.turn;log('Hidra Faminta · 5 RC · ataque desta cauda: −1d.');}break;
- case 'sacrifice':if(c.powers.includes('canibalismo-celular')&&p&&!p.ready&&v.sacrifices<2){v.sacrifices++;p.damage=c.durability;p.ready=v.turn+3;p.sacrificedUntil=p.ready;heal(Math.floor(c.maxLife*(v.sacrifices===1?.10:.05)));gain(v.sacrifices===1?4:2);log(`Canibalismo Celular · cauda bloqueada até T${p.ready}.`);}break;
+ case 'hydra':if(c.powers.includes('hidra-faminta')&&p?.ready&&!p.sacrificedUntil&&v.hydraTurn!==v.turn&&v.turn>=v.kakuhouUntil&&spend(5)){p.damage=0;p.ready=0;v.hydraTurn=v.turn;log('Hidra Faminta · 5 RC · ataque desta cauda: −1 acerto.');}break;
+ case 'sacrifice':if(c.powers.includes('canibalismo-celular')&&p&&!p.ready&&v.sacrifices<2){v.sacrifices++;p.damage=Math.floor(c.durability);p.ready=v.turn+3;p.sacrificedUntil=p.ready;heal(Math.floor(c.maxLife*(v.sacrifices===1?.10:.05)));gain(v.sacrifices===1?4:2);log(`Canibalismo Celular · cauda bloqueada até T${p.ready}.`);}break;
  case 'tails-attack':{if(!c.hasKagune)break;const attacks=tailLoadout(v.parts,c.tails,c.kaguneActive!==false,v.turn,v.kakuhouUntil,c.powers.includes('oito-caminhos')).attacks;const budget=tailAttackBudget(attacks,c.paidTailStart??c.tails,c.tailAttackRC??2,c.naturalTails??1,v.manualTails,v.manualTailRC);if(budget.total>0&&spend(budget.total))log(`Ataques selecionados: ${attacks.map(i=>i+1).join(', ')} · ${budget.total} RC pagos por ${budget.paid} caudas adicionais. Role o acerto de cada cauda.`);break;}
  case 'tail-attack':if(c.hasKagune&&c.kaguneActive!==false&&p&&tailAvailability(p,true,v.turn,v.kakuhouUntil)==='Disponível'&&(!p.role||p.role==='attack')&&(a.index??0)<c.tails&&(a.index??0)>=(c.paidTailStart??c.tails)&&v.turn>=v.kakuhouUntil){const cost=tailAttackBudget([a.index??0],c.paidTailStart??c.tails,c.tailAttackRC??2,c.naturalTails??1,v.manualTails,v.manualTailRC).total;if(cost>0&&spend(cost))log(`Ataque da cauda ${(a.index??0)+1}: ${cost} RC pagos. Role o acerto normal da Kagune.`);}break;
  case 'growth':if(c.powers.includes('continua-crescendo')&&growthLimit>0&&v.growth>=growthLimit&&v.turn>=v.kakuhouUntil&&spend(4)){v.parts.slice(0,c.tails).forEach(p=>{p.damage=0;p.ready=0;p.sacrificedUntil=0;});v.growth=0;log(`${growthLimit} Crescimento consumidos · 4 RC: todas as caudas regeneradas.`);}break;
  case 'axolotl':if(c.powers.includes('axolote')&&v.axolotlTurn!==v.turn&&spend(6)){for(const [id,,type]of regions)if(type==='arm'||type==='leg'){v.body[id].destroyed=false;v.body[id].effects=v.body[id].effects.filter(e=>!['Braço Destruído','Perna Destruída','Mão Destruída'].includes(e));}v.axolotlTurn=v.turn;log('Axolote: membros reconstruídos, sem recuperar PV.');}break;
- case 'flesh':if(c.powers.includes('carne-recusa')&&!v.fleshUsed&&spend(20)){v.fleshUsed=true;v.fleshUntil=v.turn+2;for(const [id]of regions)if(!v.body[id].destroyed&&v.body[id].damage>=c.maxLife)v.body[id].damage=c.maxLife-1;log('Carne que se Recusa: 1 PV nas regiões não destruídas; regeneração ×2 por 2 turnos.');}break;
- case 'centipede':if(c.powers.includes('centopeia')&&c.centipedeAllowed!==false&&!v.centipedeUsed){v.centipedeUsed=true;v.centipedeUntil=v.turn+3;log('Centopeia por 3 turnos. Ataque extra custa 10 RC na ficha.');}break;
+ case 'flesh':if(c.powers.includes('carne-recusa')&&!v.fleshUsed&&spend(20)){v.fleshUsed=true;v.fleshUntil=v.turn+2;for(const [id]of regions)if(!v.body[id].destroyed&&v.body[id].damage>=c.maxLife)v.body[id].damage=Math.floor(c.maxLife-1);log('Carne que se Recusa: 1 PV nas regiões não destruídas; regeneração ×2 por 2 turnos.');}break;
+ case 'centipede':if(!isRCSuppressed(v)&&c.powers.includes('centopeia')&&c.centipedeAllowed!==false&&!v.centipedeUsed){v.centipedeUsed=true;v.centipedeUntil=v.turn+3;log('Centopeia por 3 turnos. Ataque extra custa 10 RC na ficha.');}break;
  case 'full':if(c.superior===4&&spend(6+penalties(v).regenCost)){heal(c.maxLife);log('Regeneração Superior: cura total das regiões não destruídas.');}break;
- case 'breathe':if(c.powers.includes('respirar-fundo')&&v.breathe<2){v.breathe++;heal(c.vigor+4);log(`Respirar Fundo: +${c.vigor+4} PV por região; ${v.breathe}/2 usos.`);}break;
- case 'second':if(c.powers.includes('segundo-folego')&&!v.secondWind&&regions.some(([id])=>v.body[id].damage>=c.maxLife/2)){v.secondWind=true;heal(Math.ceil(c.vigor/2));log('Segundo Fôlego usado.');}break;
+ case 'breathe':if(c.powers.includes('respirar-fundo')&&v.breathe<2){v.breathe++;heal(c.vigor+4);log(`Respirar Fundo: +${Math.floor(c.vigor+4)} PV por região; ${v.breathe}/2 usos.`);}break;
+ case 'second':if(c.powers.includes('segundo-folego')&&!v.secondWind&&regions.some(([id])=>v.body[id].damage>=c.maxLife/2)){v.secondWind=true;heal(Math.floor(c.vigor/2));log('Segundo Fôlego usado.');}break;
  case 'angel':if(c.powers.includes('anjo-morte')&&v.angel<4){gain(2);v.angel+=2;log('Abate confirmado: +2 RC.');}break;
  case 'fortress':if(c.powers.includes('fortaleza-carne')&&v.fortressTurn!==v.turn&&spend(5)){v.fortressTurn=v.turn;v.fortressBonus=Math.floor(c.baseVigor/2);log(`Fortaleza de Carne: +${Math.floor(c.baseVigor/2)} RD para este golpe.`);}break;
  case 'rest':v.breathe=0;v.secondWind=false;log('Descanso: usos de Respirar Fundo e Segundo Fôlego renovados.');break;
- case 'session':v.fleshUsed=false;v.centipedeUsed=false;v.meter=0;v.healedTurn=0;v.rcSpent=0;log('Nova sessão: habilidades renovadas, saldo de cura e gasto de RC zerados. Ferimentos e reserva de RC mantidos.');break;
+ case 'session':v.rcRemedyUsed=false;v.activeHealTurn=0;v.fleshUsed=false;v.centipedeUsed=false;v.meter=0;v.healedTurn=0;v.rcSpent=0;log('Nova sessão: habilidades renovadas, saldo de cura e gasto de RC zerados. Ferimentos e reserva de RC mantidos.');break;
  }
- return {vats:normalizeVats(v),currentRC:rc,hunger};
+ return {vats:normalizeVats(v),currentRC:rc,hunger,...(currentLife===undefined?{}:{currentLife})};
 }

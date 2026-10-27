@@ -4,7 +4,7 @@ import {createServer} from 'vite';
 const vite=await createServer({configFile:false,server:{middlewareMode:true}});
 after(()=>vite.close());
 const {blankVats,normalizeVats,kaguneRange,penalties,passivePreview,vatsAction}=await vite.ssrLoadModule('/app/vats-engine.ts');
-const {effectMaximum}=await vite.ssrLoadModule('/app/page.tsx');
+const {effectMaximum}=await vite.ssrLoadModule('/app/character.ts');
 const {kaguneEffects}=await vite.ssrLoadModule('/app/data.ts');
 const cfg={maxLife:20,maxRC:40,rc:40,hunger:1,vigor:4,baseVigor:4,grade:4,regeneration:5,regenLevel:1,superior:0,cells:false,kami:false,hasKagune:true,durability:10,tails:2,powers:[],rd:2,movement:1,dodgeTest:'4d8++2>>5',blockTest:'4d8++2>>5'};
 test('nova sessão e novo combate não carregam cobrança de cura anterior',()=>{

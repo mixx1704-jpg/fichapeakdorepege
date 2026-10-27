@@ -1,19 +1,20 @@
 import assert from 'node:assert/strict';
 import test,{after} from 'node:test';
 import {createServer} from 'vite';
+import {accuracyTotal} from './test-helpers.mjs';
 const vite=await createServer({configFile:false,server:{middlewareMode:true,hmr:false}});after(()=>vite.close());
-const {normalizeCharacter:n,calculateCharacter:calc}=await vite.ssrLoadModule('/app/page.tsx');
+const {normalizeCharacter:n,calculateCharacter:calc}=await vite.ssrLoadModule('/app/character.ts');
 const {normalizeQuinque:q,calculateQuinque:qc}=await vite.ssrLoadModule('/app/quinque.ts');
 const {blankVats,vatsAction,normalizeVats}=await vite.ssrLoadModule('/app/vats-engine.ts');
-const dice=x=>parseInt(x,10);
-const sheet=(patch={})=>n({species:'ghoul',grade:12,weaponKind:'kagune',kaguneType:'Rinkaku',kaguneActive:true,currentRC:200,baseAttributes:{forca:8,vigor:8,agilidade:8,precisao:8},...patch},7);
+const sheet=(patch={})=>n({species:'ghoul',grade:12,weaponKind:'kagune',kaguneType:'Rinkaku',kaguneActive:true,currentRC:200,baseAttributes:{forca:8,vigor:8,agilidade:8,precisao:8,controle:4},...patch},7);
 const config=s=>{const d=calc(s);return {hasKagune:true,kaguneActive:s.kaguneActive,maxLife:d.maxLife,maxRC:300,rc:200,hunger:0,vigor:8,baseVigor:8,grade:12,regeneration:0,regenLevel:0,superior:0,cells:false,kami:false,durability:d.kaguneDurability,tails:d.maximumTails,naturalTails:d.naturalTails,powers:s.selectedEvolutions,rd:d.rd,movement:1,dodgeTest:d.dodgeTest,blockTest:d.blockTest,paidTailStart:1,tailAttackRC:2};};
-test('bônus racial é Grau/2 em quatro testes, nunca em atributos, dano ou quinques',()=>{
- for(const species of ['ghoul','ghoul-artificial','ghoul-dominante','humano','humano-dominante','quinx'])for(const grade of [2,4,6,8,10,12,14]){
+test('bônus racial soma floor(Level/2) e Controle em quatro testes, nunca em modificadores de atributos, dano ou quinques',()=>{
+ for(const species of ['ghoul','ghoul-artificial','ghoul-dominante','humano','humano-dominante','quinx'])for(const grade of Array.from({length:20},(_,i)=>i+1)){
  const s=sheet({species,grade}),actual=calc(s),without=calc(s,{quinque:true});
- const bonus=['ghoul','ghoul-artificial','ghoul-dominante'].includes(species)?grade/2:0;
- for(const key of ['kaguneTest','physicalHitTest','blockTest','dodgeTest'])assert.equal(dice(actual[key])-dice(without[key]),bonus,`${species} ${grade} ${key}`);
- assert.deepEqual(actual.attributeTests,without.attributeTests);assert.equal(actual.kaguneDamage,without.kaguneDamage);
+ const bonus=['ghoul','ghoul-artificial','ghoul-dominante'].includes(species)?Math.floor(grade/2)+actual.activeAttributes.controle:0;
+ for(const key of ['kaguneTest','physicalHitTest','blockTest','dodgeTest'])assert.equal(accuracyTotal(actual[key])-accuracyTotal(without[key]),bonus,`${species} ${grade} ${key}`);
+ for(const attribute of Object.keys(actual.attributeTests)) assert.equal(accuracyTotal(actual.attributeTests[attribute]),accuracyTotal(without.attributeTests[attribute]),`${species} ${grade} ${attribute}`);
+ assert.equal(actual.kaguneDamage,without.kaguneDamage);
  assert.equal(qc(q({grade})).ghoulCombatDice,0);
  }
 });
@@ -40,16 +41,16 @@ test('Mil Pernas e Mitose cobram RC uma vez, expiram e preservam caudas naturais
  assert.equal(vatsAction(blankVats(),{...config(s),rc:1},{type:'mil-pernas'}).vats.milPernasUntil,0);
 });
 test('Tentáculos Incessantes acumula uma vez por turno e perde sequência sem atacar',()=>{
- let s=sheet({selectedEvolutions:['tentaculos-incessantes']});const base=dice(calc(s).kaguneTest);
- s={...s,...vatsAction(s.vats,config(s),{type:'tentacle-momentum'})};assert.equal(dice(calc(s).kaguneTest),base+1);
+ let s=sheet({selectedEvolutions:['tentaculos-incessantes']});const base=accuracyTotal(calc(s).kaguneTest);
+ s={...s,...vatsAction(s.vats,config(s),{type:'tentacle-momentum'})};assert.equal(accuracyTotal(calc(s).kaguneTest),base+1);
  s={...s,...vatsAction(s.vats,config(s),{type:'tentacle-momentum'})};assert.equal(s.vats.tentacleMomentum,1);
  s={...s,...vatsAction(s.vats,config(s),{type:'turn'})};s={...s,...vatsAction(s.vats,config(s),{type:'tentacle-momentum'})};assert.equal(s.vats.tentacleMomentum,2);
- s={...s,...vatsAction(s.vats,config(s),{type:'turn'})};s={...s,...vatsAction(s.vats,config(s),{type:'turn'})};assert.equal(dice(calc(s).kaguneTest),base);
+ s={...s,...vatsAction(s.vats,config(s),{type:'turn'})};s={...s,...vatsAction(s.vats,config(s),{type:'turn'})};assert.equal(accuracyTotal(calc(s).kaguneTest),base);
 });
-test('correções auditadas: Perda de Peso, Arsenal Vivo e dados sacrificados',()=>{
+test('correções auditadas: Perda de Peso, Arsenal Vivo e acertos sacrificados',()=>{
  const base=sheet({kaguneType:'Koukaku',selectedEvolutions:['perda-peso','arsenal-vivo'],perks:{'golpe-preciso':{rank:1}}});
  const d=calc(base),active=calc({...base,damageContext:{...base.damageContext,preciseHitDice:2,active:{'kagune:perda-peso':true,'kagune:arsenal-vivo':true,'kagune:golpe-preciso':true}}});
- assert.equal(dice(active.blockTest)-dice(d.blockTest),4);assert.equal(active.kaguneSteps-d.kaguneSteps,9);assert.equal(active.kaguneDamageModifier,d.kaguneDamageModifier);assert.equal(dice(active.kaguneTest),dice(d.kaguneTest)-2);
+ assert.equal(accuracyTotal(active.blockTest)-accuracyTotal(d.blockTest),4);assert.equal(active.kaguneSteps-d.kaguneSteps,9);assert.equal(active.kaguneDamageModifier,d.kaguneDamageModifier);assert.equal(accuracyTotal(active.kaguneTest),accuracyTotal(d.kaguneTest)-2);
  const ukaku=sheet({kaguneType:'Ukaku',selectedEvolutions:['coruka']});assert.equal(calc(ukaku).durabilityMultiplier,.8);
 });
 
