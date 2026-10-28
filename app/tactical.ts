@@ -1,6 +1,7 @@
 import type { AttributeKey, Perk } from './data';
 import {canonicalPerkId} from './perk-migrations';
 import {additionalEndgameTactics,endgameTacticalPreview} from './endgame-tactics';
+import {DAMAGE_MAX_SIDES} from './damage-dice';
 
 export type TacticalSlot = 'action' | 'reaction';
 export type TacticalEffect = 'intercept' | 'retaliate' | 'stance' | 'split-heal' | 'detonate' | 'bind' | 'ricochet' | 'last-stand' | 'reflect' | 'drain' | 'transfer' | 'move' | 'capture' | 'push' | 'trap' | 'precision' | 'counter' | 'fuel' | 'blood' | 'redistribute' | 'wave' | 'reroll-damage' | 'store-natural' | 'reroll' | 'ally-reroll' | 'release-rc' | 'seismic' | 'aegis' | 'maximum' | 'flurry' | 'disassemble' | 'mark' | 'exchange';
@@ -126,7 +127,7 @@ export function tacticalAvailability(technique:TacticalTechnique,state:TacticalS
   if(technique.usesSession&&state.usedSession.includes(technique.id))return 'Já usada nesta sessão.';
   return '';
 }
-const diceList=(value:string)=>value.split(/[,;\s]+/).filter(Boolean).slice(0,100).map(Number).filter(n=>Number.isFinite(n)&&Number.isInteger(n)&&n>=1&&n<=12);
+const diceList=(value:string)=>value.split(/[,;\s]+/).filter(Boolean).slice(0,100).map(Number).filter(n=>Number.isFinite(n)&&Number.isInteger(n)&&n>=1&&n<=DAMAGE_MAX_SIDES);
 export function tacticalPreview(technique:TacticalTechnique,state:TacticalState,c:TacticalContext={}) {
   const i=state.inputs,life=num(c.currentLife),max=num(c.maxLife),control=num(c.control??c.attributes?.controle),agility=num(c.attributes?.agilidade);
   const die=[10,20,30].includes(c.die||20)?c.die||20:20;
@@ -224,7 +225,7 @@ export function resolveTactical(input:TacticalState,action:TacticalAction,c:Tact
     const die=[10,20,30].includes(c.die||20)?c.die||20:20;
     if(['store-natural','reroll','ally-reroll'].includes(effect)&&(i.roll<1||i.roll>die||((effect==='reroll'||effect==='ally-reroll')&&(i.reroll<1||i.reroll>die))))return fail(`Informe resultados naturais entre 1 e ${die}.`);
     if(effect==='store-natural'&&state.storedNatural!==null&&state.storedDie!==die)return fail(`O natural guardado é de d${state.storedDie}; use com esse dado ou descarte a reserva.`);
-    if(effect==='reroll-damage'){const count=Math.floor(diceList(i.damageDice).length/2);if([i.damageDice,i.rerollDice].some(list=>list.split(/[,;\s]+/).filter(Boolean).some(value=>!Number.isInteger(Number(value))||Number(value)<1||Number(value)>12)))return fail('Os dados de dano precisam ter resultados inteiros de 1 a 12.');if(count<1||diceList(i.rerollDice).length<count)return fail('Informe pelo menos 2 dados originais e uma nova rolagem para cada dado a refazer.');}
+    if(effect==='reroll-damage'){const count=Math.floor(diceList(i.damageDice).length/2);if([i.damageDice,i.rerollDice].some(list=>list.split(/[,;\s]+/).filter(Boolean).some(value=>!Number.isInteger(Number(value))||Number(value)<1||Number(value)>DAMAGE_MAX_SIDES)))return fail(`Os dados de dano precisam ter resultados inteiros de 1 a ${DAMAGE_MAX_SIDES}.`);if(count<1||diceList(i.rerollDice).length<count)return fail('Informe pelo menos 2 dados originais e uma nova rolagem para cada dado a refazer.');}
     name=technique.name;id=technique.id;message=preview.description;rcCost=preview.rcCost;lifeDelta=preview.lifeDelta;
     state={...state,usedTurn:{...state.usedTurn,[technique.slot]:state.turn,[technique.id]:state.turn},usedSession:technique.usesSession?[...state.usedSession,technique.id]:state.usedSession};
     if(technique.rc>0&&state.credit)state={...state,credit:null};

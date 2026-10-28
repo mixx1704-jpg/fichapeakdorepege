@@ -53,11 +53,11 @@ test('Kakuja damage and own RD inherit Kagune values once while preserving indep
   const saved = state({});
   const snapshot = structuredClone(saved);
   const inherited = render({ state: saved, kaguneModifier: 20, kaguneRD: 14 });
-  assert.match(inherited, /<span>Dano da Kakuja<\/span><strong>6d12\+1d4\+22<\/strong>/);
+  assert.match(inherited, /<span>Dano da Kakuja<\/span><strong>1d62\+22<\/strong>/); // Thirty steps: ten inherited plus twenty from the incomplete form.
   assert.match(inherited, /<dt>RD da Kakuja<\/dt><dd>16 <small>inclui 14 da Kagune/);
   assert.match(inherited, /<span>Dureza total da Kakuja<\/span><strong>44<\/strong>/);
   const legacy = render();
-  assert.match(legacy, /<span>Dano da Kakuja<\/span><strong>6d12\+1d4\+2<\/strong>/);
+  assert.match(legacy, /<span>Dano da Kakuja<\/span><strong>1d62\+2<\/strong>/);
   assert.match(legacy, /<dt>RD da Kakuja<\/dt><dd>2 <small>inclui 0 da Kagune/);
   assert.deepEqual(saved, snapshot);
 });

@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useRef, useState } from "react";
+import { formatDamage } from "./damage-dice";
 import { KakujaImageSlot } from "./KakujaImages";
 import { calculateKakujaPerkBonuses, kakujaPerks, kakujaPerksCost, kakujaPEKPerksCost } from "./kakuja-perks";
 import { CustomSkillsPanel, customSkillsCost, normalizeCustomSkills } from "./CustomSkillsPanel";
@@ -178,19 +179,6 @@ const uid = () => `${Date.now().toString(36)}-${Math.random().toString(36).slice
 function capForGrade(grade: number) {
   const capGrade = ([6, 8, 10, 12, 14, 16, 18, 20] as const).filter((value) => value <= grade).at(-1) || 6;
   return kakujaCaps[capGrade];
-}
-
-function formatDamage(steps: number, modifier: number) {
-  modifier = Math.floor(modifier);
-  const safeSteps = Math.max(0, Math.floor(steps));
-  const fullD12 = Math.floor(safeSteps / 5);
-  const remainder = safeSteps % 5;
-  const sides = [4, 6, 8, 10, 12][remainder];
-  const groups = new Map<number, number>();
-  if (fullD12) groups.set(12, fullD12);
-  groups.set(sides, (groups.get(sides) || 0) + 1);
-  const dice = [...groups.entries()].filter(([, count]) => count > 0).sort((a, b) => b[0] - a[0]).map(([side, count]) => `${count}d${side}`).join("+") || "1d4";
-  return `${dice}${modifier > 0 ? `+${modifier}` : modifier < 0 ? modifier : ""}`;
 }
 
 export function calculateKakujaSteps(kaguneSteps: number, moduleSteps: number, advantageSteps: number) {

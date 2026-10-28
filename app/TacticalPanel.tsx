@@ -1,5 +1,6 @@
 "use client";
 import { useState } from 'react';
+import {DAMAGE_MAX_SIDES} from './damage-dice';
 import { normalizeTacticalState, resolveTactical, tacticalAvailability, tacticalOwnedTechniques, tacticalPreview, tacticalSummary, type TacticalAction, type TacticalContext, type TacticalInputs, type TacticalResolution, type TacticalState } from './tactical';
 
 export interface TacticalPanelProps {
@@ -42,7 +43,7 @@ export function TacticalPanel({state:raw,context={},managedTurn=false,onAction,o
     {technique?<><label className="field"><span>Técnica adquirida</span><select value={technique.id} onChange={event=>{setSelected(event.target.value);setError('');setCopied(false);setManualCopy('');}}>{owned.map(item=><option key={item.id} value={item.id}>{item.name}{item.existing?' · incluída na perk':''} · {item.rc} RC</option>)}</select></label><p className="section-help">{technique.description}</p>
       <div className="field-grid"><label className="field"><span>Alvo / aliado</span><input value={i.target} maxLength={100} onChange={event=>patch({target:event.target.value})}/></label>{effect&&['split-heal','ricochet','redistribute','wave'].includes(effect)&&<label className="field"><span>Segundo alvo / aliado</span><input value={i.target2} maxLength={100} onChange={event=>patch({target2:event.target.value})}/></label>}
       {[...new Set(fields)].map(key=><label className="field" key={key}><span>{effect==='disassemble'&&key==='target2RD'?'RD própria da arma do alvo':numberLabels[key]}</span><input type="number" step={1} min={key==='rollModifier'?undefined:0} max={key==='doses'?4:key==='spentHit'?20:undefined} value={i[key] as number} onChange={event=>patch({[key]:Number(event.target.value)})}/></label>)}
-      {effect==='reroll-damage'&&<><label className="field"><span>Dados de dano originais · separados por vírgula</span><input value={i.damageDice} placeholder="2, 4, 7, 10" onChange={event=>patch({damageDice:event.target.value})}/></label><label className="field"><span>Novos resultados para a metade inferior</span><input value={i.rerollDice} placeholder="8, 9" onChange={event=>patch({rerollDice:event.target.value})}/></label></>}
+      {effect==='reroll-damage'&&<><label className="field"><span>Dados de dano originais · d4 a d{DAMAGE_MAX_SIDES} · separados por vírgula</span><input value={i.damageDice} placeholder="2, 14, 20, 75" onChange={event=>patch({damageDice:event.target.value})}/></label><label className="field"><span>Novos resultados para a metade inferior · use os mesmos dados</span><input value={i.rerollDice} placeholder="4, 18" onChange={event=>patch({rerollDice:event.target.value})}/></label></>}
       </div>
       {confirmation&&<label className="vats-check"><input type="checkbox" checked={i.confirmed} onChange={event=>patch({confirmed:event.target.checked})}/>Acerto, defesa, passagem ou consentimento exigido confirmado na mesa</label>}
       {preview&&<div className="hit-rule"><strong>Prévia da resolução</strong><p>{preview.description}</p><small>{preview.rcCost} RC · {technique.slot==='reaction'?'reação':'ação'} tática{technique.usesSession?' · uma vez por sessão':''}</small></div>}

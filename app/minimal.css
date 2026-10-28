@@ -108,3 +108,8 @@
 .kakuja-biological-notes {display:grid;gap:8px;padding-top:12px;}
 .kakuja-biological-notes p {margin:0;padding:11px 0;border-bottom:1px solid var(--line);}
 @media(max-width:640px){.kakuja-biology .field-grid.three{grid-template-columns:1fr;}}
+.damage-scale-reference .field-grid { margin:14px 0; align-items:end; }
+.damage-scale-reference .test-command { margin:0; min-width:0; }
+.damage-scale-reference table { width:100%; border-collapse:collapse; margin-top:12px; font-size:12px; text-align:left; }
+.damage-scale-reference th,.damage-scale-reference td { padding:7px 9px; border-bottom:1px solid var(--line); }
+.damage-scale-reference th { color:var(--muted); font-weight:500; }

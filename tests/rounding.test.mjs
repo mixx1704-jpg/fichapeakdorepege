@@ -17,8 +17,8 @@ test('life and reactions round the final result down',()=>{
 test('accuracy and damage modifiers floor positive and negative fractions',()=>{
  assert.equal(character.formatTest(4.9,2.8),'1d20+4+2');
  assert.equal(character.formatTest(-0.1,-1.2),'1d20-1-2');
- assert.equal(character.formatDamage(1.9,2.9),'1d6+2');
- assert.equal(character.formatDamage(1.9,-0.1),'1d6-1');
+ assert.equal(character.formatDamage(1.9,2.9),'1d4+2');
+ assert.equal(character.formatDamage(1.9,-0.1),'1d4-1');
 });
 test('fractional healing floors instead of giving the next point',()=>{
  assert.equal(character.calculateRegeneration(35,3,0,1).superior,8);

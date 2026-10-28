@@ -71,7 +71,7 @@ test('base critical adds fifty percent of whole damage steps and leaves fixed da
   assert.equal(result.flat,12);
   assert.equal(result.penetrationPercent,0);
   assert.equal(result.remainingRD,37);
-  assert.equal(result.formula,'1d12+1d8+12');
+  assert.equal(result.formula,'1d16+12'); // Five base steps plus floor(50%) = seven steps.
 });
 
 test('critical confirmation is explicit and does not modify an ordinary attack',()=>{
@@ -159,11 +159,11 @@ test('critical formula and character formula share the same step ladder',()=>{
       assert.equal(character.formatDamage(steps,flat),damage.formatDamage(steps,flat));
     }
   }
-  assert.equal(damage.formatDamage(5,0),'1d12+1d4');
-  assert.equal(damage.formatDamage(9,0),'2d12');
+  assert.equal(damage.formatDamage(5,0),'1d12');
+  assert.equal(damage.formatDamage(9,0),'1d20');
 });
 
-test('corrupt damage inputs produce a bounded zero-based formula without NaN',()=>{
+test('corrupt damage inputs fall back to a bounded d4 formula without NaN',()=>{
   const result=criticalAttack({steps:NaN,flat:Infinity,rd:-1.5,confirmed:true});
   assert.equal(result.steps,0);
   assert.equal(result.flat,0);

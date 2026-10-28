@@ -17,7 +17,7 @@ run(['--test', '--test-concurrency=1',
   'tests/tactical.test.mjs', 'tests/tactical-integration.test.mjs',
   'tests/rebalance.test.mjs',
   'tests/colosso.test.mjs', 'tests/scaling-perks.test.mjs', 'tests/scaling-integration.test.mjs',
-  'tests/poison.test.mjs', 'tests/combat-tools.test.mjs', 'tests/attack-integration.test.mjs', 'tests/healing.test.mjs', 'tests/critical.test.mjs', 'tests/damage-step-perks.test.mjs',
+  'tests/poison.test.mjs', 'tests/combat-tools.test.mjs', 'tests/attack-integration.test.mjs', 'tests/healing.test.mjs', 'tests/critical.test.mjs', 'tests/damage-dice.test.mjs', 'tests/damage-step-perks.test.mjs',
   'tests/catalog-stacks.test.mjs', 'tests/catalog-audit.test.mjs', 'tests/vats.test.mjs', 'tests/quinque.test.mjs', 'tests/quinque-carrier.test.mjs',
   'tests/weapon-updates.test.mjs', 'tests/mastery.test.mjs', 'tests/ghoul-tails.test.mjs',
 ]);

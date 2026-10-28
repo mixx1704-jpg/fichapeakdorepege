@@ -1,14 +1,23 @@
-/** Converts whole damage steps into the sheet's shared d4-to-d12 ladder. */
+export const DAMAGE_MIN_SIDES = 4;
+export const DAMAGE_MAX_SIDES = 100;
+export const DAMAGE_SIDES_PER_STEP = 2;
+export const DAMAGE_STEPS_PER_CYCLE = (DAMAGE_MAX_SIDES - DAMAGE_MIN_SIDES) / DAMAGE_SIDES_PER_STEP + 1;
+
+/** One-based ladder: d4, d6, ... d100, then add another die from d4. */
+export function damageDiceGroups(steps: number): Array<{ sides: number; count: number }> {
+  const safeSteps = Number.isFinite(steps) ? Math.max(1, Math.floor(steps)) : 1;
+  const fullDice = Math.floor(safeSteps / DAMAGE_STEPS_PER_CYCLE);
+  const remainder = safeSteps % DAMAGE_STEPS_PER_CYCLE;
+  const groups: Array<{ sides: number; count: number }> = [];
+  if (fullDice) groups.push({ sides: DAMAGE_MAX_SIDES, count: fullDice });
+  if (remainder) groups.push({ sides: DAMAGE_MIN_SIDES + (remainder - 1) * DAMAGE_SIDES_PER_STEP, count: 1 });
+  return groups;
+}
+
+/** Converts whole damage steps into the shared ladder and applies fixed damage once. */
 export function formatDamage(steps: number, modifier: number) {
   modifier = Number.isFinite(modifier) ? Math.floor(modifier) : 0;
-  const safeSteps = Number.isFinite(steps) ? Math.max(0, Math.floor(steps)) : 0;
-  const fullD12 = Math.floor(safeSteps / 5);
-  const remainder = safeSteps % 5;
-  const sides = [4, 6, 8, 10, 12][remainder];
-  const groups = new Map<number, number>();
-  if (fullD12) groups.set(12, fullD12);
-  groups.set(sides, (groups.get(sides) || 0) + 1);
-  const dice = [...groups.entries()].filter(([, count]) => count > 0).sort((a, b) => b[0] - a[0]).map(([side, count]) => `${count}d${side}`).join("+") || "1d4";
+  const dice = damageDiceGroups(steps).map(({ sides, count }) => `${count}d${sides}`).join("+");
   return `${dice}${modifier > 0 ? `+${modifier}` : modifier < 0 ? modifier : ""}`;
 }
 

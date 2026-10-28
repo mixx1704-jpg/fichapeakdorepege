@@ -144,7 +144,24 @@ test('Atlas wave affects only the second target, without repeating the main atta
 test('Zero Desvio rerolls only half the lower damage dice and retains a higher old result',()=>{
  const result=cap('precisao',start({damageDice:'2, 4, 7, 10',rerollDice:'8, 9'}));assert.match(result.receipt.text,/total dos dados 34/);
  const lower=cap('precisao',start({damageDice:'2, 4, 7, 10',rerollDice:'1, 1'}));assert.match(lower.receipt.text,/ganho 0; total dos dados 23/);
- assert.match(cap('precisao',start({damageDice:'2,99,4',rerollDice:'5'})).error,/1 a 12/);
+ assert.match(cap('precisao',start({damageDice:'2,101,4',rerollDice:'5'})).error,/1 a 100/);
+});
+
+test('Zero Desvio accepts expanded damage dice and rerolls only the floored lower half',()=>{
+ const result=cap('precisao',start({damageDice:'14, 20, 100, 2, 7',rerollDice:'6, 99, 100'}));
+ assert.ok(!result.error);assert.match(result.receipt.text,/originais somam 143; refaça 2 resultados/);
+ assert.match(result.receipt.text,/Novos dados \[6, 99\]; ganho 96; total dos dados 239/);
+ const lower=cap('precisao',start({damageDice:'14, 20, 100, 2, 7',rerollDice:'1, 1'}));
+ assert.ok(!lower.error);assert.match(lower.receipt.text,/ganho 0; total dos dados 143/);
+});
+
+test('Zero Desvio rejects zero, oversized and fractional originals or rerolls without consuming an action',()=>{
+ for(const invalid of ['0','101','1.5'])for(const key of ['damageDice','rerollDice']){
+  const inputs={damageDice:'14, 20, 100',rerollDice:'75',[key]:key==='damageDice'?`14, ${invalid}, 100`:invalid};
+  const original=start(inputs),result=cap('precisao',original);
+  assert.match(result.error,/resultados inteiros de 1 a 100/);
+  assert.deepEqual(result.state,original);assert.deepEqual(result.state.usedTurn,{});
+ }
 });
 test('Laplace stores and consumes a natural across turns, never granting a critical or changing dice',()=>{
  const saved=cap('raciocinio',start({roll:30}),{...context,die:30});assert.equal(saved.state.storedNatural,30);assert.equal(saved.state.storedDie,30);

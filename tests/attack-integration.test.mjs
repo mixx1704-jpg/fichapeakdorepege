@@ -40,7 +40,7 @@ test('RC suppression blocks biological attacks and poison without deleting the s
 });
 test('a fused critical combines the dice of each part and adds fixed critical bonuses only once',()=>{
  const r=tools.prepareCriticalAttack({steps:5,flat:2,confirmed:true,perks:owned('critico-trauma'),context:{level:20,attributes:attrs},parts:3,ordinaryFormula:'3d12+3d4+6'});
- assert.equal(r.formula,'3d12+3d8+26');
+ assert.equal(r.formula,'3d16+26'); // Three seven-step critical parts, one level-20 flat bonus.
  assert.equal(r.bonusSteps,2);assert.equal(r.flatBonus,20);
  assert.equal(tools.prepareCriticalAttack({steps:5,flat:2,confirmed:false,parts:3,ordinaryFormula:'3d12+3d4+6'}).formula,'3d12+3d4+6');
 });
