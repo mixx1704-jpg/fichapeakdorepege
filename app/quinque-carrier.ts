@@ -48,8 +48,9 @@ export function quinqueCarrierBonuses(carrier?: QuinqueCarrier): QuinqueCarrierB
   if (owner.perks['entre-costelas'] && activeInEitherAttack('entre-costelas')) bonuses.hit += 1;
   if (owner.perks['golpe-preciso'] && activeInEitherAttack('golpe-preciso')) bonuses.hit -= Math.max(0, owner.damageContext.preciseHitDice);
   if (owner.perks['equacao-letal'] && activeInEitherAttack('equacao-letal')) bonuses.hit -= Math.min(2, Math.max(0, owner.damageContext.equationLethalDice));
-  bonuses.block += derived.customSkillBonuses.blockDice + derived.kakujaBonuses.block + (owner.perks['corpo-pesado'] ? 1 : 0);
-  bonuses.dodge += derived.customSkillBonuses.dodgeDice + derived.kakujaBonuses.dodge + (owner.perks['corpo-leve'] ? 1 : 0) + (owner.perks['cem-por-cento'] ? 1 : 0) + (owner.perks.ceifador ? 2 : 0);
+  // Kakuja purchases and authorials belong only to its manifested form.
+  bonuses.block += derived.customSkillBonuses.blockDice + (owner.perks['corpo-pesado'] ? 1 : 0);
+  bonuses.dodge += derived.customSkillBonuses.dodgeDice + (owner.perks['corpo-leve'] ? 1 : 0) + (owner.perks['cem-por-cento'] ? 1 : 0) + (owner.perks.ceifador ? 2 : 0);
   // Percentage perks produce additional successes, while the carrier's base,
   // racial Control/Level and sanity die themselves remain outside this transfer.
   bonuses.hit += Math.max(derived.scaling.bonuses.physicalHit, derived.scaling.bonuses.kaguneHit);

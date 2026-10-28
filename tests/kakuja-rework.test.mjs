@@ -67,7 +67,8 @@ test('authorial Kakuja costs use PE-K and only affect manifested Kakuja',()=>{
   const sheet=normalizeCharacter({rulesVersion:8,grade:14,species:'ghoul',kakuja:own},8);
   const base=calculateCharacter({...sheet,kakuja:state({})}),applied=calculateCharacter(sheet);
   assert.equal(applied.peSpent,base.peSpent);
-  assert.equal(sum(applied.blockTest)-sum(base.blockTest),12);
+  assert.equal(sum(applied.blockTest)-sum(base.blockTest),0);
+  assert.equal(sum(applied.kakujaBlockTest)-sum(base.kakujaBlockTest),12);
   assert.equal(applied.kaguneSteps,base.kaguneSteps);
 });
 

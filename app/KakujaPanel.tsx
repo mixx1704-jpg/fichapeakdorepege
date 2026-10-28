@@ -33,6 +33,11 @@ type Props = {
   vigor: number;
   kaguneSteps: number;
   kaguneTest: string;
+  blockTest?: string;
+  dodgeTest?: string;
+  kaguneModifier?: number;
+  kaguneRD?: number;
+  extraAttacks?: number;
   kaguneDurability: number;
   kaguneFamilies: string[];
   state: KakujaState;
@@ -211,7 +216,7 @@ export function calculateKakujaDurability(kaguneDurability: number, ownDurabilit
   return Math.max(1, Math.floor(combined * (fragile ? 0.75 : 1)));
 }
 
-export function KakujaPanel({ grade, species, vigor, kaguneSteps, kaguneTest, kaguneDurability, kaguneFamilies, state, onChange, suppressed = false,attributes={},maxLife=0,baseRange=0,baseMovement=0,passiveRegeneration=0,basePenetration=0 }: Props) {
+export function KakujaPanel({ grade, species, vigor, kaguneSteps, kaguneTest, blockTest, dodgeTest, kaguneModifier = 0, kaguneRD = 0, extraAttacks, kaguneDurability, kaguneFamilies, state, onChange, suppressed = false,attributes={},maxLife=0,baseRange=0,baseMovement=0,passiveRegeneration=0,basePenetration=0 }: Props) {
   const [activeTab, setActiveTab] = useState("painel");
   const [search, setSearch] = useState("");
   const [ownedOnly, setOwnedOnly] = useState(false);
@@ -229,6 +234,7 @@ export function KakujaPanel({ grade, species, vigor, kaguneSteps, kaguneTest, ka
   const gradeUnlocked = grade >= 6;
   const awakened = gradeUnlocked && ghoulSpecies && state.cannibalPE >= 25;
   const complete = awakened && state.complete && state.cannibalPE >= 60;
+  const manifested = state.active && awakened && !suppressed;
   const cap = capForGrade(grade);
   const familySet = useMemo(() => new Set(kaguneFamilies), [kaguneFamilies]);
   const selectedSet = useMemo(() => new Set(state.selectedModules), [state.selectedModules]);
@@ -317,11 +323,11 @@ export function KakujaPanel({ grade, species, vigor, kaguneSteps, kaguneTest, ka
   const formBonus = kakujaFormBonuses(complete);
   const biological=calculateKakujaBiology(suppressed?{...state,active:false}:state,grade,species,kaguneFamilies,attributes);
   const baseSteps = calculateKakujaSteps(initialSteps, moduleSteps + perkBonuses.steps, state.advantageSteps) + formBonus.steps;
-  const totalModifier = Math.floor(2 + calculation.modifier + state.advantageModifier + perkBonuses.modifier);
+  const totalModifier = Math.floor(kaguneModifier + 2 + calculation.modifier + state.advantageModifier + perkBonuses.modifier);
   const totalAccuracy = Math.floor(formBonus.dice + calculation.accuracy + state.advantageAccuracy + perkBonuses.accuracy);
   const accuracyTest = kakujaAccuracyTest(kaguneTest, totalAccuracy);
 
-  const baseRD = Math.max(0, Math.floor(2 + moduleRD + state.advantageRD + perkBonuses.rd));
+  const baseRD = Math.max(0, Math.floor(kaguneRD + 2 + moduleRD + state.advantageRD + perkBonuses.rd));
   const typeMultiplier = kaguneFamilies[0] === "Koukaku" ? 1.5 : kaguneFamilies[0] === "Ukaku" ? (selectedSet.has("blindagem-cristalina") ? 0.8 : 0.5) : 1;
   const ownDurabilityValue = Math.max(1, (vigor + grade + spent + calculation.durability) * typeMultiplier + perkBonuses.durability);
   const rawReserveMax=Math.floor(calculation.reserve+perkBonuses.reserve);
@@ -333,6 +339,20 @@ export function KakujaPanel({ grade, species, vigor, kaguneSteps, kaguneTest, ka
   const activationCost = Math.max(2, 4 - (selectedSet.has("metabolismo-eficiente") && state.activationsSinceRest === 0 ? 2 : 0));
   const nextHunger = (state.activationsSinceRest > 0 ? 2 : 0) + (state.selectedInstabilities.includes("fome-anormal") ? 1 : 0) + (state.overload ? 1 : 0);
   const reserveMax=anatomy.reserve;
+  const totalExtraAttacks = Math.max(0, Math.floor(extraAttacks ?? perkBonuses.extraAttacks));
+  const combatSummary = [
+    state.name || "Kakuja",
+    `Dano: ${damage}`,
+    `Acerto: ${accuracyTest}`,
+    ...(blockTest ? [`Bloqueio: ${blockTest}`] : []),
+    ...(dodgeTest ? [`Esquiva: ${dodgeTest}`] : []),
+    `RD da Kakuja: ${rd}`,
+    `Dureza: ${durability}`,
+    `Ataques extras: ${totalExtraAttacks}`,
+    `Alcance: ${Math.floor(baseRange + biological.range)} m`,
+    `Deslocamento: ${Math.floor(baseMovement)} espaços`,
+    `Penetração: ${Math.max(basePenetration, biological.penetration)}%`,
+  ].join("\n");
 
   const issues = [
     !ghoulSpecies ? "Kakuja é exclusiva de Ghoul; Quinx e espécies humanas não têm acesso." : "",
@@ -424,7 +444,7 @@ export function KakujaPanel({ grade, species, vigor, kaguneSteps, kaguneTest, ka
 
   return <div className="kakuja-shell">
     <section className="kakuja-hero">
-      <div><span>Sistema modular exclusivo</span><h2>{state.name || "Kakuja sem epíteto"}</h2><p>A Kakuja usa os Passos atuais da Kagune como base. Seus módulos, Perfis, CM, Dureza e reserva continuam sendo calculados separadamente.</p></div>
+      <div><span>Sistema modular exclusivo</span><h2>{state.name || "Kakuja sem epíteto"}</h2><p>Herda os bônus da Kagune. Os bônus desta forma ficam na Kakuja.</p></div>
       <label className="kakuja-active"><Switch checked={state.active && awakened && !suppressed} disabled={!awakened || suppressed} onCheckedChange={(checked) => patch({ active: checked })} /><b>{state.active && awakened && !suppressed ? "Manifestada" : "Retraída"}</b></label>
     </section>
 
@@ -468,8 +488,24 @@ export function KakujaPanel({ grade, species, vigor, kaguneSteps, kaguneTest, ka
         <section className="kakuja-combat section-block">
           <div className="kakuja-damage-card">
             <div><span>Dano da Kakuja</span><strong>{damage}</strong><button type="button" onClick={() => navigator.clipboard?.writeText(damage)}>Copiar</button></div>
-            <dl><div><dt>Base da Kagune</dt><dd>{Math.floor(initialSteps)} Passos</dd></div><div><dt>Módulos ativos</dt><dd>{moduleSteps >= 0 ? "+" : ""}{Math.floor(moduleSteps)} Passos</dd></div><div><dt>Vantagens</dt><dd>{state.advantageSteps >= 0 ? "+" : ""}{Math.floor(state.advantageSteps)} Passos</dd></div><div><dt>Bônus base da {complete ? "Completa" : "Incompleta"}</dt><dd>+{formBonus.steps} Passos</dd></div><div><dt>Acerto da Kakuja</dt><dd>{accuracyTest} <button type="button" onClick={() => navigator.clipboard?.writeText(accuracyTest)}>Copiar acerto</button></dd></div><div><dt>Bloqueio e desvio enquanto ativa</dt><dd>+{Math.floor(formBonus.dice + perkBonuses.block)} bloqueio / +{Math.floor(formBonus.dice + perkBonuses.dodge)} desvio</dd></div><div><dt>Perks e autorais de Kakuja</dt><dd>+{Math.floor(perkBonuses.accuracy)} acerto / +{Math.floor(perkBonuses.steps)} Passos / +{Math.floor(perkBonuses.modifier)} dano</dd></div><div><dt>Regeneração e ataques extras da forma</dt><dd>+{Math.floor(perkBonuses.regeneration)} por turno / +{Math.floor(perkBonuses.extraAttacks)} ataques</dd></div><div><dt>RD total</dt><dd>{rd}</dd></div></dl>
-            <p><b>Regra aplicada:</b> a Kakuja começa com os mesmos {Math.floor(initialSteps)} Passos de Dano atuais da Kagune. Soma +{formBonus.steps} Passos base, além dos módulos manifestados no Perfil ativo e dos bônus de Vantagens. O acerto usa o teste atual da Kagune com +{formBonus.dice} acertos base, além dos ajustes de módulos e Vantagens.</p>
+            <dl>
+              <div><dt>Base da Kagune</dt><dd>{Math.floor(initialSteps)} Passos / {Math.floor(kaguneModifier)} dano fixo</dd></div>
+              <div><dt>Módulos ativos</dt><dd>{moduleSteps >= 0 ? "+" : ""}{Math.floor(moduleSteps)} Passos</dd></div>
+              <div><dt>Vantagens</dt><dd>{state.advantageSteps >= 0 ? "+" : ""}{Math.floor(state.advantageSteps)} Passos</dd></div>
+              <div><dt>Bônus base da {complete ? "Completa" : "Incompleta"}</dt><dd>+{formBonus.steps} Passos</dd></div>
+              <div><dt>Acerto da Kakuja</dt><dd>{accuracyTest} <button type="button" onClick={() => navigator.clipboard?.writeText(accuracyTest)}>Copiar acerto</button></dd></div>
+              <div><dt>Bloqueio da Kakuja</dt><dd>{manifested && blockTest ? <>{blockTest} <button type="button" onClick={() => navigator.clipboard?.writeText(blockTest)}>Copiar bloqueio</button></> : manifested ? "Teste não informado" : "Indisponível · Kakuja retraída ou suprimida"}</dd></div>
+              <div><dt>Esquiva da Kakuja</dt><dd>{manifested && dodgeTest ? <>{dodgeTest} <button type="button" onClick={() => navigator.clipboard?.writeText(dodgeTest)}>Copiar esquiva</button></> : manifested ? "Teste não informado" : "Indisponível · Kakuja retraída ou suprimida"}</dd></div>
+              <div><dt>Bônus defensivos desta forma</dt><dd>+{Math.floor(formBonus.dice + perkBonuses.block)} bloqueio / +{Math.floor(formBonus.dice + perkBonuses.dodge)} esquiva{manifested ? " · já incluídos nos testes" : " · prévia"}</dd></div>
+              <div><dt>Perks e autorais de Kakuja</dt><dd>+{Math.floor(perkBonuses.accuracy)} acerto / +{Math.floor(perkBonuses.steps)} Passos / +{Math.floor(perkBonuses.modifier)} dano</dd></div>
+              <div><dt>Regeneração da forma</dt><dd>+{Math.floor(perkBonuses.regeneration)} por turno</dd></div>
+              <div><dt>Ataques extras herdados e da forma</dt><dd>{totalExtraAttacks}</dd></div>
+              <div><dt>RD da Kakuja</dt><dd>{rd} <small>inclui {Math.floor(kaguneRD)} da Kagune; some a RD corporal uma vez quando aplicável</small></dd></div>
+              <div><dt>Alcance e deslocamento</dt><dd>{Math.floor(baseRange + biological.range)} m / {Math.floor(baseMovement)} espaços</dd></div>
+              <div><dt>Penetração</dt><dd>{Math.max(basePenetration, biological.penetration)}% da RD · maior fonte, sem somar em cascata</dd></div>
+            </dl>
+            <p>Acerto, bloqueio e esquiva incluem os bônus herdados da Kagune e os adicionais da Kakuja. Módulos, perks e autorais desta forma são aplicados uma única vez.</p>
+            <button type="button" disabled={!manifested} onClick={() => navigator.clipboard?.writeText(combatSummary)}>Copiar resumo da Kakuja</button>
           </div>
           <div className="kakuja-advantage-box">
             <div><span>Bônus de Vantagens</span><strong>Aplicação separada</strong></div>

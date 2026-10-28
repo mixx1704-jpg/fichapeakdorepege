@@ -31,7 +31,7 @@ export function kakujaPerkMissing(p:KakujaPerk,state:KakujaState,grade:number,sp
  return missing;
 }
 
-/** Only these bonuses escape the Kakuja panel: block, dodge, regeneration and extraAttacks. */
+/** Bonuses of the manifested Kakuja. Weapon combat bonuses never flow back into the Kagune. */
 export function calculateKakujaPerkBonuses(state:KakujaState,level:number,species:string,families?:string[],attributes:Record<string,number>={}):KakujaBonuses {
  const total=emptyKakujaBonuses();
  if(!state.active||level<6||state.cannibalPE<25||!['ghoul','ghoul-dominante','ghoul-artificial'].includes(species))return total;

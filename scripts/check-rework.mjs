@@ -10,7 +10,7 @@ function run(args) {
 }
 if (!process.argv.includes('--skip-types')) run([path.join(root,'node_modules/typescript/bin/tsc'), '-p', 'tsconfig.app.json', '--noEmit']);
 run(['--test', '--test-concurrency=1',
-  'tests/rework.test.mjs', 'tests/rework-perks.test.mjs', 'tests/kakuja-rework.test.mjs', 'tests/kakuja-biology.test.mjs', 'tests/custom-skill-images.test.mjs',
+  'tests/rework.test.mjs', 'tests/rework-perks.test.mjs', 'tests/kakuja-rework.test.mjs', 'tests/kakuja-biology.test.mjs', 'tests/kakuja-defense.test.mjs', 'tests/kakuja-panel-inheritance.test.mjs', 'tests/custom-skill-images.test.mjs',
   'tests/catalog-filtering.test.mjs', 'tests/rounding.test.mjs', 'tests/rounding-vats.test.mjs',
   'tests/legacy-accuracy-text.test.mjs',
   'tests/endgame-accuracy-cap.test.mjs',

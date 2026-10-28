@@ -112,3 +112,20 @@ test('atributos fracionários preservados na ficha antiga não criam penalidades
  assert.equal(quinqueCarrierBonuses(boosted).attributes.vigor,2);
  assert.equal(calculateQuinque(q,boosted).activeAttributes.vigor,base.activeAttributes.vigor+2);
 });
+
+test('formas, perks e autorais da Kakuja não chegam à Quinque nem ampliam os extras percentuais recebidos',()=>{
+ const person=owner({weaponKind:'kagune',kaguneType:'Koukaku',kaguneActive:true,
+  perks:{'corpo-pesado':{rank:1},'corpo-leve':{rank:1},'r26-escala-defesa-adaptativa':{rank:1},'r26-escala-acuracia-progressiva':{rank:1}},
+  customSkills:[skill([effect('hit-dice',5),effect('block-dice',3),effect('dodge-dice',4),effect('damage-steps',8,'physical')])],
+  kakuja:{active:false,complete:true,cannibalPE:1000,selectedPerks:['k20-olhar-do-rei','k20-soberano-eterno'],customSkills:[skill([effect('hit-dice',20),effect('block-dice',17),effect('dodge-dice',19),effect('damage-steps',60),effect('attribute-bonus',10,'kagune','vigor')],{id:'kakuja-authorial'})]}});
+ const active={...person,kakuja:{...person.kakuja,active:true}};
+ assert.ok(calculateCharacter(active).kakujaBonuses.block>0);
+ assert.ok(calculateCharacter(active).kakujaBonuses.dodge>0);
+ const inherited=quinqueCarrierBonuses(person);
+ assert.ok(inherited.hit>=5);assert.ok(inherited.block>=4);assert.ok(inherited.dodge>=5);
+ assert.ok(calculateCharacter(person).scaling.bonuses.block>0);
+ assert.deepEqual(quinqueCarrierBonuses(active),inherited);
+ const q=weapon();const before=calculateQuinque(q,person),after=calculateQuinque(q,active);
+ for(const key of ['kaguneTest','blockTest','dodgeTest','kaguneSteps','kaguneDamage','rd'])assert.equal(after[key],before[key],key);
+ assert.deepEqual(after.activeAttributes,before.activeAttributes);
+});

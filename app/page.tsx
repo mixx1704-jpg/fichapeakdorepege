@@ -544,16 +544,21 @@ export default function Home() {
             <KakujaPanel key={sheet.id}
               grade={sheet.grade}
               species={sheet.species}
-              vigor={derived.permanentAttributes.vigor}
-              attributes={derived.activeAttributes}
+              vigor={derived.kakujaAttributes.vigor}
+              attributes={derived.kakujaAttributes}
               maxLife={derived.maxLife}
-              baseRange={derived.distance}
-              baseMovement={derived.movement}
+              baseRange={derived.kakujaKaguneRange}
+              baseMovement={derived.kakujaMovement}
               passiveRegeneration={derived.regeneration}
-              basePenetration={derived.scaling.penetrationPercent}
-              kaguneTest={derived.kaguneTest}
-              kaguneSteps={derived.kaguneSteps}
-              kaguneDurability={derived.kaguneDurability}
+              basePenetration={derived.kakujaKagunePenetration}
+              kaguneTest={derived.kakujaKaguneTest}
+              kaguneSteps={derived.kakujaKaguneSteps}
+              kaguneModifier={derived.kakujaKaguneDamageModifier}
+              kaguneRD={derived.kakujaKaguneRD}
+              kaguneDurability={derived.kakujaKaguneDurability}
+              blockTest={derived.kakujaBlockTest}
+              dodgeTest={derived.kakujaDodgeTest}
+              extraAttacks={derived.kakujaExtraAttacks}
               kaguneFamilies={[...kaguneFamiliesForSheet(sheet)]}
               state={derived.rcSuppressed ? {...sheet.kakuja,active:false} : sheet.kakuja}
               suppressed={derived.rcSuppressed || sheet.vats.kakuhouUntil > sheet.vats.turn}
@@ -592,13 +597,14 @@ function RankControl({ rank, max, availableMax = max, onDown, onUp }: { rank: nu
 
 function AttributeCard({ attributeKey, sheet, derived, copied, onCopy, onSet, onExtra }: {
   attributeKey: AttributeKey; sheet: CharacterSheet;
-  derived: { speciesBonuses: Record<AttributeKey, number>; permanentAttributes: Record<AttributeKey, number>; activeAttributes: Record<AttributeKey, number>; permanentDice: Record<AttributeKey, number>; attributeTests: Record<AttributeKey, string>; primaryAttribute: AttributeKey; kaguneTest: string; looseHitAdjustments: number; purchasedCap: number; customSkillBonuses: CustomSkillBonuses };
+  derived: { speciesBonuses: Record<AttributeKey, number>; permanentAttributes: Record<AttributeKey, number>; activeAttributes: Record<AttributeKey, number>; permanentDice: Record<AttributeKey, number>; attributeTests: Record<AttributeKey, string>; blockTest: string; dodgeTest: string; primaryAttribute: AttributeKey; kaguneTest: string; looseHitAdjustments: number; purchasedCap: number; customSkillBonuses: CustomSkillBonuses };
   copied: string; onCopy: (formula: string, key: string) => void; onSet: (key: AttributeKey, value: number) => void; onExtra: (key: AttributeKey, value: number) => void;
 }) {
   const base = sheet.baseAttributes[attributeKey]; const total = derived.activeAttributes[attributeKey]; const speciesBonus = derived.speciesBonuses[attributeKey]; const customBonus = sheet.customBonuses.attributes[attributeKey]; const skillAttributeBonus = derived.customSkillBonuses.attributeBonus[attributeKey]; const skillDice = derived.customSkillBonuses.attributeDice[attributeKey];
   const acurado = sheet.perks[`acurado-${attributeKey}`] ? 1 : 0; const bodyUpgrade = sheet.kaguneActive && sheet.effects["aprimoramentos-corporais"]?.target === attributeKey ? sheet.effects["aprimoramentos-corporais"].rank : 0;
   const rawBonus = derived.permanentDice[attributeKey] - skillDice; const formula = derived.attributeTests[attributeKey]; const isPrimary = sheet.weaponKind === "kagune" && derived.primaryAttribute === attributeKey;
-  return <article className={`attribute-card ${base > derived.purchasedCap ? "over-cap" : ""}`}><div className="attribute-title"><div><span>{attributeLabels[attributeKey]}</span><p>{attributeDescriptions[attributeKey]}</p></div><b>{attributePurchaseCost(base)} PE</b></div><div className="attribute-value-row"><div className="stepper"><button type="button" onClick={() => onSet(attributeKey, base - 1)} disabled={base <= 0}>−</button><strong>{base}</strong><button type="button" onClick={() => onSet(attributeKey, base + 1)} disabled={!sheet.narrativeLimits && base >= 11}>+</button></div>{(speciesBonus + acurado + bodyUpgrade + customBonus + skillAttributeBonus) !== 0 && <div className="total-value"><span>Total</span><b>{total}</b></div>}</div><div className="bonus-chips">{speciesBonus > 0 && <span>+{speciesBonus} espécie</span>}{acurado > 0 && <span>+1 Acurado</span>}{bodyUpgrade > 0 && <span>+{bodyUpgrade} Kakuhou</span>}{customBonus !== 0 && <span>{customBonus > 0 ? "+" : ""}{customBonus} mesa</span>}{skillAttributeBonus !== 0 && <span>{skillAttributeBonus > 0 ? "+" : ""}{skillAttributeBonus} autoral</span>}{rawBonus > 0 && <span>+{rawBonus} acertos de perk</span>}{skillDice !== 0 && <span>{skillDice > 0 ? "+" : ""}{skillDice} acertos autorais</span>}</div><button className="test-command" type="button" onClick={() => onCopy(formula, attributeKey)}><span>{copied === attributeKey ? "Copiado" : "Teste Rollem"}</span><code>{formula}</code><i>⧉</i></button>{base === 0 && <p className="zero-rule">Atributo 0: um único dado, mantendo os demais acertos.</p>}{isPrimary && <button className="test-command kagune" type="button" onClick={() => onCopy(derived.kaguneTest, `${attributeKey}-kagune`)}><span>{copied === `${attributeKey}-kagune` ? "Copiado" : "Com Kagune"}</span><code>{derived.kaguneTest}</code><i>⧉</i></button>}<label className="extra-dice"><span>Acertos extras / penalidade</span><div><button type="button" onClick={() => onExtra(attributeKey, sheet.extraDice[attributeKey] - 1)}>−</button><input type="number" value={sheet.extraDice[attributeKey]} onChange={(event) => onExtra(attributeKey, Number(event.target.value) || 0)} /><button type="button" onClick={() => onExtra(attributeKey, sheet.extraDice[attributeKey] + 1)}>+</button></div></label></article>;
+  const defense = attributeKey === "vigor" ? { label: "Bloqueio", formula: derived.blockTest, key: "attribute-block" } : attributeKey === "agilidade" ? { label: "Esquiva", formula: derived.dodgeTest, key: "attribute-dodge" } : null;
+  return <article className={`attribute-card ${base > derived.purchasedCap ? "over-cap" : ""}`}><div className="attribute-title"><div><span>{attributeLabels[attributeKey]}</span><p>{attributeDescriptions[attributeKey]}</p></div><b>{attributePurchaseCost(base)} PE</b></div><div className="attribute-value-row"><div className="stepper"><button type="button" onClick={() => onSet(attributeKey, base - 1)} disabled={base <= 0}>−</button><strong>{base}</strong><button type="button" onClick={() => onSet(attributeKey, base + 1)} disabled={!sheet.narrativeLimits && base >= 11}>+</button></div>{(speciesBonus + acurado + bodyUpgrade + customBonus + skillAttributeBonus) !== 0 && <div className="total-value"><span>Total</span><b>{total}</b></div>}</div><div className="bonus-chips">{speciesBonus > 0 && <span>+{speciesBonus} espécie</span>}{acurado > 0 && <span>+1 Acurado</span>}{bodyUpgrade > 0 && <span>+{bodyUpgrade} Kakuhou</span>}{customBonus !== 0 && <span>{customBonus > 0 ? "+" : ""}{customBonus} mesa</span>}{skillAttributeBonus !== 0 && <span>{skillAttributeBonus > 0 ? "+" : ""}{skillAttributeBonus} autoral</span>}{rawBonus > 0 && <span>+{rawBonus} acertos de perk</span>}{skillDice !== 0 && <span>{skillDice > 0 ? "+" : ""}{skillDice} acertos autorais</span>}</div><button className="test-command" type="button" onClick={() => onCopy(formula, attributeKey)}><span>{copied === attributeKey ? "Copiado" : `Teste de ${attributeLabels[attributeKey]}`}</span><code>{formula}</code><i>⧉</i></button>{base === 0 && <p className="zero-rule">Atributo 0: um único dado, mantendo os demais acertos.</p>}{defense && <button className="test-command defense" type="button" title={`Mesmo teste de ${defense.label} do Resumo`} onClick={() => onCopy(defense.formula, defense.key)}><span>{copied === defense.key ? "Copiado" : defense.label}</span><code>{defense.formula}</code><i>⧉</i></button>}{isPrimary && <button className="test-command kagune" type="button" onClick={() => onCopy(derived.kaguneTest, `${attributeKey}-kagune`)}><span>{copied === `${attributeKey}-kagune` ? "Copiado" : "Ataque da Kagune"}</span><code>{derived.kaguneTest}</code><i>⧉</i></button>}<label className="extra-dice"><span>Acertos extras / penalidade</span><div><button type="button" onClick={() => onExtra(attributeKey, sheet.extraDice[attributeKey] - 1)}>−</button><input type="number" value={sheet.extraDice[attributeKey]} onChange={(event) => onExtra(attributeKey, Number(event.target.value) || 0)} /><button type="button" onClick={() => onExtra(attributeKey, sheet.extraDice[attributeKey] + 1)}>+</button></div></label></article>;
 }
 
 
