@@ -1,5 +1,6 @@
 import type { AttributeKey, KaguneFamily, Perk, SpeciesId } from "./data";
 import { endgameProperties } from './endgame-properties';
+import { perkKaguneRequirementsMet } from './bikaku-access';
 
 /** Each percentage uses the same unmodified subtotal, once; bonuses never compound. */
 export const SCALING_PERCENT_CAP = 75;
@@ -15,6 +16,7 @@ export interface ScalingContext {
   level?: number;
   species?: SpeciesId;
   kaguneTypes?: KaguneFamily[];
+  primaryKaguneType?: KaguneFamily;
   weaponKind?: "kagune" | "quinque" | "arata" | "none" | string;
   quinque?: boolean;
   hasRC?: boolean;
@@ -115,7 +117,7 @@ function isEligible(definition: ScalingDefinition, context: ScalingContext): boo
   if (perk.requiredWeapon && perk.requiredWeapon !== context.weaponKind) return false;
   if (perk.requiresRC && context.hasRC === false) return false;
   if (perk.species && (!context.species || !perk.species.includes(context.species))) return false;
-  if (perk.kaguneTypes?.some(family => !context.kaguneTypes?.includes(family))) return false;
+  if (!perkKaguneRequirementsMet(perk, context)) return false;
   if (perk.attribute && (context.attributes[perk.attribute] || 0) < (perk.min || 0)) return false;
   if (Object.entries(perk.requirements || {}).some(([attribute, min]) => (context.attributes[attribute as AttributeKey] || 0) < Number(min))) return false;
   if (perk.requiredPerk) {

@@ -27,6 +27,10 @@ export function applyCharacterTacticalAction(sheet: CharacterSheet, action: Tact
     turn: sheet.vats.turn,
     damageSteps: sheet.weaponKind === 'kagune' && sheet.kaguneActive ? derived.kaguneSteps : derived.physicalSteps,
     damageFormula: sheet.weaponKind === 'kagune' && sheet.kaguneActive ? derived.kaguneDamage : derived.physicalDamage,
+    damageMultiplier: sheet.weaponKind === 'kagune' && sheet.kaguneActive ? derived.packEffects.damageMultiplier.kagune : derived.packEffects.damageMultiplier.physical,
+    rcDiscount: derived.packEffects.rcDiscount,
+    rcCostIncrease: derived.packEffects.rcCostIncrease,
+    rcCostMultiplier: derived.packEffects.rcCostMultiplier,
     penetrationPercent:derived.scaling.penetrationPercent,
     hitBonus: [...(sheet.weaponKind === 'kagune' && sheet.kaguneActive ? derived.kaguneTest : derived.physicalHitTest).matchAll(/[+-]\d+/g)].reduce((sum, match) => sum + Number(match[0]), 0),
   };

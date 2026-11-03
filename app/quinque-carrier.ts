@@ -29,12 +29,12 @@ export function quinqueCarrierBonuses(carrier?: QuinqueCarrier): QuinqueCarrierB
   for (const key of attributeKeys) {
     bonuses.attributes[key] = Math.floor(derived.activeAttributes[key] - Math.floor(owner.baseAttributes[key] + derived.speciesBonuses[key]));
     bonuses.attributeDice[key] = Math.floor(owner.extraDice[key] + derived.permanentDice[key]);
-    bonuses.attributeChecks[key] = Math.floor(derived.reworkBonuses.attributeChecks[key]);
+    bonuses.attributeChecks[key] = Math.floor(derived.reworkBonuses.attributeChecks[key] + derived.packEffects.bonuses.attributeChecks[key]);
   }
   const weaponActive = owner.weaponKind !== 'nenhum' && !derived.rcSuppressed && owner.vats.kakuhouUntil <= owner.vats.turn && (owner.kaguneActive || (Boolean(owner.effects['forma-versatil']) && kaguneFamiliesForSheet(owner).has('Koukaku') && owner.damageContext.koukakuMode !== 'normal'));
   // A purchase affecting both attack channels is one source, not two purchases.
   for (const [id, selection] of Object.entries(normalizePerkPurchases(owner.perks))) {
-    const perk = calculateReworkBonuses({ perks: { [id]: selection }, attributes: derived.activeAttributes, weaponActive, level: owner.grade, species: owner.species, kaguneTypes: [...kaguneFamiliesForSheet(owner)] });
+    const perk = calculateReworkBonuses({ perks: { [id]: selection }, attributes: derived.activeAttributes, weaponActive, level: owner.grade, species: owner.species, kaguneTypes: [...kaguneFamiliesForSheet(owner)], primaryKaguneType: owner.kaguneType, weaponKind: owner.weaponKind });
     bonuses.hit += !perk.physicalHit ? perk.kaguneHit : !perk.kaguneHit ? perk.physicalHit : Math.max(perk.physicalHit, perk.kaguneHit);
     bonuses.block += perk.block;
     bonuses.dodge += perk.dodge;
@@ -56,6 +56,9 @@ export function quinqueCarrierBonuses(carrier?: QuinqueCarrier): QuinqueCarrierB
   bonuses.hit += Math.max(derived.scaling.bonuses.physicalHit, derived.scaling.bonuses.kaguneHit);
   bonuses.block += derived.scaling.bonuses.block;
   bonuses.dodge += derived.scaling.bonuses.dodge;
+  bonuses.hit += derived.packEffects.carrierHit;
+  bonuses.block += derived.packEffects.bonuses.block;
+  bonuses.dodge += derived.packEffects.bonuses.dodge;
   bonuses.hit = Math.floor(bonuses.hit);
   bonuses.block = Math.floor(bonuses.block);
   bonuses.dodge = Math.floor(bonuses.dodge);

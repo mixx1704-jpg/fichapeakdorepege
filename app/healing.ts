@@ -51,7 +51,7 @@ export function rollHealing(technique: HealingTechnique, roll: (sides: number) =
   return { formula: healingFormula(technique), rolls, total: rolls.reduce((sum, value) => sum + value, 0) };
 }
 
-export type HealingResult = { turn: number; id: string; name: string; formula: string; rolls: number[]; total: number; applied: number; rcCost: number; ally: boolean; target: string; effect: string; restored: string };
+export type HealingResult = { turn: number; id: string; name: string; formula: string; rolls: number[]; total: number; applied: number; rcCost: number; ally: boolean; target: string; effect: string; restored: string; receivedMultiplier?:number };
 
 export function normalizeHealingResult(input: unknown): HealingResult | null {
   if (!input || typeof input !== 'object') return null;
@@ -59,14 +59,16 @@ export function normalizeHealingResult(input: unknown): HealingResult | null {
   const technique = healingTechniques.find(item => item.id === raw.id);
   if (!technique) return null;
   const positiveInteger = (value: unknown) => Math.max(0, Math.floor(Number.isFinite(Number(value)) ? Number(value) : 0));
-  return { turn: positiveInteger(raw.turn), id: technique.id, name: technique.name, formula: healingFormula(technique), rolls: Array.isArray(raw.rolls) ? raw.rolls.slice(0, 12).map(value => Math.min(12, Math.max(1, positiveInteger(value)))) : [], total: positiveInteger(raw.total), applied: positiveInteger(raw.applied), rcCost: technique.rc, ally: raw.ally === true, target: typeof raw.target === 'string' ? raw.target : '', effect: typeof raw.effect === 'string' ? raw.effect : '', restored: typeof raw.restored === 'string' ? raw.restored : '' };
+  const rcCost=technique.rc===0?0:Math.max(1,Math.min(9999,raw.rcCost==null?technique.rc:positiveInteger(raw.rcCost)));
+  const receivedMultiplier=raw.receivedMultiplier!=null&&Number.isFinite(Number(raw.receivedMultiplier))&&raw.ally!==true?Math.max(0,Math.min(2,Number(raw.receivedMultiplier))):1;
+  return { turn: positiveInteger(raw.turn), id: technique.id, name: technique.name, formula: healingFormula(technique), rolls: Array.isArray(raw.rolls) ? raw.rolls.slice(0, 12).map(value => Math.min(12, Math.max(1, positiveInteger(value)))) : [], total: positiveInteger(raw.total), applied: positiveInteger(raw.applied), rcCost, ally: raw.ally === true, target: typeof raw.target === 'string' ? raw.target : '', effect: typeof raw.effect === 'string' ? raw.effect : '', restored: typeof raw.restored === 'string' ? raw.restored : '',...(receivedMultiplier!==1?{receivedMultiplier}:{}) };
 }
 
 export function healingSummary(result: HealingResult) {
   return [
     `${result.name} · turno ${result.turn} · ${result.rcCost} RC`,
     `Alvo: ${result.ally ? 'aliado · ' : ''}${result.target}.`,
-    result.rolls.length ? `Cura ${result.formula}: [${result.rolls.join(', ')}] = ${result.total} PV.${result.ally ? ' Aplique na ficha do aliado.' : ` Recuperação efetiva: ${result.applied} PV.`}` : '',
+    result.rolls.length ? `Cura ${result.formula}: [${result.rolls.join(', ')}] = ${result.total} PV.${result.receivedMultiplier!=null?` Cura recebida ×${result.receivedMultiplier}: ${Math.floor(result.total*result.receivedMultiplier)} PV.`:''}${result.ally ? ' Aplique na ficha do aliado.' : ` Recuperação efetiva: ${result.applied} PV.`}` : '',
     result.effect ? `Condição removida: ${result.effect}.` : '', result.restored ? `Restaurado: ${result.restored}.` : '',
   ].filter(Boolean).join('\n');
 }

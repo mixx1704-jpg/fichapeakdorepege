@@ -3,6 +3,7 @@ import { masteryEvolutions } from "./kakuhou-mastery";
 import thousandPerks from "./thousand-perks.json";
 import { reworkPerks } from "./rework-perks";
 import { reworkText } from "./rework-rules";
+import { newPackPerks } from "./new-pack-catalog";
 
 export { combatManeuvers };
 
@@ -128,6 +129,7 @@ const perk = (
 const ghoulSpecies: SpeciesId[] = ["ghoul", "ghoul-dominante", "ghoul-artificial"];
 
 export const perks: Perk[] = [
+  ...newPackPerks,
   ...reworkPerks,
   perk("terapeuta", "Terapeuta", "Genérica", 5, "A terapia pode recuperar Sanidade."),
   perk("atante-medicina", "Atante de medicina", "Genérica", 6, "+1 dado em Medicina; toda cura executada recebe +Grau."),

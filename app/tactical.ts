@@ -66,6 +66,8 @@ export interface TacticalContext {
   level?:number;species?:string;attributes?:Partial<Record<AttributeKey,number>>;ownedPerks?:Record<string,{rank:number}>|readonly string[];
   currentRC?:number;maxLife?:number;currentLife?:number;damageSteps?:number;hitBonus?:number;rd?:number;control?:number;
   weaponKind?:string;kaguneType?:string;isRCSuppressed?:boolean;weaponActive?:boolean;weaponOnly?:boolean;turn?:number;die?:number;damageFormula?:string;penetrationPercent?:number;
+  rcDiscount?:number;rcCostIncrease?:number;rcCostMultiplier?:number;
+  damageMultiplier?:number;
 }
 export interface TacticalInputs {
   target:string;target2:string;incomingDamage:number;damage:number;targetRD:number;target2RD:number;
@@ -113,6 +115,14 @@ export function normalizeTacticalState(value?:unknown):TacticalState {
   };
 }
 function sync(state:TacticalState,turn:number){const next=Math.max(state.turn,num(turn,state.turn,1));return {...state,turn:next,aegis:state.aegis&&state.aegis.until>next?state.aegis:null,mark:state.mark&&state.mark.until>next?state.mark:null,retaliation:state.retaliation&&state.retaliation.expires>next?state.retaliation:null,stance:state.stance&&state.stance.until>next?state.stance:null,trap:state.trap&&state.trap.expires>next?state.trap:null,credit:state.credit&&state.credit.expires>next?state.credit:null,binding:state.binding&&state.binding.until>next?state.binding:null};}
+/** Event modifiers apply once; the existing RC credit can still pay the resulting cost in full. */
+export function tacticalRCCost(baseCost:number,state:Pick<TacticalState,'credit'>,c:TacticalContext={}) {
+  const base=num(baseCost);
+  if(!base)return 0;
+  const multiplier=Number.isFinite(c.rcCostMultiplier)?Math.max(0,c.rcCostMultiplier!):1;
+  const adjusted=Math.max(1,Math.floor((base-num(c.rcDiscount)+num(c.rcCostIncrease))*multiplier));
+  return Math.max(0,adjusted-num(state.credit?.amount));
+}
 export function tacticalAvailability(technique:TacticalTechnique,state:TacticalState,c:TacticalContext={}):string {
   if(!owned(c,technique.id))return 'Técnica não adquirida.';
   if(num(c.level,1,1,20)<technique.level)return `Requer LEVEL ${technique.level}.`;
@@ -121,7 +131,7 @@ export function tacticalAvailability(technique:TacticalTechnique,state:TacticalS
   if(technique.weaponOnly&&(c.weaponActive===false||!['kagune','quinque'].includes(c.weaponKind||'')))return 'A arma precisa estar disponível e ativa.';
   if(technique.requiresRC&&!hasRC(c))return 'Exige um organismo ou arma com RC.';
   if(technique.requiresRC&&c.isRCSuppressed)return 'RC suprimido.';
-  const cost=Math.max(0,technique.rc-(state.credit?.amount||0));
+  const cost=tacticalRCCost(technique.rc,state,c);
   if(num(c.currentRC)<cost)return `RC insuficiente: ${cost} necessários.`;
   if(state.usedTurn[technique.slot]===state.turn)return `${technique.slot==='reaction'?'Reação':'Ação'} tática já usada neste turno.`;
   if(technique.usesSession&&state.usedSession.includes(technique.id))return 'Já usada nesta sessão.';
@@ -162,7 +172,7 @@ export function tacticalPreview(technique:TacticalTechnique,state:TacticalState,
     case 'seismic':case 'aegis':case 'maximum':case 'flurry':case 'disassemble':case 'mark':case 'exchange':{const value=endgameTacticalPreview(technique,state,c);description=value.description;amount=value.amount;lifeDelta=value.lifeDelta;penetration=value.penetration;break;}
     case 'release-rc':description='Encerre sua supressão de RC. A reserva atual permanece a mesma; exaustão por falta de RC não é removida.';break;
   }
-  return {description,lifeDelta,amount,penetration,rcCost:Math.max(0,technique.rc-(state.credit?.amount||0)),testTotal,dc};
+  return {description,lifeDelta,amount,penetration,rcCost:tacticalRCCost(technique.rc,state,c),testTotal,dc};
 }
 export function tacticalSummary(receipt:TacticalReceipt|null):string{return receipt?`${receipt.name} · T${receipt.turn} · sessão ${receipt.session}\n${receipt.rcCost} RC${receipt.lifeDelta?` · Vida ${receipt.lifeDelta>0?'+':''}${receipt.lifeDelta}`:''}\n${receipt.text}\nResolução na mesa: confirme alvos, acerto, defesas e condições. Nenhuma ficha de outro alvo foi alterada.`:'Nenhuma técnica resolvida.';}
 

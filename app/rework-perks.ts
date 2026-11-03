@@ -7,6 +7,7 @@ import { criticalPerks } from "./critical";
 import { TACTICAL_PERK_DEFINITIONS, tacticalCapstones } from "./tactical";
 import { normalizePerkPurchases } from "./perk-migrations";
 import { endgameProperties } from "./endgame-properties";
+import { perkKaguneRequirementsMet } from './bikaku-access';
 
 /** Numeric effects are the source of truth for both the card and the calculation. */
 export interface ReworkBonuses {
@@ -466,6 +467,9 @@ export interface ReworkBonusContext {
   level?: number;
   species?: SpeciesId;
   kaguneTypes?: KaguneFamily[];
+  primaryKaguneType?: KaguneFamily;
+  weaponKind?: string;
+  quinque?: boolean;
 }
 
 export function calculateReworkBonuses(context: ReworkBonusContext): ReworkBonuses {
@@ -481,7 +485,7 @@ export function calculateReworkBonuses(context: ReworkBonusContext): ReworkBonus
     if (!rank || (weaponOnly && !context.weaponActive)) continue;
     if (context.level !== undefined && context.level < (perk.minGrade || 1)) continue;
     if (context.species && perk.species && !perk.species.includes(context.species)) continue;
-    if (context.kaguneTypes && perk.kaguneTypes?.some(family => !context.kaguneTypes!.includes(family))) continue;
+    if (!perkKaguneRequirementsMet(perk, context)) continue;
     if (perk.attribute && (context.attributes[perk.attribute] || 0) < (perk.min || 0)) continue;
     for (const [key, value] of Object.entries(modifiers)) {
       if(key === 'weaponRD' && !context.weaponActive) continue;
