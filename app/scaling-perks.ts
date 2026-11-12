@@ -4,7 +4,7 @@ import { perkKaguneRequirementsMet } from './bikaku-access';
 
 /** Each percentage uses the same unmodified subtotal, once; bonuses never compound. */
 export const SCALING_PERCENT_CAP = 75;
-export const PENETRATION_PERCENT_CAP = 50;
+export const PENETRATION_PERCENT_CAP = Number.POSITIVE_INFINITY;
 export const scalingStats = ["life", "sanity", "rc", "rd", "physicalHit", "kaguneHit", "block", "dodge", "physicalSteps", "kaguneSteps", "physicalDamage", "kaguneDamage"] as const;
 export type ScalingStat = typeof scalingStats[number];
 export type ScalingBase = Partial<Record<ScalingStat, number>>;
@@ -76,7 +76,7 @@ for (const [id, name, level, cost, percent] of penetrationRows) definitions.push
     id: `r26-penetracao-${id}`, name, minGrade: level, cost, maxRank: 1,
     category: "Combate", sourceId: "REWORK 2026", supplement: true, equipmentCompatible: true,
     useType: "Passiva · calculadora de ataque", requirement: `LEVEL ${level}+`,
-    description: `Ataques físicos e de Kagune/Quinque ignoram ${percent}% da RD do alvo. Use somente a maior fonte de penetração, limitada a 50%. RD ignorada = piso(RD do alvo × ${percent}/100); a RD restante ainda protege normalmente. A calculadora mostra RD restante e dano final.`,
+    description: `Ataques físicos e de Kagune/Quinque ignoram ${percent}% da RD do alvo. Some as fontes de penetração uma vez, sem teto. Acima de 100%, cada ponto excedente concede +1% de Passos de Dano. RD ignorada = piso(RD do alvo × ${percent}/100); a RD restante ainda protege normalmente. A calculadora mostra RD restante e dano final.`,
   },
 });
 
@@ -85,7 +85,7 @@ const poisonRows: [string, string, number, number, string][] = [
   ["concentrado", "Veneno Concentrado", 4, 8, "A potência do veneno tóxico passa de 3% para 4% da Vida máxima do alvo por carga e por turno. O teto permanece 16% da Vida máxima por turno, antes da mitigação."],
   ["persistente", "Veneno Persistente", 6, 10, "O veneno dura +2 turnos: 5 turnos ao receber uma dose aceita. A duração é renovada, nunca somada indefinidamente."],
   ["acumulativo", "Veneno Acumulativo", 8, 12, "O limite de veneno sobe em +1 carga, para 4. Cada dose aceita acrescenta uma carga até o limite; o dano tóxico bruto não ultrapassa 16% da Vida máxima por turno."],
-  ["corrosivo", "Veneno Corrosivo", 12, 18, "Libera o tipo corrosivo: sem dano direto, reduz 5% da RD do alvo por carga, até 20%, enquanto durar. Usa a maior fonte de penetração/redução percentual de RD, com teto global de 50%; não soma percentuais em cascata."],
+  ["corrosivo", "Veneno Corrosivo", 12, 18, "Libera o tipo corrosivo: sem dano direto, reduz 5% da RD do alvo por carga, até 20%, enquanto durar. Soma sua redução à penetração, uma vez sobre a RD original; o excesso acima de 100% concede Passos de Dano percentuais."],
   ["paralisante", "Veneno Neurotóxico", 15, 22, "Libera o tipo neurotóxico: sem dano direto, impõe −mínimo(10, piso(Controle do aplicador/3) × cargas) acertos em ataques e Desvio até expirar. Não remove ações ou reações."],
 ];
 export const poisonPerks: Perk[] = poisonRows.map(([id, name, level, cost, effect]) => ({
@@ -102,7 +102,7 @@ export const colossusPerk: Perk = {
   category: "Combate", sourceId: "REWORK 2026", supplement: true, location: "vantagens",
   requiredWeapon: "kagune", equipmentCompatible: false,
   useType: "Ativa · união de partes", requirement: "LEVEL 1+ · Kagune com partes extras",
-  description: "Una todas as partes em uma única grande Kagune. Para N partes, sacrifique N − 1 extras; pares = piso((N − 1)/2). Perca 1 acerto em testes de Agilidade por par, ganhe +1 metro de alcance base e +1 acerto de Kagune por par. A parte unida recebe piso(soma da Dureza de todas as partes/2), piso(soma da RD de todas as partes/2) e a soma do dano de todas as partes unidas. Bônus gerais de personagem entram uma única vez no ataque unido; o dano próprio e os efeitos específicos das partes continuam somando. A ficha permite ativar, conferir os totais e copiar o ataque; ao desfazer, as partes e a mobilidade originais retornam.",
+  description: "Una todas as partes em uma única grande Kagune. Para N tentáculos usados, ganhe +2 acertos de Kagune a cada par completo: 2 × piso(N/2). A parte unida recebe piso(soma da Dureza de todas as partes/2), a soma integral da RD e o mesmo dano de acertar todas as partes unidas. Com 8 tentáculos, são +8 acertos, dureza de 4 partes e RD de 8 partes. Cada par completo de partes extras mantém +1 metro de alcance base e −1 acerto em testes de Agilidade. Bônus gerais de personagem entram uma única vez no ataque unido; o dano próprio e os efeitos específicos das partes continuam somando. A Kakuja herda o dano, a dureza e a RD da fusão. A ficha permite ativar, conferir os totais e copiar o ataque; ao desfazer, as partes e a mobilidade originais retornam.",
 };
 
 export const scalingPerks: Perk[] = [...definitions.map(({ perk }) => perk), ...poisonPerks];
@@ -159,7 +159,7 @@ export function calculateScalingBonuses(context: ScalingContext, base: ScalingBa
       const key = stat as ScalingStat;
       percentages[key] = Math.min(SCALING_PERCENT_CAP, percentages[key] + nonnegativeInteger(percent));
     }
-    penetrationPercent = Math.min(PENETRATION_PERCENT_CAP, Math.max(penetrationPercent, definition.penetrationPercent || 0));
+    penetrationPercent += Math.max(0, definition.penetrationPercent || 0);
   }
   for(const [id,property] of Object.entries(endgameProperties)){
     if((context.level||1)<20||Math.floor(context.perks[id]?.rank||0)<=0)continue;
@@ -186,7 +186,7 @@ export function applyPartialPenetration(rawDamage: number, targetRD: number, pen
   const damage = nonnegativeInteger(rawDamage);
   const rd = nonnegativeInteger(targetRD);
   const percentage = Math.min(PENETRATION_PERCENT_CAP, nonnegativeInteger(penetrationPercent));
-  const ignoredRD = Math.floor(rd * percentage / 100);
+  const ignoredRD = Math.floor(rd * Math.min(100, percentage) / 100);
   const remainingRD = rd - ignoredRD;
-  return { rawDamage: damage, targetRD: rd, penetrationPercent: percentage, ignoredRD, remainingRD, damage: Math.max(0, damage - remainingRD) };
+  return { rawDamage: damage, targetRD: rd, penetrationPercent: percentage, excessStepsPercent: Math.max(0,percentage-100), ignoredRD, remainingRD, damage: Math.max(0, damage - remainingRD) };
 }

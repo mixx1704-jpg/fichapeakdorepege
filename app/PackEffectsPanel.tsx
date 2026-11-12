@@ -40,7 +40,14 @@ function effectLines(effects: PackEffects) {
     ['Vida máxima', effects.lifeMultiplier], ['RC máximo', effects.rcMultiplier], ['Regeneração', effects.regenMultiplier],
     ['Alcance', effects.rangeMultiplier], ['Deslocamento', effects.movementMultiplier], ['Custo de RC', effects.rcCostMultiplier],
     ['Cura recebida', effects.healingReceivedMultiplier],
+    ['Passos físicos', effects.stepsMultiplier.physical], ['Passos de Kagune', effects.stepsMultiplier.kagune], ['Passos de Kakuja', effects.stepsMultiplier.kakuja],
+    ['Dureza da Kagune', effects.kaguneDurabilityMultiplier], ['Acerto ofensivo total', effects.offensiveAccuracyMultiplier], ['Desvio total', effects.dodgeMultiplier],
+    ['Dano recebido no contexto confirmado', effects.incomingDamageMultiplier],
   ] as Array<[string, number]>) if (value !== 1) lines.push(`${label}: ${times(value)}`);
+  if (effects.baseLifeLossPercent) lines.push(`Perda permanente de Vida base: ${effects.baseLifeLossPercent * 100}%`);
+  if (effects.kakujaHit) lines.push(`Acerto de Kakuja: ${signed(effects.kakujaHit)}`);
+  if (effects.kakujaAttacks) lines.push(`Ataques de Kakuja: ${signed(effects.kakujaAttacks)}`);
+  if (effects.dodgeDisabled) lines.push('Desvio indisponível durante Postura Sem Retorno');
   if (effects.penetrationPercent) lines.push(`Penetração: ${effects.penetrationPercent}%`);
   if (effects.targetRDReduction) lines.push(`RD do alvo contra você: −${effects.targetRDReduction}`);
   if (effects.rcDiscount) lines.push(`Desconto de RC: −${effects.rcDiscount}`);
@@ -76,13 +83,16 @@ export function PackEffectsPanel({ effects, value, onChange, currentRC, onRCChan
   };
   const clear = (perkId?: string) => {
     setCopied(''); setPayment(''); setFallback('');
-    if (!perkId) { onChange({}); return; }
-    const next = { ...conditions }; delete next[perkId]; onChange(next);
+    const neurose = conditions['r26-revisao-009']?.value ? { value: 1 } : undefined;
+    if (!perkId) { onChange(neurose ? { 'r26-revisao-009': neurose } : {}); return; }
+    const next = { ...conditions }; delete next[perkId];
+    if (perkId === 'r26-revisao-009' && neurose) next[perkId] = neurose;
+    onChange(next);
   };
   const controlValue = (control: PackControl) => conditions[control.perkId]?.[control.key] ?? control.defaultValue ?? (control.type === 'toggle' ? false : control.type === 'counter' ? 0 : 'none');
   const receiptText = (receipt: PackReceipt) => [
     receipt.label,
-    receipt.costRC ? `Custo: ${packRCCost(receipt.costRC, effects)} RC${packRCCost(receipt.costRC,effects) !== receipt.costRC ? ` (${receipt.costRC} antes dos modificadores)` : ''}.` : '',
+    receipt.costRC ? `Custo: ${(receipt.ignoreRCModifiers ? whole(receipt.costRC) : packRCCost(receipt.costRC, effects))} RC${(receipt.ignoreRCModifiers ? whole(receipt.costRC) : packRCCost(receipt.costRC,effects)) !== receipt.costRC ? ` (${receipt.costRC} antes dos modificadores)` : ''}.` : '',
     receipt.costLife ? `Sacrifício: ${whole(receipt.costLife)} Vida.` : '',
     receipt.heal ? `Cura: ${whole(receipt.heal)} Vida, até a Vida faltante.` : '',
     receipt.restoreRC ? `Recuperação: ${whole(receipt.restoreRC)} RC, até a reserva máxima.` : '',
@@ -91,7 +101,7 @@ export function PackEffectsPanel({ effects, value, onChange, currentRC, onRCChan
   ].filter(Boolean).join('\n');
   const pay = (receipt: PackReceipt) => {
     if (receipt.disabled) return;
-    const rc = receipt.costRC ? packRCCost(receipt.costRC, effects) : 0;
+    const rc = receipt.costRC ? (receipt.ignoreRCModifiers ? whole(receipt.costRC) : packRCCost(receipt.costRC, effects)) : 0;
     const life = whole(receipt.costLife);
     if ((rc && (currentRC === undefined || !onRCChange || currentRC < rc)) || (life && (currentLife === undefined || !onLifeChange || currentLife <= life))) return;
     if (rc && onRCChange && currentRC !== undefined) onRCChange(Math.max(0, whole(currentRC) - rc));
@@ -129,7 +139,7 @@ export function PackEffectsPanel({ effects, value, onChange, currentRC, onRCChan
           </label>)}</div>}
           {controls.filter(control => control.type === 'toggle').map(control => <label className="vats-check" key={`${key}-${control.key}`}><input type="checkbox" checked={Boolean(controlValue(control))} onChange={event => patch(control, event.target.checked)} />{control.label}</label>)}
           {receipts.map((receipt, index) => {
-            const rc = receipt.costRC ? packRCCost(receipt.costRC, effects) : 0;
+            const rc = receipt.costRC ? (receipt.ignoreRCModifiers ? whole(receipt.costRC) : packRCCost(receipt.costRC, effects)) : 0;
             const life = whole(receipt.costLife);
             const canPay = !receipt.disabled && (!rc || (currentRC !== undefined && !!onRCChange && currentRC >= rc)) && (!life || (currentLife !== undefined && !!onLifeChange && currentLife > life));
             const showPayment = (rc > 0 && onRCChange && currentRC !== undefined) || (life > 0 && onLifeChange && currentLife !== undefined);

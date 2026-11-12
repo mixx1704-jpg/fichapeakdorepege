@@ -2,7 +2,7 @@
 import {tailAttackBudget} from './tail-management';
 import { useState } from 'react';
 import { HealingPanel } from './HealingPanel';
-import { regions, injuryGroups, injuryByName, penalties, passivePreview, adjustTest, isRCSuppressed, type RegionId, type VatsState, type VatsConfig, type VatsAction } from './vats-engine';
+import { regions, injuryGroups, injuryByName, penalties, passivePreview, adjustTest, isRCSuppressed, vatsReceivedDamage, type RegionId, type VatsState, type VatsConfig, type VatsAction } from './vats-engine';
 
 const shapes:Record<RegionId,string>={
  head:'M140 23 Q115 23 117 49 L123 69 135 78 146 78 158 68 164 45 Q164 23 140 23Z',
@@ -34,7 +34,8 @@ export function VatsPanel({state:v,config:c,name,onAction:act}:{state:VatsState;
    </div><div className="monitor-legend"><span>● Íntegro</span><span>● Ferido</span><span>● Crítico</span></div><p className="monitor-footnote">Cada região usa a Vida máxima da ficha. Ferimentos permanecem ao trocar de aba ou personagem.</p></section>
    <section className="region-inspector"><span className="eyebrow">REGIÃO SELECIONADA</span><h2>{region[1]}</h2><div className="region-hp"><b>{hp(selected)}</b><span>/ {c.maxLife} PV</span><small>{r.destroyed?'DESTRUÍDO':pct(selected)<=25?'CRÍTICO':pct(selected)<100?'FERIDO':'ÍNTEGRO'}</small></div><div className="integrity-bar"><i style={{width:`${pct(selected)}%`}}/></div>
     <div className="damage-controls"><label>Quantidade<input aria-label="Quantidade de dano ou cura" type="number" min="0" value={amount} onChange={e=>setAmount(Math.max(0,Number(e.target.value)||0))}/></label><button type="button" className="blood-button" disabled={!amount} onClick={()=>act({type:'damage',region:selected,amount,reduceRD:useRD})}>Aplicar dano</button><button type="button" disabled={!amount||r.destroyed} onClick={()=>act({type:'heal',region:selected,amount})}>Curar</button></div>
-    <label className="vats-check"><input type="checkbox" checked={useRD} onChange={e=>setUseRD(e.target.checked)}/>Descontar RD da ficha ({c.rd})<b>{Math.max(0,amount-(useRD?c.rd:0)-v.fortressBonus)} dano líquido</b></label>
+    <label className="vats-check"><input type="checkbox" checked={useRD} onChange={e=>setUseRD(e.target.checked)}/>Descontar RD da ficha ({c.rd})<b>{vatsReceivedDamage(Math.max(0,amount-(useRD?c.rd:0)-v.fortressBonus),c)} dano líquido</b></label>
+    {c.incomingDamageMultiplier!==undefined&&c.incomingDamageMultiplier!==1&&<p className="vats-help">Condição ativa: dano recebido ×{c.incomingDamageMultiplier.toLocaleString('pt-BR')}, aplicado após a RD.</p>}
     {r.effects.includes('Costelas Quebradas')&&<p className="vats-warning">Pancada no tronco: +1 Passo no dano do atacante antes de rolar.</p>}
     {v.fortressBonus>0&&<p className="vats-help">Fortaleza: +{v.fortressBonus} RD já descontados no próximo dano.</p>}<div className="region-minor"><button type="button" onClick={()=>act({type:r.destroyed?'rebuild':'destroy',region:selected})}>{r.destroyed?'Reconstruir · decisão da mesa':'Marcar região destruída'}</button></div>
     <div className="effect-picker"><label htmlFor="injury-select">Aplicar condição</label><select id="injury-select" value={effect} onChange={e=>setEffect(e.target.value)}><option value="">Escolha um efeito…</option>{[['blood','Sangue'],[region[2],'Região'],['global','Posicionamento e colapso']].map(([key,label])=><optgroup key={key} label={label}>{injuryGroups[key].map(([n])=><option key={n} value={n} disabled={actions.includes(n)}>{n}</option>)}</optgroup>)}</select>{effect&&<div className="injury-preview"><b>{injuryByName[effect][1]}</b><p>{injuryByName[effect][2]}</p><button type="button" onClick={()=>{act({type:'add',region:selected,effect});setEffect('');}}>Aplicar efeito</button></div>}</div>

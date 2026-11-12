@@ -2,10 +2,12 @@
 
 import { useMemo, useRef, useState } from "react";
 import { formatDamage } from "./damage-dice";
+import { sumPartDamage } from "./colosso";
+import { combineMultipliers } from './numeric-modifiers';
 import { KakujaImageSlot } from "./KakujaImages";
 import { calculateKakujaPerkBonuses, kakujaPerks, kakujaPerksCost, kakujaPEKPerksCost } from "./kakuja-perks";
-import { CustomSkillsPanel, customSkillsCost, normalizeCustomSkills } from "./CustomSkillsPanel";
-import {calculateKakujaBiology,applyKakujaBiology} from './kakuja-biology';
+import { CustomSkillsPanel, calculateCustomSkillBonuses, customSkillsCost, normalizeCustomSkills } from "./CustomSkillsPanel";
+import {calculateKakujaBiology} from './kakuja-biology';
 import {KakujaBiologyPanel} from './KakujaBiologyPanel';
 import { KakujaPerksPanel } from "./KakujaPerksPanel";
 import {KakujaApexPanel} from './KakujaApexPanel';
@@ -27,6 +29,7 @@ import {
 } from "./kakuja-data";
 
 type Props = {
+  turn?:number;
   suppressed?: boolean;
   attributes?:Record<string,number>;maxLife?:number;baseRange?:number;baseMovement?:number;passiveRegeneration?:number;basePenetration?:number;
   grade: number;
@@ -38,6 +41,15 @@ type Props = {
   dodgeTest?: string;
   kaguneModifier?: number;
   kaguneRD?: number;
+  kaguneStepReference?: number;
+  inheritedStepMultiplier?: number;
+  kaguneRDReference?: number;
+  inheritedRDMultiplier?: number;
+  rdDisabled?: boolean;
+  customFactors?: KakujaCustomFactors;
+  fusion?: KakujaFusion;
+  kakujaStepsMultiplier?: number;
+  offensiveAccuracyMultiplier?: number;
   damageMultiplier?: number;
   rdMultiplier?: number;
   rdSacrifice?: number;
@@ -61,6 +73,40 @@ type Calculation = {
   stackLabel?: string;
   activeLabel?: string;
 };
+
+export type KakujaCustomFactors = { steps?: number; rd?: number; accuracy?: number; damage?: number; durability?: number; reserve?: number };
+export type KakujaFusion = { partCount: number; stepPenalty: number; sharedSteps: number; sharedFlat: number; sharedReferenceSteps?: number };
+
+/** Inherit every fused part; the form's own additions enter the united attack once. */
+export function calculateKakujaDamage(kaguneSteps: number, kaguneModifier: number, totalSteps: number, totalModifier: number, fusion?: KakujaFusion, stepsMultiplier = 1) {
+  const multiplier = Number.isFinite(stepsMultiplier) ? Math.max(0, stepsMultiplier) : 1;
+  if (!fusion || fusion.partCount < 2) return formatDamage(Math.floor(totalSteps * multiplier), totalModifier);
+  const partCount = Math.min(100, Math.max(2, Math.floor(fusion.partCount)));
+  const first = formatDamage(Math.floor(Math.max(0, totalSteps - fusion.stepPenalty) * multiplier), totalModifier);
+  const other = formatDamage(Math.floor(Math.max(0, kaguneSteps - fusion.stepPenalty - (fusion.sharedReferenceSteps ?? fusion.sharedSteps)) * multiplier), kaguneModifier - fusion.sharedFlat);
+  return sumPartDamage([first, ...Array.from({ length: partCount - 1 }, () => other)]);
+}
+
+export function calculateKakujaAccuracy(kaguneTest: string, bonus: number, multiplier = 1) {
+  const test = kakujaAccuracyTest(kaguneTest, bonus);
+  if (!Number.isFinite(multiplier) || multiplier === 1) return test;
+  const total = [...test.replace(/^\d+d\d+/, '').matchAll(/[+-]\d+/g)].reduce((sum, match) => sum + Number(match[0]), 0);
+  return kakujaAccuracyTest(test, Math.floor(total * Math.max(0, multiplier)) - total);
+}
+
+/** Percentages use one unmodified subtotal, including the form's own fixed gains. */
+export function calculateKakujaComposition(input: {
+  inheritedSteps: number; ownSteps: number; inheritedRD: number; ownRD: number;
+  stepFactors?: number[]; rdFactors?: number[]; penetration?: number; rdSacrifice?: number; rdDisabled?: boolean;
+}) {
+  const baseSteps = Math.max(0, input.inheritedSteps + input.ownSteps), baseRD = Math.max(0, input.inheritedRD + input.ownRD);
+  const penetration = Math.max(0, Number.isFinite(input.penetration) ? input.penetration || 0 : 0);
+  const excessStepsPercent = Math.max(0, penetration - 100);
+  const stepMultiplier = combineMultipliers(...(input.stepFactors || []), 1 + excessStepsPercent / 100);
+  const rdMultiplier = combineMultipliers(...(input.rdFactors || []));
+  return { baseSteps, baseRD, penetration, excessStepsPercent, stepMultiplier, rdMultiplier,
+    steps: Math.floor(baseSteps * stepMultiplier), rd: input.rdDisabled ? 0 : Math.max(0, Math.floor(baseRD * rdMultiplier) - Math.max(0, Math.floor(input.rdSacrifice || 0))) };
+}
 
 type CheckProps = {
   checked: boolean;
@@ -207,7 +253,7 @@ export function calculateKakujaDurability(kaguneDurability: number, ownDurabilit
   return Math.max(1, Math.floor(combined * (fragile ? 0.75 : 1)));
 }
 
-export function KakujaPanel({ grade, species, vigor, kaguneSteps, kaguneTest, blockTest, dodgeTest, kaguneModifier = 0, kaguneRD = 0, damageMultiplier = 1, rdMultiplier = 1, rdSacrifice = 0, extraAttacks, kaguneDurability, kaguneFamilies, state, onChange, suppressed = false,attributes={},maxLife=0,baseRange=0,baseMovement=0,passiveRegeneration=0,basePenetration=0 }: Props) {
+export function KakujaPanel({ turn=1, grade, species, vigor, kaguneSteps, kaguneTest, blockTest, dodgeTest, kaguneModifier = 0, kaguneRD = 0, kaguneStepReference, inheritedStepMultiplier = 1, kaguneRDReference, inheritedRDMultiplier = 1, rdDisabled = false, customFactors = {}, fusion, kakujaStepsMultiplier = 1, offensiveAccuracyMultiplier = 1, damageMultiplier = 1, rdMultiplier = 1, rdSacrifice = 0, extraAttacks, kaguneDurability, kaguneFamilies, state, onChange, suppressed = false,attributes={},maxLife=0,baseRange=0,baseMovement=0,passiveRegeneration=0,basePenetration=0 }: Props) {
   const [activeTab, setActiveTab] = useState("painel");
   const [search, setSearch] = useState("");
   const [ownedOnly, setOwnedOnly] = useState(false);
@@ -226,6 +272,9 @@ export function KakujaPanel({ grade, species, vigor, kaguneSteps, kaguneTest, bl
   const awakened = gradeUnlocked && ghoulSpecies && state.cannibalPE >= 25;
   const complete = awakened && state.complete && state.cannibalPE >= 60;
   const manifested = state.active && awakened && !suppressed;
+  const localCustomMultipliers=calculateCustomSkillBonuses(awakened&&state.active&&!suppressed?normalizeCustomSkills(state.customSkills):[],turn).multipliers;
+  const localCustomFactors={steps:localCustomMultipliers.kaguneSteps,rd:localCustomMultipliers.rd,accuracy:localCustomMultipliers.kaguneHit,damage:localCustomMultipliers.kaguneDamage,durability:localCustomMultipliers.durability,reserve:localCustomMultipliers.rc};
+  const appliedCustomFactors:KakujaCustomFactors = manifested ? Object.fromEntries(Object.keys(localCustomFactors).map(key=>[key,combineMultipliers((localCustomFactors as Record<string,number>)[key],(customFactors as Record<string,number>)?.[key]??1)])) as typeof localCustomFactors : {};
   const cap = capForGrade(grade);
   const familySet = useMemo(() => new Set(kaguneFamilies), [kaguneFamilies]);
   const selectedSet = useMemo(() => new Set(state.selectedModules), [state.selectedModules]);
@@ -307,30 +356,39 @@ export function KakujaPanel({ grade, species, vigor, kaguneSteps, kaguneTest, bl
   }, { steps: 0, modifier: 0, accuracy: 0, rd: 0, durability: 0, reserve: 0, burst: false });
 
   const stepsCap = calculation.burst ? cap.burstSteps : cap.passiveSteps;
-  const perkBonuses = calculateKakujaPerkBonuses(suppressed?{...state,active:false}:state, grade, species, kaguneFamilies,attributes);
+  const perkBonuses = calculateKakujaPerkBonuses(suppressed?{...state,active:false}:state, grade, species, kaguneFamilies,attributes,turn);
   const moduleSteps = Math.min(stepsCap, Math.max(-stepsCap, calculation.steps));
   const moduleRD = Math.min(cap.rd, Math.max(-cap.rd, calculation.rd));
-  const initialSteps = Math.max(0, kaguneSteps);
+  const initialSteps = Math.max(0, kaguneStepReference ?? kaguneSteps);
   const formBonus = kakujaFormBonuses(complete);
   const biological=calculateKakujaBiology(suppressed?{...state,active:false}:state,grade,species,kaguneFamilies,attributes);
   const baseSteps = calculateKakujaSteps(initialSteps, moduleSteps + perkBonuses.steps, state.advantageSteps) + formBonus.steps;
   const totalModifier = Math.floor(kaguneModifier + 2 + calculation.modifier + state.advantageModifier + perkBonuses.modifier);
   const totalAccuracy = Math.floor(formBonus.dice + calculation.accuracy + state.advantageAccuracy + perkBonuses.accuracy);
-  const accuracyTest = kakujaAccuracyTest(kaguneTest, totalAccuracy);
+  const accuracyTest = calculateKakujaAccuracy(kaguneTest, totalAccuracy, combineMultipliers(offensiveAccuracyMultiplier, appliedCustomFactors.accuracy ?? 1));
 
-  const baseRD = Math.max(0, Math.floor(kaguneRD + 2 + moduleRD + state.advantageRD + perkBonuses.rd));
+  const inheritedRD = kaguneRDReference ?? kaguneRD;
+  const ownRD = 2 + moduleRD + state.advantageRD + perkBonuses.rd;
   const typeMultiplier = kaguneFamilies[0] === "Koukaku" ? 1.5 : kaguneFamilies[0] === "Ukaku" ? (selectedSet.has("blindagem-cristalina") ? 0.8 : 0.5) : 1;
   const ownDurabilityValue = Math.max(1, (vigor + grade + spent + calculation.durability) * typeMultiplier + perkBonuses.durability);
   const rawReserveMax=Math.floor(calculation.reserve+perkBonuses.reserve);
-  const anatomy=applyKakujaBiology({steps:baseSteps,rd:baseRD,ownDurability:ownDurabilityValue,reserve:rawReserveMax},biological);
-  const totalSteps=anatomy.steps,rd=Math.max(0, Math.floor(anatomy.rd * rdMultiplier) - rdSacrifice),ownDurability=anatomy.ownDurability;
-  const damage=formatDamage(totalSteps,totalModifier);
-  const damageToCopy = damageMultiplier === 1 ? damage : `piso((${damage}) × ${damageMultiplier.toFixed(3).replace(/0+$/, '').replace(/\.$/, '')}) antes da RD`;
-  const durability = calculateKakujaDurability(kaguneDurability, biological.durabilityPercent?ownDurability:ownDurabilityValue, state.selectedInstabilities.includes("carapaca-fragil"));
+  const penetration = Math.max(0, basePenetration) + biological.penetration;
+  const stepFactors = [inheritedStepMultiplier, kakujaStepsMultiplier, 1 + biological.stepsPercent / 100, appliedCustomFactors.steps ?? 1];
+  const composition = calculateKakujaComposition({ inheritedSteps: initialSteps, ownSteps: baseSteps - initialSteps, inheritedRD, ownRD, stepFactors,
+    rdFactors: [inheritedRDMultiplier, rdMultiplier, 1 + biological.rdPercent / 100, appliedCustomFactors.rd ?? 1], penetration, rdSacrifice, rdDisabled });
+  const rd = composition.rd;
+  const ownDurability = Math.max(1, Math.floor(ownDurabilityValue * combineMultipliers(1 + biological.durabilityPercent / 100, appliedCustomFactors.durability ?? 1, state.selectedInstabilities.includes("carapaca-fragil") ? .75 : 1)));
+  const damageFormula = (extraPenetration = 0) => calculateKakujaDamage(initialSteps, kaguneModifier, baseSteps, totalModifier, fusion,
+    combineMultipliers(...stepFactors, 1 + Math.max(0, penetration + Math.max(0, extraPenetration) - 100) / 100));
+  const damage = damageFormula();
+  const finalDamageMultiplier = combineMultipliers(damageMultiplier, appliedCustomFactors.damage ?? 1);
+  const damageToCopy = finalDamageMultiplier === 1 ? damage : `piso((${damage}) × ${finalDamageMultiplier.toFixed(3).replace(/0+$/, '').replace(/\.$/, '')}) antes da RD`;
+  const durabilityBase = Math.max(1, kaguneDurability + ownDurabilityValue);
+  const durability = Math.max(1, Math.floor(durabilityBase * combineMultipliers(appliedCustomFactors.durability ?? 1, state.selectedInstabilities.includes("carapaca-fragil") ? .75 : 1) + ownDurabilityValue * biological.durabilityPercent / 100));
   const controlMD = Math.floor(grade / 2 + (state.selectedInstabilities.includes("mente-rachada") ? 1 : 0) + (state.overload ? Math.max(1, profileCM - cap.cm) : 0));
   const activationCost = Math.max(2, 4 - (selectedSet.has("metabolismo-eficiente") && state.activationsSinceRest === 0 ? 2 : 0));
   const nextHunger = (state.activationsSinceRest > 0 ? 2 : 0) + (state.selectedInstabilities.includes("fome-anormal") ? 1 : 0) + (state.overload ? 1 : 0);
-  const reserveMax=anatomy.reserve;
+  const reserveMax=Math.max(0, Math.floor(rawReserveMax * combineMultipliers(1 + biological.reservePercent / 100, appliedCustomFactors.reserve ?? 1)));
   const totalExtraAttacks = Math.max(0, Math.floor(extraAttacks ?? perkBonuses.extraAttacks));
   const combatSummary = [
     state.name || "Kakuja",
@@ -340,10 +398,11 @@ export function KakujaPanel({ grade, species, vigor, kaguneSteps, kaguneTest, bl
     ...(dodgeTest ? [`Esquiva: ${dodgeTest}`] : []),
     `RD da Kakuja: ${rd}`,
     `Dureza: ${durability}`,
+    ...(fusion ? [`Colosso de Carne: ${fusion.partCount} partes; dano, RD e dureza da fusão herdados. Bônus próprios da Kakuja entram uma vez.`] : []),
     `Ataques extras: ${totalExtraAttacks}`,
     `Alcance: ${Math.floor(baseRange + biological.range)} m`,
     `Deslocamento: ${Math.floor(baseMovement)} espaços`,
-    `Penetração: ${Math.max(basePenetration, biological.penetration)}%`,
+    `Penetração: ${penetration}%${composition.excessStepsPercent ? `; +${composition.excessStepsPercent}% de Passos já incluídos no dano` : ''}`,
   ].join("\n");
 
   const issues = [
@@ -479,12 +538,13 @@ export function KakujaPanel({ grade, species, vigor, kaguneSteps, kaguneTest, bl
 
         <section className="kakuja-combat section-block">
           <div className="kakuja-damage-card">
-            <div><span>Dano da Kakuja</span><strong>{damage}</strong>{damageMultiplier !== 1 && <small>×{damageMultiplier.toFixed(3).replace(/0+$/, '').replace(/\.$/, '')} após rolar, antes da RD</small>}<button type="button" onClick={() => navigator.clipboard?.writeText(damageToCopy)}>Copiar</button></div>
+            <div><span>Dano da Kakuja</span><strong>{damage}</strong>{finalDamageMultiplier !== 1 && <small>×{finalDamageMultiplier.toFixed(3).replace(/0+$/, '').replace(/\.$/, '')} após rolar, antes da RD</small>}<button type="button" onClick={() => navigator.clipboard?.writeText(damageToCopy)}>Copiar</button></div>
             <dl>
-              <div><dt>Base da Kagune</dt><dd>{Math.floor(initialSteps)} Passos / {Math.floor(kaguneModifier)} dano fixo</dd></div>
+              <div><dt>Base da Kagune</dt><dd>{Math.floor(initialSteps)} Passos / {Math.floor(kaguneModifier)} dano fixo{fusion && <small> · Colosso: {fusion.partCount} partes somadas; bônus próprios da Kakuja entram uma vez</small>}</dd></div>
               <div><dt>Módulos ativos</dt><dd>{moduleSteps >= 0 ? "+" : ""}{Math.floor(moduleSteps)} Passos</dd></div>
               <div><dt>Vantagens</dt><dd>{state.advantageSteps >= 0 ? "+" : ""}{Math.floor(state.advantageSteps)} Passos</dd></div>
               <div><dt>Bônus base da {complete ? "Completa" : "Incompleta"}</dt><dd>+{formBonus.steps} Passos</dd></div>
+              {composition.stepMultiplier !== 1 && <div><dt>Fatores de Passos somados</dt><dd>×{composition.stepMultiplier.toLocaleString('pt-BR')} sobre o subtotal original{composition.excessStepsPercent > 0 ? ` · inclui +${composition.excessStepsPercent}% pelo excesso de penetração` : ''}</dd></div>}
               <div><dt>Acerto da Kakuja</dt><dd>{accuracyTest} <button type="button" onClick={() => navigator.clipboard?.writeText(accuracyTest)}>Copiar acerto</button></dd></div>
               <div><dt>Bloqueio da Kakuja</dt><dd>{manifested && blockTest ? <>{blockTest} <button type="button" onClick={() => navigator.clipboard?.writeText(blockTest)}>Copiar bloqueio</button></> : manifested ? "Teste não informado" : "Indisponível · Kakuja retraída ou suprimida"}</dd></div>
               <div><dt>Esquiva da Kakuja</dt><dd>{manifested && dodgeTest ? <>{dodgeTest} <button type="button" onClick={() => navigator.clipboard?.writeText(dodgeTest)}>Copiar esquiva</button></> : manifested ? "Teste não informado" : "Indisponível · Kakuja retraída ou suprimida"}</dd></div>
@@ -492,9 +552,9 @@ export function KakujaPanel({ grade, species, vigor, kaguneSteps, kaguneTest, bl
               <div><dt>Perks e autorais de Kakuja</dt><dd>+{Math.floor(perkBonuses.accuracy)} acerto / +{Math.floor(perkBonuses.steps)} Passos / +{Math.floor(perkBonuses.modifier)} dano</dd></div>
               <div><dt>Regeneração da forma</dt><dd>+{Math.floor(perkBonuses.regeneration)} por turno</dd></div>
               <div><dt>Ataques extras herdados e da forma</dt><dd>{totalExtraAttacks}</dd></div>
-              <div><dt>RD da Kakuja</dt><dd>{rd} <small>inclui {Math.floor(kaguneRD)} da Kagune; some a RD corporal uma vez quando aplicável</small></dd></div>
+              <div><dt>RD da Kakuja</dt><dd>{rd} <small>inclui {Math.floor(inheritedRD)} da Kagune; some a RD corporal uma vez quando aplicável</small></dd></div>
               <div><dt>Alcance e deslocamento</dt><dd>{Math.floor(baseRange + biological.range)} m / {Math.floor(baseMovement)} espaços</dd></div>
-              <div><dt>Penetração</dt><dd>{Math.max(basePenetration, biological.penetration)}% da RD · maior fonte, sem somar em cascata</dd></div>
+              <div><dt>Penetração</dt><dd>{penetration}% · fontes somadas; {composition.excessStepsPercent}% de Passos adicionais acima de 100%</dd></div>
             </dl>
             <p>Acerto, bloqueio e esquiva incluem os bônus herdados da Kagune e os adicionais da Kakuja. Módulos, perks e autorais desta forma são aplicados uma única vez.</p>
             <button type="button" disabled={!manifested} onClick={() => navigator.clipboard?.writeText(combatSummary)}>Copiar resumo da Kakuja</button>
@@ -511,7 +571,7 @@ export function KakujaPanel({ grade, species, vigor, kaguneSteps, kaguneTest, bl
           </div>
         </section>
 
-        <KakujaBiologyPanel key={biological.names.join('|')} bio={biological} rd={rd} ownDurability={Math.floor(ownDurability*(state.selectedInstabilities.includes("carapaca-fragil")?0.75:1))} reserve={reserveMax} range={Math.floor(baseRange+biological.range)} movement={baseMovement} regeneration={passiveRegeneration} maxLife={maxLife} penetration={basePenetration}/>
+        <KakujaBiologyPanel key={biological.names.join('|')} bio={biological} rd={rd} rdDisabled={rdDisabled} ownDurability={ownDurability} reserve={reserveMax} range={Math.floor(baseRange+biological.range)} movement={baseMovement} regeneration={passiveRegeneration} maxLife={maxLife} penetration={basePenetration} damageFormula={damageFormula} damageMultiplier={finalDamageMultiplier}/>
         <KakujaApexPanel state={state} onAction={actApex}/>
         {activeModules.some((item) => calculations[item.id]?.mode === "toggle") && <section className="section-block">
           <div className="kakuja-section-title"><div><span>Cena atual</span><h3>Técnicas e condições ativas</h3></div><small>Somente itens do Perfil ativo aparecem aqui.</small></div>
@@ -571,7 +631,7 @@ export function KakujaPanel({ grade, species, vigor, kaguneSteps, kaguneTest, bl
       </div>}
 
       {activeTab === "autoral" && <div className="kakuja-tab-content" role="tabpanel">
-        <CustomSkillsPanel targetLabel="Kakuja" currency="PE-K" restrictToKakuja effectsEnabled={state.active && awakened} skills={authorialSkills} onChange={customSkills=>patch({customSkills})}/>
+        <CustomSkillsPanel turn={turn} targetLabel="Kakuja" currency="PE-K" restrictToKakuja effectsEnabled={state.active && awakened} skills={authorialSkills} onChange={customSkills=>patch({customSkills})}/>
         <details className="section-block"><summary>Construir módulos</summary>
         <section className="section-block kakuja-author-builder">
           <div className="kakuja-section-title"><div><span>Categoria própria</span><h3>Construção de módulos autorais</h3></div><small>Separe dano, acerto, alvos, RD e condições em compras diferentes.</small></div>

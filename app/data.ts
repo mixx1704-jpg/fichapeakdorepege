@@ -1,3 +1,4 @@
+import { archetypeDefinitions } from "./archetype";
 import { combatManeuvers, expansionEvolutions, expansionKaguneEffects, expansionPerks } from "./expansion-data";
 import { masteryEvolutions } from "./kakuhou-mastery";
 import thousandPerks from "./thousand-perks.json";
@@ -46,18 +47,7 @@ export const attributeDescriptions: Record<AttributeKey, string> = {
   controle: "Fome, sanidade, foco e domínio dos impulsos.",
 };
 
-export const archetypes = [
-  { name: "O Protetor", ability: "Como Reação, intercepte um golpe contra um aliado: receba metade do dano, anule a outra metade e armazene o dano recebido para fortalecer um ataque futuro. Um golpe armazenado por vez." },
-  { name: "O Justiceiro", ability: "Contra alguém que feriu você ou cometeu uma injustiça, receba +1 acerto e +2 Passos de Dano." },
-  { name: "O Hedonista", ability: "Quando a ação estiver diretamente ligada ao seu prazer, receba +2 acertos ou +3 Passos de Dano." },
-  { name: "O Idealista", ability: "Ao agir movido por sua convicção, adicione metade do Controle em uma rolagem." },
-  { name: "O Mártir", ability: "Receba no lugar de um aliado uma penalidade, dano, perda de item, Mácula ou efeito negativo." },
-  { name: "O Sobrevivente", ability: "Guarde o resultado de um dado, rerrole-o e use o resultado guardado para substituir uma rolagem futura. Um resultado armazenado por vez." },
-  { name: "O Niilista", ability: "Ignore completamente o dano mental de uma fonte." },
-  { name: "O Obsessivo", ability: "Ignore uma penalidade momentânea ou uma situação ruim que impediria seu objetivo." },
-  { name: "O Insaciável", ability: "Repita uma rolagem comum ou de dano e some metade dos acertos da rolagem anterior ao novo resultado." },
-  { name: "O Palhaço", ability: "Inverta uma rolagem visível: sucesso vira falha ou falha vira sucesso; o Narrador cria uma nova complicação." },
-] as const;
+export const archetypes = archetypeDefinitions;
 
 export const speciesOptions = [
   { id: "humano", label: "Humano", lifeBase: 1, cap: 11, creationGrant: 6, subCost: 0, hasKagune: false, hasHunger: false, summary: "+1 Vida por Level, +6 PE de criação, +1 Atributo Mental e uma rerrolagem por sessão." },

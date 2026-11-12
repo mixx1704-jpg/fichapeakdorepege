@@ -4,6 +4,7 @@ import { attributeKeys, attributeLabels, type AttributeKey } from "./data";
 import { CustomSkillImage } from "./CustomSkillImage";
 import { normalizeCustomSkillImage } from "./custom-skill-images";
 import "./custom-skill-images.css";
+import {projectCustomOperations,requiresCustomActivation,customSkillIsActive,normalizeSkillTiming,type SkillOperation,type SkillTiming,type CustomMultipliers} from './skill-operations';
 
 export type CustomSkillActivation = "passive" | "active";
 export type CustomSkillScope = "physical" | "kagune" | "both";
@@ -24,9 +25,10 @@ export type CustomSkillEffectType =
   | "carrying"
   | "determination"
   | "attribute-dice"
-  | "attribute-bonus";
+  | "attribute-bonus" | "rc-regenerated" | "pe-gain" | "penetration";
 
-export type CustomSkillEffect = {
+export type CustomSkillEffect = SkillTiming & {
+  operation?:SkillOperation; activation?:"inherit"|"passive"|"active"; enabled?:boolean;
   id: string;
   type: CustomSkillEffectType;
   value: number;
@@ -34,7 +36,7 @@ export type CustomSkillEffect = {
   attribute: AttributeKey;
 };
 
-export type CustomSkill = {
+export type CustomSkill = SkillTiming & {
   id: string;
   name: string;
   description: string;
@@ -45,7 +47,11 @@ export type CustomSkill = {
   effects: CustomSkillEffect[];
 };
 
-export type CustomSkillBonuses = {
+export function customSkillRequiresActivation(skill: CustomSkill) {
+  return requiresCustomActivation(skill);
+}
+
+export type LegacyCustomSkillBonuses = {
   physicalHitDice: number;
   kaguneHitDice: number;
   physicalSteps: number;
@@ -68,7 +74,12 @@ export type CustomSkillBonuses = {
   attributeBonus: Record<AttributeKey, number>;
 };
 
+export type CustomSkillBonuses=LegacyCustomSkillBonuses & {multipliers:CustomMultipliers;peGainMultiplier:number;peGainSources:string[];penetration:number};
+
 const effectOptions: { value: CustomSkillEffectType; label: string; configuration?: "scope" | "attribute" }[] = [
+  { value: "pe-gain", label: "PE ganho (fator de recompensa)" },
+  { value: "rc-regenerated", label: "RC regenerado (fator)" },
+  { value: "penetration", label: "Penetração da RD (%)" },
   { value: "hit-dice", label: "Acerto adicional", configuration: "scope" },
   { value: "damage-steps", label: "Passos de dano adicionais", configuration: "scope" },
   { value: "damage-modifier", label: "Modificador de dano", configuration: "scope" },
@@ -119,7 +130,7 @@ function newSkill(): CustomSkill {
 
 export function normalizeCustomSkills(value: unknown): CustomSkill[] {
   if (!Array.isArray(value)) return [];
-  return value.map((entry, skillIndex) => {
+  return value.map<CustomSkill>((entry, skillIndex) => {
     const source = entry && typeof entry === "object" ? entry as Partial<CustomSkill> : {};
     const effects = Array.isArray(source.effects) ? source.effects.map((entryEffect, effectIndex) => {
       const effect = entryEffect && typeof entryEffect === "object" ? entryEffect as Partial<CustomSkillEffect> : {};
@@ -127,6 +138,9 @@ export function normalizeCustomSkills(value: unknown): CustomSkill[] {
       const scope = ["physical", "kagune", "both"].includes(String(effect.scope)) ? effect.scope as CustomSkillScope : "kagune";
       const attribute = attributeKeys.includes(effect.attribute as AttributeKey) ? effect.attribute as AttributeKey : "forca";
       return {
+        ...normalizeSkillTiming(effect),
+        ...(effect.operation?{operation:['add','subtract','multiply','increase-percent','decrease-percent'].includes(String(effect.operation))?effect.operation:'add' as const}:{}),
+        ...(effect.activation?{activation:effect.activation}:{}),...(typeof effect.enabled==='boolean'?{enabled:effect.enabled}:{}),
         id: String(effect.id || `efeito-${skillIndex}-${effectIndex}`),
         type,
         value: Number(effect.value) || 0,
@@ -135,6 +149,7 @@ export function normalizeCustomSkills(value: unknown): CustomSkill[] {
       };
     }) : [];
     return {
+      ...normalizeSkillTiming(source),
       id: String(source.id || `habilidade-${skillIndex}`),
       name: String(source.name || "Habilidade autoral"),
       description: String(source.description || ""),
@@ -142,17 +157,17 @@ export function normalizeCustomSkills(value: unknown): CustomSkill[] {
       cost: Math.max(0, Number(source.cost) || 0),
       activation: source.activation === "active" ? "active" : "passive",
       enabled: source.enabled !== false,
-      effects,
+      effects:effects.filter((effect,index,all)=>all.findIndex(item=>item.id===effect.id)===index),
     };
-  });
+  }).filter((skill,index,all)=>all.findIndex(item=>item.id===skill.id)===index);
 }
 
 export function customSkillsCost(skills: CustomSkill[]) {
   return Math.floor(skills.reduce((total, skill) => total + Math.max(0, Number(skill.cost) || 0), 0));
 }
 
-export function calculateCustomSkillBonuses(skills: CustomSkill[]): CustomSkillBonuses {
-  const totals: CustomSkillBonuses = {
+function calculateLegacyCustomSkillBonuses(skills: CustomSkill[]): LegacyCustomSkillBonuses {
+  const totals: LegacyCustomSkillBonuses = {
     physicalHitDice: 0,
     kaguneHitDice: 0,
     physicalSteps: 0,
@@ -185,7 +200,7 @@ export function calculateCustomSkillBonuses(skills: CustomSkill[]): CustomSkillB
     if (scope === "kagune" || scope === "both") totals[kagune] += value;
   };
 
-  skills.filter((skill) => skill.activation === "passive" || skill.enabled).forEach((skill) => {
+  skills.filter((skill) => !customSkillRequiresActivation(skill) || skill.enabled).forEach((skill) => {
     skill.effects.forEach((effect) => {
       const value = Number(effect.value) || 0;
       if (effect.type === "hit-dice") addScoped(effect.scope, value, "physicalHitDice", "kaguneHitDice");
@@ -211,6 +226,11 @@ export function calculateCustomSkillBonuses(skills: CustomSkill[]): CustomSkillB
   return totals;
 }
 
+export function calculateCustomSkillBonuses(skills:CustomSkill[],turn=1):CustomSkillBonuses {
+  const projected=projectCustomOperations(skills,turn);
+  return {...calculateLegacyCustomSkillBonuses(projected.additiveSkills),multipliers:projected.multipliers,peGainMultiplier:projected.multipliers.peGain,peGainSources:projected.peGainSources,penetration:projected.penetration};
+}
+
 function effectConfiguration(type: CustomSkillEffectType) {
   return effectOptions.find((option) => option.value === type)?.configuration;
 }
@@ -220,14 +240,16 @@ function effectLabel(effect: CustomSkillEffect) {
   const target = effectConfiguration(effect.type) === "scope"
     ? effect.scope === "both" ? "nos dois ataques" : effect.scope === "physical" ? "no físico" : "na Kagune/arma"
     : effectConfiguration(effect.type) === "attribute" ? `em ${attributeLabels[effect.attribute]}` : "";
-  return `${Math.floor(effect.value) >= 0 ? "+" : ""}${Math.floor(effect.value)} ${label}${target ? ` ${target}` : ""}`;
+  const operation=effect.operation||'add';
+  const value=operation==='multiply'?`×${effect.value}`:operation==='increase-percent'?`+${effect.value}%`:operation==='decrease-percent'?`−${effect.value}%`:operation==='subtract'?`−${Math.abs(effect.value)}`:`${effect.value>=0?'+':''}${effect.value}`;
+  return `${value} ${label}${target ? ` ${target}` : ""}`;
 }
 
-export function CustomSkillsPanel({ skills, onChange, targetLabel = "Personagem", currency = "PE", restrictToKakuja = false, effectsEnabled = true }: { targetLabel?: string; currency?: "PE" | "PE-K"; restrictToKakuja?: boolean; effectsEnabled?: boolean; skills: CustomSkill[]; onChange: (skills: CustomSkill[]) => void }) {
+export function CustomSkillsPanel({ skills, onChange, targetLabel = "Personagem", currency = "PE", restrictToKakuja = false, effectsEnabled = true, turn=1 }: { turn?:number; targetLabel?: string; currency?: "PE" | "PE-K"; restrictToKakuja?: boolean; effectsEnabled?: boolean; skills: CustomSkill[]; onChange: (skills: CustomSkill[]) => void }) {
   const options = restrictToKakuja ? effectOptions.filter(option => ["hit-dice", "damage-steps", "damage-modifier", "extra-attacks", "dodge-dice", "block-dice", "rd", "max-rc", "regeneration", "kagune-durability"].includes(option.value)) : effectOptions;
-  const defenseBonuses = calculateCustomSkillBonuses(effectsEnabled ? skills : []);
+  const defenseBonuses = calculateCustomSkillBonuses(effectsEnabled ? skills : [],turn);
   const totalCost = customSkillsCost(skills);
-  const appliedCount = effectsEnabled ? skills.filter((skill) => skill.activation === "passive" || skill.enabled).length : 0;
+  const appliedCount = effectsEnabled ? skills.filter((skill) => !customSkillRequiresActivation(skill) || skill.enabled).length : 0;
   const updateSkill = (id: string, patch: Partial<CustomSkill>) => onChange(skills.map((skill) => skill.id === id ? { ...skill, ...patch } : skill));
   const removeSkill = (id: string) => onChange(skills.filter((skill) => skill.id !== id));
   const addEffect = (skill: CustomSkill) => updateSkill(skill.id, { effects: [...skill.effects, newEffect()] });
@@ -244,7 +266,8 @@ export function CustomSkillsPanel({ skills, onChange, targetLabel = "Personagem"
 
     <div className="section-block compact"><h3>Acerto extra de defesa · {targetLabel}</h3><p>Bloqueio: <strong>{defenseBonuses.blockDice >= 0 ? '+' : ''}{Math.floor(defenseBonuses.blockDice)} acertos</strong> · Esquiva: <strong>{defenseBonuses.dodgeDice >= 0 ? '+' : ''}{Math.floor(defenseBonuses.dodgeDice)} acertos</strong>. Somados aos testes atuais; habilidades ativas só contam quando ativadas.</p></div>
     {skills.length ? <div className="custom-skill-list">{skills.map((skill, index) => {
-      const applied = effectsEnabled && (skill.activation === "passive" || skill.enabled);
+      const requiresActivation = customSkillRequiresActivation(skill);
+      const applied = effectsEnabled && customSkillIsActive(skill,turn);
       return <article className={`custom-skill-card section-block ${applied ? "applied" : ""}`} key={skill.id}>
         <div className="custom-skill-head">
           <span className="custom-skill-index">{String(index + 1).padStart(2, "0")}</span>
@@ -254,10 +277,13 @@ export function CustomSkillsPanel({ skills, onChange, targetLabel = "Personagem"
           <button className="custom-skill-remove" type="button" aria-label={`Remover ${skill.name}`} onClick={() => removeSkill(skill.id)}>×</button>
         </div>
         <label className="custom-skill-description"><span>Descrição, custo em RC e regras</span><textarea rows={3} value={skill.description} onChange={(event) => updateSkill(skill.id, { description: event.target.value })} placeholder="Descreva ativação, alcance, duração, custo em RC, limites e efeito narrativo..." /></label>
+        <div className="field-grid three"><label className="field"><span>Condição da habilidade</span><input value={skill.condition||''} onChange={e=>updateSkill(skill.id,{condition:e.target.value,conditionMet:!e.target.value})}/></label><label className="field"><span>Duração em turnos (0 = até desativar)</span><input type="number" min={0} value={skill.durationTurns||0} onChange={e=>updateSkill(skill.id,{durationTurns:Math.max(0,Math.floor(Number(e.target.value)||0))})}/></label><label className="field"><span>Limitações</span><input value={skill.limitations||''} onChange={e=>updateSkill(skill.id,{limitations:e.target.value})}/></label></div>
+        {!!skill.condition&&<label className="requirement-confirm"><input type="checkbox" checked={skill.conditionMet!==false} onChange={e=>updateSkill(skill.id,{conditionMet:e.target.checked})}/>Condição confirmada pela mesa</label>}
+        {!!skill.expiresTurn&&<p className="section-help">Ativada em T{skill.activatedTurn} · expira no início de T{skill.expiresTurn}.</p>}
         <CustomSkillImage name={skill.name} value={skill.image} onChange={image => updateSkill(skill.id, { image })} />
         <div className="custom-skill-state">
-          <div><span>{skill.activation === "passive" ? "Passiva" : "Técnica ativa"}</span><strong>{applied ? "Aplicando efeitos" : "Efeitos desligados"}</strong></div>
-          {skill.activation === "active" ? <label className="custom-skill-switch"><input type="checkbox" checked={skill.enabled} onChange={(event) => updateSkill(skill.id, { enabled: event.target.checked })} /><span>{skill.enabled ? "Ativada" : "Desativada"}</span></label> : <span className="custom-skill-always">{restrictToKakuja ? "Ao manifestar a Kakuja" : "Sempre aplicada"}</span>}
+          <div><span>{skill.activation === "passive" ? requiresActivation ? "Passiva com condição" : "Passiva" : "Técnica ativa"}</span><strong>{applied ? "Aplicando efeitos" : "Efeitos desligados"}</strong></div>
+          {requiresActivation ? <label className="custom-skill-switch"><input type="checkbox" checked={skill.enabled} onChange={(event) => updateSkill(skill.id, { enabled: event.target.checked })} /><span>{skill.enabled ? "Ativada" : "Desativada"}</span></label> : <span className="custom-skill-always">{restrictToKakuja ? "Ao manifestar a Kakuja" : "Sempre aplicada"}</span>}
         </div>
         <div className="custom-effect-head"><div><span>Modificadores automáticos</span><p>Valores negativos também funcionam como penalidades.</p></div><button type="button" onClick={() => addEffect(skill)}>+ Adicionar efeito</button></div>
         {skill.effects.length ? <div className="custom-effect-list">{skill.effects.map((effect) => {
@@ -267,11 +293,11 @@ export function CustomSkillsPanel({ skills, onChange, targetLabel = "Personagem"
             {configuration === "scope" && !restrictToKakuja && <label><span>Aplicar em</span><select value={effect.scope} onChange={(event) => updateEffect(skill, effect.id, { scope: event.target.value as CustomSkillScope })}><option value="kagune">Kagune / arma</option><option value="physical">Ataque físico</option><option value="both">Ambos</option></select></label>}
             {configuration === "attribute" && <label><span>Atributo</span><select value={effect.attribute} onChange={(event) => updateEffect(skill, effect.id, { attribute: event.target.value as AttributeKey })}>{attributeKeys.map((key) => <option value={key} key={key}>{attributeLabels[key]}</option>)}</select></label>}
             {!configuration && <div className="custom-effect-direct"><span>Aplicação</span><b>{targetLabel}</b></div>}
-            <label className="custom-effect-value"><span>Valor</span><input type="number" value={effect.value} onChange={(event) => updateEffect(skill, effect.id, { value: Number(event.target.value) || 0 })} /></label>
-            <button type="button" aria-label="Remover modificador" onClick={() => removeEffect(skill, effect.id)}>×</button>
+            <label className="field"><span>Operação</span><select value={effect.operation||'add'} onChange={e=>updateEffect(skill,effect.id,{operation:e.target.value as SkillOperation})}><option value="add">Adição (+)</option><option value="subtract">Subtração (−)</option><option value="multiply">Multiplicador (×)</option><option value="increase-percent">Aumento (%)</option><option value="decrease-percent">Redução (%)</option></select></label><label className="custom-effect-value"><span>Valor</span><input type="number" value={effect.value} onChange={(event) => updateEffect(skill, effect.id, { value: Number(event.target.value) || 0 })} /></label>
+            <details className="custom-effect-settings"><summary>Condição, duração e origem</summary><div className="field-grid two"><label className="field"><span>Condição</span><input value={effect.condition||''} onChange={e=>updateEffect(skill,effect.id,{condition:e.target.value,conditionMet:!e.target.value})}/></label><label><input type="checkbox" checked={effect.conditionMet!==false} onChange={e=>updateEffect(skill,effect.id,{conditionMet:e.target.checked})}/>Condição confirmada</label><label className="field"><span>Duração (turnos; 0 = habilidade)</span><input type="number" min={0} value={effect.durationTurns||0} onChange={e=>updateEffect(skill,effect.id,{durationTurns:Math.max(0,Number(e.target.value)||0)})}/></label><label className="field"><span>Ativação</span><select value={effect.activation||'inherit'} onChange={e=>updateEffect(skill,effect.id,{activation:e.target.value as CustomSkillEffect['activation']})}><option value="inherit">Com a habilidade</option><option value="passive">Passiva</option><option value="active">Manual</option></select></label><label><input type="checkbox" checked={effect.enabled!==false} onChange={e=>updateEffect(skill,effect.id,{enabled:e.target.checked})}/>Efeito habilitado</label><label className="field"><span>Origem</span><input value={effect.source||''} placeholder={skill.name} onChange={e=>updateEffect(skill,effect.id,{source:e.target.value})}/></label><label className="field"><span>Limitações</span><input value={effect.limitations||''} onChange={e=>updateEffect(skill,effect.id,{limitations:e.target.value})}/></label></div></details><button type="button" aria-label="Remover modificador" onClick={() => removeEffect(skill, effect.id)}>×</button>
           </div>;
         })}</div> : <button className="custom-effect-empty" type="button" onClick={() => addEffect(skill)}>Nenhum modificador automático. Adicionar o primeiro.</button>}
-        {skill.effects.length > 0 && <div className="custom-effect-preview">{skill.effects.map((effect) => <span key={effect.id}>{restrictToKakuja ? effectLabel(effect).replace("Kagune/arma", "Kakuja") : effectLabel(effect)}</span>)}</div>}
+        {skill.effects.length > 0 && <><p className="section-help">Fatores somam suas parcelas: ×2 e ×1,5 resultam em ×2,5. Fixos entram antes dos fatores; a base permanece salva sem alterações. Dano multiplicativo afeta o dano rolado; adição em Dano modifica o dano fixo.</p><div className="custom-effect-preview">{skill.effects.map((effect) => <span key={effect.id}>{restrictToKakuja ? effectLabel(effect).replace("Kagune/arma", "Kakuja") : effectLabel(effect)}</span>)}</div></>}
       </article>;
     })}</div> : <button className="empty-add" type="button" onClick={() => onChange([newSkill()])}>Nenhuma habilidade autoral <span>Criar a primeira</span></button>}
   </section>;

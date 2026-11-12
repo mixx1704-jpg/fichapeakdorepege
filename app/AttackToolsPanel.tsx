@@ -8,12 +8,13 @@ import { criticalRange, type CriticalContext, type CriticalSelections } from './
 
 type Scaling = ReturnType<typeof calculateScalingBonuses>;
 const statNames: Record<ScalingStat, string> = { life:'Vida',sanity:'Sanidade',rc:'RC',rd:'RD',physicalHit:'Acerto físico',kaguneHit:'Acerto da Kagune/Quinque',block:'Bloqueio',dodge:'Desvio',physicalSteps:'Passos físicos',kaguneSteps:'Passos da Kagune/Quinque',physicalDamage:'Dano fixo físico',kaguneDamage:'Dano fixo da Kagune/Quinque' };
-export function AttackToolsPanel({ value, onChange, name, physicalTest, physicalDamage, kaguneTest, kaguneDamage, scaling, poisonConfig, criticalPerks, criticalContext, die=20, physicalSteps, physicalFlat, kaguneSteps, kaguneFlat, fusedParts=1, sharedSteps=0,sharedFlat=0,weaponOnly = false, weaponActive = true, damageMultipliers, structureDamageMultiplier=1, targetRDReduction=0 }: {
+export function AttackToolsPanel({ value, onChange, name, physicalTest, physicalDamage, kaguneTest, kaguneDamage, scaling, poisonConfig, criticalPerks, criticalContext, die=20, physicalSteps, physicalFlat, kaguneSteps, kaguneFlat, fusedParts=1, sharedSteps=0,sharedFlat=0,physicalStepReference,kaguneStepReference,sharedStepReference,physicalStepsUnrounded,kaguneStepsUnrounded,penetrationStepsApplied=0,weaponOnly = false, weaponActive = true, damageMultipliers, structureDamageMultiplier=1, targetRDReduction=0 }: {
   value: CombatToolsState; onChange:(value:CombatToolsState)=>void; name:string;
   physicalTest:string; physicalDamage:string; kaguneTest:string; kaguneDamage:string;
   scaling:Scaling; poisonConfig:PoisonConfig; weaponOnly?:boolean; weaponActive?:boolean;
   criticalPerks:CriticalSelections; criticalContext:CriticalContext; die?:number; physicalSteps:number; physicalFlat:number; kaguneSteps:number; kaguneFlat:number; fusedParts?:number;sharedSteps?:number;sharedFlat?:number;
   damageMultipliers?:{physical:number;kagune:number}; structureDamageMultiplier?:number; targetRDReduction?:number;
+  physicalStepsUnrounded?:number;kaguneStepsUnrounded?:number;physicalStepReference?:number;kaguneStepReference?:number;sharedStepReference?:number;penetrationStepsApplied?:number;
 }) {
   const [copied,setCopied] = useState(false),[fallback,setFallback] = useState('');
   const [previousTarget,setPreviousTarget] = useState<CombatToolsState|null>(null);
@@ -21,13 +22,17 @@ export function AttackToolsPanel({ value, onChange, name, physicalTest, physical
   const scope=weaponOnly?'kagune':v.scope;
   const test=scope==='physical'?physicalTest:kaguneTest, originalFormula=scope==='physical'?physicalDamage:kaguneDamage;
   const range=criticalRange(criticalPerks,die), parts=scope==='kagune'?Math.max(1,Math.floor(fusedParts)):1;
-  const critical=prepareCriticalAttack({steps:scope==='physical'?physicalSteps:kaguneSteps,flat:scope==='physical'?physicalFlat:kaguneFlat,rd:target.rd,confirmed:v.criticalConfirmed,perks:criticalPerks,context:criticalContext,die,parts,sharedSteps:scope==='kagune'?sharedSteps:0,sharedFlat:scope==='kagune'?sharedFlat:0,ordinaryFormula:originalFormula});
-  const formula=critical.formula;
   const preview=poisonPreview(v.poison,poisonConfig);
+  const attackInput={unroundedSteps:scope==='physical'?physicalStepsUnrounded:kaguneStepsUnrounded,steps:scope==='physical'?physicalSteps:kaguneSteps,referenceSteps:scope==='physical'?(physicalStepReference??physicalSteps):(kaguneStepReference??kaguneSteps),flat:scope==='physical'?physicalFlat:kaguneFlat,rd:target.rd,confirmed:v.criticalConfirmed,perks:criticalPerks,context:criticalContext,die,parts,sharedSteps:scope==='kagune'?sharedSteps:0,sharedReferenceSteps:scope==='kagune'?(sharedStepReference??sharedSteps):0,sharedFlat:scope==='kagune'?sharedFlat:0,ordinaryFormula:originalFormula};
+  const baseCritical=prepareCriticalAttack(attackInput);
+  const totalPenetration=scaling.penetrationPercent+baseCritical.penetrationPercent+preview.rdReductionPercent;
+  const extraStepsPercent=Math.max(0,Math.max(0,totalPenetration-100)-penetrationStepsApplied);
+  const critical=extraStepsPercent?prepareCriticalAttack({...attackInput,extraStepsPercent}):baseCritical;
+  const formula=critical.formula;
   const effectiveDamage=v.damage>0?Math.max(v.damage,critical.minimumRawDamage):0;
   const structureMultiplier=normalizeDamageMultiplier(structureDamageMultiplier);
   const multiplier=attackDamageMultiplier(damageMultipliers?.[scope],v.targetStructure,structureMultiplier);
-  const result=damageAgainstTarget(effectiveDamage,target.rd,Math.max(scaling.penetrationPercent,critical.penetrationPercent),preview.rdReductionPercent,multiplier,targetRDReduction);
+  const result=damageAgainstTarget(effectiveDamage,target.rd,scaling.penetrationPercent+critical.penetrationPercent,preview.rdReductionPercent,multiplier,targetRDReduction);
   const inactive=scope==='kagune'&&!weaponActive;
   const patch=(next:Partial<CombatToolsState>)=>{setCopied(false);setFallback('');onChange(normalizeCombatTools({...v,...next}));};
   const setTarget=(patchTarget:Partial<typeof target>)=>patch({poison:updatePoison(v.poison,{type:'target',patch:patchTarget},poisonConfig)});
@@ -44,10 +49,11 @@ export function AttackToolsPanel({ value, onChange, name, physicalTest, physical
     <label className="vats-check"><input type="checkbox" checked={v.criticalConfirmed} onChange={event=>patch({criticalConfirmed:event.target.checked})}/>Crítico natural confirmado <b>{range.label}</b></label><p className="section-help">d{range.maximum}: {range.outcomes}/{range.maximum} resultados ({range.chancePercent}%). Acertos somados não geram crítico. {range.maximum!==20?'A faixa ampliada vale somente no d20.':''}</p>
     {critical.critical&&<p className="critical-preview">{critical.baseSteps} Passos + {critical.stepsPercent}% (+{critical.bonusSteps}) = {critical.steps} Passos{parts>1?` na primeira parte. A fórmula unida soma ${parts} partes e conta os bônus gerais uma única vez`:''}. Dano fixo adicional do crítico: +{critical.flatBonus} uma vez. Role a fórmula acima antes de informar o resultado.</p>}
     {critical.minimumRawDamage>0&&<p className="critical-preview">Colapso Controlado: após rolar, dano bruto mínimo {critical.minimumRawDamage}. Resultado informado {v.damage}; valor usado {effectiveDamage}. O piso entra uma vez, antes da RD.</p>}
-    {multiplier!==1&&<p className="critical-preview">Dano antes da RD: {result.rolledDamage} × {multiplier.toLocaleString('pt-BR',{maximumFractionDigits:6})} = <strong>{result.rawDamage}</strong>. Multiplicadores entram uma única vez, após o piso de crítico, com limite total de ×3.</p>}
+    {multiplier!==1&&<p className="critical-preview">Dano antes da RD: {result.rolledDamage} × {multiplier.toLocaleString('pt-BR',{maximumFractionDigits:6})} = <strong>{result.rawDamage}</strong>. As parcelas dos fatores somam sobre uma base única, após o piso de crítico.</p>}
+    {result.excessStepsPercent>0&&<p className="critical-preview">Penetração {result.penetrationPercent}%: ignora toda a RD e concede +{result.excessStepsPercent}% de Passos de Dano. A fórmula acima já inclui esse ganho; role a fórmula atualizada antes de informar o resultado.</p>}
     {Boolean(result.flatRDReduction)&&<p className="critical-preview">RD antes da penetração: {result.originalTargetRD} − {result.flatRDReduction} = <strong>{result.targetRD}</strong>. A redução fixa entra uma vez; a RD não fica negativa.</p>}
     <div className="field-grid four"><label className="field"><span>Resultado do dano rolado</span><input type="number" min={0} value={v.damage} onChange={event=>patch({damage:Number(event.target.value)})}/></label><div className="attack-result"><span>Penetração aplicada</span><strong>{result.penetrationPercent}%</strong><small>−{result.ignoredRD} RD</small></div><div className="attack-result"><span>RD restante</span><strong>{result.remainingRD}</strong><small>{result.targetRD} − {result.ignoredRD}</small></div><div className="attack-result"><span>Dano final</span><strong>{result.damage}</strong><small>máximo(0, {result.rawDamage} − {result.remainingRD})</small></div></div>
-    <p className="section-help">Penetração da ficha: {scaling.penetrationPercent}%. Crítico: {critical.penetrationPercent}%. Corrosão ativa: {preview.rdReductionPercent}%. Vale a maior fonte, até 50%; os percentuais não se somam. Frações são arredondadas para baixo.</p>
+    <p className="section-help">Penetração da ficha: {scaling.penetrationPercent}%. Crítico: {critical.penetrationPercent}%. Corrosão ativa: {preview.rdReductionPercent}%. As fontes somam uma vez, sem teto; o excedente acima de 100% vira bônus percentual de Passos. Frações são arredondadas para baixo.</p>
     {inactive&&<p className="vats-warning">Kagune recolhida ou indisponível. Manifeste-a para usar este ataque.</p>}
     <button type="button" disabled={inactive} onClick={copy}>{copied?'Resultado copiado':'Copiar ataque e dano final'}</button>
     {fallback&&<label className="field"><span>Selecione o texto para copiar</span><textarea readOnly value={fallback} onFocus={event=>event.currentTarget.select()}/></label>}

@@ -32,7 +32,7 @@ export function kakujaPerkMissing(p:KakujaPerk,state:KakujaState,grade:number,sp
 }
 
 /** Bonuses of the manifested Kakuja. Weapon combat bonuses never flow back into the Kagune. */
-export function calculateKakujaPerkBonuses(state:KakujaState,level:number,species:string,families?:string[],attributes:Record<string,number>={}):KakujaBonuses {
+export function calculateKakujaPerkBonuses(state:KakujaState,level:number,species:string,families?:string[],attributes:Record<string,number>={},turn=1):KakujaBonuses {
  const total=emptyKakujaBonuses();
  if(!state.active||level<6||state.cannibalPE<25||!['ghoul','ghoul-dominante','ghoul-artificial'].includes(species))return total;
  for(const id of normalizeKakujaPerks(state.selectedPerks)) {
@@ -41,7 +41,7 @@ export function calculateKakujaPerkBonuses(state:KakujaState,level:number,specie
   if(perk.activation==='active'&&!state.activeTechniques.includes(id))continue;
   for(const key of Object.keys(total) as (keyof KakujaBonuses)[]) total[key]+=perk.bonuses[key]||0;
  }
- const custom=calculateCustomSkillBonuses(normalizeCustomSkills(state.customSkills));
+ const custom=calculateCustomSkillBonuses(normalizeCustomSkills(state.customSkills),turn);
  total.accuracy+=custom.kaguneHitDice; total.steps+=custom.kaguneSteps;
  total.modifier+=custom.kaguneDamageModifier;total.block+=custom.blockDice;total.dodge+=custom.dodgeDice;
  total.rd+=custom.rd;total.reserve+=custom.maxRC;total.durability+=custom.kaguneDurability;

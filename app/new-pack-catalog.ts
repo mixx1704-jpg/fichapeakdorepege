@@ -1,5 +1,6 @@
 import type { AttributeKey, CatalogCategory, KaguneFamily, Perk, SpeciesId } from './data';
 import importedDefinitions from './new-pack-catalog.json';
+import revisionDefinitions from './revision-catalog.json';
 
 export type NewPackRequirements = {
   level: number;
@@ -29,10 +30,13 @@ export type NewPackDefinition = {
   biological?: boolean;
   integrationNotes?: string;
   pendingClarification?: string;
+  catalogOverrides?: Partial<Perk>;
 };
 
 export const NEW_PACK_DEFINITIONS = importedDefinitions as NewPackDefinition[];
-const definitionById = new Map(NEW_PACK_DEFINITIONS.map(definition => [definition.id, definition]));
+export const REVISION_PACK_DEFINITIONS = revisionDefinitions as NewPackDefinition[];
+export const ALL_PACK_DEFINITIONS = [...NEW_PACK_DEFINITIONS, ...REVISION_PACK_DEFINITIONS];
+const definitionById = new Map(ALL_PACK_DEFINITIONS.map(definition => [definition.id, definition]));
 export function newPackDefinition(id: string): NewPackDefinition | undefined {
   return definitionById.get(id);
 }
@@ -80,7 +84,8 @@ function catalogEntry(definition: NewPackDefinition): Perk {
     supplement: true,
     sourceId: 'perks_e_propriedades_tokyo_ghoul.txt',
     useType: definition.usage || (definition.rcCost ? `Ativa · ${definition.rcCost} RC` : 'Conforme o efeito'),
+    ...definition.catalogOverrides,
   };
 }
 
-export const newPackPerks: Perk[] = NEW_PACK_DEFINITIONS.map(catalogEntry);
+export const newPackPerks: Perk[] = ALL_PACK_DEFINITIONS.map(catalogEntry);

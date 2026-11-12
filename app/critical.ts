@@ -39,7 +39,7 @@ function add(id: string, name: string, level: number, cost: number, description:
     id: `r26-critico-${id}`, name, category: "Combate", minGrade: level, cost, maxRank: 1, sourceId: "REWORK 2026", supplement: true,
     equipmentCompatible: true, useType: "Passiva · crítico confirmado",
     requirement: `LEVEL ${level}+`,
-    description: `${description} Só no ataque com crítico natural confirmado. Percentuais de Passos usam a maior fonte, sem somar; todos usam os Passos anteriores ao crítico. A maior penetração disponível é aplicada uma vez e limitada a 50%. Frações são arredondadas para baixo.`, ...options,
+    description: `${description} Só no ataque com crítico natural confirmado. Melhorias que substituem o bônus crítico usam o maior patamar; percentuais independentes somam sobre os Passos de referência. Penetração soma às outras fontes, sem teto; o excesso acima de 100% concede bônus percentual de Passos. Frações são arredondadas para baixo.`, ...options,
   } });
 }
 
@@ -81,7 +81,7 @@ export function criticalBonuses(perks: CriticalSelections = {}, context: Critica
     minimum: criticalRange(perks).minimum,
     stepsPercent: Math.max(50, ...active.map(definition => definition.stepsPercent ?? 0)),
     flatBonus: active.reduce((sum, definition) => sum + integer(definition.flat?.(context, steps)), 0),
-    penetrationPercent: Math.min(50, Math.max(0, ...active.map(definition => definition.penetrationPercent ?? 0))),
+    penetrationPercent: active.reduce((sum,definition)=>sum+Math.max(0,definition.penetrationPercent||0),0),
     minimumPercent:Math.max(0,...active.map(definition=>definition.minimumPercent||0)),
     minimumFlat:active.some(definition=>definition.minimumPercent)?attribute(context,'controle')*4:0,
     activePerks: [...(rank(perks, CRITICAL_RANGE_ID) ? [CRITICAL_RANGE_ID] : []), ...active.map(definition => definition.perk.id)],
@@ -98,6 +98,10 @@ export const criticalDamageFormula = formatDamage;
 
 export interface CriticalAttackInput {
   steps: number;
+  /** Shared unmultiplied reference for independent percentage modifiers. */
+  referenceSteps?: number;
+  extraStepsPercent?: number;
+  unroundedSteps?: number;
   flat: number;
   rd?: number;
   confirmed: boolean;
@@ -114,12 +118,15 @@ export function criticalAttack(input: CriticalAttackInput) {
   const critical = Boolean(input.confirmed) && (natural === null || natural.isCritical);
   const bonuses = criticalBonuses(perks, context, baseSteps);
   const stepsPercent = critical ? bonuses.stepsPercent : 0;
-  const bonusSteps = Math.floor(baseSteps * stepsPercent / 100);
+  const referenceSteps = integer(input.referenceSteps ?? baseSteps);
+  const extraStepsPercent = Math.max(0,Number(input.extraStepsPercent)||0);
+  const rawSteps=Number.isFinite(input.unroundedSteps)?Math.max(0,input.unroundedSteps!):baseSteps;
+  const bonusSteps = Math.floor(rawSteps+referenceSteps * (stepsPercent + extraStepsPercent) / 100+1e-10)-baseSteps;
   const flatBonus = critical ? bonuses.flatBonus : 0;
   const penetrationPercent = critical ? bonuses.penetrationPercent : 0;
-  const ignoredRD = Math.floor(rd * penetrationPercent / 100);
+  const ignoredRD = Math.floor(rd * Math.min(100,penetrationPercent) / 100);
   const steps = baseSteps + bonusSteps, flat = baseFlat + flatBonus;
   const formula=criticalDamageFormula(steps,flat),minimumPercent=critical?bonuses.minimumPercent:0,minimumFlat=critical?bonuses.minimumFlat:0;
   const minimumRawDamage=minimumPercent?Math.max(minimumFlat,Math.floor(damageStatistics(formula).diceMaximum*minimumPercent/100)+flat):0;
-  return { critical, baseSteps, bonusSteps, steps, baseFlat, flatBonus, flat, stepsPercent, penetrationPercent, ignoredRD, remainingRD: rd - ignoredRD, formula, minimumPercent,minimumFlat,minimumRawDamage, activePerks: bonuses.activePerks };
+  return { critical, baseSteps, referenceSteps, extraStepsPercent, bonusSteps, steps, baseFlat, flatBonus, flat, stepsPercent, penetrationPercent, ignoredRD, remainingRD: rd - ignoredRD, formula, minimumPercent,minimumFlat,minimumRawDamage, activePerks: bonuses.activePerks };
 }

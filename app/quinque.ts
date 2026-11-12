@@ -1,4 +1,6 @@
 import { attributeKeys, evolutions, kaguneEffects, perks, type AttributeKey, type KaguneFamily, type Evolution, type KaguneEffect, type Perk } from './data';
+import {combineMultipliers} from './numeric-modifiers';
+import {normalizePEHistory,type PERewardRecord} from './pe-rewards';
 import { normalizeCustomSkills, type CustomSkill } from './CustomSkillsPanel';
 import { RULES_VERSION, cumulativeLevelPE, previousCumulativePE } from './rework-rules';
 import { normalizeCombatTools, type CombatToolsState } from './combat-tools';
@@ -7,9 +9,11 @@ import { normalizePerkPurchases } from './perk-migrations';
 import { normalizePackConditions, type PackConditions } from './pack-effects';
 import { scalingIncrease } from './scaling-perks';
 import { appendQuinqueSuccesses, quinqueCarrierBonuses, type QuinqueCarrier } from './quinque-carrier';
+import { adjustTest } from './vats-engine';
 import { normalizeCharacter, calculateCharacter, effectMaximum, effectRequirementStatus, evolutionRequirementStatus, evolutionCostsForSheet, incrementalCosts, rankCost, progressionPEFor, gradeRequirementFor, damageConditionsForSheet, perkRequirementMet } from './character';
 
 export type Quinque = {
+ peHistory:PERewardRecord[]; extraPE:number;
  rulesVersion:number; progressionOffset:number; narrativeLimits:boolean;
  id:string; name:string; image:string; rcType:KaguneFamily; grade:number; creationGrade:number; earnedPE:number; progressPE:number; bonusPE:number;
  attributeBonuses:Record<AttributeKey,number>; attributeDice:Record<AttributeKey,number>;
@@ -28,7 +32,7 @@ const grade=(v:unknown)=>Math.max(1,Math.min(20,Math.floor(num(v,1))));
 const override=(v:unknown)=>v==null||v===''?null:Math.max(0,num(v));
 export function normalizeQuinque(raw:Partial<Quinque>={}):Quinque {
  const selections=(source:Record<string,{rank:number;target?:AttributeKey}>|undefined)=>Object.fromEntries(Object.entries(source||{}).map(([id,item])=>[id,{rank:Math.max(1,Math.floor(num(item?.rank,1))),...(attributeKeys.includes(item?.target as AttributeKey)?{target:item.target}:{})}]));
- return {tactical:normalizeTacticalState(raw.tactical),combatTools:normalizeCombatTools(raw.combatTools),packConditions:normalizePackConditions(raw.packConditions),rulesVersion:RULES_VERSION,progressionOffset:raw.rulesVersion===RULES_VERSION?num(raw.progressionOffset):previousCumulativePE(grade(raw.grade))-cumulativeLevelPE(grade(raw.grade)),narrativeLimits:raw.narrativeLimits===true,image:typeof raw.image==='string'?raw.image:'',blockDice:Math.trunc(num(raw.blockDice)),dodgeDice:Math.trunc(num(raw.dodgeDice)),rdBonus:num(raw.rdBonus),targetKaguneType:families.includes(raw.targetKaguneType as KaguneFamily)?raw.targetKaguneType!:'',milPenasSacrifices:Math.max(0,Math.trunc(num(raw.milPenasSacrifices))),growthPoints:Math.max(0,Math.trunc(num(raw.growthPoints))),predadorCeusStacks:Math.max(0,Math.min(4,Math.trunc(num(raw.predadorCeusStacks)))),id:typeof raw.id==='string'&&raw.id?raw.id:crypto.randomUUID(),name:typeof raw.name==='string'?raw.name:'Nova Quinque',rcType:families.includes(raw.rcType!)?raw.rcType!:'Koukaku',grade:grade(raw.grade),creationGrade:grade(raw.creationGrade),earnedPE:Math.max(0,num(raw.earnedPE)),progressPE:Math.max(0,num(raw.progressPE)),bonusPE:num(raw.bonusPE),
+ return {peHistory:normalizePEHistory(raw.peHistory),extraPE:num(raw.extraPE),tactical:normalizeTacticalState(raw.tactical),combatTools:normalizeCombatTools(raw.combatTools),packConditions:normalizePackConditions(raw.packConditions),rulesVersion:RULES_VERSION,progressionOffset:raw.rulesVersion===RULES_VERSION?num(raw.progressionOffset):previousCumulativePE(grade(raw.grade))-cumulativeLevelPE(grade(raw.grade)),narrativeLimits:raw.narrativeLimits===true,image:typeof raw.image==='string'?raw.image:'',blockDice:Math.trunc(num(raw.blockDice)),dodgeDice:Math.trunc(num(raw.dodgeDice)),rdBonus:num(raw.rdBonus),targetKaguneType:families.includes(raw.targetKaguneType as KaguneFamily)?raw.targetKaguneType!:'',milPenasSacrifices:Math.max(0,Math.trunc(num(raw.milPenasSacrifices))),growthPoints:Math.max(0,Math.trunc(num(raw.growthPoints))),predadorCeusStacks:Math.max(0,Math.min(4,Math.trunc(num(raw.predadorCeusStacks)))),id:typeof raw.id==='string'&&raw.id?raw.id:crypto.randomUUID(),name:typeof raw.name==='string'?raw.name:'Nova Quinque',rcType:families.includes(raw.rcType!)?raw.rcType!:'Koukaku',grade:grade(raw.grade),creationGrade:grade(raw.creationGrade),earnedPE:Math.max(0,num(raw.earnedPE)),progressPE:Math.max(0,num(raw.progressPE)),bonusPE:num(raw.bonusPE),
  attributeBonuses:Object.fromEntries(attributeKeys.map(k=>[k,Math.trunc(num(raw.attributeBonuses?.[k]))])) as Record<AttributeKey,number>,
  attributeDice:Object.fromEntries(attributeKeys.map(k=>[k,Math.trunc(num(raw.attributeDice?.[k]))])) as Record<AttributeKey,number>,
  attributes:Object.fromEntries(attributeKeys.map(k => [k, Math.max(0, Math.floor(num(raw.attributes?.[k])))])) as Record<AttributeKey,number>,
@@ -98,7 +102,7 @@ export function calculateQuinque(q:Quinque,carrier?:QuinqueCarrier) {
  const effectPE=Object.entries(q.effects).reduce((n,[id,v])=>{const e=kaguneEffects.find(x=>x.id===id);return n+(e?incrementalCosts(e,v.rank).reduce((a,b)=>a+b,0):0);},0);
  const evolutionPE=[...new Set(q.evolutions)].reduce((n,id)=>{const e=evolutions.find(x=>x.id===id);return n+(e?evolutionCostsForSheet(e,q.evolutions.filter(x=>x===id).length,'ghoul').paidTotal:0);},0);
  const perkPE=Object.entries(q.perks).reduce((n,[id,v])=>{const p=perks.find(x=>x.id===id);return n+(p?rankCost(p.cost,v.rank,p.costMode):0);},0);
- const available=Math.floor(8+q.creationGrade+progressionPEFor(q)+q.bonusPE);
+ const available=Math.floor(8+q.creationGrade+progressionPEFor(q)+q.bonusPE+q.extraPE);
  const spent=Math.floor(d.attributePE+effectPE+evolutionPE+perkPE+d.customSkillsPE);
 
  const manualHitModifier=Math.floor(q.hitModifier);
@@ -106,7 +110,13 @@ export function calculateQuinque(q:Quinque,carrier?:QuinqueCarrier) {
  const hitScalingBonus=scalingIncrease('kaguneHit',hitSubtotal,d.scaling.percentages);
  const extraScaling=hitScalingBonus-d.scaling.bonuses.kaguneHit;
  const scaling={...d.scaling,bonuses:{...d.scaling.bonuses,kaguneHit:hitScalingBonus},totals:{...d.scaling.totals,kaguneHit:hitSubtotal+hitScalingBonus}};
- const kaguneTest=`${d.kaguneTest}${manualHitModifier>0?`+${manualHitModifier}`:manualHitModifier<0?manualHitModifier:''}${extraScaling>0?`+${extraScaling}`:extraScaling<0?extraScaling:''}`;
+ const testMultiplier=(test:string,multiplier:number)=>{
+  if(multiplier===1)return test;
+  const total=[...test.matchAll(/[+-]\d+/g)].reduce((sum,match)=>sum+Number(match[0]),0);
+  return adjustTest(test,Math.floor(total*multiplier)-total);
+ };
+ const kaguneTest=testMultiplier(`${d.kakujaKaguneTest}${manualHitModifier>0?`+${manualHitModifier}`:manualHitModifier<0?manualHitModifier:''}`,combineMultipliers(d.packEffects.offensiveAccuracyMultiplier,inherited.offensiveAccuracyMultiplier));
+ const dodgeTest=inherited.dodgeDisabled?'Indisponível — Postura sem Retorno':testMultiplier(d.dodgeTest,inherited.dodgeMultiplier);
  const attributeTests=Object.fromEntries(attributeKeys.map(key=>[key,appendQuinqueSuccesses(d.attributeTests[key],inherited.attributeChecks[key])])) as Record<AttributeKey,string>;
- return {...d,attributeTests,carrierBonuses:inherited,scaling,kaguneTest,conditions:damageConditionsForSheet(s,'kagune'),available,spent,remaining:available-spent,effectPE:Math.floor(effectPE),evolutionPE:Math.floor(evolutionPE),perkPE:Math.floor(perkPE),invalidEffects:[...new Set(invalidEffects)],invalidEvolutions:[...new Set(invalidEvolutions)],invalidPerks,rd:Math.floor(q.rdOverride??d.rd),durability:Math.floor(q.durabilityOverride??d.kaguneDurability),nextGradePE:gradeRequirementFor(q.grade),hitModifier:Math.floor(Math.floor(d.activeAttributes[primary]/2)+q.hitModifier)};
+ return {...d,dodgeTest,attributeTests,carrierBonuses:inherited,scaling,kaguneTest,conditions:damageConditionsForSheet(s,'kagune'),available,spent,remaining:available-spent,effectPE:Math.floor(effectPE),evolutionPE:Math.floor(evolutionPE),perkPE:Math.floor(perkPE),invalidEffects:[...new Set(invalidEffects)],invalidEvolutions:[...new Set(invalidEvolutions)],invalidPerks,rd:Math.floor(q.rdOverride??d.rd),durability:Math.floor(q.durabilityOverride??d.kaguneDurability),nextGradePE:gradeRequirementFor(q.grade),hitModifier:Math.floor(Math.floor(d.activeAttributes[primary]/2)+q.hitModifier)};
 }

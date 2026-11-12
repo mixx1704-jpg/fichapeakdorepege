@@ -1,6 +1,7 @@
 import { attributeKeys, type AttributeKey } from './data';
 import { calculateCharacter, kaguneFamiliesForSheet, type CharacterSheet } from './character';
 import { calculateReworkBonuses } from './rework-perks';
+import {projectCustomOperations} from './skill-operations';
 import { normalizePerkPurchases } from './perk-migrations';
 
 const blankAttributes = () => Object.fromEntries(attributeKeys.map(key => [key, 0])) as Record<AttributeKey, number>;
@@ -13,16 +14,19 @@ export type QuinqueCarrierBonuses = {
   block: number;
   dodge: number;
   physicalSteps: number;
+  offensiveAccuracyMultiplier: number;
+  dodgeMultiplier: number;
+  dodgeDisabled: boolean;
 };
 export function emptyQuinqueCarrierBonuses(): QuinqueCarrierBonuses {
-  return { kind: 'quinque-carrier', attributes: blankAttributes(), attributeDice: blankAttributes(), attributeChecks: blankAttributes(), hit: 0, block: 0, dodge: 0, physicalSteps: 0 };
+  return { kind: 'quinque-carrier', attributes: blankAttributes(), attributeDice: blankAttributes(), attributeChecks: blankAttributes(), hit: 0, block: 0, dodge: 0, physicalSteps: 0, offensiveAccuracyMultiplier:1, dodgeMultiplier:1, dodgeDisabled:false };
 }
 export type QuinqueCarrier = CharacterSheet | QuinqueCarrierBonuses;
 
 /** Recomputed from the carrier; these bonuses are never written into the weapon. */
 export function quinqueCarrierBonuses(carrier?: QuinqueCarrier): QuinqueCarrierBonuses {
   if (!carrier) return emptyQuinqueCarrierBonuses();
-  if ('kind' in carrier && carrier.kind === 'quinque-carrier') return carrier;
+  if ('kind' in carrier && carrier.kind === 'quinque-carrier') return { ...emptyQuinqueCarrierBonuses(), ...carrier };
   const owner = carrier as CharacterSheet;
   const derived = calculateCharacter(owner);
   const bonuses = emptyQuinqueCarrierBonuses();
@@ -39,12 +43,12 @@ export function quinqueCarrierBonuses(carrier?: QuinqueCarrier): QuinqueCarrierB
     bonuses.block += perk.block;
     bonuses.dodge += perk.dodge;
   }
-  for (const skill of owner.customSkills) {
+  for (const skill of projectCustomOperations(owner.customSkills,owner.vats.turn).additiveSkills) {
     if (skill.activation === 'active' && !skill.enabled) continue;
     for (const effect of skill.effects) if (effect.type === 'hit-dice') bonuses.hit += Number(effect.value) || 0;
   }
   const activeInEitherAttack = (id: string) => Boolean(owner.damageContext.active[`physical:${id}`] || owner.damageContext.active[`kagune:${id}`]);
-  if (owner.archetype === 'O Justiceiro' && activeInEitherAttack('justiceiro')) bonuses.hit += 1;
+  bonuses.hit+=derived.archetypeBonuses.hit;bonuses.block+=derived.archetypeBonuses.block;bonuses.dodge+=derived.archetypeBonuses.dodge;
   if (owner.perks['entre-costelas'] && activeInEitherAttack('entre-costelas')) bonuses.hit += 1;
   if (owner.perks['golpe-preciso'] && activeInEitherAttack('golpe-preciso')) bonuses.hit -= Math.max(0, owner.damageContext.preciseHitDice);
   if (owner.perks['equacao-letal'] && activeInEitherAttack('equacao-letal')) bonuses.hit -= Math.min(2, Math.max(0, owner.damageContext.equationLethalDice));
@@ -63,6 +67,9 @@ export function quinqueCarrierBonuses(carrier?: QuinqueCarrier): QuinqueCarrierB
   bonuses.block = Math.floor(bonuses.block);
   bonuses.dodge = Math.floor(bonuses.dodge);
   bonuses.physicalSteps = Math.floor(derived.physicalSteps);
+  bonuses.offensiveAccuracyMultiplier = derived.carrierAccuracyMultiplier;
+  bonuses.dodgeMultiplier = derived.carrierDodgeMultiplier;
+  bonuses.dodgeDisabled = derived.packEffects.dodgeDisabled;
   return bonuses;
 }
 

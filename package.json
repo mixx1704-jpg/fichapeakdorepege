@@ -6,19 +6,13 @@
     "node": ">=22.13.0"
   },
   "scripts": {
-    "install:ci": "bash scripts/install-ci.sh",
     "dev": "vite --config vite.portable.config.mjs --open /portable.html",
     "build": "node scripts/build-pages.mjs",
     "build:pages": "node scripts/build-pages.mjs",
     "start": "vite preview --config vite.portable.config.mjs",
-    "test": "node scripts/check-rework.mjs",
-    "lint": "bash scripts/sites-env.sh -- eslint . --ignore-pattern dist --ignore-pattern .next",
-    "db:generate": "bash scripts/sites-env.sh -- drizzle-kit generate",
     "dev:portable": "vite --config vite.portable.config.mjs --open /portable.html",
     "build:portable": "node scripts/prepare-release.mjs && tsc -p tsconfig.app.json --noEmit && vite build --config vite.portable.config.mjs",
-    "test:vats": "node --test --test-concurrency=1 tests/vats.test.mjs tests/catalog-stacks.test.mjs",
-    "build:host": "bash scripts/build-verified.sh",
-    "test:rules": "node scripts/check-rework.mjs --skip-types"
+    "package:portable": "node scripts/package-portable.mjs"
   },
   "dependencies": {
     "drizzle-orm": "0.45.2",

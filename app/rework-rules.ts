@@ -79,5 +79,8 @@ export function reworkText(text: string) {
     .replace(/bônus em dados/gi, "bônus em acertos aditivos")
     .replace(/sacrifício de dados/gi, "sacrifício de acertos aditivos")
     .replace(/conceda dados\b/gi, "conceda acertos aditivos")
-    .replace(/\bem dados\b/gi, "em acertos aditivos");
+    .replace(/\bem dados\b/gi, "em acertos aditivos")
+    .replace(/(?:Use|Usa) (?:somente )?a maior fonte de penetração(?:\/redução percentual de RD)?[^.\n]*(?:50%)[^.\n]*\.?/gi, "Some as fontes de penetração uma vez, sem teto. O excedente acima de 100% concede o mesmo percentual em Passos de Dano.")
+    .replace(/Use a maior penetração disponível, até 50%\.?/gi, "Some as fontes de penetração, sem teto; o excedente acima de 100% concede bônus percentual de Passos de Dano.")
+    .replace(/A maior penetração prevalece; teto de 50%\.?/gi, "As fontes de penetração somam sem teto; o excedente acima de 100% concede bônus percentual de Passos de Dano.");
 }

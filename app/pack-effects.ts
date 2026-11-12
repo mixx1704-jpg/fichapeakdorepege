@@ -1,13 +1,14 @@
 import type { AttributeKey, KaguneFamily, SpeciesId } from './data';
-import { NEW_PACK_DEFINITIONS, newPackPerks, type NewPackDefinition } from './new-pack-catalog';
+import { ALL_PACK_DEFINITIONS, newPackPerks, type NewPackDefinition } from './new-pack-catalog';
+import { applyRevisionPackEffects } from './revision-pack-effects';
 import { perkKaguneRequirementsMet } from './bikaku-access';
 
 export const PACK_DAMAGE_MULTIPLIER_CAP = 2;
 export const PACK_RD_MULTIPLIER_CAP = 2;
 export const PACK_REGEN_MULTIPLIER_CAP = 2;
 export const PACK_STRUCTURE_DAMAGE_MULTIPLIER_CAP = 3;
-export const PACK_PENETRATION_CAP = 50;
-export const PACK_MULTIPLIER_RULE = 'Os multiplicadores deste pacote se multiplicam uma vez sobre o dano final antes da RD, até ×2 de dano, ×2 de RD e ×2 de regeneração. Contra estruturas, o limite de dano é ×3. Use a maior penetração, até 50%. Custos de RC nunca ficam abaixo de 1, salvo um efeito explicitamente gratuito. Arredonde apenas o resultado final para baixo.';
+export const PACK_PENETRATION_CAP = Number.POSITIVE_INFINITY;
+export const PACK_MULTIPLIER_RULE = 'Os fatores deste pacote somam suas parcelas sobre uma única base, até ×2 de dano, ×2 de RD e ×2 de regeneração. Contra estruturas, o limite de dano é ×3. Some as fontes de penetração, sem teto. Exceder 100% concede o excesso em percentual de Passos de Dano. Custos de RC nunca ficam abaixo de 1, salvo um efeito explicitamente gratuito. Arredonde apenas o resultado final para baixo.';
 
 export type PackCondition = { active?: boolean; counter?: number; secondaryCounter?: number; value?: number; mode?: string };
 export type PackConditions = Record<string, PackCondition>;
@@ -34,6 +35,7 @@ export interface PackContext {
   weaponKind?: string;
   quinque?: boolean;
   hasRC?: boolean;
+  hasKakuja?: boolean;
   currentLife?: number;
   maxLife?: number;
   currentRC?: number;
@@ -60,11 +62,23 @@ export interface PackPermission { perkId: string; name: string; text: string }
 export interface PackReceipt {
   perkId: string; label: string;
   /** Explicit event receipts. They are not automatic healing or RC ticks. */
-  costRC?: number; costLife?: number; heal?: number; restoreRC?: number;
+  costRC?: number; costLife?: number;
+  ignoreRCModifiers?: boolean; heal?: number; restoreRC?: number;
   amount?: number; limit?: string;
   disabled?: boolean; disabledReason?: string;
 }
 export interface PackEffects {
+  rdDisabled: boolean;
+  /** Percentages of steps apply before selecting damage dice. */
+  stepsMultiplier: { physical: number; kagune: number; kakuja: number };
+  kaguneDurabilityMultiplier: number;
+  offensiveAccuracyMultiplier: number;
+  dodgeMultiplier: number;
+  incomingDamageMultiplier: number;
+  kakujaHit: number;
+  kakujaAttacks: number;
+  dodgeDisabled: boolean;
+  baseLifeLossPercent: number;
   bonuses: PackBonuses;
   carrierHit: number;
   damageMultiplier: { physical: number; kagune: number };
@@ -110,7 +124,7 @@ export function packRCCost(cost: number, effects: Pick<PackEffects,'rcDiscount'|
 }
 export function normalizePackConditions(input: unknown): PackConditions {
   if(!input||typeof input!=='object'||Array.isArray(input))return {};
-  const validIds=new Set(NEW_PACK_DEFINITIONS.map(d=>d.id));
+  const validIds=new Set(ALL_PACK_DEFINITIONS.map(d=>d.id));
   const output:PackConditions={};
   for(const [id,raw] of Object.entries(input)){
     if(!validIds.has(id)||!raw||typeof raw!=='object'||Array.isArray(raw))continue;
@@ -119,12 +133,13 @@ export function normalizePackConditions(input: unknown): PackConditions {
     if(typeof value.active==='boolean')next.active=value.active;
     for(const key of ['counter','secondaryCounter','value'] as const)if(typeof value[key]==='number'&&Number.isFinite(value[key]))next[key]=packClamp(value[key],0,999999);
     if(typeof value.mode==='string')next.mode=value.mode.slice(0,80);
+    if(id==='r26-revisao-009' && next.active)next.value=1;
     if(Object.keys(next).length)output[id]=next;
   }
   return output;
 }
 export function emptyPackEffects(): PackEffects {
-  return { bonuses:{physicalHit:0,kaguneHit:0,block:0,dodge:0,physicalSteps:0,kaguneSteps:0,rd:0,kaguneRD:0,life:0,rc:0,regen:0,movement:0,reactions:0,range:0,attributes:Object.fromEntries(attributes.map(a=>[a,0])) as Record<AttributeKey,number>,attributeChecks:Object.fromEntries(attributes.map(a=>[a,0])) as Record<AttributeKey,number>},carrierHit:0, damageMultiplier:{physical:1,kagune:1},structureDamageMultiplier:1,rdMultiplier:1,kaguneRDMultiplier:1,lifeMultiplier:1,rcMultiplier:1,regenMultiplier:1,movementMultiplier:1,rangeMultiplier:1,penetrationPercent:0,targetRDReduction:0,rdSacrifice:0,rcDiscount:0,rcCostIncrease:0,rcCostMultiplier:1,regenRCDiscount:0,healingReceivedMultiplier:1,temporaryLifeCapMultiplier:1,temporaryRCCapMultiplier:1,controls:[],permissions:[],receipts:[],activePerkIds:[],eligiblePerkIds:[],pendingPerkIds:[],rules:PACK_MULTIPLIER_RULE };
+  return { rdDisabled:false, stepsMultiplier:{physical:1,kagune:1,kakuja:1},kaguneDurabilityMultiplier:1,offensiveAccuracyMultiplier:1,dodgeMultiplier:1,incomingDamageMultiplier:1,kakujaHit:0,kakujaAttacks:0,dodgeDisabled:false,baseLifeLossPercent:0,bonuses:{physicalHit:0,kaguneHit:0,block:0,dodge:0,physicalSteps:0,kaguneSteps:0,rd:0,kaguneRD:0,life:0,rc:0,regen:0,movement:0,reactions:0,range:0,attributes:Object.fromEntries(attributes.map(a=>[a,0])) as Record<AttributeKey,number>,attributeChecks:Object.fromEntries(attributes.map(a=>[a,0])) as Record<AttributeKey,number>},carrierHit:0, damageMultiplier:{physical:1,kagune:1},structureDamageMultiplier:1,rdMultiplier:1,kaguneRDMultiplier:1,lifeMultiplier:1,rcMultiplier:1,regenMultiplier:1,movementMultiplier:1,rangeMultiplier:1,penetrationPercent:0,targetRDReduction:0,rdSacrifice:0,rcDiscount:0,rcCostIncrease:0,rcCostMultiplier:1,regenRCDiscount:0,healingReceivedMultiplier:1,temporaryLifeCapMultiplier:1,temporaryRCCapMultiplier:1,controls:[],permissions:[],receipts:[],activePerkIds:[],eligiblePerkIds:[],pendingPerkIds:[],rules:PACK_MULTIPLIER_RULE };
 }
 
 export function isPackDefinitionEligible(definition: NewPackDefinition, context: PackContext): boolean {
@@ -140,6 +155,7 @@ export function isPackDefinitionEligible(definition: NewPackDefinition, context:
   if(definition.biological&&context.species&&!biologicalSpecies.includes(context.species))return false;
   if((definition.section==='RC / CONTROLE'||definition.kind==='property')&&context.hasRC===false)return false;
   const perk=newPackPerks.find(p=>p.id===definition.id)!;
+  if(perk.requiresKakuja&&context.hasKakuja===false)return false;
   if(perk.species&&context.species&&!perk.species.includes(context.species))return false;
   if(!perkKaguneRequirementsMet(perk,context))return false;
   return true;
@@ -162,13 +178,13 @@ export function calculatePackEffects(context: PackContext): PackEffects {
   const add=(key:Exclude<keyof PackBonuses,'attributes'|'attributeChecks'>,value:number)=>{if(value){b[key]+=value;applied=true;}};
   const check=(attribute:AttributeKey,value:number)=>{b.attributeChecks[attribute]+=value;if(value)applied=true;};
   const attack=(hit=0,steps=0,multiplier=1,scope:'both'|'physical'|'kagune'='both')=>{
-    if(scope!=='kagune'){add('physicalHit',hit);add('physicalSteps',steps);result.damageMultiplier.physical*=multiplier;}
-    if(scope!=='physical'&&weapon){add('kaguneHit',hit);add('kaguneSteps',steps);result.damageMultiplier.kagune*=multiplier;}
+    if(scope!=='kagune'){add('physicalHit',hit);add('physicalSteps',steps);result.damageMultiplier.physical+=multiplier-1;}
+    if(scope!=='physical'&&weapon){add('kaguneHit',hit);add('kaguneSteps',steps);result.damageMultiplier.kagune+=multiplier-1;}
     if(multiplier!==1)applied=true;
   };
   const defense=(block=0,dodge=0)=>{add('block',block);add('dodge',dodge);};
-  const multiply=(key:'rdMultiplier'|'kaguneRDMultiplier'|'lifeMultiplier'|'rcMultiplier'|'regenMultiplier'|'movementMultiplier'|'rangeMultiplier'|'rcCostMultiplier'|'healingReceivedMultiplier',value:number)=>{result[key]*=value;if(value!==1)applied=true;};
-  const pen=(value:number)=>{result.penetrationPercent=Math.max(result.penetrationPercent,value);applied=true;};
+  const multiply=(key:'rdMultiplier'|'kaguneRDMultiplier'|'lifeMultiplier'|'rcMultiplier'|'regenMultiplier'|'movementMultiplier'|'rangeMultiplier'|'rcCostMultiplier'|'healingReceivedMultiplier',value:number)=>{result[key]+=value-1;if(value!==1)applied=true;};
+  const pen=(value:number)=>{result.penetrationPercent+=Math.max(0,value);applied=true;};
   const receipt=(label:string,values:Omit<PackReceipt,'perkId'|'label'>={})=>{result.receipts.push({perkId:current.id,label,...values});};
   const control=(key:PackConditionKey,label:string,type:PackControl['type'],options:Partial<PackControl>={})=>{result.controls.push({perkId:current.id,key,label,type,...options});};
   const flag=(label='Aplicar a condição descrita',key:'active'='active')=>{control(key,label,'toggle',{defaultValue:false});return states[current.id]?.[key]===true;};
@@ -181,7 +197,7 @@ export function calculatePackEffects(context: PackContext): PackEffects {
   const permission=(text?:string)=>result.permissions.push({perkId:current.id,name:current.name,text:text||[current.body,current.integrationNotes].filter(Boolean).join('\n\n')});
   const simple=(condition:string,hit=0,steps=0,multiplier=1,scope:'both'|'physical'|'kagune'='both')=>{if(flag(condition))attack(hit,steps,multiplier,scope);};
 
-  for(const definition of NEW_PACK_DEFINITIONS){
+  for(const definition of ALL_PACK_DEFINITIONS){
     if(!isPackDefinitionEligible(definition,context))continue;
     current=definition; applied=false;result.eligiblePerkIds.push(definition.id);
     // Every purchased entry retains its rule text, including narrative permissions and unresolved table events.
@@ -204,7 +220,7 @@ export function calculatePackEffects(context: PackContext): PackEffects {
       case 9: attack(0,4*count('Cargas de Brutalidade contra a presa atual',3));break;
       case 10: simple('Próximo ataque depois de sofrer crítico',0,0,1.25);break;
       case 11:{const target=count('Vida atual do alvo (%)',100,'value',100);if(target<.25*100)attack(4,0,1.15);else if(target<50)attack(2);break;}
-      case 12: if(flag('Sacrificar toda a RD neste golpe')&&hp<.2){result.rdMultiplier=0;attack(0,0,1.35);}break;
+      case 12: if(flag('Sacrificar toda a RD neste golpe')&&hp<.2){result.rdDisabled=true;result.rdMultiplier=0;attack(0,0,1.35);}break;
       case 13: attack(count('Acertos consecutivos sem errar',3));break;
       case 14: if(flag('Reação obtida após esquivar completamente (1/rodada)'))add('reactions',1);break;
       case 15: if(flag('Defendendo a habilidade já observada duas vezes'))defense(3,3);break;
@@ -224,7 +240,7 @@ export function calculatePackEffects(context: PackContext): PackEffects {
       case 29: attack(0,Math.min(8,2*Math.floor(missingLife/lifeMax*5)));break;
       case 30: if(flag('Acabou de cruzar 10% de Vida (1/combate)')&&hp<.1)add('reactions',1);break;
       case 31: if(flag('Mesmo tipo de dano recebido três vezes; defendendo esse tipo'))multiply('rdMultiplier',1.15);break;
-      case 32: if(flag('Sobreviveu com 1 Vida; RD zerada até o próximo turno'))result.rdMultiplier=0;break;
+      case 32: if(flag('Sobreviveu com 1 Vida; RD zerada até o próximo turno')){result.rdDisabled=true;result.rdMultiplier=0;}break;
       case 33: simple('Tiro Ukaku de Reação contra ataque à distância (1/rodada)',-2,0,1,'kagune');break;
       case 34: attack(Math.min(2,Math.max(0,count('Número do ataque Ukaku consecutivo contra o alvo',3)-1)),0,1,'kagune');break;
       case 35: simple('Alvo ainda não agiu nesta rodada',0,4,1,'kagune');break;
@@ -319,7 +335,7 @@ export function calculatePackEffects(context: PackContext): PackEffects {
       case 124: if(flag('Convergência ativa (3 turnos, 1/sessão)')){attack(4,0,1.25,'kagune');multiply('rangeMultiplier',1.5);multiply('rdMultiplier',1.25);multiply('regenMultiplier',1.3);defense(4,4);multiply('rcCostMultiplier',.75);}break;
       case 125: simple('Ataque corpo a corpo após mover em linha reta',0,4);break;
       case 126: if(flag('Agarrar, segurar ou impedir movimento com Força'))check('forca',3);receipt('Agarrar, segurar ou impedir movimento: +3 no teste');break;
-      case 127: result.structureDamageMultiplier*=1.5;break;
+      case 127: result.structureDamageMultiplier+=.5;break;
       case 128: simple('Força do inimigo é igual ou maior que a sua',0,0,1.2);break;
       case 129: multiply('lifeMultiplier',1.1);break;
       case 130: break;
@@ -445,7 +461,7 @@ export function calculatePackEffects(context: PackContext): PackEffects {
       case 68: if(flag('Atacando articulação ou sustentação de criatura muito maior'))attack(2);receipt(`RD ignorada apenas de tamanho: ${packPercent(count('RD concedida exclusivamente por tamanho',999999,'value'),25)}`);break;
       case 69:{const bonus=2*count('Categorias de tamanho acima da forma normal',3);const m=mode('Teste atual contra deslocamento',[['none','Sem teste'],['forca','Força'],['vigor','Vigor'],['agilidade','Agilidade']]);if(m!=='none')check(m as AttributeKey,bonus);receipt(`Contra empurrões, arremessos e agarrões: +${bonus}`);break;}
       case 70: if(flag('Kagune Compactada; desativa Expansão')){multiply('rangeMultiplier',.5);attack(0,0,1.15,'kagune');}break;
-      case 71:{const compact=NEW_PACK_DEFINITIONS.find(d=>d.kind==='property'&&d.ordinal===70);const compactActive=compact&&isPackDefinitionEligible(compact,context)&&states[compact.id]?.active;if(flag('Kagune Expandida; desativa Compactação')&&!compactActive){multiply('rangeMultiplier',1.5);attack(0,0,.85,'kagune');}break;}
+      case 71:{const compact=ALL_PACK_DEFINITIONS.find(d=>d.kind==='property'&&d.ordinal===70);const compactActive=compact&&isPackDefinitionEligible(compact,context)&&states[compact.id]?.active;if(flag('Kagune Expandida; desativa Compactação')&&!compactActive){multiply('rangeMultiplier',1.5);attack(0,0,.85,'kagune');}break;}
       case 72:{const m=mode('Densidade escolhida ao manifestar',[['none','Normal'],['light','Leve: +1 Deslocamento, −2 RD'],['dense','Densa: +2 RD, −1 Deslocamento']]);if(m==='light'){add('movement',1);add('rd',-2);}if(m==='dense'){add('movement',-1);add('rd',2);}break;}
       case 73: attack(0,2*count('Impactos consumidos neste ataque',3));break;
       case 74: receipt('Campo de Pressão até o próximo turno; interrompe entrada se alvo falhar teste físico',{costRC:6});break;
@@ -503,7 +519,7 @@ export function calculatePackEffects(context: PackContext): PackEffects {
     if(result.rdSacrifice>0)result.activePerkIds.push(rdSacrificeRequest.id);
   }
   if(fragileKaguneId&&availableRD-result.rdSacrifice<5){
-    result.damageMultiplier.kagune*=1.18;
+    result.damageMultiplier.kagune+=.18;
     result.activePerkIds.push(fragileKaguneId);
   }
   result.damageMultiplier.physical=Math.min(PACK_DAMAGE_MULTIPLIER_CAP,Math.max(0,result.damageMultiplier.physical));
@@ -513,6 +529,9 @@ export function calculatePackEffects(context: PackContext): PackEffects {
   result.lifeMultiplier=Math.min(2,Math.max(0,result.lifeMultiplier));
   result.rcMultiplier=Math.min(2,Math.max(0,result.rcMultiplier));
   result.penetrationPercent=Math.min(PACK_PENETRATION_CAP,Math.max(0,result.penetrationPercent));
+  // The new rules have their own explicit percentages; legacy package caps do not change their text.
+  applyRevisionPackEffects(context,result);
+  if(result.rdDisabled)result.rdMultiplier=0;
   for(const [key,value] of Object.entries(b))if(typeof value==='number')(b as unknown as Record<string,unknown>)[key]=Math.floor(value);
   return result;
 }

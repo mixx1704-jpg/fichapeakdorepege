@@ -204,6 +204,6 @@ export function poisonSummary(input: PoisonState, config: PoisonConfig): string 
     ? `${preview.percent}% de ${state.target.maxLife} PV = ${preview.rawDamage}; − metade da RD (${preview.mitigation}) = ${preview.damage} dano por turno.`
     : state.kind === "neurotoxic"
       ? `−${preview.accuracyPenalty} acertos em ataque e desvio. Não remove ações. Nenhum dano direto.`
-      : `Corrosão: ignora ${preview.rdReductionPercent}% da RD (${preview.rdIgnored} de ${state.target.rd}); RD restante ${preview.effectiveRD}. Use a maior fonte de penetração, sem somar, até 50%. Nenhum dano direto.`;
+      : `Corrosão: ignora ${preview.rdReductionPercent}% da RD (${preview.rdIgnored} de ${state.target.rd}); RD restante ${preview.effectiveRD}. Some à penetração uma vez; o excesso acima de 100% concede bônus percentual de Passos no ataque. Nenhum dano direto.`;
   return `${heading}\n${effect}\nResistência a uma nova dose: ${preview.resistanceTest} contra CD ${preview.resistanceDC}; sucesso impede só a nova dose.\nNova dose renova a duração. Ao encerrar turno, registre o efeito uma vez e reduza a duração.`;
 }

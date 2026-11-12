@@ -90,7 +90,7 @@ const num=(v:unknown,f=0,min=0,max=1_000_000_000)=>{if(v===null||v===undefined||
 const text=(v:unknown,max=100)=>typeof v==='string'?v.slice(0,max):'';
 const owned=(c:TacticalContext,id:string)=>Array.isArray(c.ownedPerks)?c.ownedPerks.includes(id):num((c.ownedPerks as Record<string,{rank:number}>|undefined)?.[id]?.rank)>0;
 const hasRC=(c:TacticalContext)=>['ghoul','ghoul-artificial','ghoul-dominante','quinx'].includes(c.species||'')||c.weaponKind==='quinque';
-const remainingRD=(rd:number,percent=0)=>num(rd)-Math.floor(num(rd)*Math.min(50,num(percent))/100);
+const remainingRD=(rd:number,percent=0)=>num(rd)-Math.floor(num(rd)*Math.min(100,num(percent))/100);
 const netDamage=(raw:number,rd:number,percent=0)=>Math.max(0,num(raw)-remainingRD(rd,percent));
 export const tacticalId=(suffix:string)=>`r26-tatica-${suffix}`;
 export const tacticalOwnedTechniques=(c:TacticalContext={})=>tacticalTechniques.filter(item=>owned(c,item.id)&&(!c.weaponOnly||(item.equipmentCompatible&&!item.requiresRC&&item.rc===0)));
@@ -104,7 +104,7 @@ export function normalizeTacticalState(value?:unknown):TacticalState {
   return {...defaults,turn:num(raw.turn,1,1),session:num(raw.session,1,1),inputs,
     usedTurn:Object.fromEntries(Object.entries(turns).filter(([id])=>['action','reaction',...tacticalTechniques.map(item=>item.id)].includes(id)).map(([id,turn])=>[id,num(turn)])),
     usedSession:Array.isArray(raw.usedSession)?[...new Set(raw.usedSession.filter((id):id is string=>typeof id==='string').map(canonicalPerkId).filter((id):id is string=>typeof id==='string'&&tacticalTechniques.some(item=>item.id===id&&item.usesSession)))]:[],
-    retaliation:num(r.amount)>0?{amount:num(r.amount),expires:num(r.expires),penetrationPercent:Math.min(50,num(r.penetrationPercent))}:null,
+    retaliation:num(r.amount)>0?{amount:num(r.amount),expires:num(r.expires),penetrationPercent:num(r.penetrationPercent)}:null,
     stance:typeof s.id==='string'&&num(s.until)>0?{id:text(s.id),until:num(s.until),charges:Math.min(2,num(s.charges)),mitigationPercent:Math.min(75,num(s.mitigationPercent))}:null,
     trap:num(t.damage)>0?{damage:num(t.damage),expires:num(t.expires)}:null,credit:num(credit.amount)>0?{amount:Math.min(6,num(credit.amount)),expires:num(credit.expires)}:null,
     aegis:num(a.remaining)>0?{remaining:num(a.remaining),until:num(a.until)}:null,mark:num(mark.charges)>0?{target:text(mark.target),until:num(mark.until),charges:Math.min(2,num(mark.charges))}:null,
@@ -192,14 +192,14 @@ export function resolveTactical(input:TacticalState,action:TacticalAction,c:Tact
     lifeDelta=-Math.min(life,taken);state={...state,aegis:state.aegis.remaining>absorbed?{...state.aegis,remaining:state.aegis.remaining-absorbed}:null,inputs:{...i,incomingDamage:0}};
   }else if(action.type==='use-mark'){
     if(!state.mark)return fail('Sem abertura preparada.');if(!i.confirmed||i.damage<=0)return fail('Informe novo dano e confirme o acerto no alvo marcado.');
-    const penetration=Math.min(50,Math.max(25,num(c.penetrationPercent))),remaining=state.mark.charges-1;
+    const penetration=25+num(c.penetrationPercent),remaining=state.mark.charges-1;
     name='Consumir abertura de Presa Terminal';id='use-mark';message=`${state.mark.target}: dano ${i.damage} com penetração ${penetration}% contra RD ${i.targetRD} = ${netDamage(i.damage,i.targetRD,penetration)}. Aberturas restantes ${remaining}.`;
     state={...state,mark:remaining?{...state.mark,charges:remaining}:null,inputs:{...i,damage:0,confirmed:false}};
   }
   else if(action.type==='discard-natural'){if(state.storedNatural===null)return fail('Sem natural guardado.');name='Descartar natural';id='discard-natural';message=`Natural ${state.storedNatural} de d${state.storedDie} descartado.`;state={...state,storedNatural:null};}
   else if(action.type==='release-retaliation'){
     if(!state.retaliation)return fail('Sem dano reservado.');if(state.usedTurn.action===state.turn)return fail('Ação tática já usada neste turno.');
-    const reserve=state.retaliation;name='Liberar retaliação';id='release-retaliation';message=`Adicione ${reserve.amount} de dano fixo a UM ataque. Penetração desta reserva ${reserve.penetrationPercent}%; use a maior fonte, até 50%. Se o ataque falhar, a reserva também foi gasta. Não produz nova reserva.`;state={...state,retaliation:null,usedTurn:{...state.usedTurn,action:state.turn}};
+    const reserve=state.retaliation;name='Liberar retaliação';id='release-retaliation';message=`Adicione ${reserve.amount} de dano fixo a UM ataque. Penetração desta reserva ${reserve.penetrationPercent}%; some às outras fontes; excesso acima de 100% vira bônus percentual de Passos. Se o ataque falhar, a reserva também foi gasta. Não produz nova reserva.`;state={...state,retaliation:null,usedTurn:{...state.usedTurn,action:state.turn}};
   }else if(action.type==='resolve-stance'){
     if(!state.stance)return fail('Sem postura ativa.');if(state.stance.charges<=0)return fail('Proteção da postura esgotada; deslocamento continua 0 até seu próximo turno.');if(i.incomingDamage<=0)return fail('Informe o dano pós-RD recebido.');
     const taken=Math.floor(i.incomingDamage*(100-state.stance.mitigationPercent)/100),reduced=i.incomingDamage-taken;name='Resolver impacto na postura';id='resolve-stance';message=`Dano pós-RD ${i.incomingDamage}: ${reduced} impedidos e ${taken} recebidos. Deslocamento continua 0 até seu próximo turno.`;lifeDelta=-Math.min(life,taken);state={...state,stance:{...state.stance,charges:state.stance.charges-1},inputs:{...state.inputs,incomingDamage:0}};

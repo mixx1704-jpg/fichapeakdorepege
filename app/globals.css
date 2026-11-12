@@ -947,3 +947,13 @@ textarea { resize: vertical; }
 }
 
 
+
+.catalog-quality { margin: 16px 0; padding: 16px; border: 1px solid var(--line, #414145); border-radius: 8px; }
+.quick-activation-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr)); gap:12px; margin-top:14px; }
+.quick-activation { align-items:flex-start; padding:14px; border:1px solid var(--line,#414145); border-radius:8px; margin:0; }
+.quick-activation span { display:grid; gap:6px; min-width:0; }
+.quick-activation b { font-size:14px; }
+.quick-activation small { white-space:pre-line; font-size:12px; line-height:1.5; max-height:160px; overflow:auto; }
+.quick-activation em { font-size:11px; opacity:.75; }
+.quick-activation.active { border-color:var(--accent,#b83a49); }
+.quick-rule-conditions summary { cursor:pointer; font-weight:600; }

@@ -1,5 +1,6 @@
 import {tailAvailability,tailLoadout,tailAttackBudget,type TailPart,type TailRole} from './tail-management';
 import injuries from './vats-injuries.json';
+import {combineMultipliers} from './numeric-modifiers';
 import { curablePhysicalEffects, healingSpecies, healingTechniques, normalizeHealingResult, reconstructableEffects, rollHealing, type HealingResult, type HealingTarget } from './healing';
 
 export const regions = [ ['head','Cabeça','head'], ['torso','Tronco','torso'], ['armL','Braço esquerdo','arm'], ['armR','Braço direito','arm'], ['legL','Perna esquerda','leg'], ['legR','Perna direita','leg'] ] as const;
@@ -44,7 +45,7 @@ export const adjustTest=(test:string,delta:number)=>{
  return test.replace(/^\d+d8/,s=>`${Math.max(0,parseInt(s)+delta)}d8`);
 };
 export const isRCSuppressed=(v:Pick<VatsState,'rcSuppressedUntil'|'turn'>)=>v.rcSuppressedUntil>v.turn;
-export type VatsConfig={ currentLife?:number; species?:string; maxLife:number; maxRC:number; rc:number; hunger:number; vigor:number; baseVigor:number; grade:number; regeneration:number; regenLevel:number; superior:number; cells:boolean; kami:boolean; hasKagune:boolean; kaguneActive?:boolean; colossoActive?:boolean; paidTailStart?:number; tailAttackRC?:number; durability:number; tails:number; naturalTails?:number; powers:string[]; rd:number; movement:number; dodgeTest:string; blockTest:string; centipedeAllowed?:boolean; tests?:Record<string,string>; rcDiscount?:number; rcCostIncrease?:number; rcCostMultiplier?:number; regenRCDiscount?:number; healingReceivedMultiplier?:number; temporaryLifeCapMultiplier?:number; temporaryRCCapMultiplier?:number };
+export type VatsConfig={ regenerationReference?:number; rcGainMultiplier?:number; currentLife?:number; species?:string; maxLife:number; maxRC:number; rc:number; hunger:number; vigor:number; baseVigor:number; grade:number; regeneration:number; regenLevel:number; superior:number; cells:boolean; kami:boolean; hasKagune:boolean; kaguneActive?:boolean; colossoActive?:boolean; paidTailStart?:number; tailAttackRC?:number; durability:number; tails:number; naturalTails?:number; powers:string[]; rd:number; movement:number; dodgeTest:string; blockTest:string; centipedeAllowed?:boolean; tests?:Record<string,string>; rcDiscount?:number; rcCostIncrease?:number; rcCostMultiplier?:number; regenRCDiscount?:number; healingReceivedMultiplier?:number; incomingDamageMultiplier?:number; temporaryLifeCapMultiplier?:number; temporaryRCCapMultiplier?:number };
 export type VatsAction={type:string; healingId?:string; healingTarget?:HealingTarget; ally?:boolean; region?:RegionId; amount?:number; effect?:string; index?:number; enabled?:boolean;name?:string;role?:TailRole;notes?:string;cost?:number; enemy?:boolean; reduceRD?:boolean};
 const boundedMultiplier=(value:unknown,maximum=2)=>value==null||!Number.isFinite(Number(value))?1:Math.max(0,Math.min(maximum,Number(value)));
 /** The whole confirmed base is billed once; an originally paid effect never becomes free. */
@@ -52,11 +53,15 @@ export function vatsRCCost(cost:number,c:Pick<VatsConfig,'rcDiscount'|'rcCostInc
  const confirmed=positive(cost);if(!confirmed)return 0;const base=Math.floor(confirmed);
  return Math.max(1,Math.floor((base-Math.floor(positive(c.rcDiscount))- (regeneration?Math.floor(positive(c.regenRCDiscount)):0)+Math.floor(positive(c.rcCostIncrease)))*boundedMultiplier(c.rcCostMultiplier,100)));
 }
-export function passiveRegeneration(v:Pick<VatsState, "turn" | "fleshUntil" | "passiveMultiplier">,c:Pick<VatsConfig, "regeneration" | "cells" | "maxLife" | "grade" | "kami">) {
+export function vatsReceivedDamage(amount:number,c:Pick<VatsConfig,'incomingDamageMultiplier'>) {
+ return Math.floor(Math.max(0,amount)*boundedMultiplier(c.incomingDamageMultiplier,100));
+}
+export function passiveRegeneration(v:Pick<VatsState, "turn" | "fleshUntil" | "passiveMultiplier">,c:Pick<VatsConfig, "regeneration" | "cells" | "maxLife" | "grade" | "kami" | "regenerationReference">) {
  const biological=c.regeneration, cells=c.cells?Math.floor(c.maxLife/6)+(biological===0?c.grade:0):0;
  const automaticMultiplier=c.kami||v.fleshUntil>v.turn?2:1;
  const multiplier=normalizePassiveMultiplier(v.passiveMultiplier);
- const amount=Math.max(0,Math.floor((biological*automaticMultiplier+cells)*multiplier));
+ const reference=c.regenerationReference??biological;
+ const amount=Math.max(0,Math.floor(biological+reference*(combineMultipliers(automaticMultiplier,multiplier)-1)+cells*multiplier));
  return {amount,biological,cells,automaticMultiplier,multiplier};
 }
 export function passivePreview(v:VatsState,c:VatsConfig) {
@@ -80,7 +85,7 @@ export function vatsAction(source:VatsState,c:VatsConfig,a:VatsAction,roll:(s:nu
   return {vats:v,currentRC:rc,hunger,...(currentLife===undefined?{}:{currentLife})};
  }
  const spend=(n:number,regeneration=false)=>{lastCost=vatsRCCost(n,c,regeneration);if(rc<lastCost||penalties(v).exhausted||isRCSuppressed(v)){log('Ação indisponível: RC insuficiente, suprimido ou exaustão.');return false;}rc-=lastCost;v.rcSpent=Math.floor(v.rcSpent+lastCost);if(lastCost!==Math.floor(positive(n)))log(`Custo ajustado: ${Math.floor(positive(n))} → ${lastCost} RC.`);return true;};
- const gain=(n:number)=>{if(v.fleshUntil>v.turn){log('Recuperação de RC bloqueada por Carne que se Recusa.');return;}rc=Math.floor(Math.max(rc,Math.min(c.maxRC,rc+positive(n))));};
+ const gain=(n:number)=>{if(v.fleshUntil>v.turn){log('Recuperação de RC bloqueada por Carne que se Recusa.');return;}rc=Math.floor(Math.max(rc,Math.min(c.maxRC,rc+positive(n)*Math.max(0,c.rcGainMultiplier??1))));};
  const heal=(n:number)=>{n=Math.floor(positive(n));for(const [id] of regions) if(!v.body[id].destroyed) v.body[id].damage=Math.floor(Math.max(0,Math.min(c.maxLife,v.body[id].damage)-n));};
  const growthLimit=Math.max(0,Math.floor(c.tails));
  v.growth=Math.min(growthLimit,Math.max(0,Math.floor(v.growth)));
@@ -153,7 +158,7 @@ export function vatsAction(source:VatsState,c:VatsConfig,a:VatsAction,roll:(s:nu
  case 'mitosis':if(c.hasKagune&&c.kaguneActive!==false&&v.kakuhouUntil<=v.turn&&c.powers.includes('mitose-tentacruel')&&v.mitosisUntil<=v.turn&&amount>=1&&amount<=(c.naturalTails??c.tails)&&Number.isFinite(a.cost)&&a.cost!>0&&spend(a.cost!)){v.mitosisUntil=v.turn+2;v.mitosisCount=Math.floor(amount);log(`Mitose: +${v.mitosisCount} caudas por 2 turnos; ${lastCost} RC pagos (custo-base confirmado pela mesa).`);}break;
  case 'passive-multiplier':v.passiveMultiplier=normalizePassiveMultiplier(a.amount);break;
  case 'combat':v.activeHealTurn=0;v.milPernasUntil=0;v.mitosisUntil=0;v.mitosisCount=0;v.tentacleMomentum=0;v.lastTentacleAttackTurn=0;v.meter=0;v.healedTurn=0;v.rcSpent=0;log('Novo combate: saldo de cura e gasto de RC zerados. Ferimentos e reserva de RC mantidos.');break;
- case 'damage': if(r){const reduced=Math.floor(Math.max(0,amount-(a.reduceRD?c.rd:0)-v.fortressBonus));const actual=Math.floor(Math.min(c.maxLife,reduced));v.fortressBonus=0;r.damage=Math.floor(Math.min(c.maxLife,r.damage+actual));if(r.damage>=Math.floor(c.maxLife)&&a.region!=='head'&&a.region!=='torso')r.destroyed=true;log(`${regions.find(x=>x[0]===a.region)?.[1]}: ${actual} de dano líquido.`);}break;
+ case 'damage': if(r){const reduced=vatsReceivedDamage(Math.max(0,amount-(a.reduceRD?c.rd:0)-v.fortressBonus),c);const actual=Math.floor(Math.min(c.maxLife,reduced));v.fortressBonus=0;r.damage=Math.floor(Math.min(c.maxLife,r.damage+actual));if(r.damage>=Math.floor(c.maxLife)&&a.region!=='head'&&a.region!=='torso')r.destroyed=true;log(`${regions.find(x=>x[0]===a.region)?.[1]}: ${actual} de dano líquido.`);}break;
  case 'heal':if(r&&!r.destroyed){const received=Math.floor(Math.floor(amount)*boundedMultiplier(c.healingReceivedMultiplier)),before=Math.floor(Math.min(c.maxLife,r.damage));r.damage=Math.max(0,before-received);log(`Cura localizada: ${received} PV; ${before-r.damage} PV efetivos.`);}break;
  case 'destroy':if(r){r.destroyed=true;r.damage=Math.floor(c.maxLife);log('Região destruída.');}break;
  case 'rebuild':if(r){r.destroyed=false;r.effects=r.effects.filter(e=>!['Braço Destruído','Perna Destruída','Mão Destruída'].includes(e));log('Reconstrução autorizada pela mesa; PV não recuperados.');}break;
@@ -161,9 +166,9 @@ export function vatsAction(source:VatsState,c:VatsConfig,a:VatsAction,roll:(s:nu
  case 'remove':if(a.effect){v.global=v.global.filter(e=>e!==a.effect);if(r)r.effects=r.effects.filter(e=>e!==a.effect);log(`Removido: ${a.effect}.`);}break;
  case 'consume-stun':for(const [id] of regions)v.body[id].effects=v.body[id].effects.filter(e=>e!=='Atordoado');log('Atordoado consumido no teste.');break;
  case 'passive':{if(v.healedTurn===v.turn){log('Regeneração já aplicada neste turno.');break;}const q=passivePreview(v,c);if(!q.total)break;if(spend(q.baseCost,true)){heal(q.amount);v.healedTurn=v.turn;if(c.regenLevel)v.meter=(Math.floor(v.meter)+q.total)%q.threshold;log(`Regeneração: ${q.total} PV efetivos; ${lastCost} RC; saldo ${v.meter}/${q.threshold} PV.`);}break;}
- case 'turn':{for(const [id,name] of regions){const b=v.body[id];for(const e of b.effects){const die=e==='Sangramento Leve'?4:e==='Sangramento Grave'?6:e==='Hemorragia'?8:0;if(die){const n=roll(die);b.damage=Math.floor(Math.min(c.maxLife,b.damage+n));log(`${name} · ${e}: 1d${die} = ${n} PV.`);}const loss=e==='Hemorragia'?1:e==='Estômago Destruído'?2:0;if(loss){rc=Math.max(0,rc-loss);log(`${e}: −${loss} RC.`);}}if(b.damage>=c.maxLife&&!['head','torso'].includes(id))b.destroyed=true;}v.turn++;if(v.lastTentacleAttackTurn<v.turn-1)v.tentacleMomentum=0;v.sacrifices=0;v.angel=0;log('Início do turno.');if(v.kakuhouUntil&&v.turn>=v.kakuhouUntil){v.kakuhouUntil=0;log('Kakuhou disponível novamente.');}break;}
+ case 'turn':{for(const [id,name] of regions){const b=v.body[id];for(const e of b.effects){const die=e==='Sangramento Leve'?4:e==='Sangramento Grave'?6:e==='Hemorragia'?8:0;if(die){const rolled=roll(die),n=vatsReceivedDamage(rolled,c);b.damage=Math.floor(Math.min(c.maxLife,b.damage+n));log(`${name} · ${e}: 1d${die} = ${rolled}; dano recebido ${n} PV.`);}const loss=e==='Hemorragia'?1:e==='Estômago Destruído'?2:0;if(loss){rc=Math.max(0,rc-loss);log(`${e}: −${loss} RC.`);}}if(b.damage>=c.maxLife&&!['head','torso'].includes(id))b.destroyed=true;}v.turn++;if(v.lastTentacleAttackTurn<v.turn-1)v.tentacleMomentum=0;v.sacrifices=0;v.angel=0;log('Início do turno.');if(v.kakuhouUntil&&v.turn>=v.kakuhouUntil){v.kakuhouUntil=0;log('Kakuhou disponível novamente.');}break;}
  case 'kakuhou':if(c.hasKagune&&v.kakuhouUntil<=v.turn){const n=roll(6);rc=Math.max(0,rc-n);v.kakuhouUntil=v.turn+2;log(`Kakuhou destruído · vazamento 1d6 = ${n} RC · bloqueio até T${v.kakuhouUntil}.`);}break;
- case 'part-damage':if(p&&!p.ready){p.damage=Math.floor(Math.min(c.durability,p.damage+Math.floor(amount)));if(p.damage>=Math.floor(c.durability))breakPart(a.index??0,!!a.enemy);else log(`Kagune ${(a.index??0)+1}: −${Math.floor(amount)} PV.`);}break;
+ case 'part-damage':if(p&&!p.ready){p.damage=Math.floor(Math.min(c.durability,p.damage+vatsReceivedDamage(amount,c)));if(p.damage>=Math.floor(c.durability))breakPart(a.index??0,!!a.enemy);else log(`Kagune ${(a.index??0)+1}: −${vatsReceivedDamage(amount,c)} PV.`);}break;
  case 'break':breakPart(a.index??0,!!a.enemy);break;
  case 'part-regen':if(p&&p.ready&&v.turn>=p.ready&&v.turn>=p.sacrificedUntil&&v.turn>=v.kakuhouUntil&&spend(2,true)){p.damage=0;p.ready=0;p.sacrificedUntil=0;log(`Kagune regenerada · ${lastCost} RC.`);}break;
  case 'hydra':if(c.powers.includes('hidra-faminta')&&p?.ready&&!p.sacrificedUntil&&v.hydraTurn!==v.turn&&v.turn>=v.kakuhouUntil&&spend(5,true)){p.damage=0;p.ready=0;v.hydraTurn=v.turn;log(`Hidra Faminta · ${lastCost} RC · ataque desta cauda: −1 acerto.`);}break;
