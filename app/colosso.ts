@@ -34,15 +34,14 @@ export function sumPartDamage(expressions: string[]) {
 }
 
 export function calculateColosso(parts: ReturnType<typeof colossoParts>, values: {
-  damagePerPart: string; otherPartDamage?:string; durabilityPerPart: number; rdPerPart: number; baseRange: number;
+  damagePerPart: string; durabilityPerPart: number; rdPerPart: number; baseRange: number;
 }) {
   const durabilitySum = Math.max(0, Math.floor(values.durabilityPerPart)) * parts.partCount;
   const rdSum = Math.max(0, Math.floor(values.rdPerPart)) * parts.partCount;
   return {
     ...parts,
     damagePerPart: values.damagePerPart,
-    otherPartDamage:values.otherPartDamage||values.damagePerPart,
-    damage: parts.partCount?sumPartDamage([values.damagePerPart,...Array.from({length:parts.partCount-1},()=>values.otherPartDamage||values.damagePerPart)]):'0',
+    damage: sumPartDamage(Array.from({ length: parts.partCount }, () => values.damagePerPart)),
     durabilityPerPart: Math.max(0, Math.floor(values.durabilityPerPart)), durabilitySum, durability: Math.floor(durabilitySum / 2),
     rdPerPart: Math.max(0, Math.floor(values.rdPerPart)), rdSum, rd: rdSum,
     baseRange: Math.floor(values.baseRange), range: Math.floor(values.baseRange + parts.extraPairs),
@@ -57,7 +56,7 @@ export function colossoSummary(result: ColossoResult, attackTest: string, totalR
     'Colosso de Carne',
     `${result.partCount} partes fundidas (${result.extraParts} extras; floor(${result.partCount} / 2) = ${result.pairs} pares para o acerto).`,
     `Acerto: ${attackTest}. Dano: ${result.damage}. Alcance: ${result.range} m.`,
-    'Bônus gerais de personagem entram uma vez no ataque unido; o dano próprio de cada parte continua somando.',
+    'O dano unido soma o dano completo de cada parte, incluindo todos os seus dados e modificadores, sem perdas na fusão.',
     `Dureza: floor(${result.durabilityPerPart} × ${result.partCount} / 2) = ${result.durability}. RD da Kagune: ${result.rdPerPart} × ${result.partCount} = ${result.rd}.`,
     ...(totalRD===undefined?[]:[`RD total da ficha, após bônus e porcentagens: ${Math.floor(totalRD)}.`]),
     `+${result.accuracyBonus} acertos de Kagune; −${result.agilityPenalty} acertos de Agilidade, Esquiva e Iniciativa.`,

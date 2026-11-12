@@ -27,11 +27,10 @@ export function damageAgainstTarget(damage: number, rd: number, penetration: num
   const rawDamage=Math.floor(rolledDamage*multiplier);
   return {...result,originalTargetRD,flatRDReduction,rolledDamage,multiplier,rawDamage,damage:Math.max(0,rawDamage-result.remainingRD)};
 }
-export function prepareCriticalAttack(input: CriticalAttackInput & { parts?:number; ordinaryFormula:string;sharedSteps?:number;sharedFlat?:number;sharedReferenceSteps?:number }) {
+export function prepareCriticalAttack(input: CriticalAttackInput & { parts?:number; ordinaryFormula:string }) {
   const result=criticalAttack(input),parts=Math.min(100,Math.max(1,integer(input.parts)||1));
-  const other=criticalAttack({...input,referenceSteps:Math.max(0,(input.referenceSteps??input.steps)-integer(input.sharedReferenceSteps??input.sharedSteps)),steps:Math.max(0,input.steps-integer(input.sharedSteps)),flat:input.flat-integer(input.sharedFlat)});
   const formula=!result.critical&&!result.extraStepsPercent?input.ordinaryFormula:parts===1?result.formula:sumPartDamage([result.formula,
-    ...Array.from({length:parts-1},()=>sumPartDamage([other.formula,String(-other.flatBonus)])),
+    ...Array.from({length:parts-1},()=>sumPartDamage([result.formula,String(-result.flatBonus)])),
   ]);
   const statistics=damageStatistics(formula);
   const minimumRawDamage=result.minimumPercent?Math.max(result.minimumFlat,Math.floor(statistics.diceMaximum*result.minimumPercent/100)+statistics.flat):0;

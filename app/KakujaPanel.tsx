@@ -75,7 +75,7 @@ type Calculation = {
 };
 
 export type KakujaCustomFactors = { steps?: number; rd?: number; accuracy?: number; damage?: number; durability?: number; reserve?: number };
-export type KakujaFusion = { partCount: number; stepPenalty: number; sharedSteps: number; sharedFlat: number; sharedReferenceSteps?: number };
+export type KakujaFusion = { partCount: number; stepPenalty: number };
 
 /** Inherit every fused part; the form's own additions enter the united attack once. */
 export function calculateKakujaDamage(kaguneSteps: number, kaguneModifier: number, totalSteps: number, totalModifier: number, fusion?: KakujaFusion, stepsMultiplier = 1) {
@@ -83,7 +83,7 @@ export function calculateKakujaDamage(kaguneSteps: number, kaguneModifier: numbe
   if (!fusion || fusion.partCount < 2) return formatDamage(Math.floor(totalSteps * multiplier), totalModifier);
   const partCount = Math.min(100, Math.max(2, Math.floor(fusion.partCount)));
   const first = formatDamage(Math.floor(Math.max(0, totalSteps - fusion.stepPenalty) * multiplier), totalModifier);
-  const other = formatDamage(Math.floor(Math.max(0, kaguneSteps - fusion.stepPenalty - (fusion.sharedReferenceSteps ?? fusion.sharedSteps)) * multiplier), kaguneModifier - fusion.sharedFlat);
+  const other = formatDamage(Math.floor(Math.max(0, kaguneSteps - fusion.stepPenalty) * multiplier), kaguneModifier);
   return sumPartDamage([first, ...Array.from({ length: partCount - 1 }, () => other)]);
 }
 
