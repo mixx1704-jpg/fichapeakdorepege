@@ -1,3 +1,4 @@
+import { rollemDice } from './damage-dice';
 import {calculateArchetype} from './archetype';
 import {combineMultipliers} from './numeric-modifiers';
 import {calculateKakujaBiology,kakujaRegeneration,kakujaWoundPenalty} from './kakuja-biology';
@@ -452,7 +453,7 @@ export { formatDamage } from "./damage-dice";
 export function multiplyDamage(expression: string, multiplier: number) {
   const safeMultiplier = Math.max(1, Math.floor(multiplier));
   const dice = [...expression.matchAll(/(\d+)d(\d+)/g)]
-    .map((match) => `${Number(match[1]) * safeMultiplier}d${match[2]}`)
+    .map((match) => rollemDice(Number(match[1]) * safeMultiplier, Number(match[2])))
     .join("+");
   const modifier = Number(expression.match(/([+-]\d+)$/)?.[1] || 0) * safeMultiplier;
   return `${dice}${modifier > 0 ? `+${modifier}` : modifier < 0 ? modifier : ""}`;
@@ -1128,7 +1129,7 @@ function calculateCharacterWithPack(sheet: CharacterSheet, context: {quinque?:bo
 }
 
 /** Kakuja includes the manifested Kagune; its bonuses never flow back into that base weapon. */
-export function calculateCharacter(sheet: CharacterSheet, context: {quinque?:boolean} = {}) {
+function calculateCharacterWithoutLevelDice(sheet: CharacterSheet, context: {quinque?:boolean} = {}) {
   const base = calculateCharacterWithPack(sheet, context);
   if (!base.kakujaManifested || (sheet.kaguneActive && sheet.weaponKind === "kagune")) return base;
   const inherited = calculateCharacterWithPack({ ...sheet, weaponKind: "kagune", kaguneActive: true }, context);
@@ -1257,3 +1258,13 @@ export const damageConditionsForSheet = (sheet: CharacterSheet, scope: "physical
     return options;
   };
 
+
+/** Combat progression is derived once, never stored in purchased attributes. */
+export function calculateCharacter(sheet: CharacterSheet, context: {quinque?:boolean} = {}) {
+  const result = calculateCharacterWithoutLevelDice(sheet, context);
+  const count = context.quinque ? 0 : Math.min(10, Math.max(0, Math.floor(sheet.grade / 2)));
+  const bonus = (test: string) => count && /^1d\d+/.test(test) ? test + '+' + count + 'd10' : test;
+  return { ...result, physicalHitTest: bonus(result.physicalHitTest), kaguneTest: bonus(result.kaguneTest),
+    blockTest: bonus(result.blockTest), dodgeTest: bonus(result.dodgeTest),
+    kakujaKaguneTest: bonus(result.kakujaKaguneTest), kakujaBlockTest: bonus(result.kakujaBlockTest), kakujaDodgeTest: bonus(result.kakujaDodgeTest) };
+}

@@ -90,7 +90,7 @@ export function calculateKakujaDamage(kaguneSteps: number, kaguneModifier: numbe
 export function calculateKakujaAccuracy(kaguneTest: string, bonus: number, multiplier = 1) {
   const test = kakujaAccuracyTest(kaguneTest, bonus);
   if (!Number.isFinite(multiplier) || multiplier === 1) return test;
-  const total = [...test.replace(/^\d+d\d+/, '').matchAll(/[+-]\d+/g)].reduce((sum, match) => sum + Number(match[0]), 0);
+  const total = [...test.replace(/\d+d\d+/g, '').matchAll(/[+-]\d+/g)].reduce((sum, match) => sum + Number(match[0]), 0);
   return kakujaAccuracyTest(test, Math.floor(total * Math.max(0, multiplier)) - total);
 }
 

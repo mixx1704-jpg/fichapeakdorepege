@@ -1,3 +1,4 @@
+import { rollemDice } from './damage-dice';
 import { tailAvailability, type TailPart } from './tail-management';
 
 export const COLOSSO_PERK_ID = 'r26-colosso-carne';
@@ -29,7 +30,7 @@ export function sumPartDamage(expressions: string[]) {
     for (const match of remainder.matchAll(/[+-]?\d+(?:\.\d+)?/g)) modifier += Number(match[0]);
   }
   modifier = Math.floor(modifier);
-  const dice = [...groups].filter(([, count]) => count > 0).sort((a, b) => b[0] - a[0]).map(([side, count]) => `${count}d${side}`).join('+');
+  const dice = [...groups].filter(([, count]) => count > 0).sort((a, b) => b[0] - a[0]).map(([side, count]) => rollemDice(count, side)).join('+');
   return `${dice}${modifier > 0 && dice ? '+' : ''}${modifier || !dice ? modifier : ''}`;
 }
 

@@ -1,3 +1,11 @@
+/** Rollem accepts at most 100 dice in each summed group. */
+export function rollemDice(count: number, sides: number): string {
+  const groups: string[] = [];
+  count = Math.max(0, Math.floor(count));
+  while (count > 100) { groups.push('100d' + sides); count -= 100; }
+  if (count) groups.push(count + 'd' + sides);
+  return groups.join('+');
+}
 export const DAMAGE_MIN_SIDES = 4;
 export const DAMAGE_MAX_SIDES = 100;
 export const DAMAGE_SIDES_PER_STEP = 2;
@@ -17,7 +25,7 @@ export function damageDiceGroups(steps: number): Array<{ sides: number; count: n
 /** Converts whole damage steps into the shared ladder and applies fixed damage once. */
 export function formatDamage(steps: number, modifier: number) {
   modifier = Number.isFinite(modifier) ? Math.floor(modifier) : 0;
-  const dice = damageDiceGroups(steps).map(({ sides, count }) => `${count}d${sides}`).join("+");
+  const dice = damageDiceGroups(steps).map(({ sides, count }) => rollemDice(count, sides)).join("+");
   return `${dice}${modifier > 0 ? `+${modifier}` : modifier < 0 ? modifier : ""}`;
 }
 
