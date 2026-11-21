@@ -1,0 +1,20 @@
+import raw from './perks.json';
+import type { Perk, KaguneEffect, Evolution } from './data';
+import type { KakujaPerk } from './kakuja-perks';
+import type { CustomSkillEffect } from './CustomSkillsPanel';
+import type { NewPackDefinition } from './new-pack-catalog';
+import type { TacticalTechnique } from './tactical';
+import type { HealingTechnique } from './healing';
+export type CatalogAutomation = {
+  rework?: { modifiers: Record<string, number | Record<string, number | string>>; weaponOnly: boolean };
+  scaling?: { percentages?: Record<string, number>; penetrationPercent?: number; weaponOnly?: boolean };
+  critical?: { stepsPercent?: number; penetrationPercent?: number; minimumPercent?: number; flat?: string };
+  healing?: HealingTechnique;
+  tactical?: TacticalTechnique;
+  pack?: NewPackDefinition;
+  endgame?: { percentages: Record<string, number>; description: string };
+  custom?: { activation: 'passive' | 'active'; rcCost?: number; effects: CustomSkillEffect[] };
+};
+export type CatalogPerk = Perk & { catalogGroups?: string[]; automation?: CatalogAutomation };
+export const perkCatalog = raw as unknown as { schemaVersion: number; perks: CatalogPerk[]; kakujaPerks: (KakujaPerk & {catalogGroups?: string[]})[]; kaguneEffects: (KaguneEffect & {catalogGroups?: string[]})[]; evolutions: (Evolution & {catalogGroups?: string[]})[] };
+export const catalogGroup = (group: string) => perkCatalog.perks.filter(p => p.catalogGroups?.includes(group));

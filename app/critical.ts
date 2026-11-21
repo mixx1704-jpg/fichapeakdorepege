@@ -1,8 +1,9 @@
+import { perkCatalog, catalogGroup } from './perk-catalog';
 import type { AttributeKey, Perk } from "./data";
 import { formatDamage, damageStatistics } from "./damage-dice";
 
 export const CRITICAL_RANGE_ID = "r26-critico-faixa";
-export const CRITICAL_RANGE_COSTS = [30, 40, 50, 60] as const;
+export const CRITICAL_RANGE_COSTS = perkCatalog.perks.find(p=>p.id===CRITICAL_RANGE_ID)!.cost as number[];
 export type CriticalSelections = Record<string, { rank: number }>;
 export interface CriticalContext {
   level: number;
@@ -26,34 +27,17 @@ const rank = (perks: CriticalSelections | null | undefined, id: string) => integ
 const attribute = (context: CriticalContext, key: AttributeKey) => integer(context.attributes?.[key]);
 const defaultContext: CriticalContext = { level: 1, attributes: {} };
 
-const rangePerk: Perk = {
-  id: CRITICAL_RANGE_ID, name: "Faixa de Crítico", category: "Combate", cost: [...CRITICAL_RANGE_COSTS], costMode: "sum", maxRank: 4, minGrade: 1,
-  sourceId: "REWORK 2026", supplement: true, equipmentCompatible: true, useType: "Passiva · crítico natural",
-  requirement: "LEVEL 1+ · até 4 compras cumulativas",
-  description: "Cada compra amplia o crítico natural do d20 em 1: 19–20, 18–20, 17–20 e 16–20. Custos das compras: 30, 40, 50 e 60 PE; totais investidos: 30, 70, 120 e 180 PE. Modificadores de acerto nunca geram crítico. Nos testes de d10/d30, apenas o máximo natural é crítico. O crítico confirmado acrescenta 50% dos Passos de Dano, arredondados para baixo, antes de rolar o dano; não multiplica dano fixo.",
+const flatEffects: Record<string, NonNullable<CriticalDefinition['flat']>> = {
+  trauma: context => integer(context.level,1,1,20),
+  'massa-impacto': (_context,steps) => Math.floor(steps/2),
+  aniquilacao: () => 20,
+  'incisao-absoluta': context => attribute(context,'precisao')*2,
 };
-
-const definitions: CriticalDefinition[] = [];
-function add(id: string, name: string, level: number, cost: number, description: string, effects: Omit<CriticalDefinition, "perk">, options: Partial<Perk> = {}) {
-  definitions.push({ ...effects, perk: {
-    id: `r26-critico-${id}`, name, category: "Combate", minGrade: level, cost, maxRank: 1, sourceId: "REWORK 2026", supplement: true,
-    equipmentCompatible: true, useType: "Passiva · crítico confirmado",
-    requirement: `LEVEL ${level}+`,
-    description: `${description} Só no ataque com crítico natural confirmado. Melhorias que substituem o bônus crítico usam o maior patamar; percentuais independentes somam sobre os Passos de referência. Penetração soma às outras fontes, sem teto; o excesso acima de 100% concede bônus percentual de Passos. Frações são arredondadas para baixo.`, ...options,
-  } });
-}
-
-add("impacto-ampliado", "Impacto Ampliado", 4, 12, "O bônus do crítico sobe de +50% para +100% dos Passos de Dano.", { stepsPercent: 100 });
-add("ruptura-certeira", "Ruptura Certeira", 7, 18, "O crítico ignora 10% da RD do alvo.", { penetrationPercent: 10 });
-add("ponto-fraco", "Ponto Fraco", 12, 28, "O crítico ignora 20% da RD do alvo.", { penetrationPercent: 20 });
-add("impacto-profundo", "Impacto Profundo", 14, 35, "O bônus do crítico sobe para +150% dos Passos de Dano.", { stepsPercent: 150 });
-add("trauma", "Trauma Acumulado", 9, 20, "Adicione o seu LEVEL ao dano fixo do crítico.", { flat: context => integer(context.level, 1, 1, 20) });
-add("massa-impacto", "Massa no Impacto", 16, 40, "Adicione ao dano fixo do crítico metade dos Passos de Dano anteriores ao crítico.", { flat: (_context, steps) => Math.floor(steps / 2) });
-add("aniquilacao", "Aniquilação", 20, 320, "Explosão: o crítico acrescenta +200% dos Passos de Dano e +20 de dano fixo.", { stepsPercent: 200, flat: () => 20 }, { category: "Força", attribute: "forca", min: 15, requirement: "LEVEL 20 · Força 15 · exclusiva do LEVEL 20" });
-add("incisao-absoluta", "Incisão Absoluta", 20, 280, "Antiblindagem: o crítico ignora 50% da RD do alvo e acrescenta duas vezes a sua Precisão ao dano fixo.", { penetrationPercent: 50, flat: context => attribute(context, "precisao") * 2 }, { category: "Precisão", attribute: "precisao", min: 15, requirement: "LEVEL 20 · Precisão 15 · exclusiva do LEVEL 20" });
-add("colapso-controlado", "Colapso Controlado", 20, 300, "Consistência: após rolar o dano crítico, ele tem piso bruto igual ao maior entre 4 × Controle e 75% do máximo dos dados + dano fixo. A RD é descontada depois. O piso é aplicado uma vez no ataque unido; não acrescenta outro percentual de Passos.", { minimumPercent:75 }, { category: "Controle", attribute: "controle", min: 15, requirement: "LEVEL 20 · Controle 15 · exclusiva do LEVEL 20" });
-
-export const criticalPerks: Perk[] = [rangePerk, ...definitions.map(definition => definition.perk)];
+const definitions: CriticalDefinition[] = perkCatalog.perks.flatMap(perk=>{
+  const effects=perk.automation?.critical;
+  return effects ? [{...effects,perk,flat:effects.flat?flatEffects[effects.flat]:undefined}] : [];
+});
+export const criticalPerks: Perk[] = catalogGroup('critical');
 
 export function criticalRange(perks: CriticalSelections | null | undefined = {}, die = 20) {
   const maximum = [10, 20, 30].includes(die) ? die : 20;

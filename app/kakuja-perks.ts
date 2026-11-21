@@ -1,12 +1,11 @@
-import raw from './kakuja-perks.json';
+import { perkCatalog } from './perk-catalog';
 import type {KakujaBiologicalProperties} from './kakuja-biology-perks';
 import { kakujaElements, kakujaModules, type KakujaState } from './kakuja-data';
-import { emptyKakujaBonuses, kakujaReworkPerks, type KakujaBonuses } from './kakuja-rework';
+import { emptyKakujaBonuses, type KakujaBonuses } from './kakuja-rework';
 import { calculateCustomSkillBonuses, normalizeCustomSkills } from './CustomSkillsPanel';
 import { reworkText } from './rework-rules';
 export type KakujaPerk = {id:string;sourceId:string;name:string;cost:number;grade:number;cm:number;category:string;usage:string;requirement:string;effect:string;sourcePage:number;requiresModules:string[];requiresElements:string[];minElements:number;requiresPerks?:string[];currency?:'PE-K';activation?:'passive'|'active';bonuses?:Partial<KakujaBonuses>;requiresFamily?:string;requiresComplete?:boolean;requiresAttribute?:{attribute:string;min:number};biology?:KakujaBiologicalProperties};
-const modernText = reworkText;
-export const kakujaPerks:KakujaPerk[] = [...kakujaReworkPerks, ...(raw as KakujaPerk[]).map(p=>({...p,effect:modernText(p.effect),requirement:modernText(p.requirement),usage:modernText(p.usage)}))];
+export const kakujaPerks:KakujaPerk[] = perkCatalog.kakujaPerks;
 export function normalizeKakujaPerks(value:unknown):string[] {
  return Array.isArray(value)? [...new Set(value.filter((id):id is string=>typeof id==='string'))]:[];
 }

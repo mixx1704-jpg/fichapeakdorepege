@@ -1,34 +1,11 @@
+import { perkCatalog, catalogGroup } from './perk-catalog';
 import type { Perk } from './data';
 
 export type HealingTarget = 'life' | 'body' | 'part' | 'kakuhou' | 'rc';
 export type HealingTechnique = { id: string; name: string; level: number; pe: number; rc: number; minVigor?:number; kind: 'heal' | 'cleanse' | 'rebuild' | 'release'; dice?: number; sides?: number; description: string };
 export const healingSpecies = ['ghoul', 'ghoul-artificial', 'ghoul-dominante'];
-const tierRows = [
-  [1, 3, 2, 2, 6, 'Cicatriz Viva'], [3, 5, 3, 4, 6, 'Sutura Carmim'],
-  [5, 7, 4, 4, 8, 'Pulso Regenerativo'], [7, 9, 5, 6, 8, 'Transfusão de Kagune'],
-  [9, 12, 6, 6, 10, 'Reparo Profundo'], [11, 15, 8, 8, 10, 'Enxerto Vital'],
-  [13, 35, 10, 8, 12, 'Organismo Soberano'], [16, 50, 12, 10, 12, 'Ressurgimento'],
-  [20, 300, 15, 12, 12, 'Reconstituição Absoluta'],
-] as const;
-
-export const healingTechniques: HealingTechnique[] = [
-  ...tierRows.map(([level, pe, rc, dice, sides, name]) => ({
-    id: `r26-cura-${level}`, name, level, pe, rc, dice, sides, kind: 'heal' as const, ...(level===20?{minVigor:15}:{}),
-    description: `Cure ${dice}d${sides} PV de sua Vida geral OU de uma região corporal não destruída. Pode curar um aliado por contato: a ficha rola os dados e gera o resultado para copiar. Custa ${rc} RC e usa a cura ativa do turno; a regeneração automática permanece separada. Não reconstrói partes nem remove condições.`,
-  })),
-  { id: 'r26-sutura-emergencia', name: 'Sutura de Emergência', level: 3, pe: 6, rc: 4, kind: 'cleanse', description: 'Remova uma condição física curável selecionada: sangramento, hemorragia, ferimento, fratura não destrutiva, trauma pulmonar, concussão, atordoamento ou colapso orgânico. Não remove destruição, efeitos mentais, supressão de RC ou objetos que prendem o corpo. Pode tratar um aliado por contato. 4 RC; usa a cura ativa do turno.' },
-  { id: 'r26-reconstrucao-organica', name: 'Reconstrução Orgânica', level: 8, pe: 14, rc: 8, kind: 'rebuild', description: 'Reconstrua um alvo por uso: uma região corporal destruída (retorna com 1 PV e remove suas lesões destrutivas), uma parte da Kagune quebrada/sacrificada (retorna com 1 PV), uma lesão destrutiva selecionada ou o Kakuhou perdido (encerra o bloqueio). Não recupera todos os PV nem ativa a Kagune automaticamente. Pode tratar aliado por contato. 8 RC; usa a cura ativa do turno.' },
-  { id: 'r26-desbloqueio-rc', name: 'Desbloqueio de RC', level: 5, pe: 12, rc: 0, kind: 'release', description: 'Uma vez por sessão, encerre a supressão de RC em você ou num aliado por contato. Não custa RC e funciona com o RC suprimido ou zerado. A reserva permanece a mesma: não cria RC. Usa a cura ativa do turno. Não remove exaustão por falta de reserva.' },
-];
-
-export const healingPerks: Perk[] = healingTechniques.map(technique => ({
-  id: technique.id, name: technique.name, category: 'Vigor', cost: technique.pe,
-  description: technique.description, minGrade: technique.level, maxRank: 1,
-  species: ['ghoul', 'ghoul-artificial', 'ghoul-dominante'], requiresRC: technique.kind !== 'release',
-  ...(technique.minVigor?{attribute:'vigor' as const,min:technique.minVigor}:{}),
-  requirement: `LEVEL ${technique.level}${technique.minVigor?` · Vigor ${technique.minVigor}`:''} · Ghoul, Ghoul Artificial ou Ghoul Dominante`,
-  sourceId: 'nova-era-cura', supplement: true,
-}));
+export const healingTechniques: HealingTechnique[] = perkCatalog.perks.flatMap(p=>p.automation?.healing?[{...p.automation.healing,id:p.id,name:p.name,level:p.minGrade||1,pe:Array.isArray(p.cost)?p.cost[0]:p.cost}]:[]);
+export const healingPerks: Perk[] = catalogGroup('healing');
 
 /** Physical injuries only; positional restraints and mental conditions are not erased. */
 export const curablePhysicalEffects = [

@@ -1,6 +1,7 @@
+import { perkCatalog, catalogGroup } from './perk-catalog';
 import type { AttributeKey, Perk } from './data';
 import {canonicalPerkId} from './perk-migrations';
-import {additionalEndgameTactics,endgameTacticalPreview} from './endgame-tactics';
+import {endgameTacticalPreview} from './endgame-tactics';
 import {DAMAGE_MAX_SIDES} from './damage-dice';
 
 export type TacticalSlot = 'action' | 'reaction';
@@ -11,56 +12,9 @@ export interface TacticalTechnique {
   requiresRC?: boolean; weaponOnly?: boolean; equipmentCompatible?: boolean; existing?: boolean;
 }
 
-const techniques: TacticalTechnique[] = [];
-function add(id: string, name: string, level: number, pe: number, rc: number, slot: TacticalSlot, effect: TacticalEffect, description: string, extra: Partial<TacticalTechnique> = {}) {
-  techniques.push({ id: `r26-tatica-${id}`, name, level, pe, rc, slot, effect, description, equipmentCompatible: rc === 0 && ['ricochet','move','capture','push','precision','counter'].includes(effect), requiresRC: rc > 0, ...extra });
-}
-add('guarda-interposta','Guarda Interposta',2,6,0,'reaction','intercept','Intercepte um dano pós-RD que atingiria um aliado. Você recebe metade, arredondada para baixo, e a outra metade é impedida; o aliado não recebe esse dano.',{percent:50});
-add('reserva-dor','Reserva de Dor',3,8,0,'reaction','retaliate','Informe um dano pós-RD que você já recebeu. Guarde 50%, até metade de sua Vida máxima, como dano fixo para um único próximo ataque. A reserva é consumida ao liberar e expira no início do segundo turno seguinte. Não aplica de novo o dano recebido.',{percent:50});
-add('postura-ancora','Postura de Âncora',4,10,0,'action','stance','Até seu próximo turno, seu deslocamento fica 0. Contra o próximo dano pós-RD recebido, reduza 50%. Use Resolver impacto uma vez; não altera sua RD nem concede ataques.',{percent:50});
-add('partilha-vital','Partilha Vital',4,9,0,'action','split-heal','Informe uma cura já rolada e ainda não aplicada. Distribua entre dois alvos: o primeiro recebe o valor escolhido e o segundo a sobra. A soma nunca ultrapassa a cura original. O resultado é um recibo para as fichas dos destinatários.');
-add('detonacao-toxica','Detonação Tóxica',5,12,3,'action','detonate','Consuma até 4 doses registradas neste controlador. Dano bruto = doses × dano por dose informado; desconte a RD inteira do alvo. Copie o resultado e encerre manualmente as mesmas doses no painel original; não produz novo veneno.',{weaponOnly:true});
-add('laco-constritor','Laço Constritor',5,12,2,'action','bind','Depois de confirmar um acerto, o alvo testa 1d20 + Vigor + Controle contra 15 + seu Controle. Falha prende o alvo por 2 turnos: deslocamento 0, sem retirar ações ou defesas. Ele pode gastar sua ação para repetir o teste; use Libertação para registrar o sucesso.',{weaponOnly:true});
-add('ricochete-duplo','Ricochete Duplo',6,14,0,'action','ricochet','Depois de confirmar um ataque, divida o dano bruto já rolado entre dois alvos: metade para o primeiro e a sobra para o segundo. Cada alvo desconta sua própria RD inteira. Não repita críticos, veneno ou ricochetes nesta divisão.');
-add('ultimo-pulso','Último Pulso',7,18,6,'reaction','last-stand','Uma vez por sessão, quando um dano pós-RD derrubaria você de Vida positiva para 0, permaneça com 1 PV. Informe o dano antes de aplicá-lo; não ressuscita quem já está com 0 PV.',{usesSession:true});
-add('baluarte-aliado','Baluarte Aliado',8,20,0,'reaction','intercept','Intercepte um dano pós-RD de um aliado: receba 25%, arredondados para baixo, e impeça o restante. O aliado não recebe esse dano. A redução acontece uma vez, depois da RD original.',{percent:75});
-add('refluxo-dor','Refluxo de Dor',8,18,3,'reaction','reflect','Após um dano pós-RD já recebido, devolva metade como um impacto contra o atacante; desconte a RD inteira dele. Não causa novamente o dano original, não pode gerar outro Refluxo e não conta como novo ataque.',{weaponOnly:true});
-add('drenagem-ferida','Drenagem da Ferida',9,22,4,'action','drain','Confirme um acerto e informe o dano pós-RD efetivamente causado. Recupere 25% desse dano, limitado a 20% da sua Vida máxima e à Vida que falta. Uma resolução por turno; não conta cura de outro painel.',{percent:25,weaponOnly:true});
-add('transfusao-campo','Transfusão de Campo',9,20,0,'action','transfer','Transfira uma quantidade escolhida de sua própria Vida para um aliado por contato. Você precisa permanecer com pelo menos 1 PV; o aliado recebe exatamente o que você perdeu. O recibo não aplica cura na ficha dele.');
-add('recuo-coberto','Recuo Coberto',10,24,0,'reaction','move','Mova 2 + metade da Agilidade em espaços antes ou depois de uma defesa, sem provocar ataques durante esse movimento. É reposicionamento, não uma ação ou ataque adicional.',{percent:50});
-add('captura-viva','Captura Viva',10,24,0,'action','capture','Confirme o acerto e informe Vida atual e RD do alvo. Cause o dano normal, mas limite o dano final para deixá-lo com pelo menos 1 PV. Se conseguir esse limite, a captura ainda exige confirmação da mesa; não ignora defesas.');
-add('arranco-impacto','Arranco de Impacto',11,28,0,'action','push','Após um acerto confirmado, converta todo o dano bruto em deslocamento forçado: piso(dano ÷ máximo(1, Vigor do alvo)), até 10 espaços. Não causa dano de ataque. O alvo pode resistir com Vigor + Controle contra 15 + seu Controle.');
-add('campo-espinhos','Campo de Espinhos',12,30,4,'action','trap','Guarde metade de um dano bruto rolado como armadilha até o início do segundo turno seguinte. Ao confirmar que um inimigo atravessou a área, gaste sua reação para disparar uma vez, descontando a RD inteira dele. A armadilha é consumida.',{weaponOnly:true});
-add('acerto-cirurgico','Acerto Cirúrgico',12,30,0,'action','precision','Para um ataque, sacrifique até 20 de seus acertos bônus: cada acerto sacrificado concede 2% de penetração, até 40%. Informe a quantidade e copie a penalidade junto do resultado. Não cria acertos; a RD é descontada depois.');
-add('janela-contraataque','Janela de Contra-Ataque',13,32,0,'reaction','counter','Após confirmar um bloqueio ou desvio, faça um contra-ataque com metade do dano bruto informado. O inimigo pode defender normalmente; desconte sua RD inteira. Um contra-ataque por turno, sem gerar novas janelas.');
-add('carne-combustivel','Carne como Combustível',14,36,0,'action','fuel','Sacrifique 10% de sua Vida máxima, permanecendo com pelo menos 1 PV. Guarde desconto de RC igual a piso(Vida sacrificada/5), até 6 RC, para a próxima técnica deste controlador até o segundo turno seguinte. Não recupera nem cria RC.',{requiresRC:true,equipmentCompatible:false});
-add('sangue-por-sangue','Sangue por Sangue',15,40,3,'action','blood','Sacrifique 20% de sua Vida máxima, permanecendo com pelo menos 1 PV. Guarde duas vezes a Vida perdida como dano fixo para um próximo ataque, limitado à metade da Vida máxima. Consome a reserva ao liberar; expira no segundo turno seguinte.',{weaponOnly:true});
-add('rede-distribuicao','Rede de Distribuição',18,50,0,'reaction','redistribute','Com dois aliados voluntários e confirmação da mesa, redistribua um dano pós-RD entre você e eles em três parcelas. Você recebe piso(dano/3), o primeiro aliado recebe piso(dano/3) e o segundo a sobra. Não reduz a soma nem permite novas redistribuições.');
-add('sentenca-ruina','Sentença de Ruína',20,280,8,'action','detonate','Consuma até 4 doses locais: dano bruto = doses × dano por dose × 2. Ignore 50% da RD do alvo, sem somar com outras fontes. As mesmas doses precisam ser encerradas no painel original. Não causa um novo acúmulo.',{percent:200,attribute:'precisao',min:15,weaponOnly:true});
-add('bastiao-vivo','Bastião Vivo',20,340,0,'action','stance','Uma vez por sessão, fixe seu deslocamento em 0 até seu próximo turno. Reduza em 75% cada um dos próximos dois danos pós-RD recebidos. Use Resolver impacto para cada golpe; não é imunidade nem modifica a RD.',{percent:75,usesSession:true,attribute:'vigor',min:15});
-add('retaliacao-absoluta','Retaliação Absoluta',20,360,0,'reaction','retaliate','Guarde 100% de um dano pós-RD já recebido, até sua Vida máxima. Um próximo ataque pode consumir a reserva inteira como dano fixo e usar 50% de penetração. Expira no início do segundo turno seguinte; não duplica o dano recebido.',{percent:100,attribute:'forca',min:15});
-
-const existing: TacticalTechnique[] = [
-  {id:'r26-exp-forca-atlas-vivo',name:'Atlas Vivo · onda de impacto',attribute:'forca',effect:'wave',slot:'action',description:'Após um ataque confirmado, cause metade do dano bruto informado a um segundo alvo, descontando a RD inteira dele. O primeiro ataque não é aplicado de novo. A onda não gera outras ondas.'},
-  {id:'r26-exp-vigor-corpo-continental',name:'Corpo Continental · impedir queda',attribute:'vigor',effect:'last-stand',slot:'reaction',usesSession:true,description:'Uma vez por sessão, receba um golpe que levaria de Vida positiva a 0 e permaneça com 1 PV. Informe o dano antes de aplicá-lo. Não custa RC nem ressuscita quem já caiu.'},
-  {id:'r26-exp-precisao-zero-desvio',name:'Zero Desvio · refazer dano',attribute:'precisao',effect:'reroll-damage',slot:'action',description:'Informe os resultados dos dados de dano e rerrole a metade inferior deles, arredondada para baixo. Substitua cada dado escolhido apenas se a nova rolagem for maior. O dano fixo não é rerrolado. Uma vez por turno.'},
-  {id:'r26-exp-agilidade-alem-do-instante',name:'Além do Instante · reposicionar',attribute:'agilidade',effect:'move',slot:'reaction',percent:200,description:'Antes ou depois de defender, mova até duas vezes sua Agilidade em espaços, sem provocar ataques nesse movimento. Uma reação tática por turno; não concede novos ataques.'},
-  {id:'r26-exp-raciocinio-mente-laplace',name:'Mente de Laplace · guardar natural',attribute:'raciocinio',effect:'store-natural',slot:'action',description:'Guarde um resultado natural já rolado no dado atual (d10, d20 ou d30). Em outro turno com o mesmo dado, consuma-o para substituir um novo natural inferior. O valor substituído nunca gera crítico. Só uma reserva; ela termina ao começar outro combate.'},
-  {id:'r26-exp-percepcao-horizonte-absoluto',name:'Horizonte Absoluto · segunda leitura',attribute:'percepcao',effect:'reroll',slot:'reaction',description:'Rerrole um ataque ou defesa e mantenha o maior resultado natural. Informe os dois resultados; use o mesmo modificador. Uma reação tática por turno, sem rerrolagem em cadeia.'},
-  {id:'r26-exp-presenca-imperador-do-campo',name:'Imperador do Campo · comando defensivo',attribute:'presenca',effect:'ally-reroll',slot:'reaction',description:'Um aliado pode rerrolar uma defesa e manter o maior natural. Informe os dois dados e o modificador dele; copie o recibo. Uma reação tática por turno, sem alterar a ficha do aliado.'},
-  {id:'r26-passos-controle-comando-catastrofe',name:'Comando de Catástrofe · liberar RC',attribute:'controle',effect:'release-rc',slot:'action',usesSession:true,description:'Uma vez por sessão, encerre a supressão de RC em você, mesmo com a reserva zerada. Não recupera RC, não remove exaustão por falta de reserva e não cria uma técnica adicional.'},
-].map(item=>({...item,level:20,min:15,pe:0,rc:0,existing:true,equipmentCompatible:false} as TacticalTechnique));
-
-export const tacticalTechniques: readonly TacticalTechnique[] = [...techniques,...existing,...additionalEndgameTactics];
-export const tacticalCapstones: readonly TacticalTechnique[] = [...existing,...additionalEndgameTactics];
-export const TACTICAL_PERK_DEFINITIONS: Perk[] = techniques.map(technique=>({
-  id:technique.id,name:technique.name,category:technique.attribute ? ({forca:'Força',vigor:'Vigor',precisao:'Precisão'} as const)[technique.attribute as 'forca'|'vigor'|'precisao'] : 'Combate',
-  cost:technique.pe,maxRank:1,minGrade:technique.level,attribute:technique.attribute,min:technique.min,
-  equipmentCompatible:technique.equipmentCompatible,requiresRC:technique.requiresRC,requiredWeapon:technique.weaponOnly?'kagune':undefined,
-  sourceId:'nova-era-tatica',supplement:true,useType:`Ativa · ${technique.slot==='reaction'?'reação':'ação'} tática`,
-  requirement:`LEVEL ${technique.level}${technique.attribute?` · ${technique.attribute} ${technique.min}`:''}${technique.usesSession?' · 1/sessão':''}`,
-  description:`${technique.description} ${technique.rc?`${technique.rc} RC por uso. `:''}Usa a ${technique.slot==='reaction'?'reação':'ação'} tática do turno. A ficha calcula e registra o resultado; efeitos em outros alvos são resolvidos na mesa.`,
-}));
+export const tacticalTechniques: readonly TacticalTechnique[] = perkCatalog.perks.flatMap(p=>p.automation?.tactical?[{...p.automation.tactical,id:p.id,level:p.minGrade||1,pe:p.automation.tactical.existing?0:Array.isArray(p.cost)?p.cost[0]:p.cost}]:[]);
+export const tacticalCapstones = tacticalTechniques.filter(t=>t.existing);
+export const TACTICAL_PERK_DEFINITIONS: Perk[] = catalogGroup('tactical');
 
 export interface TacticalContext {
   level?:number;species?:string;attributes?:Partial<Record<AttributeKey,number>>;ownedPerks?:Record<string,{rank:number}>|readonly string[];

@@ -1,4 +1,5 @@
 import { rollemDice } from './damage-dice';
+import { catalogSkills } from './catalog-skills';
 import {calculateArchetype} from './archetype';
 import {combineMultipliers} from './numeric-modifiers';
 import {calculateKakujaBiology,kakujaRegeneration,kakujaWoundPenalty} from './kakuja-biology';
@@ -654,7 +655,9 @@ function calculateCharacterCore(sheet: CharacterSheet, context: {quinque?:boolea
     const vatsWounds = penalties(sheet.vats);
     const centipedeActive = sheet.vats.centipedeUntil > sheet.vats.turn;
     const species = speciesOptions.find((item) => item.id === sheet.species) || speciesOptions[0];
-    const customSkillBonuses = calculateCustomSkillBonuses(sheet.customSkills,sheet.vats.turn);
+    const catalogAttributes = permanentAttributesForSheet(sheet).permanentAttributes;
+    const catalogEffects = catalogSkills(sheet,id=>perkRequirementMet(perks.find(p=>p.id===id)!,sheet,catalogAttributes));
+    const customSkillBonuses = calculateCustomSkillBonuses([...sheet.customSkills,...catalogEffects],sheet.vats.turn);
     const cm=customSkillBonuses.multipliers;
     const archetypeBonuses=context.quinque?calculateArchetype('',undefined,{level:sheet.grade,hunger:0}):calculateArchetype(sheet.archetype,sheet.archetypeState,{level:sheet.grade,hunger:sheet.hunger});
     const customSkillsPE = customSkillsCost(sheet.customSkills);

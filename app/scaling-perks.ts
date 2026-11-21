@@ -1,3 +1,4 @@
+import { perkCatalog, catalogGroup } from './perk-catalog';
 import type { AttributeKey, KaguneFamily, Perk, SpeciesId } from "./data";
 import { endgameProperties } from './endgame-properties';
 import { perkKaguneRequirementsMet } from './bikaku-access';
@@ -27,85 +28,10 @@ interface ScalingDefinition {
   penetrationPercent?: number;
   weaponOnly?: boolean;
 }
-const statLabels: Record<ScalingStat, string> = {
-  life: "Vida máxima", sanity: "Sanidade máxima", rc: "RC máximo", rd: "RD",
-  physicalHit: "acertos em ataques físicos", kaguneHit: "acertos de Kagune/Quinque",
-  block: "acertos de Bloqueio", dodge: "acertos de Desvio",
-  physicalSteps: "Passos de Dano físico", kaguneSteps: "Passos de Dano de Kagune/Quinque",
-  physicalDamage: "dano fixo físico", kaguneDamage: "dano fixo de Kagune/Quinque",
-};
-const definitions: ScalingDefinition[] = [];
-function addPercentage(id: string, name: string, level: number, cost: number, percentages: ScalingBase, options: Partial<Perk> = {}, weaponOnly = false) {
-  const effects = Object.entries(percentages).map(([stat, percent]) => `+${percent}% de ${statLabels[stat as ScalingStat]}`).join("; ");
-  definitions.push({
-    percentages, weaponOnly,
-    perk: {
-      id: `r26-escala-${id}`, name, minGrade: level, cost, maxRank: 1,
-      category: "Genérica", sourceId: "REWORK 2026", supplement: true,
-      useType: "Passiva · automática", equipmentCompatible: false,
-      description: `${weaponOnly ? "Com a Kagune/Quinque em uso: " : ""}${effects}. Percentuais da mesma grandeza somam até 75%, sobre o subtotal sem estas perks; o bônus é calculado uma única vez, arredondado para baixo.`,
-      requirement: `LEVEL ${level}+`, ...options,
-    },
-  });
-}
-
-addPercentage("massa-vital", "Massa Vital", 2, 5, { life: 15 }, { category: "Vigor" });
-addPercentage("corpo-expansivo", "Corpo Expansivo", 10, 14, { life: 25 }, { category: "Vigor" });
-addPercentage("armadura-organica", "Armadura Orgânica", 3, 7, { rd: 15 }, { category: "Combate", equipmentCompatible: true });
-addPercentage("muralha-crescente", "Muralha Crescente", 12, 18, { rd: 30 }, { category: "Combate", equipmentCompatible: true });
-addPercentage("mente-profunda", "Mente Profunda", 2, 5, { sanity: 20 }, { category: "Controle" });
-addPercentage("reserva-mental", "Reserva Mental", 11, 12, { sanity: 30 }, { category: "Controle" });
-addPercentage("reservatorio-rc", "Reservatório RC", 3, 6, { rc: 20 }, { requiresRC: true, location: "kakuhou", equipmentCompatible: true });
-addPercentage("coracao-rc", "Coração RC", 13, 17, { rc: 30 }, { requiresRC: true, location: "kakuhou", equipmentCompatible: true });
-addPercentage("acuracia-progressiva", "Acurácia Progressiva", 5, 9, { physicalHit: 10, kaguneHit: 10 }, { category: "Combate", equipmentCompatible: true });
-addPercentage("potencia-continua", "Potência Contínua", 7, 11, { physicalSteps: 15, kaguneSteps: 15 }, { category: "Combate", equipmentCompatible: true });
-addPercentage("defesa-adaptativa", "Defesa Adaptativa", 8, 12, { block: 15, dodge: 15 }, { category: "Combate", equipmentCompatible: true });
-addPercentage("pico-predatorio", "Pico Predatório", 18, 35, { physicalSteps: 25, kaguneSteps: 25, physicalHit: 15, kaguneHit: 15 }, { category: "Combate", equipmentCompatible: true });
-
-const penetrationRows: [string, string, number, number, number][] = [
-  ["ponta-invasiva", "Ponta Invasiva", 2, 6, 10],
-  ["fio-antiblindagem", "Fio Antiblindagem", 4, 8, 15],
-  ["corte-de-junta", "Corte de Junta", 7, 11, 20],
-  ["fenda-profunda", "Fenda Profunda", 10, 15, 25],
-  ["ruptura-controlada", "Ruptura Controlada", 14, 22, 35],
-  ["cerco-perfeito", "Cerco Perfeito", 18, 35, 50],
-];
-for (const [id, name, level, cost, percent] of penetrationRows) definitions.push({
-  penetrationPercent: percent,
-  perk: {
-    id: `r26-penetracao-${id}`, name, minGrade: level, cost, maxRank: 1,
-    category: "Combate", sourceId: "REWORK 2026", supplement: true, equipmentCompatible: true,
-    useType: "Passiva · calculadora de ataque", requirement: `LEVEL ${level}+`,
-    description: `Ataques físicos e de Kagune/Quinque ignoram ${percent}% da RD do alvo. Some as fontes de penetração uma vez, sem teto. Acima de 100%, cada ponto excedente concede +1% de Passos de Dano. RD ignorada = piso(RD do alvo × ${percent}/100); a RD restante ainda protege normalmente. A calculadora mostra RD restante e dano final.`,
-  },
-});
-
-const poisonRows: [string, string, number, number, string][] = [
-  ["inoculacao", "Inoculação Tóxica", 1, 5, "Libera veneno tóxico: ao final de cada turno do alvo, dano bruto = piso(3% da Vida máxima do alvo × cargas); subtraia piso(RD do alvo/2), mínimo 0. Até 3 cargas por 3 turnos. Uma dose aceita acrescenta 1 carga e renova o tempo."],
-  ["concentrado", "Veneno Concentrado", 4, 8, "A potência do veneno tóxico passa de 3% para 4% da Vida máxima do alvo por carga e por turno. O teto permanece 16% da Vida máxima por turno, antes da mitigação."],
-  ["persistente", "Veneno Persistente", 6, 10, "O veneno dura +2 turnos: 5 turnos ao receber uma dose aceita. A duração é renovada, nunca somada indefinidamente."],
-  ["acumulativo", "Veneno Acumulativo", 8, 12, "O limite de veneno sobe em +1 carga, para 4. Cada dose aceita acrescenta uma carga até o limite; o dano tóxico bruto não ultrapassa 16% da Vida máxima por turno."],
-  ["corrosivo", "Veneno Corrosivo", 12, 18, "Libera o tipo corrosivo: sem dano direto, reduz 5% da RD do alvo por carga, até 20%, enquanto durar. Soma sua redução à penetração, uma vez sobre a RD original; o excesso acima de 100% concede Passos de Dano percentuais."],
-  ["paralisante", "Veneno Neurotóxico", 15, 22, "Libera o tipo neurotóxico: sem dano direto, impõe −mínimo(10, piso(Controle do aplicador/3) × cargas) acertos em ataques e Desvio até expirar. Não remove ações ou reações."],
-];
-export const poisonPerks: Perk[] = poisonRows.map(([id, name, level, cost, effect]) => ({
-  id: `r26-veneno-${id}`, name, minGrade: level, cost, maxRank: 1, category: "Combate",
-  sourceId: "REWORK 2026", supplement: true, location: "kakuhou", requiresRC: true,
-  equipmentCompatible: true, useType: "Ativa · calculadora de veneno",
-  requiredPerk: id === "inoculacao" ? undefined : "r26-veneno-inoculacao",
-  requirement: `LEVEL ${level}+ · Kagune/Quinque em uso${id === "inoculacao" ? "" : " · Inoculação Tóxica"}`,
-  description: `${effect} A calculadora registra cargas e turnos e gera texto para copiar. Um único tipo de veneno por alvo. Resistência do alvo: 1d20 + Vigor + Controle contra CD 15 + Controle do aplicador; sucesso impede a nova dose, sem remover a anterior. Arredonde todos os resultados para baixo.`,
-}));
-
-export const colossusPerk: Perk = {
-  id: "r26-colosso-carne", name: "Colosso de Carne", cost: 15, minGrade: 1, maxRank: 1,
-  category: "Combate", sourceId: "REWORK 2026", supplement: true, location: "vantagens",
-  requiredWeapon: "kagune", equipmentCompatible: false,
-  useType: "Ativa · união de partes", requirement: "LEVEL 1+ · Kagune com partes extras",
-  description: "Una todas as partes em uma única grande Kagune. Para N tentáculos usados, ganhe +2 acertos de Kagune a cada par completo: 2 × piso(N/2). A parte unida recebe piso(soma da Dureza de todas as partes/2), a soma integral da RD e o mesmo dano de acertar todas as partes unidas. Com 8 tentáculos, são +8 acertos, dureza de 4 partes e RD de 8 partes. Cada par completo de partes extras mantém +1 metro de alcance base e −1 acerto em testes de Agilidade. O dano unido soma o dano completo de cada tentáculo, incluindo todos os dados e modificadores, sem perdas ao ativar a fusão. A Kakuja herda o dano, a dureza e a RD da fusão. A ficha permite ativar, conferir os totais e copiar o ataque; ao desfazer, as partes e a mobilidade originais retornam.",
-};
-
-export const scalingPerks: Perk[] = [...definitions.map(({ perk }) => perk), ...poisonPerks];
+const definitions: ScalingDefinition[] = perkCatalog.perks.flatMap(perk => perk.automation?.scaling ? [{perk, ...perk.automation.scaling} as ScalingDefinition] : []);
+export const poisonPerks: Perk[] = catalogGroup('poison');
+export const colossusPerk: Perk = perkCatalog.perks.find(p=>p.id==='r26-colosso-carne')!;
+export const scalingPerks: Perk[] = catalogGroup('scaling');
 
 function isEligible(definition: ScalingDefinition, context: ScalingContext): boolean {
   const { perk, weaponOnly } = definition;

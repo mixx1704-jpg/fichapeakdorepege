@@ -2,6 +2,16 @@
 import { customSkillRequiresActivation, type CustomSkill } from "./CustomSkillsPanel";
 import { isConditionalCatalogEntry } from "./catalog-filters";
 import type { Evolution, KaguneEffect, Perk } from "./data";
+import type { CatalogPerk } from './perk-catalog';
+
+export function QuickCatalogSkills({items,active,currentRC,onToggle}:{items:Perk[];active:Record<string,boolean>;currentRC:number;onToggle:(id:string,cost:number)=>void}) {
+  const visible=(items as CatalogPerk[]).filter(p=>p.automation?.custom?.activation==='active');
+  if(!visible.length)return null;
+  return <section className="section-block quick-activations"><h2>Habilidades do catálogo</h2><p className="section-help">Ative o bônus enquanto o efeito durar. O custo de RC é pago uma vez ao ativar.</p><div className="quick-activation-grid">{visible.map(p=>{
+    const enabled=!!active[`tracking:${p.id}`],cost=p.automation?.custom?.rcCost||0;
+    return <label key={p.id} className={`requirement-confirm quick-activation ${enabled?'active':''}`}><input type="checkbox" checked={enabled} disabled={!enabled&&currentRC<cost} onChange={()=>onToggle(p.id,enabled?0:cost)}/><span><b>{p.name}</b><small>{p.description}</small><em>{enabled?'Ativa':'Inativa'} · {cost} RC ao ativar</em></span></label>;
+  })}</div></section>;
+}
 
 export function QuickCustomSkills({ skills, onChange, label }: { skills: CustomSkill[]; onChange: (skills: CustomSkill[]) => void; label: string }) {
   const visible = skills.filter(customSkillRequiresActivation);
@@ -11,7 +21,7 @@ export function QuickCustomSkills({ skills, onChange, label }: { skills: CustomS
 
 /** Tracking for narrative triggers that have no numerical automation in the attack calculator. */
 export function QuickRuleConditions({ items, active, onToggle }: { items: Array<Perk | KaguneEffect | Evolution>; active: Record<string, boolean>; onToggle: (id: string) => void }) {
-  const visible = items.filter(item => isConditionalCatalogEntry({ ...item, cost: "cost" in item ? item.cost : 0 }));
+  const visible = items.filter(item => !(item as CatalogPerk).automation?.custom && isConditionalCatalogEntry({ ...item, cost: "cost" in item ? item.cost : 0 }));
   if (!visible.length) return null;
   return <details className="section-block quick-rule-conditions"><summary>Outras condições e habilidades · {visible.length}</summary><p className="section-help">Marcadores para acompanhar gatilhos e efeitos narrativos. A descrição informa os custos e limites; estes marcadores não acrescentam bônus numéricos.</p><div className="quick-activation-grid">{visible.map(item => <label className="requirement-confirm quick-activation" key={item.id}><input type="checkbox" checked={!!active[`tracking:${item.id}`]} onChange={() => onToggle(item.id)} /><span><b>{item.name}</b><small>{item.description}</small></span></label>)}</div></details>;
 }

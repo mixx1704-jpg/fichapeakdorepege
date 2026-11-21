@@ -1,6 +1,5 @@
+import { catalogGroup } from './perk-catalog';
 import type { AttributeKey, CatalogCategory, KaguneFamily, Perk, SpeciesId } from './data';
-import importedDefinitions from './new-pack-catalog.json';
-import revisionDefinitions from './revision-catalog.json';
 
 export type NewPackRequirements = {
   level: number;
@@ -33,59 +32,13 @@ export type NewPackDefinition = {
   catalogOverrides?: Partial<Perk>;
 };
 
-export const NEW_PACK_DEFINITIONS = importedDefinitions as NewPackDefinition[];
-export const REVISION_PACK_DEFINITIONS = revisionDefinitions as NewPackDefinition[];
-export const ALL_PACK_DEFINITIONS = [...NEW_PACK_DEFINITIONS, ...REVISION_PACK_DEFINITIONS];
-const definitionById = new Map(ALL_PACK_DEFINITIONS.map(definition => [definition.id, definition]));
-export function newPackDefinition(id: string): NewPackDefinition | undefined {
-  return definitionById.get(id);
+function definition(p: import('./perk-catalog').CatalogPerk): NewPackDefinition {
+ const d=p.automation!.pack!;
+ return {...d,id:p.id,name:p.name,cost:Array.isArray(p.cost)?p.cost[0]:p.cost,requirement:p.requirement??null,usage:p.useType??null,requirements:{...d.requirements,level:p.minGrade||0,attributes:{...p.requirements},families:[...(p.kaguneTypes||[])]}};
 }
-
-const biologicalSpecies: SpeciesId[] = ['ghoul', 'ghoul-dominante', 'ghoul-artificial', 'quinx'];
-const categories: Array<[RegExp, CatalogCategory]> = [
-  [/FORÇA/, 'Força'], [/VIGOR|VIDA \/ SOBREVIVÊNCIA/, 'Vigor'], [/PRECISÃO/, 'Precisão'],
-  [/AGILIDADE/, 'Agilidade'], [/RACIOCÍNIO/, 'Raciocínio'], [/PERCEPÇÃO/, 'Percepção'],
-  [/PRESENÇA/, 'Presença'], [/CONTROLE/, 'Controle'],
-];
-
-function catalogEntry(definition: NewPackDefinition): Perk {
-  const requirements = definition.requirements;
-  const families = requirements.families;
-  const isProperty = definition.kind === 'property';
-  const isQuimera = (requirements.minimumFamilies || families.length) > 1;
-  const weaponBound = isProperty || families.length > 0 || isQuimera;
-  const isBiological = definition.biological || (isProperty && !definition.equipmentCompatible);
-  const category: CatalogCategory = isQuimera ? 'Kagune Quimera'
-    : categories.find(([pattern]) => pattern.test(definition.section))?.[1]
-      || (weaponBound ? 'Combate' : 'Genérica');
-  const attributeEntries = Object.entries(requirements.attributes) as Array<[AttributeKey, number]>;
-  const description = [definition.body,
-    definition.integrationNotes ? `Aplicação na ficha: ${definition.integrationNotes}` : '',
-    definition.pendingClarification ? `Texto incompleto: ${definition.pendingClarification}` : '',
-  ].filter(Boolean).join('\n\n');
-  return {
-    id: definition.id,
-    name: definition.name,
-    category,
-    cost: definition.cost,
-    maxRank: 1,
-    minGrade: requirements.level,
-    description,
-    requirement: definition.requirement || undefined,
-    requirements: { ...requirements.attributes },
-    ...(attributeEntries.length === 1 ? { attribute: attributeEntries[0][0], min: attributeEntries[0][1] } : {}),
-    ...(families.length ? { kaguneTypes: [...families] } : {}),
-    ...(requirements.minimumFamilies ? { minKaguneTypes: requirements.minimumFamilies } : {}),
-    ...(weaponBound ? { location: 'kakuhou' as const, requiredWeapon: 'kagune' as const } : {}),
-    ...(isBiological ? { species: [...biologicalSpecies] } : {}),
-    equipmentCompatible: definition.equipmentCompatible,
-    ...(definition.section === 'RC / CONTROLE' || isProperty ? { requiresRC: true } : {}),
-    ...(isProperty ? { organGroup: 'Propriedades' } : isQuimera ? { organGroup: 'Quimera' } : families.length === 1 ? { organGroup: families[0] } : {}),
-    supplement: true,
-    sourceId: 'perks_e_propriedades_tokyo_ghoul.txt',
-    useType: definition.usage || (definition.rcCost ? `Ativa · ${definition.rcCost} RC` : 'Conforme o efeito'),
-    ...definition.catalogOverrides,
-  };
-}
-
-export const newPackPerks: Perk[] = ALL_PACK_DEFINITIONS.map(catalogEntry);
+export const NEW_PACK_DEFINITIONS = catalogGroup('pack').map(definition);
+export const REVISION_PACK_DEFINITIONS = catalogGroup('revision').map(definition);
+export const ALL_PACK_DEFINITIONS = [...NEW_PACK_DEFINITIONS,...REVISION_PACK_DEFINITIONS];
+const definitionById=new Map(ALL_PACK_DEFINITIONS.map(d=>[d.id,d]));
+export const newPackDefinition=(id:string) => definitionById.get(id);
+export const newPackPerks: Perk[] = [...catalogGroup('pack'),...catalogGroup('revision')];
