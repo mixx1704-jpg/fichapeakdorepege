@@ -196,7 +196,7 @@
       "cost": 8,
       "maxRank": 1,
       "minGrade": 6,
-      "description": "Se você sofreu dano desde seu último turno:\n\n+2 Acerto no primeiro ataque.\n\nSe perdeu pelo menos 20% da Vida Máxima:\n\no ataque também recebe ×1,10 dano.",
+      "description": "Se você sofreu dano desde seu último turno:\n\n+20 Acerto no primeiro ataque.\n\nSe perdeu pelo menos 20% da Vida Máxima:\n\no ataque também recebe ×1,10 dano.",
       "requirement": "LEVEL 6+ · Vigor 6+",
       "requirements": {
         "vigor": 6
@@ -234,7 +234,9 @@
           "equipmentCompatible": false,
           "biological": false
         }
-      }
+      },
+      "costMode": "choice",
+      "location": "vantagens"
     },
     {
       "id": "n26-pack-perk-006",
@@ -1892,7 +1894,7 @@
       "cost": 10,
       "maxRank": 1,
       "minGrade": 7,
-      "description": "Se estiver acima do alvo verticalmente:\n\n+2 Acerto.\n+4 Passos.",
+      "description": "Se estiver acima do alvo verticalmente:\n\n+20 Acerto.\n+50 Passos.",
       "requirement": "Ukaku · LEVEL 7+ · Agilidade 7+",
       "requirements": {
         "agilidade": 7
@@ -1938,7 +1940,8 @@
           "equipmentCompatible": true,
           "biological": false
         }
-      }
+      },
+      "costMode": "choice"
     },
     {
       "id": "n26-pack-perk-040",
@@ -2387,7 +2390,7 @@
       "cost": 25,
       "maxRank": 1,
       "minGrade": 14,
-      "description": "Ao acertar o mesmo alvo três vezes consecutivamente:\n\nseu próximo ataque contra ele recebe ×1,30 dano.\n\nDepois disso, o contador reinicia.",
+      "description": "Ao acertar o mesmo alvo três vezes consecutivamente:\n\nseu próximo ataque contra ele recebe ×1,50 dano.\n\nDepois disso, o contador reinicia.",
       "requirement": "Ukaku · LEVEL 14+ · Precisão 10+",
       "requirements": {
         "precisao": 10
@@ -2433,7 +2436,8 @@
           "equipmentCompatible": true,
           "biological": false
         }
-      }
+      },
+      "costMode": "choice"
     },
     {
       "id": "n26-pack-perk-049",
@@ -2827,7 +2831,7 @@
       "cost": 10,
       "maxRank": 1,
       "minGrade": 7,
-      "description": "Contra o primeiro ataque recebido por rodada:\n\nRD ×1,15.",
+      "description": "Contra o primeiro ataque recebido por rodada:\n\nRD ×3.",
       "requirement": "Koukaku · LEVEL 7+ · Vigor 7+",
       "requirements": {
         "vigor": 7
@@ -2873,7 +2877,8 @@
           "equipmentCompatible": true,
           "biological": false
         }
-      }
+      },
+      "costMode": "choice"
     },
     {
       "id": "n26-pack-perk-057",
@@ -2934,10 +2939,10 @@
       "id": "n26-pack-perk-058",
       "name": "Blindagem Progressiva",
       "category": "Combate",
-      "cost": 12,
-      "maxRank": 1,
+      "cost": 3,
+      "maxRank": 10,
       "minGrade": 8,
-      "description": "Cada ataque que atingir você na mesma rodada concede +1 RD.\n\nMáximo +4.",
+      "description": "Cada ataque que atingir você na mesma rodada concede +35 RD.",
       "requirement": "Koukaku · LEVEL 8+ · Vigor 8+",
       "requirements": {
         "vigor": 8
@@ -2983,7 +2988,8 @@
           "equipmentCompatible": true,
           "biological": false
         }
-      }
+      },
+      "costMode": "sum"
     },
     {
       "id": "n26-pack-perk-059",
@@ -3704,10 +3710,10 @@
       "id": "n26-pack-perk-072",
       "name": "Ataque Tentacular",
       "category": "Combate",
-      "cost": 8,
+      "cost": 10,
       "maxRank": 1,
       "minGrade": 6,
-      "description": "Ataques contra inimigos adjacentes diferentes no mesmo turno recebem +1 Acerto por alvo anterior.",
+      "description": "Ataques contra inimigos adjacentes diferentes no mesmo turno recebem +5 Acerto por alvo anterior.",
       "requirement": "Rinkaku · LEVEL 6+ · Agilidade 6+",
       "requirements": {
         "agilidade": 6
@@ -3753,7 +3759,8 @@
           "equipmentCompatible": true,
           "biological": false
         }
-      }
+      },
+      "costMode": "choice"
     },
     {
       "id": "n26-pack-perk-073",
@@ -3995,7 +4002,7 @@
       "cost": 14,
       "maxRank": 1,
       "minGrade": 9,
-      "description": "Ao receber um crítico:\n\n+2 RD contra aquele inimigo pelo restante do combate.",
+      "description": "Ao receber um crítico:\n\n+200 RD contra aquele inimigo pelo restante do combate.",
       "requirement": "Rinkaku · LEVEL 9+ · Vigor 8+",
       "requirements": {
         "vigor": 8
@@ -4047,7 +4054,8 @@
           "equipmentCompatible": false,
           "biological": true
         }
-      }
+      },
+      "costMode": "choice"
     },
     {
       "id": "n26-pack-perk-078",
@@ -4355,7 +4363,7 @@
       "cost": 32,
       "maxRank": 1,
       "minGrade": 16,
-      "description": "Sacrifique uma cauda:\n\nrecupere 5 RC.\n\nMáximo uma vez por turno.",
+      "description": "Sacrifique uma cauda:\n\nrecupere 10d12 RC.\n\nMáximo uma vez por sessão.",
       "requirement": "Rinkaku · LEVEL 16+ · Controle 11+",
       "requirements": {
         "controle": 11
@@ -4407,13 +4415,14 @@
           "equipmentCompatible": false,
           "biological": true
         }
-      }
+      },
+      "costMode": "choice"
     },
     {
       "id": "n26-pack-perk-084",
       "name": "Aberração Persistente",
       "category": "Combate",
-      "cost": 45,
+      "cost": 30,
       "maxRank": 1,
       "minGrade": 18,
       "description": "Uma vez por combate, por 3 turnos:\n\ndano ×1,20.\n\nRegeneração ×1,30.\n\nCaudas destruídas regeneram automaticamente no final do turno por 5 RC.",
@@ -4468,7 +4477,8 @@
           "equipmentCompatible": false,
           "biological": true
         }
-      }
+      },
+      "costMode": "choice"
     },
     {
       "id": "n26-pack-perk-085",
@@ -4639,10 +4649,10 @@
       "id": "n26-pack-perk-088",
       "name": "Ataque de Retorno",
       "category": "Combate",
-      "cost": 7,
+      "cost": 15,
       "maxRank": 1,
       "minGrade": 5,
-      "description": "Depois de um inimigo errar um ataque corpo a corpo:\n\n+3 Passos no próximo ataque contra ele.",
+      "description": "Depois de um inimigo errar um ataque corpo a corpo:\n\n+15 Acerto & +50 Passos no próximo ataque contra ele.",
       "requirement": "Bikaku · LEVEL 5+ · Agilidade 6+",
       "requirements": {
         "agilidade": 6
@@ -4688,7 +4698,8 @@
           "equipmentCompatible": true,
           "biological": false
         }
-      }
+      },
+      "costMode": "choice"
     },
     {
       "id": "n26-pack-perk-089",
@@ -4859,10 +4870,10 @@
       "id": "n26-pack-perk-092",
       "name": "Ataque Circular",
       "category": "Combate",
-      "cost": 12,
+      "cost": 15,
       "maxRank": 1,
       "minGrade": 8,
-      "description": "Ao atacar múltiplos alvos:\n\nnão sofra penalidade no segundo alvo.",
+      "description": "Ao atacar múltiplos alvos:\n+25 Acerto + 10% De dano a mais.",
       "requirement": "Bikaku · LEVEL 8+ · Agilidade 7+",
       "requirements": {
         "agilidade": 7
@@ -4908,7 +4919,8 @@
           "equipmentCompatible": true,
           "biological": false
         }
-      }
+      },
+      "costMode": "choice"
     },
     {
       "id": "n26-pack-perk-093",
@@ -5137,7 +5149,7 @@
       "cost": 18,
       "maxRank": 1,
       "minGrade": 11,
-      "description": "Quando errar um ataque:\n\n+2 Acerto na próxima tentativa contra o mesmo alvo.\n\nMáximo +4.",
+      "description": "Quando errar um ataque:\n\n+10 Acerto na próxima tentativa contra o mesmo alvo.\n\nMáximo +50.",
       "requirement": "Bikaku · LEVEL 11+ · Raciocínio 9+",
       "requirements": {
         "raciocinio": 9
@@ -5183,7 +5195,8 @@
           "equipmentCompatible": true,
           "biological": false
         }
-      }
+      },
+      "costMode": "choice"
     },
     {
       "id": "n26-pack-perk-098",
@@ -7363,7 +7376,7 @@
       "cost": 12,
       "maxRank": 1,
       "minGrade": 8,
-      "description": "Ao sofrer ataque crítico:\n\nmova 1 espaço após resolver o dano.",
+      "description": "Ao sofrer ataque crítico:\n\nmova 10 espaço após resolver o dano.",
       "requirement": "Agilidade 8+ · LEVEL 8+",
       "requirements": {
         "agilidade": 8
@@ -7401,16 +7414,18 @@
           "equipmentCompatible": false,
           "biological": false
         }
-      }
+      },
+      "costMode": "choice",
+      "location": "vantagens"
     },
     {
       "id": "n26-pack-perk-139",
       "name": "Ritmo Impossível",
       "category": "Agilidade",
-      "cost": 20,
+      "cost": 10,
       "maxRank": 1,
       "minGrade": 12,
-      "description": "Se nenhum ataque acertou você na rodada anterior:\n\n+3 Esquiva.",
+      "description": "Se nenhum ataque acertou você na rodada anterior:\n\n+15 Esquiva.",
       "requirement": "Agilidade 10+ · LEVEL 12+",
       "requirements": {
         "agilidade": 10
@@ -7448,7 +7463,9 @@
           "equipmentCompatible": false,
           "biological": false
         }
-      }
+      },
+      "costMode": "choice",
+      "location": "vantagens"
     },
     {
       "id": "n26-pack-perk-140",
@@ -11529,7 +11546,7 @@
       "cost": 16,
       "maxRank": 1,
       "minGrade": 6,
-      "description": "Destrua voluntariamente tecido do próprio corpo para recuperar RC.\n\nPerca:\n\n10 Vida.\n\nRecupere:\n\n4 RC.\n\nMáximo duas vezes por combate.",
+      "description": "Destrua voluntariamente tecido do próprio corpo para recuperar RC.\n\nPerca:\n\n15d20 Vida.\n\nRecupere:\n\n10d20 RC.\n\nMáximo duas vezes por combate.",
       "requirement": "LEVEL 6+ · Vigor 6+ · Kagune",
       "requirements": {
         "vigor": 6
@@ -11576,7 +11593,8 @@
           },
           "equipmentCompatible": false
         }
-      }
+      },
+      "costMode": "choice"
     },
     {
       "id": "n26-pack-property-043",
@@ -11755,7 +11773,7 @@
       "cost": 14,
       "maxRank": 1,
       "minGrade": 6,
-      "description": "Consumir carne em combate pode ser realizado muito mais rapidamente.\n\nAo consumir material biológico durante combate:\n\nrecupere RC imediatamente.\n\nA quantidade depende da qualidade do material.\n\nAplicação na ficha: Uma vez por combate, consumir carne como ação recupera 2 RC (humana) ou 4 RC (ghoul); consumir o mesmo material não pode contar novamente.",
+      "description": "Consumir carne em combate pode ser realizado muito mais rapidamente.\n\nAo consumir material biológico durante combate:\n\nrecupere RC imediatamente.\n\nA quantidade depende da qualidade do material.\n\nAplicação na ficha: Uma vez por combate, consumir carne como ação recupera 25 RC (humana) ou 50 RC (ghoul); consumir o mesmo material não pode contar novamente.",
       "requirement": "LEVEL 6+ · Vigor 6+ · Kagune",
       "requirements": {
         "vigor": 6
@@ -11803,7 +11821,8 @@
           "equipmentCompatible": false,
           "integrationNotes": "Uma vez por combate, consumir carne como ação recupera 2 RC (humana) ou 4 RC (ghoul); consumir o mesmo material não pode contar novamente."
         }
-      }
+      },
+      "costMode": "choice"
     },
     {
       "id": "n26-pack-property-047",
@@ -11913,7 +11932,7 @@
       "cost": 45,
       "maxRank": 1,
       "minGrade": 12,
-      "description": "Sempre que falhar três vezes na mesma ação durante uma sessão:\n\nreceba +1 permanente naquela ação específica.\n\nMáximo +3.\n\nExemplo:\n\nescalar paredes;\narremessar;\nusar determinada arma;\nexecutar manobra.\n\nAplicação na ficha: O limite de +3 é total, distribuído entre ações registradas; repetir uma ação artificialmente sem risco não concede progresso.",
+      "description": "Sempre que falhar três vezes na mesma ação durante uma sessão:\n\nreceba +10 permanente naquela ação específica.\n\nMáximo +100.\n\nExemplo:\n\nescalar paredes;\narremessar;\nusar determinada arma;\nexecutar manobra.\n\nAplicação na ficha: O limite de +100 é total, distribuído entre ações registradas; repetir uma ação artificialmente sem risco não concede progresso.",
       "requirement": "LEVEL 12+ · Raciocínio 10+ · Kagune",
       "requirements": {
         "raciocinio": 10
@@ -11961,7 +11980,8 @@
           "equipmentCompatible": false,
           "integrationNotes": "O limite de +3 é total, distribuído entre ações registradas; repetir uma ação artificialmente sem risco não concede progresso."
         }
-      }
+      },
+      "costMode": "choice"
     },
     {
       "id": "n26-pack-property-050",
@@ -12024,7 +12044,7 @@
       "id": "n26-pack-property-051",
       "name": "ASSIMILAÇÃO INSTINTIVA",
       "category": "Combate",
-      "cost": 18,
+      "cost": 35,
       "maxRank": 1,
       "minGrade": 7,
       "description": "Sempre que adquirir uma nova Skill:\n\nreceba uma aplicação experimental temporária dela.\n\nDurante uma sessão:\n\nvocê pode testá-la de uma maneira ainda não registrada.\n\nApós a sessão:\n\no Narrador decide se a aplicação se torna parte permanente da Skill.\n\nAplicação na ficha: A aplicação experimental não concede bônus extras nem ignora requisitos ou custos da habilidade original.",
@@ -12069,7 +12089,8 @@
           "equipmentCompatible": true,
           "integrationNotes": "A aplicação experimental não concede bônus extras nem ignora requisitos ou custos da habilidade original."
         }
-      }
+      },
+      "costMode": "choice"
     },
     {
       "id": "n26-pack-property-052",
@@ -12918,7 +12939,7 @@
       "cost": 16,
       "maxRank": 1,
       "minGrade": 6,
-      "description": "Contra criaturas muito maiores que você:\n\nseus ataques ignoram parte dos benefícios defensivos concedidos exclusivamente por tamanho.\n\nAlém disso:\n\natingir articulações ou estruturas de sustentação recebe +2 Acerto.\n\nAplicação na ficha: Ignore até 25% da RD concedida exclusivamente por tamanho, preservando as demais fontes de RD.",
+      "description": "Contra criaturas muito maiores que você:\n\nseus ataques ignoram parte dos benefícios defensivos concedidos exclusivamente por tamanho.\n\nAlém disso:\n\natingir articulações ou estruturas de sustentação recebe +20 Acerto.\n\nAplicação na ficha: Ignore até 25% da RD concedida exclusivamente por tamanho, preservando as demais fontes de RD.",
       "requirement": "LEVEL 6+ · Precisão 6+ · Kagune",
       "requirements": {
         "precisao": 6
@@ -12960,7 +12981,8 @@
           "equipmentCompatible": true,
           "integrationNotes": "Ignore até 25% da RD concedida exclusivamente por tamanho, preservando as demais fontes de RD."
         }
-      }
+      },
+      "costMode": "choice"
     },
     {
       "id": "n26-pack-property-069",
@@ -14324,10 +14346,10 @@
       "id": "n26-pack-property-095",
       "name": "ASSINATURA DE EXECUÇÃO",
       "category": "Combate",
-      "cost": 10,
+      "cost": 25,
       "maxRank": 1,
       "minGrade": 4,
-      "description": "Escolha uma condição muito específica para seus ataques.\n\nExemplo:\n\n“atacar de cima.”\n\nQuando cumprir essa condição:\n\n+3 Passos.\n\nA condição é escolhida permanentemente.",
+      "description": "Escolha uma condição muito específica para seus ataques.\n\nExemplo:\n\n“atacar de cima.”\n\nQuando cumprir essa condição:\n\n+100 Passos +30 Acerto.\n\nA condição é escolhida permanentemente durante o combate.",
       "requirement": "LEVEL 4+ · Precisão 5+ · Kagune",
       "requirements": {
         "precisao": 5
@@ -14368,7 +14390,8 @@
           },
           "equipmentCompatible": true
         }
-      }
+      },
+      "costMode": "choice"
     },
     {
       "id": "n26-pack-property-096",
@@ -14424,10 +14447,10 @@
       "id": "n26-pack-property-097",
       "name": "CAÇA NOTURNA",
       "category": "Combate",
-      "cost": 12,
+      "cost": 20,
       "maxRank": 1,
       "minGrade": 5,
-      "description": "Em ambientes escuros:\n\n+2 Percepção em combate.\n\nAlém disso:\n\nseu primeiro ataque após permanecer oculto recebe +2 Acerto.",
+      "description": "Em ambientes escuros:\n\n+20 Percepção em combate.\n\nAlém disso:\n\nseu primeiro ataque após permanecer oculto recebe +25 Acerto.",
       "requirement": "LEVEL 5+ · Percepção 6+ · Kagune",
       "requirements": {
         "percepcao": 6
@@ -14468,7 +14491,8 @@
           },
           "equipmentCompatible": true
         }
-      }
+      },
+      "costMode": "choice"
     },
     {
       "id": "n26-pack-property-098",
@@ -18470,7 +18494,7 @@
       "supplement": true,
       "sourceId": "REWORK 2026",
       "useType": "Passiva · automática",
-      "description": "+5 acertos em ataques físicos; +5 acertos de Kagune/Quinque; +3 Iniciativa.",
+      "description": "+15 acertos em ataques físicos; +15 acertos de Kagune/Quinque; +5 Iniciativa.",
       "equipmentCompatible": true,
       "requirement": "LEVEL 15+",
       "catalogGroups": [
@@ -18486,7 +18510,10 @@
           },
           "weaponOnly": false
         }
-      }
+      },
+      "costMode": "choice",
+      "min": 0,
+      "location": "vantagens"
     },
     {
       "id": "r26-fortaleza-pessoal",
@@ -18643,13 +18670,13 @@
       "id": "r26-punho-pesado",
       "name": "Punho Pesado",
       "category": "Força",
-      "cost": 3,
+      "cost": 10,
       "maxRank": 1,
       "minGrade": 1,
       "supplement": true,
       "sourceId": "REWORK 2026",
       "useType": "Passiva · automática",
-      "description": "+2 Passos de Dano físico; +1 acerto em testes de Força.",
+      "description": "+40 Passos de Dano físico; +5 acerto em testes de Força.",
       "attribute": "forca",
       "min": 1,
       "equipmentCompatible": true,
@@ -18661,14 +18688,16 @@
       "automation": {
         "rework": {
           "modifiers": {
-            "physicalSteps": 2,
+            "physicalSteps": 40,
             "checks": {
               "forca": 1
             }
           },
           "weaponOnly": false
         }
-      }
+      },
+      "costMode": "choice",
+      "location": "vantagens"
     },
     {
       "id": "r26-rompe-carne",
@@ -19209,13 +19238,13 @@
       "id": "r26-passo-fantasma",
       "name": "Passo Fantasma",
       "category": "Agilidade",
-      "cost": 3,
+      "cost": 8,
       "maxRank": 1,
       "minGrade": 1,
       "supplement": true,
       "sourceId": "REWORK 2026",
       "useType": "Passiva · automática",
-      "description": "+2 acertos de Desvio; +1 Iniciativa.",
+      "description": "+10 acertos de Desvio; +5 Iniciativa.",
       "attribute": "agilidade",
       "min": 1,
       "equipmentCompatible": true,
@@ -19227,12 +19256,14 @@
       "automation": {
         "rework": {
           "modifiers": {
-            "dodge": 2,
-            "initiative": 1
+            "dodge": 10,
+            "initiative": 5
           },
           "weaponOnly": false
         }
-      }
+      },
+      "costMode": "choice",
+      "location": "vantagens"
     },
     {
       "id": "r26-corpo-fluido",
@@ -20260,9 +20291,10 @@
       "supplement": true,
       "sourceId": "REWORK 2026",
       "useType": "Passiva · automática",
-      "description": "+5 acertos em ataques físicos; +5 acertos de Kagune/Quinque; +15 Passos de Dano físico; +15 Passos de Dano de Kagune/Quinque; +3 acertos de Desvio.",
+      "description": "+30 acertos em ataques físicos; +30 acertos de Kagune/Quinque; +100 Passos de Dano físico; +30 Passos de Dano de Kagune/Quinque; +30 acertos de Desvio.",
       "species": [
-        "humano"
+        "humano",
+        "humano-dominante"
       ],
       "equipmentCompatible": false,
       "requirement": "LEVEL 14+",
@@ -20273,15 +20305,18 @@
       "automation": {
         "rework": {
           "modifiers": {
-            "physicalHit": 5,
-            "kaguneHit": 5,
-            "physicalSteps": 15,
-            "kaguneSteps": 15,
-            "dodge": 3
+            "physicalHit": 30,
+            "kaguneHit": 30,
+            "physicalSteps": 100,
+            "kaguneSteps": 30,
+            "dodge": 30
           },
           "weaponOnly": false
         }
-      }
+      },
+      "costMode": "choice",
+      "min": 0,
+      "location": "vantagens"
     },
     {
       "id": "r26-predador-nato",
@@ -20945,7 +20980,7 @@
       "supplement": true,
       "sourceId": "REWORK 2026",
       "useType": "Passiva · automática",
-      "description": "Enquanto a Kagune/Quinque estiver em uso: +2 acertos de Desvio; +1 Iniciativa.",
+      "description": "Enquanto a Kagune/Quinque estiver em uso: +15 acertos de Desvio; +12 Iniciativa.",
       "location": "kakuhou",
       "organGroup": "Ukaku",
       "kaguneTypes": [
@@ -20960,24 +20995,26 @@
       "automation": {
         "rework": {
           "modifiers": {
-            "dodge": 2,
-            "initiative": 1
+            "dodge": 15,
+            "initiative": 12
           },
           "weaponOnly": true
         }
-      }
+      },
+      "costMode": "choice",
+      "min": 0
     },
     {
       "id": "r26-cadencia-cristalina",
       "name": "Cadência Cristalina",
       "category": "Combate",
-      "cost": 6,
+      "cost": 25,
       "maxRank": 1,
       "minGrade": 4,
       "supplement": true,
       "sourceId": "REWORK 2026",
       "useType": "Passiva · automática",
-      "description": "Enquanto a Kagune/Quinque estiver em uso: +4 Passos de Dano de Kagune/Quinque; +1 metro de alcance da Kagune/Quinque.",
+      "description": "Enquanto a Kagune/Quinque estiver em uso: +100 Passos de Dano de Kagune/Quinque; +5 metro de alcance da Kagune/Quinque.",
       "location": "kakuhou",
       "organGroup": "Ukaku",
       "kaguneTypes": [
@@ -20992,12 +21029,14 @@
       "automation": {
         "rework": {
           "modifiers": {
-            "kaguneSteps": 4,
-            "range": 1
+            "kaguneSteps": 100,
+            "range": 5
           },
           "weaponOnly": true
         }
-      }
+      },
+      "costMode": "choice",
+      "min": 0
     },
     {
       "id": "r26-balistica-mental",
@@ -21208,12 +21247,12 @@
       "name": "Aço Nervoso",
       "category": "Combate",
       "cost": 3,
-      "maxRank": 1,
+      "maxRank": 10,
       "minGrade": 1,
       "supplement": true,
       "sourceId": "REWORK 2026",
       "useType": "Passiva · automática",
-      "description": "Enquanto a Kagune/Quinque estiver em uso: +2 acertos de Kagune/Quinque; +1 acerto de Bloqueio.",
+      "description": "Enquanto a Kagune/Quinque estiver em uso: +5 acertos de Kagune/Quinque; +8 acerto de Bloqueio.",
       "location": "kakuhou",
       "organGroup": "Koukaku",
       "kaguneTypes": [
@@ -21228,12 +21267,14 @@
       "automation": {
         "rework": {
           "modifiers": {
-            "kaguneHit": 2,
-            "block": 1
+            "kaguneHit": 5,
+            "block": 8
           },
           "weaponOnly": true
         }
-      }
+      },
+      "costMode": "sum",
+      "min": 0
     },
     {
       "id": "r26-placa-vital",
@@ -21475,13 +21516,13 @@
       "id": "r26-bastiao-apocaliptico",
       "name": "Bastião Apocalíptico",
       "category": "Combate",
-      "cost": 320,
+      "cost": 100,
       "maxRank": 1,
       "minGrade": 20,
       "supplement": true,
       "sourceId": "REWORK 2026",
       "useType": "Passiva · automática",
-      "description": "Enquanto a Kagune/Quinque estiver em uso: +50 RD; +20 acertos de Bloqueio.",
+      "description": "Enquanto a Kagune/Quinque estiver em uso: +500 RD; +100 acertos de Bloqueio.",
       "location": "kakuhou",
       "organGroup": "Koukaku",
       "kaguneTypes": [
@@ -21496,12 +21537,14 @@
       "automation": {
         "rework": {
           "modifiers": {
-            "rd": 50,
-            "block": 20
+            "rd": 500,
+            "block": 100
           },
           "weaponOnly": true
         }
-      }
+      },
+      "costMode": "choice",
+      "min": 0
     },
     {
       "id": "r26-tendao-predatorio",
@@ -22114,13 +22157,13 @@
       "id": "r26-exp-forca-soco-ancora",
       "name": "Soco Âncora",
       "category": "Força",
-      "cost": 3,
+      "cost": 8,
       "maxRank": 1,
       "minGrade": 1,
       "supplement": true,
       "sourceId": "REWORK 2026",
       "useType": "Passiva · automática",
-      "description": "+2 Passos de Dano físico; +2 dano fixo físico.",
+      "description": "+35 Passos de Dano físico; +50 dano fixo físico.",
       "attribute": "forca",
       "min": 1,
       "equipmentCompatible": false,
@@ -22132,12 +22175,14 @@
       "automation": {
         "rework": {
           "modifiers": {
-            "physicalSteps": 2,
-            "physicalDamage": 2
+            "physicalSteps": 35,
+            "physicalDamage": 50
           },
           "weaponOnly": false
         }
-      }
+      },
+      "costMode": "choice",
+      "location": "vantagens"
     },
     {
       "id": "r26-exp-forca-musculos-guarda",
@@ -22172,13 +22217,13 @@
       "id": "r26-exp-forca-tracao-devastadora",
       "name": "Tração Devastadora",
       "category": "Força",
-      "cost": 4,
+      "cost": 8,
       "maxRank": 1,
       "minGrade": 3,
       "supplement": true,
       "sourceId": "REWORK 2026",
       "useType": "Passiva · automática",
-      "description": "+2 Passos de Dano físico; +2 Passos de Dano de Kagune/Quinque; +2 acertos em testes de Força.",
+      "description": "+15 Passos de Dano físico; +6 Passos de Dano de Kagune/Quinque; +6 acertos em testes de Força.",
       "attribute": "forca",
       "min": 2,
       "equipmentCompatible": true,
@@ -22190,15 +22235,17 @@
       "automation": {
         "rework": {
           "modifiers": {
-            "physicalSteps": 2,
-            "kaguneSteps": 2,
+            "physicalSteps": 15,
+            "kaguneSteps": 6,
             "checks": {
               "forca": 2
             }
           },
           "weaponOnly": false
         }
-      }
+      },
+      "costMode": "choice",
+      "location": "vantagens"
     },
     {
       "id": "r26-exp-forca-maos-de-prensa",
@@ -22591,13 +22638,13 @@
       "id": "r26-exp-forca-atlas-vivo",
       "name": "Atlas Vivo",
       "category": "Força",
-      "cost": 300,
+      "cost": 100,
       "maxRank": 1,
       "minGrade": 20,
       "supplement": true,
       "sourceId": "REWORK 2026",
       "useType": "Passiva + técnica ativa",
-      "description": "+60 Passos de Dano físico; +60 dano fixo físico; +80 Vida máxima; +20 acertos em testes de Força. Técnica exclusiva: Após um ataque confirmado, cause metade do dano bruto informado a um segundo alvo, descontando a RD inteira dele. O primeiro ataque não é aplicado de novo. A onda não gera outras ondas. Use os controles em Combate → Técnicas.",
+      "description": "+200 Passos de Dano físico; +120 dano fixo físico; +200 Vida máxima; +20 acertos em testes de Força. Técnica exclusiva: Após um ataque confirmado, cause metade do dano bruto informado a um segundo alvo, descontando a RD inteira dele. O primeiro ataque não é aplicado de novo. A onda não gera outras ondas. Use os controles em Combate → Técnicas.",
       "attribute": "forca",
       "min": 15,
       "equipmentCompatible": true,
@@ -22609,9 +22656,9 @@
       "automation": {
         "rework": {
           "modifiers": {
-            "physicalSteps": 60,
-            "physicalDamage": 60,
-            "life": 80,
+            "physicalSteps": 200,
+            "physicalDamage": 120,
+            "life": 200,
             "checks": {
               "forca": 20
             }
@@ -22632,7 +22679,9 @@
           "existing": true,
           "equipmentCompatible": false
         }
-      }
+      },
+      "costMode": "choice",
+      "location": "vantagens"
     },
     {
       "id": "r26-exp-vigor-tecido-denso",
@@ -23702,13 +23751,13 @@
       "id": "r26-exp-agilidade-arranque-de-caca",
       "name": "Arranque de Caça",
       "category": "Agilidade",
-      "cost": 4,
+      "cost": 10,
       "maxRank": 1,
       "minGrade": 2,
       "supplement": true,
       "sourceId": "REWORK 2026",
       "useType": "Passiva · automática",
-      "description": "+3 Iniciativa; +1 acerto em ataques físicos; +1 acerto de Kagune/Quinque.",
+      "description": "+3 Iniciativa; +5 acerto em ataques físicos; +8 acerto de Kagune/Quinque.",
       "attribute": "agilidade",
       "min": 1,
       "equipmentCompatible": true,
@@ -23721,12 +23770,14 @@
         "rework": {
           "modifiers": {
             "initiative": 3,
-            "physicalHit": 1,
-            "kaguneHit": 1
+            "physicalHit": 5,
+            "kaguneHit": 8
           },
           "weaponOnly": false
         }
-      }
+      },
+      "costMode": "choice",
+      "location": "vantagens"
     },
     {
       "id": "r26-exp-agilidade-golpe-em-fluxo",
@@ -23831,7 +23882,7 @@
       "supplement": true,
       "sourceId": "REWORK 2026",
       "useType": "Passiva · automática",
-      "description": "acertos de Desvio +Agilidade; +2 Iniciativa.",
+      "description": "+15 Iniciativa.",
       "attribute": "agilidade",
       "min": 3,
       "equipmentCompatible": true,
@@ -23847,11 +23898,13 @@
               "attribute": "agilidade",
               "multiplier": 1
             },
-            "initiative": 2
+            "initiative": 15
           },
           "weaponOnly": false
         }
-      }
+      },
+      "costMode": "choice",
+      "location": "vantagens"
     },
     {
       "id": "r26-exp-agilidade-vetor-de-ataque",
@@ -23924,13 +23977,13 @@
       "id": "r26-exp-agilidade-tracado-fantasma",
       "name": "Traçado Fantasma",
       "category": "Agilidade",
-      "cost": 10,
+      "cost": 7,
       "maxRank": 1,
       "minGrade": 9,
       "supplement": true,
       "sourceId": "REWORK 2026",
       "useType": "Passiva · automática",
-      "description": "+7 acertos de Desvio; +3 acertos de Bloqueio; +4 Iniciativa.",
+      "description": "+7 acertos de Desvio; +6 acertos de Bloqueio; +4 Iniciativa.",
       "attribute": "agilidade",
       "min": 5,
       "equipmentCompatible": true,
@@ -23943,12 +23996,14 @@
         "rework": {
           "modifiers": {
             "dodge": 7,
-            "block": 3,
+            "block": 6,
             "initiative": 4
           },
           "weaponOnly": false
         }
-      }
+      },
+      "costMode": "choice",
+      "location": "vantagens"
     },
     {
       "id": "r26-exp-agilidade-pressao-ininterrupta",
@@ -24145,7 +24200,7 @@
       "id": "r26-exp-agilidade-alem-do-instante",
       "name": "Além do Instante",
       "category": "Agilidade",
-      "cost": 280,
+      "cost": 50,
       "maxRank": 1,
       "minGrade": 20,
       "supplement": true,
@@ -24184,7 +24239,9 @@
           "existing": true,
           "equipmentCompatible": false
         }
-      }
+      },
+      "costMode": "choice",
+      "location": "vantagens"
     },
     {
       "id": "r26-exp-raciocinio-logica-de-combate",
@@ -26320,13 +26377,18 @@
       "id": "r26-exp-geral-base-firme",
       "name": "Base Firme",
       "category": "Genérica",
-      "cost": 3,
-      "maxRank": 1,
+      "cost": [
+        5,
+        7,
+        10,
+        10
+      ],
+      "maxRank": 4,
       "minGrade": 1,
       "supplement": true,
       "sourceId": "REWORK 2026",
       "useType": "Passiva · automática",
-      "description": "+2 acertos de Bloqueio; +1 RD.",
+      "description": "+8 acertos de Bloqueio; +35 RD.",
       "equipmentCompatible": true,
       "requirement": "LEVEL 1+",
       "catalogGroups": [
@@ -26336,12 +26398,15 @@
       "automation": {
         "rework": {
           "modifiers": {
-            "block": 2,
-            "rd": 1
+            "block": 8,
+            "rd": 35
           },
           "weaponOnly": false
         }
-      }
+      },
+      "costMode": "choice",
+      "min": 0,
+      "location": "vantagens"
     },
     {
       "id": "r26-exp-geral-folego-inicial",
@@ -26835,7 +26900,7 @@
       "id": "r26-exp-geral-calculo-predatorio",
       "name": "Cálculo Predatório",
       "category": "Genérica",
-      "cost": 7,
+      "cost": 5,
       "maxRank": 1,
       "minGrade": 6,
       "supplement": true,
@@ -26857,7 +26922,10 @@
           },
           "weaponOnly": false
         }
-      }
+      },
+      "costMode": "choice",
+      "min": 0,
+      "location": "vantagens"
     },
     {
       "id": "r26-exp-geral-punicao-pesada",
@@ -27771,7 +27839,7 @@
       "supplement": true,
       "sourceId": "REWORK 2026",
       "useType": "Passiva · automática",
-      "description": "+14 acertos em ataques físicos; +14 acertos de Kagune/Quinque; +5 Iniciativa; +5 acertos em testes de Percepção.",
+      "description": "+20 acertos em ataques físicos; +20 acertos de Kagune/Quinque; +5 Iniciativa; +5 acertos em testes de Percepção.",
       "equipmentCompatible": true,
       "requirement": "LEVEL 14+",
       "catalogGroups": [
@@ -27781,8 +27849,8 @@
       "automation": {
         "rework": {
           "modifiers": {
-            "physicalHit": 14,
-            "kaguneHit": 14,
+            "physicalHit": 20,
+            "kaguneHit": 20,
             "initiative": 5,
             "checks": {
               "percepcao": 5
@@ -27790,7 +27858,10 @@
           },
           "weaponOnly": false
         }
-      }
+      },
+      "costMode": "choice",
+      "min": 0,
+      "location": "vantagens"
     },
     {
       "id": "r26-exp-geral-carga-de-colosso",
@@ -28760,13 +28831,13 @@
       "id": "r26-exp-geral-cacada-aberta",
       "name": "Caçada Aberta",
       "category": "Genérica",
-      "cost": 5,
+      "cost": 20,
       "maxRank": 1,
       "minGrade": 4,
       "supplement": true,
       "sourceId": "REWORK 2026",
       "useType": "Passiva · automática",
-      "description": "+4 Iniciativa; +2 espaços de Deslocamento; +2 acertos em ataques físicos; +2 acertos de Kagune/Quinque.",
+      "description": "+4 Iniciativa; +2 espaços de Deslocamento; +15 acertos em ataques físicos; +15 acertos de Kagune/Quinque.",
       "equipmentCompatible": true,
       "requirement": "LEVEL 4+",
       "catalogGroups": [
@@ -28778,12 +28849,15 @@
           "modifiers": {
             "initiative": 4,
             "movement": 2,
-            "physicalHit": 2,
-            "kaguneHit": 2
+            "physicalHit": 15,
+            "kaguneHit": 15
           },
           "weaponOnly": false
         }
-      }
+      },
+      "costMode": "choice",
+      "min": 0,
+      "location": "vantagens"
     },
     {
       "id": "r26-exp-geral-autoconfianca-de-aco",
@@ -29909,13 +29983,13 @@
       "id": "r26-passos-forca-quebra-mundo",
       "name": "Quebra-Mundo",
       "category": "Força",
-      "cost": 380,
+      "cost": 150,
       "maxRank": 1,
       "minGrade": 20,
       "supplement": true,
       "sourceId": "REWORK 2026",
       "useType": "Passiva + técnica ativa",
-      "description": "Exclusiva do Level 20: exige 15 no atributo indicado. +80 Passos de Dano físico; dano fixo físico +Força × 2. Técnica exclusiva: Após acertar um único golpe físico, sua onda atinge um segundo alvo por 75% do dano bruto original, descontando a RD própria dele. Em falha no teste de Vigor + Controle contra 15 + seu Controle, ele recua até 6 espaços. O ataque principal não é aplicado de novo; sem ondas em cadeia. Use os controles em Combate → Técnicas.",
+      "description": "Exclusiva do Level 20: exige 15 no atributo indicado. +200 Passos de Dano físico; dano fixo físico +Força × 20. Técnica exclusiva: Após acertar um único golpe físico, sua onda atinge um segundo alvo por 75% do dano bruto original, descontando a RD própria dele. Em falha no teste de Vigor + Controle contra 20+LVL+Teste de Controle, ele recua até 6 espaços. O ataque principal não é aplicado de novo; sem ondas em cadeia. Use os controles em Combate → Técnicas.",
       "attribute": "forca",
       "min": 15,
       "equipmentCompatible": false,
@@ -29928,7 +30002,7 @@
       "automation": {
         "rework": {
           "modifiers": {
-            "physicalSteps": 80,
+            "physicalSteps": 200,
             "physicalDamage": {
               "attribute": "forca",
               "multiplier": 2
@@ -29950,7 +30024,9 @@
           "slot": "action",
           "description": "Após acertar um único golpe físico, sua onda atinge um segundo alvo por 75% do dano bruto original, descontando a RD própria dele. Em falha no teste de Vigor + Controle contra 15 + seu Controle, ele recua até 6 espaços. O ataque principal não é aplicado de novo; sem ondas em cadeia."
         }
-      }
+      },
+      "costMode": "choice",
+      "location": "vantagens"
     },
     {
       "id": "r26-passos-vigor-cerco-vivo",
@@ -30327,7 +30403,7 @@
       "supplement": true,
       "sourceId": "REWORK 2026",
       "useType": "Passiva · automática",
-      "description": "Enquanto a Kagune/Quinque estiver em uso: +14 Passos de Dano de Kagune/Quinque; +6 acertos de Kagune/Quinque; +3 metros de alcance da Kagune/Quinque.",
+      "description": "Enquanto a Kagune/Quinque estiver em uso: +50 Passos de Dano de Kagune/Quinque; +30 acertos de Kagune/Quinque; +30 metros de alcance da Kagune/Quinque.",
       "location": "kakuhou",
       "organGroup": "Ukaku",
       "kaguneTypes": [
@@ -30344,13 +30420,14 @@
       "automation": {
         "rework": {
           "modifiers": {
-            "kaguneSteps": 14,
-            "kaguneHit": 6,
-            "range": 3
+            "kaguneSteps": 50,
+            "kaguneHit": 30,
+            "range": 30
           },
           "weaponOnly": true
         }
-      }
+      },
+      "costMode": "choice"
     },
     {
       "id": "r26-passos-ukaku-arsenal-tempestade",
@@ -30467,7 +30544,7 @@
       "supplement": true,
       "sourceId": "REWORK 2026",
       "useType": "Passiva · automática",
-      "description": "Enquanto a Kagune/Quinque estiver em uso: +35 Passos de Dano de Kagune/Quinque; +20 RD; +15 acertos de Bloqueio.",
+      "description": "Enquanto a Kagune/Quinque estiver em uso: +100 Passos de Dano de Kagune/Quinque; +200 RD; +45 acertos de Bloqueio.",
       "location": "kakuhou",
       "organGroup": "Koukaku",
       "kaguneTypes": [
@@ -30484,13 +30561,14 @@
       "automation": {
         "rework": {
           "modifiers": {
-            "kaguneSteps": 35,
-            "rd": 20,
-            "block": 15
+            "kaguneSteps": 100,
+            "rd": 200,
+            "block": 45
           },
           "weaponOnly": true
         }
-      }
+      },
+      "costMode": "choice"
     },
     {
       "id": "r26-passos-rinkaku-tendao-ruptura",
@@ -30759,7 +30837,7 @@
       "id": "r26-escala-armadura-organica",
       "name": "Armadura Orgânica",
       "minGrade": 3,
-      "cost": 7,
+      "cost": 25,
       "maxRank": 1,
       "category": "Combate",
       "sourceId": "REWORK 2026",
@@ -30779,7 +30857,10 @@
           },
           "weaponOnly": false
         }
-      }
+      },
+      "costMode": "choice",
+      "min": 0,
+      "location": "vantagens"
     },
     {
       "id": "r26-escala-muralha-crescente",
@@ -30918,8 +30999,8 @@
     {
       "id": "r26-escala-acuracia-progressiva",
       "name": "Acurácia Progressiva",
-      "minGrade": 5,
-      "cost": 9,
+      "minGrade": 16,
+      "cost": 30,
       "maxRank": 1,
       "category": "Combate",
       "sourceId": "REWORK 2026",
@@ -30940,7 +31021,10 @@
           },
           "weaponOnly": false
         }
-      }
+      },
+      "costMode": "choice",
+      "min": 0,
+      "location": "vantagens"
     },
     {
       "id": "r26-escala-potencia-continua",
@@ -32254,7 +32338,7 @@
       "supplement": true,
       "useType": "Ativa · reação tática",
       "requirement": "LEVEL 8",
-      "description": "Intercepte um dano pós-RD de um aliado: receba 25%, arredondados para baixo, e impeça o restante. O aliado não recebe esse dano. A redução acontece uma vez, depois da RD original. Usa a reação tática do turno. A ficha calcula e registra o resultado; efeitos em outros alvos são resolvidos na mesa.",
+      "description": "Intercepte um dano pós-RD de um aliado: receba 25%, arredondados para baixo, e impeça o restante. O aliado não recebe esse dano. A redução acontece uma vez, depois da RD original. Usa a reação tática do turno. A ficha calcula e registra o resultado; efeitos em outros alvos são resolvidos na mesa. (Basicamente, dano que o cara ia receber = X, tu deixa ele (X-RD)*0.75 )",
       "catalogGroups": [
         "rework",
         "tactical"
@@ -32273,7 +32357,10 @@
           "requiresRC": false,
           "percent": 75
         }
-      }
+      },
+      "costMode": "choice",
+      "min": 0,
+      "location": "vantagens"
     },
     {
       "id": "r26-tatica-refluxo-dor",
@@ -32417,7 +32504,7 @@
       "id": "r26-tatica-captura-viva",
       "name": "Captura Viva",
       "category": "Combate",
-      "cost": 24,
+      "cost": 15,
       "maxRank": 1,
       "minGrade": 10,
       "equipmentCompatible": true,
@@ -32444,7 +32531,10 @@
           "equipmentCompatible": true,
           "requiresRC": false
         }
-      }
+      },
+      "costMode": "choice",
+      "min": 0,
+      "location": "vantagens"
     },
     {
       "id": "r26-tatica-arranco-impacto",
@@ -32493,7 +32583,7 @@
       "supplement": true,
       "useType": "Ativa · ação tática",
       "requirement": "LEVEL 12",
-      "description": "Guarde metade de um dano bruto rolado como armadilha até o início do segundo turno seguinte. Ao confirmar que um inimigo atravessou a área, gaste sua reação para disparar uma vez, descontando a RD inteira dele. A armadilha é consumida. 4 RC por uso. Usa a ação tática do turno. A ficha calcula e registra o resultado; efeitos em outros alvos são resolvidos na mesa.",
+      "description": "Guarde metade de um dano bruto rolado como armadilha até o início do segundo turno seguinte. Ao confirmar que um inimigo atravessou a área, gaste sua reação para disparar uma vez, descontando a RD inteira dele. A armadilha é consumida. 3d12 RC por uso. Usa a ação tática do turno. A ficha calcula e registra o resultado; efeitos em outros alvos são resolvidos na mesa.",
       "catalogGroups": [
         "rework",
         "tactical"
@@ -32512,13 +32602,16 @@
           "requiresRC": true,
           "weaponOnly": true
         }
-      }
+      },
+      "costMode": "choice",
+      "min": 0,
+      "location": "vantagens"
     },
     {
       "id": "r26-tatica-acerto-cirurgico",
       "name": "Acerto Cirúrgico",
       "category": "Combate",
-      "cost": 30,
+      "cost": 15,
       "maxRank": 1,
       "minGrade": 12,
       "equipmentCompatible": true,
@@ -32545,7 +32638,10 @@
           "equipmentCompatible": true,
           "requiresRC": false
         }
-      }
+      },
+      "costMode": "choice",
+      "min": 0,
+      "location": "vantagens"
     },
     {
       "id": "r26-tatica-janela-contraataque",
@@ -32584,7 +32680,7 @@
       "id": "r26-tatica-carne-combustivel",
       "name": "Carne como Combustível",
       "category": "Combate",
-      "cost": 36,
+      "cost": 20,
       "maxRank": 1,
       "minGrade": 14,
       "equipmentCompatible": false,
@@ -32593,7 +32689,7 @@
       "supplement": true,
       "useType": "Ativa · ação tática",
       "requirement": "LEVEL 14",
-      "description": "Sacrifique 10% de sua Vida máxima, permanecendo com pelo menos 1 PV. Guarde desconto de RC igual a piso(Vida sacrificada/5), até 6 RC, para a próxima técnica deste controlador até o segundo turno seguinte. Não recupera nem cria RC. Usa a ação tática do turno. A ficha calcula e registra o resultado; efeitos em outros alvos são resolvidos na mesa.",
+      "description": "Sacrifique 10% de sua Vida máxima, permanecendo com pelo menos 1 PV. Guarde desconto de RC igual a piso(Vida sacrificada/5), até 25 RC, para a próxima técnica deste controlador até o segundo turno seguinte. Não recupera nem cria RC. Usa a ação tática do turno. A ficha calcula e registra o resultado; efeitos em outros alvos são resolvidos na mesa.",
       "catalogGroups": [
         "rework",
         "tactical"
@@ -32611,7 +32707,10 @@
           "equipmentCompatible": false,
           "requiresRC": true
         }
-      }
+      },
+      "costMode": "choice",
+      "min": 0,
+      "location": "vantagens"
     },
     {
       "id": "r26-tatica-sangue-por-sangue",
@@ -32823,8 +32922,70 @@
       "id": "apostador",
       "name": "Apostador",
       "category": "Genérica",
-      "cost": 6,
-      "description": "Três vezes por Descanso Longo, trate uma Ação Especial como se tivesse gasto 2 RC."
+      "cost": 15,
+      "description": "Uma vez por descanso você pode rolar um 1d20, se o resultado for superior a 12 você recebe +30 em todos acertos até o final da sessão.",
+      "minGrade": 1,
+      "maxRank": 1,
+      "costMode": "choice",
+      "min": 0,
+      "location": "vantagens",
+      "automation": {
+        "custom": {
+          "activation": "active",
+          "rcCost": 0,
+          "effects": [
+            {
+              "id": "efeito-1dfb240d",
+              "type": "damage-steps",
+              "value": 30,
+              "scope": "both",
+              "attribute": "forca",
+              "operation": "add"
+            },
+            {
+              "id": "efeito-0a763202",
+              "type": "hit-dice",
+              "value": 30,
+              "scope": "both",
+              "attribute": "forca",
+              "operation": "add"
+            },
+            {
+              "id": "efeito-402af0de",
+              "type": "block-dice",
+              "value": 30,
+              "scope": "both",
+              "attribute": "forca",
+              "operation": "add"
+            },
+            {
+              "id": "efeito-64978e22",
+              "type": "dodge-dice",
+              "value": 30,
+              "scope": "both",
+              "attribute": "forca",
+              "operation": "add"
+            },
+            {
+              "id": "efeito-859d0efd",
+              "type": "rd",
+              "value": 50,
+              "scope": "both",
+              "attribute": "forca",
+              "operation": "add"
+            },
+            {
+              "id": "efeito-29e3f49f",
+              "type": "damage-modifier",
+              "value": 35,
+              "scope": "both",
+              "attribute": "forca",
+              "operation": "add"
+            }
+          ]
+        }
+      },
+      "useType": "Ativa · 0 RC ao ativar"
     },
     {
       "id": "arma-favorita",
@@ -32909,8 +33070,29 @@
       "id": "nunca-prostra",
       "name": "Aquele que nunca se prostra",
       "category": "Genérica",
-      "cost": 6,
-      "description": "Determinação passa a ser Controle +4 e recupera 3 em Descanso Longo."
+      "cost": 20,
+      "description": "Determinação passa a ser Controle*2 e recupera 3 em Descanso Longo.",
+      "minGrade": 1,
+      "maxRank": 1,
+      "costMode": "choice",
+      "min": 0,
+      "location": "vantagens",
+      "automation": {
+        "custom": {
+          "activation": "passive",
+          "rcCost": 0,
+          "effects": [
+            {
+              "id": "efeito-9153e31c",
+              "type": "determination",
+              "value": 2,
+              "scope": "both",
+              "attribute": "forca",
+              "operation": "multiply"
+            }
+          ]
+        }
+      }
     },
     {
       "id": "jejuante",
@@ -32956,57 +33138,97 @@
       "id": "acurado-forca",
       "name": "Acurado — Força",
       "category": "Genérica",
-      "cost": 5,
-      "description": "+1 em Força, podendo superar o limite de Level."
+      "cost": 10,
+      "description": "+1 em Força, podendo superar o limite de Level.",
+      "minGrade": 1,
+      "maxRank": 1,
+      "costMode": "choice",
+      "min": 0,
+      "location": "vantagens"
     },
     {
       "id": "acurado-vigor",
       "name": "Acurado — Vigor",
       "category": "Genérica",
-      "cost": 5,
-      "description": "+1 em Vigor, podendo superar o limite de Level."
+      "cost": 10,
+      "description": "+1 em Vigor, podendo superar o limite de Level.",
+      "minGrade": 1,
+      "maxRank": 1,
+      "costMode": "choice",
+      "min": 0,
+      "location": "vantagens"
     },
     {
       "id": "acurado-precisao",
       "name": "Acurado — Precisão",
       "category": "Genérica",
-      "cost": 5,
-      "description": "+1 em Precisão, podendo superar o limite de Level."
+      "cost": 10,
+      "description": "+1 em Precisão, podendo superar o limite de Level.",
+      "minGrade": 1,
+      "maxRank": 1,
+      "costMode": "choice",
+      "min": 0,
+      "location": "vantagens"
     },
     {
       "id": "acurado-agilidade",
       "name": "Acurado — Agilidade",
       "category": "Genérica",
-      "cost": 5,
-      "description": "+1 em Agilidade, podendo superar o limite de Level."
+      "cost": 10,
+      "description": "+1 em Agilidade, podendo superar o limite de Level.",
+      "minGrade": 1,
+      "maxRank": 1,
+      "costMode": "choice",
+      "min": 0,
+      "location": "vantagens"
     },
     {
       "id": "acurado-raciocinio",
       "name": "Acurado — Raciocínio",
       "category": "Genérica",
-      "cost": 5,
-      "description": "+1 em Raciocínio, podendo superar o limite de Level."
+      "cost": 10,
+      "description": "+1 em Raciocínio, podendo superar o limite de Level.",
+      "minGrade": 1,
+      "maxRank": 1,
+      "costMode": "choice",
+      "min": 0,
+      "location": "vantagens"
     },
     {
       "id": "acurado-percepcao",
       "name": "Acurado — Percepção",
       "category": "Genérica",
-      "cost": 5,
-      "description": "+1 em Percepção, podendo superar o limite de Level."
+      "cost": 10,
+      "description": "+1 em Percepção, podendo superar o limite de Level.",
+      "minGrade": 1,
+      "maxRank": 1,
+      "costMode": "choice",
+      "min": 0,
+      "location": "vantagens"
     },
     {
       "id": "acurado-presenca",
       "name": "Acurado — Presença",
       "category": "Genérica",
-      "cost": 5,
-      "description": "+1 em Presença, podendo superar o limite de Level."
+      "cost": 10,
+      "description": "+1 em Presença, podendo superar o limite de Level.",
+      "minGrade": 1,
+      "maxRank": 1,
+      "costMode": "choice",
+      "min": 0,
+      "location": "vantagens"
     },
     {
       "id": "acurado-controle",
       "name": "Acurado — Controle",
       "category": "Genérica",
-      "cost": 5,
-      "description": "+1 em Controle, podendo superar o limite de Level."
+      "cost": 10,
+      "description": "+1 em Controle, podendo superar o limite de Level.",
+      "minGrade": 1,
+      "maxRank": 1,
+      "costMode": "choice",
+      "min": 0,
+      "location": "vantagens"
     },
     {
       "id": "corpo-pesado",
@@ -33048,14 +33270,33 @@
       "name": "Furioso",
       "category": "Genérica",
       "cost": [
-        3,
         5,
-        7,
-        9
+        10,
+        15,
+        25
       ],
-      "description": "Cada compra concede +1 Passo de Dano em todos os ataques do personagem.",
+      "description": "Cada compra concede +15 Passo de Dano em todos os ataques do personagem.",
       "costMode": "sum",
-      "maxRank": 4
+      "maxRank": 4,
+      "minGrade": 1,
+      "min": 0,
+      "location": "vantagens",
+      "automation": {
+        "custom": {
+          "activation": "passive",
+          "rcCost": 0,
+          "effects": [
+            {
+              "id": "efeito-848fc84a",
+              "type": "damage-steps",
+              "value": 15,
+              "scope": "both",
+              "attribute": "forca",
+              "operation": "add"
+            }
+          ]
+        }
+      }
     },
     {
       "id": "aliado-grau",
@@ -33161,10 +33402,51 @@
       "id": "pugilista",
       "name": "Pugilista",
       "category": "Força",
-      "cost": 5,
-      "description": "Ataques de mãos nuas e armas semelhantes a soco inglês recebem +2 Passos de Dano.",
+      "cost": [
+        5,
+        10,
+        15,
+        20
+      ],
+      "description": "Ataques de mãos nuas e armas semelhantes a soco inglês recebem +30 Passos de Dano e +5 Acerto.",
       "attribute": "forca",
-      "min": 1
+      "min": 1,
+      "minGrade": 1,
+      "maxRank": 4,
+      "costMode": "choice",
+      "location": "vantagens",
+      "automation": {
+        "custom": {
+          "activation": "passive",
+          "rcCost": 0,
+          "effects": [
+            {
+              "id": "efeito-f5689d79",
+              "type": "damage-steps",
+              "value": 30,
+              "scope": "physical",
+              "attribute": "forca",
+              "operation": "add"
+            },
+            {
+              "id": "efeito-ae1f76cb",
+              "type": "damage-modifier",
+              "value": 25,
+              "scope": "physical",
+              "attribute": "forca",
+              "operation": "add"
+            },
+            {
+              "id": "efeito-927167ef",
+              "type": "hit-dice",
+              "value": 5,
+              "scope": "physical",
+              "attribute": "forca",
+              "operation": "add"
+            }
+          ]
+        }
+      }
     },
     {
       "id": "impacto-brutal",
@@ -33198,9 +33480,13 @@
       "name": "Quebra-Portas",
       "category": "Força",
       "cost": 4,
-      "description": "Contra estruturas, cobertura e objetos, +2 acertos de Força e +2 Passos de Dano.",
+      "description": "Contra estruturas, cobertura e objetos, +5 acertos de Força.",
       "attribute": "forca",
-      "min": 4
+      "min": 4,
+      "minGrade": 1,
+      "maxRank": 1,
+      "costMode": "choice",
+      "location": "vantagens"
     },
     {
       "id": "pancada-seca",
@@ -33225,9 +33511,13 @@
       "name": "Brutamontes",
       "category": "Força",
       "cost": 6,
-      "description": "Ao superar a MD em 2 acertos num golpe físico, empurre o alvo 1 espaço sem outra Ação.",
+      "description": "Ao superar a MD em 15 acertos num golpe físico, empurre o alvo 1 espaço sem outra Ação.",
       "attribute": "forca",
-      "min": 6
+      "min": 6,
+      "minGrade": 1,
+      "maxRank": 1,
+      "costMode": "choice",
+      "location": "vantagens"
     },
     {
       "id": "arremessador",
@@ -33242,10 +33532,14 @@
       "id": "soco-atordoante",
       "name": "Soco Atordoante",
       "category": "Força",
-      "cost": 6,
-      "description": "Duas vezes por descanso, imponha teste de Controle MD 5; em falha, -5 Passos no próximo dano.",
+      "cost": 15,
+      "description": "Duas vezes por descanso, imponha teste de Controle MD 20+LVL do Inimigo; em falha, -20% Passos no próximo dano e perca do turno além de estonteamento causar perca de 30 de acerto por 5 turnos.",
       "attribute": "forca",
-      "min": 7
+      "min": 7,
+      "minGrade": 1,
+      "maxRank": 1,
+      "costMode": "choice",
+      "location": "vantagens"
     },
     {
       "id": "forca-minotauro",
@@ -33270,9 +33564,30 @@
       "name": "Skadoosh",
       "category": "Força",
       "cost": 15,
-      "description": "Uma vez por sessão, um ataque físico direto recebe +40 Passos de Dano. Ative a condição somente nesse golpe e registre o uso na sessão; não afeta a Kagune/Quinque.",
+      "description": "Uma vez por sessão, um ataque físico direto recebe +300% Passos de Dano. Ative a condição somente nesse golpe e registre o uso na sessão; não afeta a Kagune/Quinque.",
       "attribute": "forca",
-      "min": 10
+      "min": 10,
+      "minGrade": 1,
+      "maxRank": 1,
+      "costMode": "choice",
+      "location": "vantagens",
+      "automation": {
+        "custom": {
+          "activation": "active",
+          "rcCost": 0,
+          "effects": [
+            {
+              "id": "efeito-09f0996d",
+              "type": "damage-steps",
+              "value": 3,
+              "scope": "physical",
+              "attribute": "forca",
+              "operation": "multiply"
+            }
+          ]
+        }
+      },
+      "useType": "Ativa · 0 RC ao ativar"
     },
     {
       "id": "imunidade-natural",
@@ -33568,9 +33883,13 @@
       "name": "Parkour",
       "category": "Agilidade",
       "cost": 4,
-      "description": "Acrobacias simples não reduzem movimento; testes extremos recebem +1 acerto.",
+      "description": "Acrobacias simples não reduzem movimento; testes extremos recebem +15 acerto.",
       "attribute": "agilidade",
-      "min": 4
+      "min": 4,
+      "minGrade": 1,
+      "maxRank": 1,
+      "costMode": "choice",
+      "location": "vantagens"
     },
     {
       "id": "passo-lateral",
@@ -33649,9 +33968,29 @@
       "name": "Ceifador",
       "category": "Agilidade",
       "cost": 15,
-      "description": "Ataques furtivos ou de oportunidade recebem +8 Passos de Dano uma vez por turno; +2 acertos permanentes de Esquiva.",
+      "description": "Ataques furtivos ou de oportunidade recebem +150 Passos de Dano uma vez por turno; +20 acertos permanentes de Esquiva.",
       "attribute": "agilidade",
-      "min": 10
+      "min": 10,
+      "minGrade": 1,
+      "maxRank": 1,
+      "costMode": "choice",
+      "location": "vantagens",
+      "automation": {
+        "custom": {
+          "activation": "passive",
+          "rcCost": 0,
+          "effects": [
+            {
+              "id": "efeito-0c270f4f",
+              "type": "dodge-dice",
+              "value": 20,
+              "scope": "both",
+              "attribute": "forca",
+              "operation": "add"
+            }
+          ]
+        }
+      }
     },
     {
       "id": "memoria-fotografica",
@@ -35516,13 +35855,18 @@
     {
       "id": "cacador-reacoes",
       "name": "Caçador de Reações",
-      "cost": 6,
+      "cost": 10,
       "category": "Combate",
-      "description": "Quando inimigo gastar a Reação, o próximo ataque contra ele naquele turno recebe +1 acerto.",
+      "description": "Quando inimigo gastar a Reação, o próximo ataque contra ele naquele turno recebe +15 acerto.",
       "requirement": "Universal",
       "catalogGroups": [
         "expansion"
-      ]
+      ],
+      "minGrade": 1,
+      "maxRank": 1,
+      "costMode": "choice",
+      "min": 0,
+      "location": "vantagens"
     },
     {
       "id": "quebrador-ritmo",
@@ -35595,11 +35939,16 @@
       "name": "Ainda Não Acabou",
       "cost": 8,
       "category": "Combate",
-      "description": "Uma vez por descanso, ao sofrer crítico, ganhe +2 acertos no primeiro teste ofensivo ou defensivo do próximo turno.",
+      "description": "Uma vez por descanso, ao sofrer crítico, ganhe +35 acertos no primeiro teste ofensivo ou defensivo do próximo turno.",
       "requirement": "Universal",
       "catalogGroups": [
         "expansion"
-      ]
+      ],
+      "minGrade": 1,
+      "maxRank": 1,
+      "costMode": "choice",
+      "min": 0,
+      "location": "vantagens"
     },
     {
       "id": "dominio-espaco",
@@ -36323,7 +36672,7 @@
       "cost": 8,
       "minGrade": 6,
       "maxRank": 1,
-      "description": "Ao causar dano em três rodadas distintas, ganhe uma reserva de +2 acertos para um ataque. Consuma até o fim da cena; máximo uma reserva.",
+      "description": "Ao causar dano em três rodadas distintas, ganhe uma reserva de +20 acertos para um ataque. Consuma até o fim da cena; máximo uma reserva.",
       "requirement": "Level 6+; Universal",
       "sourceId": "P0041",
       "sourcePage": 12,
@@ -36332,7 +36681,9 @@
       "supplement": true,
       "category": "Força",
       "attribute": "forca",
-      "location": "vantagens"
+      "location": "vantagens",
+      "costMode": "choice",
+      "min": 0
     },
     {
       "id": "mil-p0042",
@@ -36442,16 +36793,34 @@
       "cost": 8,
       "minGrade": 6,
       "maxRank": 1,
-      "description": "Após defender ataques do mesmo alvo em três rodadas, seu próximo ataque nele ignora 4 RD. Consome o registro e só funciona uma vez por cena.",
+      "description": "Após defender ataques do mesmo alvo em três rodadas, seu próximo ataque nele ignora 50% da RD. Consome o registro e só funciona uma vez por cena.",
       "requirement": "Level 6+; Universal",
       "sourceId": "P0048",
       "sourcePage": 12,
       "chapter": 1,
-      "useType": "Passiva",
+      "useType": "Ativa · 0 RC ao ativar",
       "supplement": true,
       "category": "Força",
       "attribute": "forca",
-      "location": "vantagens"
+      "location": "vantagens",
+      "costMode": "choice",
+      "min": 0,
+      "automation": {
+        "custom": {
+          "activation": "active",
+          "rcCost": 0,
+          "effects": [
+            {
+              "id": "efeito-cb495f22",
+              "type": "penetration",
+              "value": 50,
+              "scope": "both",
+              "attribute": "forca",
+              "operation": "add"
+            }
+          ]
+        }
+      }
     },
     {
       "id": "mil-p0049",
@@ -37887,7 +38256,7 @@
       "cost": 3,
       "minGrade": 2,
       "maxRank": 1,
-      "description": "Numa superfície estreita, ajoelhar concede +2 acertos contra perder equilíbrio, mas impede correr.",
+      "description": "Numa superfície estreita, ajoelhar concede +15 acertos contra perder equilíbrio, mas impede correr.",
       "requirement": "Level 2+; Universal",
       "sourceId": "P0133",
       "sourcePage": 21,
@@ -37896,7 +38265,9 @@
       "supplement": true,
       "category": "Agilidade",
       "attribute": "agilidade",
-      "location": "vantagens"
+      "location": "vantagens",
+      "costMode": "choice",
+      "min": 0
     },
     {
       "id": "mil-p0134",
@@ -39995,7 +40366,7 @@
       "cost": 5,
       "minGrade": 4,
       "maxRank": 1,
-      "description": "No primeiro turno após luz se apagar, +2 acertos para esconder-se se ninguém o estiver tocando.",
+      "description": "No primeiro turno após luz se apagar, +15 acertos para esconder-se se ninguém o estiver tocando.",
       "requirement": "Level 4+; Universal",
       "sourceId": "P0257",
       "sourcePage": 33,
@@ -40004,7 +40375,9 @@
       "supplement": true,
       "category": "Agilidade",
       "attribute": "agilidade",
-      "location": "vantagens"
+      "location": "vantagens",
+      "costMode": "choice",
+      "min": 0
     },
     {
       "id": "mil-p0258",
@@ -40131,7 +40504,7 @@
       "cost": 5,
       "minGrade": 4,
       "maxRank": 1,
-      "description": "Em prédio cujo mapa estudou, +2 acertos para encontrar acesso de manutenção existente, sem criar passagem.",
+      "description": "Em prédio cujo mapa estudou, +20 acertos para encontrar acesso de manutenção existente, sem criar passagem.",
       "requirement": "Level 4+; Universal",
       "sourceId": "P0265",
       "sourcePage": 34,
@@ -40140,7 +40513,9 @@
       "supplement": true,
       "category": "Agilidade",
       "attribute": "agilidade",
-      "location": "vantagens"
+      "location": "vantagens",
+      "costMode": "choice",
+      "min": 0
     },
     {
       "id": "mil-p0266",
@@ -42222,7 +42597,7 @@
       "cost": 8,
       "minGrade": 6,
       "maxRank": 1,
-      "description": "Até três aliados voluntários podem seguir sua rota com +1 acerto contra obstáculos; cada um usa seu próprio movimento.",
+      "description": "Até três aliados voluntários podem seguir sua rota com +15 acerto contra obstáculos; cada um usa seu próprio movimento.",
       "requirement": "Level 6+; Universal; aliados precisam perceber o sinal e consentir",
       "sourceId": "P0388",
       "sourcePage": 46,
@@ -42231,7 +42606,9 @@
       "supplement": true,
       "category": "Agilidade",
       "attribute": "agilidade",
-      "location": "vantagens"
+      "location": "vantagens",
+      "costMode": "choice",
+      "min": 0
     },
     {
       "id": "mil-p0389",
@@ -44340,7 +44717,7 @@
       "cost": 3,
       "minGrade": 2,
       "maxRank": 1,
-      "description": "Disparar com uma asa recolhida reduz em 1 acerto a penalidade por espaço apertado, mas impõe -1 dano.",
+      "description": "Disparar com uma asa recolhida reduz em 100% acerto a penalidade por espaço apertado.",
       "requirement": "Level 2+; Ukaku biológica manifestada; não concede voo sem habilidade própria",
       "sourceId": "P0508",
       "sourcePage": 58,
@@ -44353,7 +44730,9 @@
       "requiredWeapon": "kagune",
       "kaguneTypes": [
         "Ukaku"
-      ]
+      ],
+      "costMode": "choice",
+      "min": 0
     },
     {
       "id": "mil-p0509",
@@ -44928,7 +45307,7 @@
       "cost": 5,
       "minGrade": 4,
       "maxRank": 1,
-      "description": "Gaste 2 RC; até seu próximo turno, +2 acertos para curva aérea e -1 acerto de disparo. Exige voo prévio.",
+      "description": "Gaste 15 RC; até seu próximo turno, +35 acertos para esquiva aérea e +25 acerto de disparo. Exige voo prévio.",
       "requirement": "Level 4+; Ukaku biológica manifestada; não concede voo sem habilidade própria",
       "sourceId": "P0536",
       "sourcePage": 61,
@@ -44941,7 +45320,33 @@
       "requiredWeapon": "kagune",
       "kaguneTypes": [
         "Ukaku"
-      ]
+      ],
+      "costMode": "choice",
+      "min": 0,
+      "automation": {
+        "custom": {
+          "activation": "active",
+          "rcCost": 0,
+          "effects": [
+            {
+              "id": "efeito-df43d8ae",
+              "type": "hit-dice",
+              "value": 25,
+              "scope": "both",
+              "attribute": "forca",
+              "operation": "add"
+            },
+            {
+              "id": "efeito-99b5cb2d",
+              "type": "dodge-dice",
+              "value": 35,
+              "scope": "both",
+              "attribute": "forca",
+              "operation": "add"
+            }
+          ]
+        }
+      }
     },
     {
       "id": "mil-p0537",
@@ -46584,10 +46989,10 @@
     {
       "id": "mil-p0615",
       "name": "Agulha Orgânica",
-      "cost": 5,
+      "cost": 15,
       "minGrade": 4,
       "maxRank": 1,
-      "description": "Gaste 2 RC para criar ponta fina estéril; +2 acertos numa sutura manual, sem dispensar habilidade médica.",
+      "description": "Gaste 5 RC para criar ponta fina estéril; +3d16 acertos numa sutura manual, sem dispensar habilidade médica.",
       "requirement": "Level 4+; Rinkaku biológica manifestada; caudas ocupadas não atacam",
       "sourceId": "P0615",
       "sourcePage": 69,
@@ -46600,7 +47005,9 @@
       "requiredWeapon": "kagune",
       "kaguneTypes": [
         "Rinkaku"
-      ]
+      ],
+      "costMode": "choice",
+      "min": 0
     },
     {
       "id": "mil-p0616",
@@ -48204,7 +48611,7 @@
       "cost": 8,
       "minGrade": 6,
       "maxRank": 1,
-      "description": "Gaste 3 RC: mova 1 espaço mantendo apoio de cauda; +2 acertos contra queda durante esse movimento.",
+      "description": "Gaste 3 RC: mova 1 espaço mantendo apoio de cauda; +15 acertos contra queda durante esse movimento.",
       "requirement": "Level 6+; Bikaku biológica manifestada",
       "sourceId": "P0692",
       "sourcePage": 77,
@@ -48217,7 +48624,9 @@
       "requiredWeapon": "kagune",
       "kaguneTypes": [
         "Bikaku"
-      ]
+      ],
+      "costMode": "choice",
+      "min": 0
     },
     {
       "id": "mil-p0693",
@@ -50143,7 +50552,7 @@
       "cost": 8,
       "minGrade": 6,
       "maxRank": 1,
-      "description": "Gaste 4 RC; conecte carapaça a superfície firme. +3 acertos contra puxão por dois turnos, mas sair exige Ação.",
+      "description": "Gaste 12 RC; conecte carapaça a superfície firme. +20 acertos contra puxão e agarrão por dois turnos, mas sair exige Ação.",
       "requirement": "Level 6+; Kakuja já desbloqueada e ativa; Level mínimo 6; compra de Vantagens pelo custo integral",
       "sourceId": "P0788",
       "sourcePage": 86,
@@ -50153,7 +50562,33 @@
       "category": "Genérica",
       "location": "kakuhou",
       "organGroup": "Kakuja",
-      "requiresKakuja": true
+      "requiresKakuja": true,
+      "costMode": "choice",
+      "min": 0,
+      "automation": {
+        "custom": {
+          "activation": "active",
+          "rcCost": 12,
+          "effects": [
+            {
+              "id": "efeito-694c4001",
+              "type": "attribute-bonus",
+              "value": 20,
+              "scope": "both",
+              "attribute": "forca",
+              "operation": "add"
+            },
+            {
+              "id": "efeito-1eb66fdf",
+              "type": "attribute-bonus",
+              "value": 20,
+              "scope": "both",
+              "attribute": "vigor",
+              "operation": "add"
+            }
+          ]
+        }
+      }
     },
     {
       "id": "mil-p0789",
@@ -50575,7 +51010,7 @@
       "cost": 5,
       "minGrade": 4,
       "maxRank": 1,
-      "description": "Fixe Quinque de disparo a apoio firme; +2 acertos no próximo tiro, mas mover a arma exige Ação.",
+      "description": "Fixe Quinque de disparo a apoio firme; +20 acertos no próximo tiro, mas mover a arma exige Ação.",
       "requirement": "Level 4+; Quinque funcional do tipo indicado; sem efeitos biológicos ou gasto de RC",
       "sourceId": "P0812",
       "sourcePage": 89,
@@ -50585,7 +51020,25 @@
       "category": "Genérica",
       "location": "kakuhou",
       "organGroup": "Quinque",
-      "requiredWeapon": "quinque"
+      "requiredWeapon": "quinque",
+      "costMode": "choice",
+      "min": 0,
+      "automation": {
+        "custom": {
+          "activation": "active",
+          "rcCost": 0,
+          "effects": [
+            {
+              "id": "efeito-abd695fd",
+              "type": "hit-dice",
+              "value": 20,
+              "scope": "both",
+              "attribute": "forca",
+              "operation": "add"
+            }
+          ]
+        }
+      }
     },
     {
       "id": "mil-p0813",
@@ -50809,7 +51262,7 @@
       "cost": 5,
       "minGrade": 4,
       "maxRank": 1,
-      "description": "Configure Quinque de disparo por um minuto: +1 acerto ao Toque e -1 em Médio ou além, até reconfigurar.",
+      "description": "Configure Quinque de disparo por um minuto: +35 acerto ao Toque e -15 em Médio ou além, até reconfigurar.",
       "requirement": "Level 4+; Quinque funcional do tipo indicado; sem efeitos biológicos ou gasto de RC",
       "sourceId": "P0825",
       "sourcePage": 90,
@@ -50819,7 +51272,9 @@
       "category": "Genérica",
       "location": "kakuhou",
       "organGroup": "Quinque",
-      "requiredWeapon": "quinque"
+      "requiredWeapon": "quinque",
+      "costMode": "choice",
+      "min": 0
     },
     {
       "id": "mil-p0826",
@@ -50827,7 +51282,7 @@
       "cost": 5,
       "minGrade": 4,
       "maxRank": 1,
-      "description": "Configure por um minuto: reduza 1 acerto de penalidade de distância, mas -1 acerto ao Toque; não amplia alcance máximo.",
+      "description": "Configure por um minuto: reduza 100% acerto de penalidade de distância e ganhe +35, mas -15 acerto ao Toque; não amplia alcance máximo.",
       "requirement": "Level 4+; Quinque funcional do tipo indicado; sem efeitos biológicos ou gasto de RC",
       "sourceId": "P0826",
       "sourcePage": 90,
@@ -50837,7 +51292,25 @@
       "category": "Genérica",
       "location": "kakuhou",
       "organGroup": "Quinque",
-      "requiredWeapon": "quinque"
+      "requiredWeapon": "quinque",
+      "costMode": "choice",
+      "min": 0,
+      "automation": {
+        "custom": {
+          "activation": "active",
+          "rcCost": 0,
+          "effects": [
+            {
+              "id": "efeito-a9e9f215",
+              "type": "hit-dice",
+              "value": 35,
+              "scope": "both",
+              "attribute": "forca",
+              "operation": "add"
+            }
+          ]
+        }
+      }
     },
     {
       "id": "mil-p0827",
@@ -53519,7 +53992,7 @@
       "cost": 8,
       "minGrade": 6,
       "maxRank": 1,
-      "description": "Nomeie incapacitado visível. Até resgatá-lo ou fim da cena, +2 acertos para transportá-lo e -2 acertos ofensivos.",
+      "description": "Nomeie incapacitado visível. Até resgatá-lo ou fim da cena, +15 acertos para transportá-lo e -5 acertos ofensivos.",
       "requirement": "Level 6+; Universal salvo exigência explícita; cada reserva é própria e não compartilhada",
       "sourceId": "P0975",
       "sourcePage": 105,
@@ -53528,7 +54001,9 @@
       "supplement": true,
       "category": "Força",
       "attribute": "forca",
-      "location": "vantagens"
+      "location": "vantagens",
+      "costMode": "choice",
+      "min": 0
     },
     {
       "id": "mil-p0976",
@@ -62839,148 +63314,342 @@
       "id": "horrendo",
       "name": "Horrendo",
       "credit": [
-        3,
-        4,
-        5
+        5,
+        10,
+        15
       ],
-      "description": "Sua aparência provoca estranhamento, dúvida ou medo conforme o valor escolhido."
+      "description": "Sua aparência provoca estranhamento, dúvida ou medo conforme o valor escolhido.",
+      "maxRank": 3,
+      "automation": {
+        "custom": {
+          "activation": "passive",
+          "rcCost": 0,
+          "effects": [
+            {
+              "id": "efeito-076b4203",
+              "type": "attribute-dice",
+              "value": 1,
+              "scope": "both",
+              "attribute": "forca",
+              "operation": "subtract"
+            }
+          ]
+        }
+      }
     },
     {
       "id": "estigma-ghoul",
       "name": "Estigma Ghoul",
-      "credit": 3,
-      "description": "Você tem fama de Ghoul e sofre -1 acerto em testes sociais com desconhecidos.",
+      "credit": 8,
+      "description": "Você tem fama de Ghoul e sofre -5 acerto em testes sociais com desconhecidos.",
       "species": [
         "humano",
         "humano-dominante",
         "ghoul-artificial",
         "quinx"
-      ]
+      ],
+      "maxRank": 1,
+      "automation": {
+        "custom": {
+          "activation": "active",
+          "rcCost": 0,
+          "effects": [
+            {
+              "id": "efeito-e7eb21b3",
+              "type": "attribute-dice",
+              "value": 5,
+              "scope": "both",
+              "attribute": "percepcao",
+              "operation": "subtract"
+            }
+          ]
+        }
+      }
     },
     {
       "id": "fraqueza-extremos",
       "name": "Fraqueza aos Extremos",
-      "credit": 3,
-      "description": "Escolha frio ou calor: sob a condição, -1 acerto em todas as rolagens e +3 dano de ataques ligados ao extremo."
+      "credit": 15,
+      "description": "Escolha frio ou calor: sob a condição, -25 acerto em todas as rolagens e +20% dano de ataques ligados ao extremo. (Dos inimigos)",
+      "maxRank": 1,
+      "automation": {
+        "custom": {
+          "activation": "active",
+          "rcCost": 0,
+          "effects": [
+            {
+              "id": "efeito-4c7a1f19",
+              "type": "damage-steps",
+              "value": 15,
+              "scope": "both",
+              "attribute": "forca",
+              "operation": "subtract"
+            },
+            {
+              "id": "efeito-9bd4505f",
+              "type": "hit-dice",
+              "value": 25,
+              "scope": "both",
+              "attribute": "forca",
+              "operation": "subtract"
+            }
+          ]
+        }
+      }
     },
     {
       "id": "voices",
       "name": "Voices, Voices, Voices, Voices!",
-      "credit": 5,
-      "description": "Trauma, vozes e visões permitem ao Narrador introduzir percepções que podem ou não ser reais."
+      "credit": 35,
+      "description": "Trauma, vozes e visões permitem ao Narrador introduzir percepções que podem ou não ser reais.",
+      "maxRank": 1
     },
     {
       "id": "kagune-eterna",
       "name": "Kagune Eterna",
-      "credit": 5,
+      "credit": 35,
       "description": "Você não consegue desenvolver Kakuja. Quinx não pode escolher.",
       "species": [
         "ghoul",
         "ghoul-dominante",
         "ghoul-artificial"
-      ]
+      ],
+      "maxRank": 1
     },
     {
       "id": "culpa-sobrevivente",
       "name": "Culpa do Sobrevivente",
-      "credit": 5,
-      "description": "Quando um aliado chega a 0 PV, perca 1 Sanidade."
+      "credit": 15,
+      "description": "Quando um aliado chega a 0 PV, perca 2d12 Sanidade.",
+      "maxRank": 1
     },
     {
       "id": "ghoul-sem-dentes",
       "name": "Ghoul sem Dentes",
-      "credit": 6,
+      "credit": 45,
       "description": "Você não consegue ativar a Kagune; os PE continuam mesmo se ela despertar depois.",
       "species": [
         "ghoul",
         "ghoul-dominante",
         "ghoul-artificial"
-      ]
+      ],
+      "maxRank": 1
     },
     {
       "id": "cheiro-sangue",
       "name": "Cheiro de Sangue",
-      "credit": 3,
-      "description": "Seu cheiro denuncia que há algo errado para sentidos apurados."
+      "credit": 10,
+      "description": "Seu cheiro denuncia que há algo errado para sentidos apurados.",
+      "maxRank": 1
     },
     {
       "id": "corpo-exigente",
       "name": "Corpo Exigente",
-      "credit": 3,
+      "credit": 15,
       "description": "Você precisa de 2 PE de alimento para reduzir 1 ponto de Fome.",
       "species": [
         "ghoul",
         "ghoul-dominante",
         "ghoul-artificial"
-      ]
+      ],
+      "maxRank": 1
     },
     {
       "id": "marcado-medo",
       "name": "Marcado pelo Medo",
-      "credit": 5,
-      "description": "Escolha um medo; diante dele, teste Controle para evitar consequências narrativas."
+      "credit": 10,
+      "description": "Escolha um medo; diante dele, teste Controle para evitar consequências narrativas.",
+      "maxRank": 1,
+      "automation": {
+        "custom": {
+          "activation": "active",
+          "rcCost": 0,
+          "effects": [
+            {
+              "id": "efeito-f51ee381",
+              "type": "hit-dice",
+              "value": 15,
+              "scope": "both",
+              "attribute": "forca",
+              "operation": "subtract"
+            },
+            {
+              "id": "efeito-9c3d82a3",
+              "type": "dodge-dice",
+              "value": 15,
+              "scope": "both",
+              "attribute": "forca",
+              "operation": "subtract"
+            },
+            {
+              "id": "efeito-8169e705",
+              "type": "block-dice",
+              "value": 15,
+              "scope": "both",
+              "attribute": "forca",
+              "operation": "subtract"
+            },
+            {
+              "id": "efeito-a9d426ad",
+              "type": "movement",
+              "value": 0.5,
+              "scope": "both",
+              "attribute": "forca",
+              "operation": "multiply"
+            },
+            {
+              "id": "efeito-641f0e5a",
+              "type": "attribute-dice",
+              "value": 15,
+              "scope": "both",
+              "attribute": "forca",
+              "operation": "subtract"
+            }
+          ]
+        }
+      }
     },
     {
       "id": "divida-sangue",
       "name": "Dívida de Sangue",
-      "credit": 3,
-      "description": "Uma pessoa ou grupo cobra missões e deveres periódicos."
+      "credit": 15,
+      "description": "Uma pessoa ou grupo cobra missões e deveres periódicos.",
+      "maxRank": 1
     },
     {
       "id": "obcecado",
       "name": "Obcecado",
-      "credit": 3,
-      "description": "Diante da obsessão, teste Raciocínio para não agir por impulso."
+      "credit": 15,
+      "description": "Diante da obsessão, teste Raciocínio para não agir por impulso.",
+      "maxRank": 1,
+      "automation": {
+        "custom": {
+          "activation": "active",
+          "rcCost": 0,
+          "effects": [
+            {
+              "id": "efeito-8f7d6fc6",
+              "type": "attribute-dice",
+              "value": 15,
+              "scope": "both",
+              "attribute": "raciocinio",
+              "operation": "subtract"
+            },
+            {
+              "id": "efeito-3f1469d0",
+              "type": "hit-dice",
+              "value": 20,
+              "scope": "both",
+              "attribute": "forca",
+              "operation": "subtract"
+            },
+            {
+              "id": "efeito-fb6b2022",
+              "type": "dodge-dice",
+              "value": 20,
+              "scope": "both",
+              "attribute": "forca",
+              "operation": "subtract"
+            },
+            {
+              "id": "efeito-097b80b6",
+              "type": "block-dice",
+              "value": 20,
+              "scope": "both",
+              "attribute": "forca",
+              "operation": "subtract"
+            }
+          ]
+        }
+      }
     },
     {
       "id": "predador-seletivo",
       "name": "Predador Seletivo",
-      "credit": 3,
+      "credit": 10,
       "description": "Fora do tipo de presa escolhido, a alimentação reduz só 1 Fome, embora conceda PE normal.",
       "species": [
         "ghoul",
         "ghoul-dominante",
         "ghoul-artificial"
-      ]
+      ],
+      "maxRank": 1
     },
     {
       "id": "corpo-fragil",
       "name": "Corpo Frágil",
-      "credit": 3,
-      "description": "Todos os golpes sofridos causam +2 Passos de Dano."
+      "credit": 10,
+      "description": "Todos os golpes sofridos causam +20% Passos de Dano.",
+      "maxRank": 1
     },
     {
       "id": "soca-fofo",
       "name": "Soca Fofo",
-      "credit": 3,
-      "description": "Ataques físicos causam -2 Passos de Dano."
+      "credit": 10,
+      "description": "Ataques físicos causam -25 Passos de Dano.",
+      "maxRank": 1,
+      "automation": {
+        "custom": {
+          "activation": "passive",
+          "rcCost": 0,
+          "effects": [
+            {
+              "id": "efeito-76fb346d",
+              "type": "damage-steps",
+              "value": 25,
+              "scope": "physical",
+              "attribute": "forca",
+              "operation": "subtract"
+            }
+          ]
+        }
+      }
     },
     {
       "id": "miseravel",
       "name": "Miserável",
       "credit": [
-        3,
-        4,
-        5
+        5,
+        8,
+        12
       ],
-      "description": "Dificuldade crescente de obter ou manter dinheiro."
+      "description": "Dificuldade crescente de obter ou manter dinheiro.",
+      "maxRank": 3
     },
     {
       "id": "desgarrado",
       "name": "Desgarrado",
-      "credit": 3,
-      "description": "Você não possui moradia estável."
+      "credit": 15,
+      "description": "Você não possui moradia estável.",
+      "maxRank": 1
     },
     {
       "id": "mente-fragil",
       "name": "Mente Frágil",
-      "credit": 6,
-      "description": "Ganhe uma Mácula e reduza pela metade a Sanidade Máxima."
+      "credit": 10,
+      "description": "Ganhe uma Mácula e reduza pela metade a Sanidade Máxima.",
+      "maxRank": 1,
+      "automation": {
+        "custom": {
+          "activation": "passive",
+          "rcCost": 0,
+          "effects": [
+            {
+              "id": "efeito-8ecbe983",
+              "type": "max-sanity",
+              "value": 0.5,
+              "scope": "both",
+              "attribute": "forca",
+              "operation": "multiply"
+            }
+          ]
+        }
+      }
     },
     {
       "id": "desabilidade",
       "name": "Desabilidade",
-      "credit": 5,
+      "credit": 12,
       "description": "Escolha um Atributo por compra: ele não pode passar de 4. Uma vez por Atributo.",
       "targetAttribute": true,
       "maxRank": 8,
