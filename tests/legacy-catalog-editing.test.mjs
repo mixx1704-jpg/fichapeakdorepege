@@ -15,6 +15,18 @@ const effect={id:'tails',type:'tails',value:2,scope:'kagune',attribute:'forca',o
 const custom={activation:'active',rcCost:5,effects:[effect]};
 const config=(s,d)=>({maxLife:d.maxLife,maxRC:d.maxRC,rc:s.currentRC,hunger:s.hunger,vigor:d.activeAttributes.vigor,baseVigor:s.baseAttributes.vigor,grade:s.grade,regeneration:d.regeneration,regenLevel:0,superior:0,cells:false,kami:false,hasKagune:true,kaguneActive:s.kaguneActive,durability:d.kaguneDurability,tails:d.maximumTails,naturalTails:d.naturalTails,powers:s.selectedEvolutions,rd:d.rd,movement:d.movement,dodgeTest:d.dodgeTest,blockTest:d.blockTest,paidTailStart:d.paidTailStart,tailAttackRC:d.tailAttackRC});
 
+test('Corpo Leve and Corpo Pesado use editable defense values while saved purchases remain intact',()=>parameters('perks','corpo-leve',{dodge:15},()=>parameters('perks','corpo-pesado',{block:15},()=>{
+ const s=sheet({perks:{'corpo-leve':{rank:1},'corpo-pesado':{rank:1}},notes:'Anotações preservadas'}),saved=JSON.stringify(s);
+ const base=rules.calculateCharacter({...s,perks:{}}),d=rules.calculateCharacter(s);
+ const pool=expression=>{const match=expression.match(/^1d\d+([+-]\d+)/);assert.ok(match,expression);return Number(match[1]);};
+ assert.equal(pool(d.dodgeTest)-pool(base.dodgeTest),15);assert.equal(pool(d.blockTest)-pool(base.blockTest),15);
+ assert.equal(d.peSpent-base.peSpent,6);assert.equal(JSON.stringify(s),saved);
+ const restored=rules.normalizeCharacter(JSON.parse(saved),8);assert.deepEqual(restored.perks,s.perks);
+ assert.equal(rules.calculateCharacter(restored).dodgeTest,d.dodgeTest);
+ parameters('perks','corpo-leve',null,()=>assert.equal(pool(rules.calculateCharacter(s).dodgeTest)-pool(base.dodgeTest),1));
+ parameters('perks','corpo-pesado',null,()=>assert.equal(pool(rules.calculateCharacter(s).blockTest)-pool(base.blockTest),1));
+})));
+
 test('crystallization tables and enhancement change both the damage and its independent preview',()=>parameters('kaguneEffects','cristalizacao',{stepsByRank:[5,8,12]},()=>parameters('kaguneEffects','cristalizacao-potencializada',{modifierPerRank:4},()=>{
  const s=sheet({kaguneType:'Ukaku',effects:{cristalizacao:{rank:2},'cristalizacao-potencializada':{rank:2}}}),before=JSON.stringify(s),preview=crystallizationComparison(s);
  assert.equal(preview.steps,8);assert.equal(preview.modifier,8);assert.equal(preview.active,false);

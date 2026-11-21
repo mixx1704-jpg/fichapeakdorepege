@@ -25,7 +25,7 @@ test('older catalogs retain the original one RD per additional rank; zero is sup
  });
 });
 
-test('configured armor does not apply while retracted and preserves saved purchases and PE',()=>{
+test('configured armor does not apply while retracted and preserves saved purchases and PE',()=>withRD(1,()=>{
  const s=purchased(base(),3),saved=JSON.stringify(s),old=rules.calculateCharacter(s);
  withRD(45,()=>{
   const loaded=rules.normalizeCharacter(JSON.parse(saved),8),next=rules.calculateCharacter(loaded);
@@ -36,4 +36,4 @@ test('configured armor does not apply while retracted and preserves saved purcha
   assert.equal(rules.calculateCharacter(retracted).kaguneRDReference,rules.calculateCharacter({...retracted,effects:{}}).kaguneRDReference);
   assert.equal(rules.effectMaximum(armor,loaded),7);
  });
-});
+}));

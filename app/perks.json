@@ -33277,9 +33277,9 @@
       "name": "Corpo Pesado",
       "category": "Genérica",
       "cost": 3,
-      "description": "+1 acerto em Vigor para Bloqueio.",
+      "description": "+15 acertos em Vigor para Bloqueio.",
       "mechanics": {
-        "block": 1
+        "block": 15
       }
     },
     {
@@ -33287,9 +33287,9 @@
       "name": "Corpo Leve",
       "category": "Genérica",
       "cost": 3,
-      "description": "+1 acerto em Agilidade para Esquiva.",
+      "description": "+15 acertos em Agilidade para Esquiva.",
       "mechanics": {
-        "dodge": 1
+        "dodge": 15
       }
     },
     {
