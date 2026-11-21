@@ -5482,7 +5482,7 @@
       "cost": 22,
       "maxRank": 1,
       "minGrade": 12,
-      "description": "Após esquivar:\n\n+2 RD até o próximo turno.\n\nApós bloquear:\n\n+2 Esquiva.",
+      "description": "Após esquivar:\n\n+250 RD até o próximo turno.\n\nApós bloquear:\n\n+25 Esquiva.",
       "requirement": "Ukaku + Koukaku · LEVEL 12+",
       "requirements": {},
       "kaguneTypes": [
@@ -5511,7 +5511,7 @@
           "cost": 22,
           "usage": null,
           "rcCost": null,
-          "body": "Após esquivar:\n\n+2 RD até o próximo turno.\n\nApós bloquear:\n\n+2 Esquiva.",
+          "body": "Após esquivar:+2 RD até o próximo turno.Após bloquear:+2 Esquiva.",
           "raw": "## 103. Asa Blindada\n\nRequisito: Ukaku + Koukaku · LEVEL 12+\\\nCusto: 22 PE\n\nApós esquivar:\n\n+2 RD até o próximo turno.\n\nApós bloquear:\n\n+2 Esquiva.",
           "sourceLine": 1287,
           "requirements": {
@@ -5526,7 +5526,9 @@
           "equipmentCompatible": false,
           "biological": false
         }
-      }
+      },
+      "costMode": "choice",
+      "min": 0
     },
     {
       "id": "n26-pack-perk-104",
@@ -7662,7 +7664,7 @@
       "cost": 28,
       "maxRank": 1,
       "minGrade": 15,
-      "description": "Uma vez por rodada:\n\nquando um inimigo gastar uma Reação, receba +1 Acerto temporário contra ele.\n\nMáximo +3.",
+      "description": "Uma vez por rodada:\n\nquando um inimigo gastar uma Reação, receba +15 Acerto temporário contra ele.\n\nMáximo +35.",
       "requirement": "Raciocínio 11+ · LEVEL 15+",
       "requirements": {
         "raciocinio": 11
@@ -7700,7 +7702,9 @@
           "equipmentCompatible": false,
           "biological": false
         }
-      }
+      },
+      "costMode": "choice",
+      "location": "vantagens"
     },
     {
       "id": "n26-pack-perk-145",
@@ -14805,7 +14809,7 @@
       "id": "r26-revisao-004",
       "name": "PREDICT INSANO",
       "category": "Raciocínio",
-      "cost": 80,
+      "cost": 35,
       "maxRank": 1,
       "minGrade": 12,
       "description": "Ativa\nREQ: 8 RACIOCÍNIO & LEVEL 12  |  80 PE\nO usuário interrompe momentaneamente seu comportamento ofensivo para realizar uma análise mental massiva do adversário. Milhares de trajetórias possíveis são simuladas em seu cérebro, permitindo antecipar uma sequência de movimentos.\nEfeitos:\n- Sacrifica um de seus ataques disponíveis para analisar um inimigo.\n- Recebe +30 DESVIO (bônus fixo) contra os próximos três ataques daquele adversário.\n- Os bônus duram até o início do seu próximo turno.\n- Pode ativar a habilidade uma vez por turno.\nLimitação: Não permite prever ataques cuja origem ou execução esteja completamente fora de sua percepção.",
@@ -14849,7 +14853,9 @@
             "sourceId": "perks-revisao-2026-11.txt"
           }
         }
-      }
+      },
+      "costMode": "choice",
+      "location": "vantagens"
     },
     {
       "id": "r26-revisao-005",
@@ -15055,7 +15061,7 @@
       "id": "r26-revisao-009",
       "name": "NEUROSE FORÇADA",
       "category": "Raciocínio",
-      "cost": 100,
+      "cost": 80,
       "maxRank": 1,
       "minGrade": 20,
       "description": "Ativa  |  Alto risco\nREQ: 11 RACIOCÍNIO & LEVEL 20  |  100 PE\nO usuário força seu sistema nervoso a trabalhar além dos próprios limites biológicos. Sinapses são estimuladas brutalmente, e o processamento cerebral alcança uma velocidade que ameaça destruir o próprio organismo.\nEfeitos:\n- Ao ativar a habilidade pela primeira vez, perde permanentemente 20% da sua VIDA MÁXIMA base.\n- Enquanto ativa, recebe +50% sobre seus valores totais de ACERTO em ataques, contra-ataques e outras ações ofensivas que exijam acerto.\n- A ativação e desativação são ações livres.\n- Sofre 2d100+30 de dano físico diretamente na cabeça uma vez por turno próprio de utilização, inclusive o primeiro.\n- Desativar encerra danos futuros, mas quita dano pendente do turno usado; nunca causa um segundo dano adicional. Alternar ativações no mesmo turno não evita nem duplica a cobrança.\nCondição especial: Se morrer em consequência do dano causado pela Neurose Forçada, qualquer forma de imortalidade, regeneração automática ou ressurreição é ignorada, resultando na perda definitiva da ficha.\nRegra de clareza: A redução permanente da vida máxima ocorre apenas na primeira ativação. O dano craniano é periódico por turno próprio e seu último processamento fica salvo com a ficha, inclusive após recarregar ou importar.",
@@ -15099,13 +15105,15 @@
             "sourceId": "perks-revisao-2026-11.txt"
           }
         }
-      }
+      },
+      "costMode": "choice",
+      "location": "vantagens"
     },
     {
       "id": "r26-revisao-010",
       "name": "DETERMINISMO PREDATÓRIO",
       "category": "Raciocínio",
-      "cost": 140,
+      "cost": 50,
       "maxRank": 1,
       "minGrade": 20,
       "description": "Ativa  |  Técnica suprema\nREQ: 15 RACIOCÍNIO & LEVEL 20  |  140 PE\nO raciocínio do usuário atinge um ponto em que seus próprios movimentos passam a ser construídos em função das ações futuras de uma vítima. O combate deixa de ser uma troca de golpes e se transforma em uma sequência de decisões calculadas.\nEfeitos:\nApós observar um mesmo alvo durante dois turnos completos, pode ativar o Determinismo Predatório uma vez por combate.\nDurante os próximos dois turnos:\n- +35 ACERTO contra o alvo analisado.\n- +35 DESVIO contra o alvo analisado.\n- Seus contra-ataques contra esse alvo recebem +30 ACERTO adicionais.\nDesvantagem: Durante a utilização, sofre +20% de dano de qualquer outra criatura que não seja o alvo analisado.\nA habilidade representa concentração extrema em um único inimigo, tornando combates contra grupos consideravelmente mais perigosos.",
@@ -15149,7 +15157,9 @@
             "sourceId": "perks-revisao-2026-11.txt"
           }
         }
-      }
+      },
+      "costMode": "choice",
+      "location": "vantagens"
     },
     {
       "id": "r26-revisao-011",
@@ -24477,7 +24487,7 @@
       "supplement": true,
       "sourceId": "REWORK 2026",
       "useType": "Passiva · automática",
-      "description": "+5 acertos de Bloqueio; +5 acertos de Desvio; +3 Iniciativa.",
+      "description": "+15 acertos de Bloqueio; +15 acertos de Desvio; +3 Iniciativa.",
       "attribute": "raciocinio",
       "min": 4,
       "equipmentCompatible": true,
@@ -24489,13 +24499,15 @@
       "automation": {
         "rework": {
           "modifiers": {
-            "block": 5,
-            "dodge": 5,
+            "block": 15,
+            "dodge": 15,
             "initiative": 3
           },
           "weaponOnly": false
         }
-      }
+      },
+      "costMode": "choice",
+      "location": "vantagens"
     },
     {
       "id": "r26-exp-raciocinio-anatomia-do-desastre",
@@ -25259,13 +25271,13 @@
       "id": "r26-exp-percepcao-horizonte-absoluto",
       "name": "Horizonte Absoluto",
       "category": "Percepção",
-      "cost": 320,
+      "cost": 50,
       "maxRank": 1,
       "minGrade": 20,
       "supplement": true,
       "sourceId": "REWORK 2026",
       "useType": "Passiva + técnica ativa",
-      "description": "+20 acertos de Bloqueio; +20 acertos de Desvio; +20 Iniciativa; +20 acertos em testes de Percepção. Técnica exclusiva: Rerrole um ataque ou defesa e mantenha o maior resultado natural. Informe os dois resultados; use o mesmo modificador. Uma reação tática por turno, sem rerrolagem em cadeia. Use os controles em Combate → Técnicas.",
+      "description": "+50 acertos de Bloqueio; +50 acertos de Desvio; +20 Iniciativa; +20 acertos em testes de Percepção. Técnica exclusiva: Rerrole um ataque ou defesa e mantenha o maior resultado natural. Informe os dois resultados; use o mesmo modificador. Uma reação tática por turno, sem rerrolagem em cadeia. Use os controles em Combate → Técnicas.",
       "attribute": "percepcao",
       "min": 15,
       "equipmentCompatible": true,
@@ -25277,8 +25289,8 @@
       "automation": {
         "rework": {
           "modifiers": {
-            "block": 20,
-            "dodge": 20,
+            "block": 50,
+            "dodge": 50,
             "initiative": 20,
             "checks": {
               "percepcao": 20
@@ -25300,7 +25312,9 @@
           "existing": true,
           "equipmentCompatible": false
         }
-      }
+      },
+      "costMode": "choice",
+      "location": "vantagens"
     },
     {
       "id": "r26-exp-presenca-porte-de-guerra",
@@ -29983,7 +29997,7 @@
       "id": "r26-passos-forca-quebra-mundo",
       "name": "Quebra-Mundo",
       "category": "Força",
-      "cost": 150,
+      "cost": 80,
       "maxRank": 1,
       "minGrade": 20,
       "supplement": true,
@@ -30222,13 +30236,13 @@
       "id": "r26-passos-percepcao-presa-terminal",
       "name": "Presa Terminal",
       "category": "Percepção",
-      "cost": 320,
+      "cost": 35,
       "maxRank": 1,
       "minGrade": 20,
       "supplement": true,
       "sourceId": "REWORK 2026",
       "useType": "Passiva + técnica ativa",
-      "description": "Exclusiva do Level 20: exige 15 no atributo indicado. +50 Passos de Dano de Kagune/Quinque; +20 Iniciativa; +8 metros de alcance da Kagune/Quinque. Técnica exclusiva: Marque um alvo por 2 turnos. Os próximos dois ataques confirmados, seus ou de aliados, podem consumir uma abertura para ignorar 25% da RD original. Some a penetração disponível; excesso acima de 100% vira bônus percentual de Passos. O controlador desconta uma carga por ataque e calcula o dano líquido. Use os controles em Combate → Técnicas.",
+      "description": "Exclusiva do Level 20: exige 15 no atributo indicado. +100 Passos de Dano de Kagune/Quinque; +20 Iniciativa; +8 metros de alcance da Kagune/Quinque. Técnica exclusiva: Marque um alvo por 2 turnos. Os próximos dois ataques confirmados, seus ou de aliados, podem consumir uma abertura para ignorar 25% da RD original. Some a penetração disponível; excesso acima de 100% vira bônus percentual de Passos. O controlador desconta uma carga por ataque e calcula o dano líquido. Use os controles em Combate → Técnicas.",
       "attribute": "percepcao",
       "min": 15,
       "equipmentCompatible": true,
@@ -30241,7 +30255,7 @@
       "automation": {
         "rework": {
           "modifiers": {
-            "kaguneSteps": 50,
+            "kaguneSteps": 100,
             "initiative": 20,
             "range": 8
           },
@@ -30261,7 +30275,9 @@
           "slot": "action",
           "description": "Marque um alvo por 2 turnos. Os próximos dois ataques confirmados, seus ou de aliados, podem consumir uma abertura para ignorar 25% da RD original. Some a penetração disponível; excesso acima de 100% vira bônus percentual de Passos. O controlador desconta uma carga por ataque e calcula o dano líquido."
         }
-      }
+      },
+      "costMode": "choice",
+      "location": "vantagens"
     },
     {
       "id": "r26-passos-presenca-peso-imperio",
@@ -32863,7 +32879,7 @@
       "id": "r26-tatica-retaliacao-absoluta",
       "name": "Retaliação Absoluta",
       "category": "Força",
-      "cost": 360,
+      "cost": 80,
       "maxRank": 1,
       "minGrade": 20,
       "attribute": "forca",
@@ -32895,7 +32911,9 @@
           "attribute": "forca",
           "min": 15
         }
-      }
+      },
+      "costMode": "choice",
+      "location": "vantagens"
     },
     {
       "id": "terapeuta",
@@ -34209,9 +34227,13 @@
       "name": "200%",
       "category": "Raciocínio",
       "cost": 10,
-      "description": "Uma vez por sessão, tenha sucesso automático em até 2 testes de Raciocínio de MD 5 ou menor se possuir as informações.",
+      "description": "Uma vez por sessão, tenha sucesso automático em até 2 testes de Raciocínio de MD 45 ou menor se possuir as informações.",
       "attribute": "raciocinio",
-      "min": 10
+      "min": 10,
+      "minGrade": 1,
+      "maxRank": 1,
+      "costMode": "choice",
+      "location": "vantagens"
     },
     {
       "id": "decodificador",
@@ -34611,9 +34633,9 @@
     {
       "id": "asa-escudada",
       "name": "Asa Escudada",
-      "cost": 5,
+      "cost": 10,
       "category": "Kagune Quimera",
-      "description": "Uma vez por rodada, contra ataque à distância, oriente placas Koukaku entre as asas e receba +2 RD.",
+      "description": "Uma vez por rodada, contra ataque à distância, oriente placas Koukaku entre as asas e receba +90 RD.",
       "requirement": "Ukaku + Koukaku",
       "kaguneTypes": [
         "Ukaku",
@@ -34621,7 +34643,12 @@
       ],
       "catalogGroups": [
         "expansion"
-      ]
+      ],
+      "minGrade": 1,
+      "maxRank": 1,
+      "costMode": "choice",
+      "min": 0,
+      "location": "vantagens"
     },
     {
       "id": "canhao-ombro",
@@ -35163,7 +35190,7 @@
       "name": "Arma de Contrapeso",
       "cost": 6,
       "category": "Kagune Quimera",
-      "description": "Ao usar arma Koukaku corpo a corpo, a Bikaku funciona como contrapeso e concede +1 acerto extra.",
+      "description": "Ao usar arma Koukaku corpo a corpo, a Bikaku funciona como contrapeso e concede +15 acerto extra.",
       "requirement": "Koukaku + Bikaku",
       "kaguneTypes": [
         "Koukaku",
@@ -35171,7 +35198,12 @@
       ],
       "catalogGroups": [
         "expansion"
-      ]
+      ],
+      "minGrade": 1,
+      "maxRank": 1,
+      "costMode": "choice",
+      "min": 0,
+      "location": "vantagens"
     },
     {
       "id": "postura-dupla",
@@ -35249,7 +35281,7 @@
       "name": "Arsenal do Carrasco",
       "cost": 20,
       "category": "Kagune Quimera",
-      "description": "Escolha por turno: Sabre +3 acerto, Machado +4 Passos de Dano, Alabarda +2 acerto e alcance ou Escudo-Cauda +3 RD.",
+      "description": "Escolha por turno: Sabre +13 acerto, Machado +54 Passos de Dano, Alabarda +12 acerto e alcance ou Escudo-Cauda +300 RD.",
       "requirement": "Koukaku + Bikaku; LEVEL 10+",
       "kaguneTypes": [
         "Koukaku",
@@ -35262,7 +35294,11 @@
       "mechanics": {
         "kaguneSteps": 4,
         "kaguneRD": 3
-      }
+      },
+      "maxRank": 1,
+      "costMode": "choice",
+      "min": 0,
+      "location": "vantagens"
     },
     {
       "id": "cavaleiro-escarlate",
@@ -35968,7 +36004,7 @@
       "name": "Autoridade Inabalável",
       "cost": 6,
       "category": "Híbrida",
-      "description": "Aliados que ouvem você ganham +1 acerto no primeiro teste contra medo ou hesitação da cena.",
+      "description": "Aliados que ouvem você ganham +15 acerto no primeiro teste contra medo ou hesitação da cena.",
       "requirements": {
         "presenca": 5,
         "controle": 5
@@ -35976,7 +36012,12 @@
       "requirement": "Presença 5; Controle 5",
       "catalogGroups": [
         "expansion"
-      ]
+      ],
+      "minGrade": 1,
+      "maxRank": 1,
+      "costMode": "choice",
+      "min": 0,
+      "location": "vantagens"
     },
     {
       "id": "rei-inferno",
@@ -54653,6 +54694,61 @@
       "category": "Controle",
       "attribute": "controle",
       "location": "vantagens"
+    },
+    {
+      "id": "autoral-let-the-sky-fall-when-it-crumbles",
+      "name": "Let the sky fall When it crumbles",
+      "cost": 50,
+      "description": "This is the end\nHold your breath and count to ten\nFeel the Earth move and then\nHear my heart burst again\nFor this is the end\nI've drowned and dreamt this moment\nSo overdue, I owe them\nSwept away, I'm stolen\nLet the sky fall\nWhen it crumbles\nWe will stand tall\nFace it all together\nLet the sky fall\nWhen it crumbles\nWe will stand tall\nFace it all together\nAt Skyfall\nAt Skyfall\nSkyfall is where we start\nA thousand miles and poles apart\nWhere worlds collide and days are dark\nYou may have my number, you can take my name\nBut you'll never have my heart\nLet the sky fall (let the sky fall)\nWhen it crumbles (when it crumbles)\nWe will stand tall (we will stand tall)\nFace it all together\nLet the sky fall (let the sky fall)\nWhen it crumbles (when it crumbles)\nWe will stand tall (we will stand tall)\nFace it all together\nAt Skyfall\nWhere you go, I go\nWhat you see, I see\nI know I'd never be me\nWithout the security\nOf your loving arms\nKeeping me from harm\nPut your hand in my hand\nAnd we'll stand\nLet the sky fall (let the sky fall)\nWhen it crumbles (when it crumbles)\nWe will stand tall (we will stand tall)\nFace it all together\nLet the sky fall (let the sky fall)\nWhen it crumbles (when it crumbles)\nWe will stand tall (we will stand tall)\nFace it all together\nAt Skyfall\nLet the sky fall\nWe will stand tall\nAt Skyfall\nOoh",
+      "category": "Presença",
+      "minGrade": 18,
+      "maxRank": 1,
+      "supplement": true,
+      "location": "vantagens",
+      "useType": "Ativa · 0 RC ao ativar",
+      "automation": {
+        "custom": {
+          "activation": "active",
+          "rcCost": 0,
+          "effects": [
+            {
+              "id": "efeito-d08f7fa1",
+              "type": "damage-steps",
+              "value": 200,
+              "scope": "both",
+              "attribute": "forca",
+              "operation": "add"
+            },
+            {
+              "id": "efeito-61153504",
+              "type": "dodge-dice",
+              "value": 67,
+              "scope": "both",
+              "attribute": "forca",
+              "operation": "add"
+            },
+            {
+              "id": "efeito-c60733f0",
+              "type": "block-dice",
+              "value": 67,
+              "scope": "both",
+              "attribute": "forca",
+              "operation": "add"
+            },
+            {
+              "id": "efeito-b129eb09",
+              "type": "hit-dice",
+              "value": 67,
+              "scope": "both",
+              "attribute": "forca",
+              "operation": "add"
+            }
+          ]
+        }
+      },
+      "requirement": "67 Acerto em todos aspectos e 200 Passos de dano enquanto estiver num estado considerado \"AURA FARM\" (e 35% De penetração de RD)",
+      "costMode": "choice",
+      "min": 0
     }
   ],
   "kakujaPerks": [
@@ -62305,14 +62401,16 @@
       "id": "aumentar-dano",
       "name": "Aumentar Dano",
       "family": "Geral",
-      "cost": 5,
+      "cost": 10,
       "maxRank": 4,
       "type": "Passivo",
-      "description": "+1 Modificador de Dano por nível; teto atual igual a Level/2 + 1.",
+      "description": "+15 Modificador de dano por lvl",
       "rankCap": "grade",
       "mechanics": {
-        "modifierPerRank": 1
-      }
+        "modifierPerRank": 15
+      },
+      "grade": 1,
+      "costMode": "sum"
     },
     {
       "id": "aumentar-passos",
@@ -62352,11 +62450,13 @@
       "cost": 5,
       "maxRank": 6,
       "type": "Passivo",
-      "description": "+1 RD por nível; teto atual igual a Level/2 + 1.",
+      "description": "+15 RD por nível;",
       "rankCap": "grade",
       "mechanics": {
-        "rdPerRank": 1
-      }
+        "rdPerRank": 15
+      },
+      "grade": 1,
+      "costMode": "sum"
     },
     {
       "id": "regeneracao-anormal",
@@ -62450,7 +62550,9 @@
       "cost": 5,
       "maxRank": 2,
       "type": "Ativo · Biológico",
-      "description": "Injete RC em um aliado e acelere recuperação mediante Reação e teste do Atributo Principal."
+      "description": "Injete RC em um aliado e acelere recuperação mediante Reação e teste do Atributo Principal.\n\n2d12*Vigor de Cura (Custo de 12 RC)",
+      "grade": 1,
+      "costMode": "sum"
     },
     {
       "id": "efeito-biologico",
@@ -62466,7 +62568,24 @@
       "maxRank": 5,
       "type": "Ativo · Biológico",
       "description": "Módulos de Paralisar, Enfraquecer, Névoa Protetiva, Confusão Mental ou Envenenamento.",
-      "costMode": "choice"
+      "costMode": "choice",
+      "grade": 1,
+      "automation": {
+        "custom": {
+          "activation": "passive",
+          "rcCost": 0,
+          "effects": [
+            {
+              "id": "efeito-58f1c33d",
+              "type": "damage-steps",
+              "value": 1,
+              "scope": "both",
+              "attribute": "forca",
+              "operation": "add"
+            }
+          ]
+        }
+      }
     },
     {
       "id": "distancia-superior",
@@ -62481,26 +62600,28 @@
       "id": "cristalizacao",
       "name": "Cristalização",
       "family": "Ukaku",
-      "cost": 3,
+      "cost": 5,
       "maxRank": 3,
       "type": "Ativo · Biológico",
       "description": "Cristais ofensivos; amplie Passos e disparos conforme o nível.",
       "mechanics": {
         "stepsByRank": [
-          2,
-          3,
-          4
+          45,
+          35,
+          45
         ]
-      }
+      },
+      "grade": 1,
+      "costMode": "sum"
     },
     {
       "id": "cristalizacao-potencializada",
       "name": "Cristalização Potencializada",
       "family": "Ukaku",
-      "cost": 5,
+      "cost": 12,
       "maxRank": 2,
       "type": "Passivo",
-      "description": "+2 no Modificador de Dano da Cristalização por nível.",
+      "description": "+45 no Modificador de Dano da Cristalização por nível.",
       "requirement": "Cristalização N1",
       "requiresEffects": [
         {
@@ -62509,8 +62630,10 @@
         }
       ],
       "mechanics": {
-        "modifierPerRank": 2
-      }
+        "modifierPerRank": 45
+      },
+      "grade": 1,
+      "costMode": "sum"
     },
     {
       "id": "criar-arma",
@@ -62548,16 +62671,18 @@
       "id": "adicionar-elemento",
       "name": "Adicionar Elemento",
       "family": "Ukaku",
-      "cost": 6,
+      "cost": 12,
       "maxRank": 2,
       "type": "Ativo · 2 RC + 1/turno",
-      "description": "Fogo, Raio ou Gelo; +3 dano no N1 e +6 no N2.",
+      "description": "Fogo, Raio ou Gelo; +30 dano no N1 e +60 no N2.",
       "mechanics": {
         "modifierByRank": [
-          3,
-          6
+          30,
+          60
         ]
-      }
+      },
+      "grade": 1,
+      "costMode": "sum"
     },
     {
       "id": "tiros-explosivos",
@@ -62566,7 +62691,7 @@
       "cost": 3,
       "maxRank": 2,
       "type": "Passivo · 2 RC",
-      "description": "Explosão em área: N1 +1 Passo; N2 +2 Passos e área maior.",
+      "description": "Explosão em área: N1 +50 Passo; N2 +100 Passos e área maior.\n\nCusto do Tiro Explosivo: 25 RC",
       "requirement": "Cristalização N2",
       "requiresEffects": [
         {
@@ -62576,7 +62701,9 @@
       ],
       "mechanics": {
         "stepsPerRank": 1
-      }
+      },
+      "grade": 1,
+      "costMode": "sum"
     },
     {
       "id": "dispersao-cristais",
@@ -62614,22 +62741,23 @@
       "family": "Koukaku",
       "cost": [
         5,
+        6,
+        7,
         8,
-        11,
-        14,
-        17,
-        20,
-        23
+        9,
+        10,
+        11
       ],
       "maxRank": 7,
       "type": "Passivo",
-      "description": "No N1, RD igual ao Vigor; níveis seguintes adicionam +1 RD. Máximo metade do Level.",
+      "description": "No N1, RD igual ao Vigor; níveis seguintes adicionam +45 RD. Máximo metade do Level.",
       "costMode": "choice",
-      "rdPerAdditionalRank": 1,
+      "rdPerAdditionalRank": 45,
       "mechanics": {
         "levelDivisorForMaxRank": 2,
         "vigorMultiplier": 1
-      }
+      },
+      "grade": 1
     },
     {
       "id": "forma-versatil",
@@ -62690,10 +62818,12 @@
       "cost": 3,
       "maxRank": 1,
       "type": "Passivo",
-      "description": "+1 acerto em Vigor para Bloqueio.",
+      "description": "+5 acerto em Vigor para Bloqueio.",
       "mechanics": {
-        "block": 1
-      }
+        "block": 5
+      },
+      "grade": 1,
+      "costMode": "sum"
     },
     {
       "id": "regeneracao-superior",
@@ -62723,8 +62853,17 @@
       "id": "multiplas-caudas",
       "name": "Múltiplas Caudas",
       "family": "Rinkaku",
-      "cost": 3,
-      "maxRank": 4,
+      "cost": [
+        5,
+        10,
+        15,
+        20,
+        30,
+        40,
+        45,
+        50
+      ],
+      "maxRank": 8,
       "type": "Passivo · Biológico",
       "description": "Cada nível cria +1 cauda, chegando a 5 no N4 com a cauda inicial. Cada tentáculo usa o dano padrão da Kagune com −2 Passos. Se vários acertarem, multiplique cada grupo de dados e o Modificador de Dano pela quantidade de acertos. No N4, +1 Modificador de Acerto. Dureza −1 por nível.",
       "catalogGroups": [
@@ -62733,10 +62872,12 @@
       "mechanics": {
         "tailsPerRank": 1,
         "hitBonusMinimumRank": 4,
-        "hitModifier": 1,
+        "hitModifier": 4,
         "stepsPenaltyPerTail": 2,
         "durabilityPenaltyPerRank": 1
-      }
+      },
+      "grade": 1,
+      "costMode": "choice"
     },
     {
       "id": "contra-ataque",
@@ -62781,10 +62922,12 @@
       "cost": 6,
       "maxRank": 1,
       "type": "Ativo · 2 RC",
-      "description": "Após errar, ganhe +1 acerto e +2 Passos contra o alvo, uma vez por alvo.",
+      "description": "Após errar, ganhe +15 acerto e +25 Passos contra o alvo, uma vez por alvo.",
       "mechanics": {
-        "steps": 2
-      }
+        "steps": 25
+      },
+      "grade": 1,
+      "costMode": "sum"
     },
     {
       "id": "espinho-carne",
@@ -62823,13 +62966,15 @@
       "id": "finta-organica",
       "name": "Finta Orgânica",
       "family": "Geral",
-      "cost": 5,
+      "cost": 15,
       "maxRank": 1,
       "type": "Passivo",
-      "description": "Uma vez por turno, ao errar com a Kagune, ganhe +1 acerto extra contra o mesmo alvo, até +2. O bônus acaba ao acertar ou trocar de alvo.",
+      "description": "Uma vez por turno, ao errar com a Kagune, ganhe +25 acerto extra contra o mesmo alvo, até +50. O bônus acaba ao acertar ou trocar de alvo.",
       "catalogGroups": [
         "expansion"
-      ]
+      ],
+      "grade": 1,
+      "costMode": "sum"
     },
     {
       "id": "recuo-vivo",
@@ -62847,25 +62992,29 @@
       "id": "absorcao-impacto",
       "name": "Absorção de Impacto",
       "family": "Geral",
-      "cost": 6,
+      "cost": 15,
       "maxRank": 1,
       "type": "Ativo · 3 RC",
-      "description": "Uma vez por rodada, após aplicar RD, reduza o dano restante em metade do LEVEL.",
+      "description": "Uma vez por rodada, após aplicar RD, reduza o dano restante em metade do LEVEL*20.",
       "catalogGroups": [
         "expansion"
-      ]
+      ],
+      "grade": 1,
+      "costMode": "sum"
     },
     {
       "id": "reflexo-kakuhou",
       "name": "Reflexo da Kakuhou",
       "family": "Geral",
-      "cost": 5,
+      "cost": 10,
       "maxRank": 1,
       "type": "Passivo",
-      "description": "A primeira defesa no turno em que a Kagune é ativada recebe +2 acertos.",
+      "description": "A primeira defesa no turno em que a Kagune é ativada recebe +25 acertos.",
       "catalogGroups": [
         "expansion"
-      ]
+      ],
+      "grade": 1,
+      "costMode": "sum"
     },
     {
       "id": "estouro-rc",
@@ -62890,10 +63039,12 @@
       "cost": 8,
       "maxRank": 1,
       "type": "Passivo",
-      "description": "Ao derrotar pessoalmente uma ameaça real com Kagune, reduza em 1 RC a próxima habilidade ativa até o fim do próximo turno, mínimo 1 RC.",
+      "description": "Ao derrotar pessoalmente uma ameaça real com Kagune, reduza em 15 RC a próxima habilidade ativa até o fim do próximo turno, mínimo 1 RC.",
       "catalogGroups": [
         "expansion"
-      ]
+      ],
+      "grade": 1,
+      "costMode": "sum"
     },
     {
       "id": "nervos-rc",
@@ -62911,25 +63062,29 @@
       "id": "predacao-instintiva",
       "name": "Predação Instintiva",
       "family": "Geral",
-      "cost": 6,
+      "cost": 10,
       "maxRank": 1,
       "type": "Passivo",
-      "description": "Contra inimigo em alcance da Kagune com metade ou menos da Vida, o primeiro ataque do turno recebe +1 acerto extra.",
+      "description": "Contra inimigo em alcance da Kagune com metade ou menos da Vida, o primeiro ataque do turno recebe +25 acerto extra.",
       "catalogGroups": [
         "expansion"
-      ]
+      ],
+      "grade": 1,
+      "costMode": "sum"
     },
     {
       "id": "kagune-reativa",
       "name": "Kagune Reativa",
       "family": "Geral",
-      "cost": 8,
+      "cost": 10,
       "maxRank": 1,
       "type": "Passivo",
-      "description": "Ao sofrer dano após RD, ganhe +1 Passo de Dano no próximo ataque contra o responsável, até +3. Os acúmulos somem ao atingi-lo.",
+      "description": "Ao sofrer dano após RD, ganhe +50 Passo de Dano no próximo ataque contra o responsável.",
       "catalogGroups": [
         "expansion"
-      ]
+      ],
+      "grade": 1,
+      "costMode": "sum"
     },
     {
       "id": "mudanca-relampago",
@@ -62949,6 +63104,39 @@
       "catalogGroups": [
         "expansion"
       ]
+    },
+    {
+      "id": "autoral-caudas-de-teste",
+      "name": "Caudas de teste",
+      "cost": 4,
+      "description": "Descreva o efeito da habilidade.",
+      "family": "Rinkaku",
+      "maxRank": 3,
+      "type": "Passivo",
+      "automation": {
+        "custom": {
+          "activation": "active",
+          "rcCost": 5,
+          "effects": [
+            {
+              "id": "efeito-9448365b",
+              "type": "tails",
+              "value": 2,
+              "scope": "kagune",
+              "attribute": "forca",
+              "operation": "add",
+              "valuesByRank": [
+                1,
+                3,
+                5
+              ]
+            }
+          ]
+        }
+      },
+      "grade": 1,
+      "costMode": "sum",
+      "useType": "Ativa · 5 RC ao ativar"
     }
   ],
   "evolutions": [
@@ -62982,9 +63170,9 @@
         "eixo-aco"
       ],
       "requirement": "Eixo de Aço; N1: LEVEL 10; N2: LEVEL 12",
-      "description": "Com a Kagune manifestada, N1 concede +2 acertos extras; N2 substitui esse bônus por +4. Soma com Eixo de Aço: +4/+6 acertos no total. Custos adicionais: 12 PE e 16 PE.",
+      "description": "Com a Kagune manifestada, N1 concede +6 acertos extras; N2 substitui esse bônus por +12. Soma com Eixo de Aço: +4/+6 acertos no total.",
       "mechanics": {
-        "hitPerRank": 2
+        "hitPerRank": 6
       }
     },
     {
@@ -63004,11 +63192,12 @@
       "cost": 10,
       "grade": 10,
       "family": "Koukaku",
-      "description": "Com a Kagune manifestada, +2 acertos de Bloqueio com ela e +2 acertos para resistir a empurrões e derrubadas. Funciona nos modos ofensivo e defensivo; não concede outra defesa.",
+      "description": "Com a Kagune manifestada, +15 acertos de Bloqueio com ela e +15 acertos para resistir a empurrões e derrubadas. Funciona nos modos ofensivo e defensivo; não concede outra defesa.",
       "mechanics": {
-        "block": 2,
-        "stability": 2
-      }
+        "block": 15,
+        "stability": 15
+      },
+      "maxRank": 1
     },
     {
       "id": "nucleo-impacto",
@@ -63016,10 +63205,11 @@
       "cost": 12,
       "grade": 10,
       "family": "Koukaku",
-      "description": "Com a Kagune manifestada, some metade do Vigor base, arredondada para baixo, aos Passos de Dano de todos os seus ataques. Vigor base 8 concede +4 Passos. Não aumenta o modificador fixo de dano.",
+      "description": "Soma o dobro do vigor pode pá :Thumbsup: 👌",
       "mechanics": {
-        "vigorDivisor": 2
-      }
+        "vigorDivisor": 0.5
+      },
+      "maxRank": 1
     },
     {
       "id": "sinapse-distribuida",
@@ -63027,10 +63217,11 @@
       "cost": 12,
       "grade": 8,
       "family": "Rinkaku",
-      "description": "Com a Kagune manifestada, +2 acertos extras em todos os ataques com ela, incluindo cada cauda. Não exige preparação ou acertos anteriores.",
+      "description": "Com a Kagune manifestada, +10 acertos extras em todos os ataques com ela, incluindo cada cauda. Não exige preparação ou acertos anteriores.",
       "mechanics": {
-        "hit": 2
-      }
+        "hit": 10
+      },
+      "maxRank": 1
     },
     {
       "id": "consciencia-tentacular",
@@ -63042,12 +63233,12 @@
       "rankCosts": [
         8,
         10,
-        12
+        14
       ],
       "rankGrades": [
         10,
-        10,
-        12
+        12,
+        14
       ],
       "requiresEvolutions": [
         "sinapse-distribuida"
@@ -63055,7 +63246,7 @@
       "requirement": "Sinapse Distribuída; N1/N2: LEVEL 10; N3: LEVEL 12",
       "description": "Com a Kagune manifestada, +1/+2/+3 acertos extras em N1/N2/N3. O maior nível substitui os anteriores. Soma com Sinapse Distribuída, até +5 acertos em cada cauda. Custos adicionais: 8, 10 e 12 PE.",
       "mechanics": {
-        "hitPerRank": 1
+        "hitPerRank": 12
       }
     },
     {
@@ -63086,11 +63277,12 @@
       "cost": 10,
       "grade": 10,
       "family": "Rinkaku",
-      "description": "Com a Kagune manifestada, elimina a penalidade de Dureza por nível de Múltiplas Caudas e acrescenta +5 à Dureza de cada cauda. Não aumenta os PV do personagem nem a RD.",
+      "description": "Com a Kagune manifestada, elimina a penalidade de Dureza por nível de Múltiplas Caudas e acrescenta +50 à Dureza de cada cauda. Não aumenta os PV do personagem nem a RD.",
       "mechanics": {
-        "tailDurability": 5,
+        "tailDurability": 50,
         "removeTailPenalty": true
-      }
+      },
+      "maxRank": 1
     },
     {
       "id": "instinto-exatidao",
@@ -63098,10 +63290,11 @@
       "cost": 8,
       "grade": 8,
       "family": "Bikaku",
-      "description": "Com a Kagune manifestada, +2 acertos extras em todos os ataques com ela. Não exige preparação, alvo marcado ou uma postura específica.",
+      "description": "Com a Kagune manifestada, +15 acertos extras em todos os ataques com ela. Não exige preparação, alvo marcado ou uma postura específica.",
       "mechanics": {
-        "hit": 2
-      }
+        "hit": 15
+      },
+      "maxRank": 1
     },
     {
       "id": "dominio-centro",
@@ -63136,11 +63329,12 @@
       "cost": 14,
       "grade": 10,
       "family": "Bikaku",
-      "description": "Com a Kagune manifestada, +2 acertos de Bloqueio e +2 acertos de Esquiva. Ambos os bônus permanecem em qualquer postura, sem conceder uma segunda defesa.",
+      "description": "Com a Kagune manifestada, +15 acertos de Bloqueio e +15 acertos de Esquiva. Ambos os bônus permanecem em qualquer postura, sem conceder uma segunda defesa.",
       "mechanics": {
-        "block": 2,
-        "dodge": 2
-      }
+        "block": 15,
+        "dodge": 15
+      },
+      "maxRank": 1
     },
     {
       "id": "gume-integral",
@@ -63148,10 +63342,11 @@
       "cost": 10,
       "grade": 10,
       "family": "Bikaku",
-      "description": "Com a Kagune manifestada, +2 Passos de Dano em todos os ataques com ela. Soma com Predador Perfeito ou Mestre de Nada e permanece nas posturas defensivas.",
+      "description": "Com a Kagune manifestada, +50 Passos de Dano em todos os ataques com ela. Soma com Predador Perfeito ou Mestre de Nada e permanece nas posturas defensivas.",
       "mechanics": {
-        "steps": 2
-      }
+        "steps": 50
+      },
+      "maxRank": 1
     },
     {
       "id": "continuidade-predatoria",
@@ -63196,15 +63391,16 @@
     {
       "id": "tentaculos-incessantes",
       "name": "Tentáculos Incessantes",
-      "cost": 10,
+      "cost": 15,
       "grade": 10,
       "family": "Rinkaku",
-      "description": "Você ganha momentum ao atacar por turnos seguidos, começando com 0 acertos extras de acerto e chegando a um máximo de +2 acertos ao atacar por dois turnos seguidos.",
+      "description": "Você ganha momentum ao atacar por turnos seguidos, começando com 0 acertos extras de acerto e chegando a um máximo de +30 acertos ao atacar por dois turnos seguidos.\n+15 por ataque.",
       "requirement": "Rinkaku; Level 10+",
       "mechanics": {
         "maximumStacks": 2,
-        "hitPerStack": 1
-      }
+        "hitPerStack": 15
+      },
+      "maxRank": 1
     },
     {
       "id": "mitose-tentacruel",
@@ -63212,11 +63408,12 @@
       "cost": 20,
       "grade": 12,
       "family": "Rinkaku",
-      "description": "Por 2 turnos, você pode aumentar sua quantidade de tentáculos para 2× a capacidade natural máxima. Cada tentáculo extra custa 2 RC; ao criar 4 extras, o custo aumenta para 4 RC, e ao criar 6 extras, para 6 RC por tentáculo. Criar 8 tentáculos extras custa 40 RC no total.",
+      "description": "Por 2 turnos, você pode aumentar sua quantidade de tentáculos para 2× a capacidade natural máxima. Cada tentáculo extra custa 20 RC; ao criar 4 extras, o custo aumenta para 40 RC, e ao criar 6 extras, para 60 RC por tentáculo. Criar 8 tentáculos extras custa 80 RC no total.",
       "requirement": "Rinkaku; Level 12+",
       "mechanics": {
         "durationTurns": 2
-      }
+      },
+      "maxRank": 1
     },
     {
       "id": "forma-especial",
@@ -63300,12 +63497,13 @@
       "cost": 8,
       "grade": 6,
       "family": "Koukaku",
-      "description": "Enquanto ativa, reduza a RD da Koukaku em 6, mínimo 0; ataques recebem +2 Passos e o Bloqueio soma metade da Agilidade base em acertos aditivos. Em crítico de Bloqueio, 1d6: com 6, faça um ataque comum adicional, uma vez por rodada.",
+      "description": "Enquanto ativa, reduza a RD da Koukaku em 6, mínimo 0; ataques recebem +25 Passos e o Bloqueio soma da Agilidade base em acertos aditivos. Em crítico de Bloqueio, 1d6: com 6, faça um ataque comum adicional, uma vez por rodada.",
       "mechanics": {
         "kaguneSteps": 2,
         "rdPenalty": 6,
-        "blockAttributeDivisor": 2
-      }
+        "blockAttributeDivisor": 1
+      },
+      "maxRank": 1
     },
     {
       "id": "mestre-armas",
@@ -63313,27 +63511,28 @@
       "cost": 8,
       "grade": 6,
       "family": "Koukaku",
-      "description": "Na configuração ofensiva, golpes recebem +2 Passos de Dano.",
+      "description": "Na configuração ofensiva, golpes recebem +50 Passos de Dano.",
       "mechanics": {
-        "kaguneSteps": 2
-      }
+        "kaguneSteps": 50
+      },
+      "maxRank": 1
     },
     {
       "id": "multiplas-caudas-plus",
       "name": "Múltiplas Caudas +",
-      "cost": 8,
+      "cost": 10,
       "grade": 6,
       "family": "Rinkaku",
-      "description": "Cada compra cria uma cauda permanente. N1 concede +1 Passo de Dano; N2 mantém +1 Passo total; N3 eleva o bônus total para +2 Passos. Cada cauda adicional pode atacar por 2 RC.",
-      "requirement": "Máximo 3 compras",
-      "maxRank": 3,
+      "description": "Cada compra cria uma cauda permanente. N1 concede +25 Passo de Dano; N2 mantém +25 Passo total; N3 eleva o bônus total para +25 Passos. Cada cauda adicional pode atacar por 2 RC.",
+      "requirement": "Máximo 6 compras",
+      "maxRank": 6,
       "mechanics": {
         "tailsPerRank": 1,
         "tailAttackRC": 2,
         "stepsByRank": [
-          1,
-          1,
-          2
+          25,
+          25,
+          25
         ]
       }
     },
@@ -63343,10 +63542,11 @@
       "cost": 10,
       "grade": 6,
       "family": "Rinkaku",
-      "description": "Uma vez por turno, gaste 6 RC para regenerar todos os membros perdidos; não recupera Vida.",
+      "description": "Uma vez por turno, gaste 25 RC para regenerar todos os membros perdidos; não recupera Vida.",
       "mechanics": {
-        "rcCost": 6
-      }
+        "rcCost": 25
+      },
+      "maxRank": 1
     },
     {
       "id": "custo-beneficio",
@@ -63373,11 +63573,12 @@
       "cost": 15,
       "grade": 8,
       "family": "Ukaku",
-      "description": "Ao derrotar uma ameaça real, recupere 2 RC; máximo 4 RC por turno.",
+      "description": "Ao derrotar uma ameaça real, recupere 15 RC; máximo 50 RC por turno.",
       "mechanics": {
         "rcGainPerTurn": 4,
         "rcGainPerKill": 2
-      }
+      },
+      "maxRank": 1
     },
     {
       "id": "coruka",
@@ -63445,10 +63646,11 @@
       "cost": 10,
       "grade": 8,
       "family": "Rinkaku",
-      "description": "Quando uma cauda for destruída, gaste 5 RC para regenerá-la e atacar com -1 acerto; uma vez por turno.",
+      "description": "Quando uma cauda for destruída, gaste 5 RC para regenerá-la.",
       "mechanics": {
         "rcCost": 5
-      }
+      },
+      "maxRank": 1
     },
     {
       "id": "carne-recusa",
@@ -63469,14 +63671,15 @@
       "cost": 20,
       "grade": 8,
       "family": "Rinkaku",
-      "description": "Por 15 RC e 3 turnos: +2 caudas, +2 Passos de Dano, um alvo extra e -2 Resistência.",
+      "description": "Por 45 RC e 3 turnos: +2 caudas, +25 Passos de Dano, um alvo extra e -25 Resistência.",
       "mechanics": {
         "extraTails": 2,
-        "steps": 2,
-        "durabilityPenalty": 2,
-        "rcCost": 15,
+        "steps": 25,
+        "durabilityPenalty": 25,
+        "rcCost": 45,
         "durationTurns": 3
-      }
+      },
+      "maxRank": 1
     },
     {
       "id": "predador-perfeito",
@@ -63484,10 +63687,11 @@
       "cost": 10,
       "grade": 8,
       "family": "Bikaku",
-      "description": "Escolha postura por turno: Ataque +2 Passos de Dano, Defesa +2 RD ou Mobilidade +2 Esquiva.",
+      "description": "Escolha postura por turno: Ataque +55 Passos de Dano, Defesa +250 RD ou Mobilidade +15 Esquiva.",
       "mechanics": {
-        "kaguneSteps": 2
-      }
+        "kaguneSteps": 55
+      },
+      "maxRank": 1
     },
     {
       "id": "cauda-escorpiao",
@@ -63503,7 +63707,8 @@
       "cost": 20,
       "grade": 8,
       "family": "Bikaku",
-      "description": "Uma vez por sessão, por 3 turnos, acumule Adaptação contra ações ofensivas e converta em acerto, Esquiva ou dano."
+      "description": "Uma vez por sessão, por 3 turnos, acumule Adaptação contra ações ofensivas e converta em acerto, Esquiva ou dano. (35 Acerto ou Esquiva | 200 Passos de dano)",
+      "maxRank": 1
     },
     {
       "id": "asas-horizonte",
@@ -63511,7 +63716,8 @@
       "cost": 12,
       "grade": 10,
       "family": "Ukaku",
-      "description": "+2 acertos à distância e +50% alcance máximo; o bônus não vale além do alcance normal."
+      "description": "+35 acertos à distância e +50% alcance máximo; o bônus não vale além do alcance normal.",
+      "maxRank": 1
     },
     {
       "id": "chuva-carmesim",
@@ -63519,11 +63725,12 @@
       "cost": 18,
       "grade": 10,
       "family": "Ukaku",
-      "description": "A cada 3 turnos, gaste 15 RC para uma área com +4 Passos de Dano; no turno seguinte, -2 Passos de Dano.",
+      "description": "A cada 3 turnos, gaste 50 RC para uma área com +100 Passos de Dano; no turno seguinte, -25 Passos de Dano.",
       "mechanics": {
         "kaguneSteps": 4,
         "kaguneStepsPenalty": 2
-      }
+      },
+      "maxRank": 1
     },
     {
       "id": "predador-ceus",
@@ -63531,12 +63738,13 @@
       "cost": 25,
       "grade": 10,
       "family": "Ukaku",
-      "description": "Ataques consecutivos em alta velocidade acumulam acerto e dano até +4/+4.",
+      "description": "Ataques consecutivos em alta velocidade acumulam acerto e dano até 100/25",
       "mechanics": {
-        "stepsPerStack": 1,
+        "stepsPerStack": 100,
         "maximumHitStacks": 4,
-        "hitPerStack": 1
-      }
+        "hitPerStack": 25
+      },
+      "maxRank": 1
     },
     {
       "id": "montanha",
@@ -63560,10 +63768,11 @@
       "cost": 25,
       "grade": 10,
       "family": "Koukaku",
-      "description": "Escolha por turno: Espada +3 acerto, Martelo +5 Passos de Dano, Escudo +4 RD ou Lança +2 acerto e alcance.",
+      "description": "Escolha por turno: Espada +15 acerto, Martelo +50 Passos de Dano, Escudo +100 RD ou Lança +25 acerto e 3 alcance.",
       "mechanics": {
         "kaguneSteps": 5
-      }
+      },
+      "maxRank": 1
     },
     {
       "id": "oito-caminhos",
@@ -63571,11 +63780,12 @@
       "cost": 12,
       "grade": 10,
       "family": "Rinkaku",
-      "description": "Reserve uma cauda não usada para +2 Esquiva ou +2 RD contra um ataque.",
+      "description": "Reserve uma cauda não usada para +25 Esquiva ou +100 RD contra um ataque.",
       "mechanics": {
         "rd": 2,
         "dodge": 2
-      }
+      },
+      "maxRank": 1
     },
     {
       "id": "canibalismo-celular",
@@ -63603,11 +63813,12 @@
       "cost": 25,
       "grade": 10,
       "family": "Rinkaku",
-      "description": "Cada cauda destruída por um inimigo gera 1 Crescimento e +2 Passos de Dano. O limite de Crescimento é sua quantidade máxima atual de caudas. Ao atingir o limite, gaste 4 RC e consuma todos os acúmulos para regenerar todas as caudas. Sacrifícios voluntários não geram Crescimento. A regeneração restaura a integridade das caudas, não os PV do personagem.",
+      "description": "Cada cauda destruída por um inimigo gera 1 Crescimento e +10 Passos de Dano. O limite de Crescimento é sua quantidade máxima atual de caudas. Ao atingir o limite, gaste 25 RC e consuma todos os acúmulos para regenerar todas as caudas. Sacrifícios voluntários não geram Crescimento. A regeneração restaura a integridade das caudas, não os PV do personagem.",
       "mechanics": {
-        "stepsPerStack": 2,
-        "rcCost": 4
-      }
+        "stepsPerStack": 10,
+        "rcCost": 25
+      },
+      "maxRank": 1
     },
     {
       "id": "sem-ponto-cego",
@@ -63615,7 +63826,8 @@
       "cost": 12,
       "grade": 10,
       "family": "Bikaku",
-      "description": "Ignore penalidades defensivas por costas e flancos; +2 acertos contra ataques de oportunidade."
+      "description": "Ignore penalidades defensivas por costas e flancos; +25 acertos contra ataques de oportunidade.",
+      "maxRank": 1
     },
     {
       "id": "contra-ataque-perfeito",
@@ -63631,18 +63843,20 @@
       "cost": 25,
       "grade": 10,
       "family": "Bikaku",
-      "description": "Posturas viram Ataque +4 Passos de Dano, Defesa +4 RD, Mobilidade +4 Esquiva; 5 RC mantém duas.",
+      "description": "Posturas viram Ataque +50 Passos de Dano, Defesa +50 RD, Mobilidade +25 Esquiva; 15 RC mantém duas.",
       "mechanics": {
-        "kaguneSteps": 4
-      }
+        "kaguneSteps": 50
+      },
+      "maxRank": 1
     },
     {
       "id": "serafim-carmesim",
       "name": "Serafim Carmesim",
-      "cost": 20,
+      "cost": 8,
       "grade": 12,
       "family": "Ukaku",
-      "description": "Uma vez por turno, gaste 5 RC para disparo adicional com metade do dano; não gera novos ataques."
+      "description": "Uma vez por turno, gaste 5 RC para disparo adicional com metade do dano; não gera novos ataques.",
+      "maxRank": 1
     },
     {
       "id": "mil-penas",
@@ -63650,11 +63864,12 @@
       "cost": 30,
       "grade": 12,
       "family": "Ukaku",
-      "description": "Uma vez por sessão, condense golpes por 2 turnos; cada sacrifício dá +2 Passos de Dano e +1 acerto; depois perca 30 RC.",
+      "description": "Uma vez por sessão, condense golpes por 2 turnos; cada sacrifício dá +50 Passos de Dano e +15 acerto; depois perca 30 RC.",
       "mechanics": {
-        "stepsPerSacrifice": 2,
-        "hitPerSacrifice": 1
-      }
+        "stepsPerSacrifice": 50,
+        "hitPerSacrifice": 15
+      },
+      "maxRank": 1
     },
     {
       "id": "fortaleza-carne",
@@ -63674,15 +63889,16 @@
       "cost": 30,
       "grade": 12,
       "family": "Koukaku",
-      "description": "Uma vez por sessão, sacrifique RD e 20 RC: +15 Passos de Dano, +4 acerto e ignore metade da RD; depois RD 0 por 5 turnos.",
+      "description": "Uma vez por sessão, sacrifique RD e 100 RC: +20% Passos de Dano +100% RD Como Dano, +45 acerto e ignore metade da RD; depois RD 0 por 5 turnos.",
       "requirement": "Lança que Devora Céus",
       "requiresEvolutions": [
         "lanca-ceus"
       ],
       "mechanics": {
-        "kaguneSteps": 15,
-        "hit": 4
-      }
+        "kaguneSteps": 50,
+        "hit": 45
+      },
+      "maxRank": 1
     },
     {
       "id": "nao-consigo-morrer",
@@ -63698,18 +63914,19 @@
       "cost": 30,
       "grade": 12,
       "family": "Rinkaku",
-      "description": "Uma vez por sessão, por 3 turnos: +4 Passos de Dano, +2 acerto, +2 Esquiva, regeneração de cauda e ataque extra por 10 RC.",
+      "description": "Uma vez por sessão, por 3 turnos: +50 Passos de Dano, +25 acerto, +25 Esquiva, regeneração de cauda e ataque extra por 50 RC.",
       "requirement": "Mil Pernas da Centopeia; Sanidade em metade ou menos",
       "requiresEvolutions": [
         "mil-pernas"
       ],
       "requiresLowSanity": true,
       "mechanics": {
-        "kaguneSteps": 4,
+        "kaguneSteps": 50,
         "durationTurns": 3,
-        "hit": 2,
-        "dodge": 2
-      }
+        "hit": 25,
+        "dodge": 25
+      },
+      "maxRank": 1
     },
     {
       "id": "ja-vi",
@@ -63739,10 +63956,11 @@
       "family": "Quimera",
       "minKaguneTypes": 2,
       "requirement": "Qualquer Quimera; LEVEL 8+",
-      "description": "Uma vez por turno, ao usar propriedades de dois tipos no mesmo ataque, recupere 1 RC após a resolução, até 3 RC por turno.",
+      "description": "Uma vez por turno, ao usar propriedades de dois tipos no mesmo ataque, recupere 15 RC após a resolução, até 39 RC por turno.",
       "catalogGroups": [
         "expansion"
-      ]
+      ],
+      "maxRank": 1
     },
     {
       "id": "sincronia-kakuhous",
@@ -63791,10 +64009,11 @@
       "family": "Quimera",
       "minKaguneTypes": 2,
       "requirement": "Quimera; LEVEL 12+; uma vez por sessão",
-      "description": "Por 3 turnos, escolha dois aspectos por turno: +4 Passos de Dano, +3 Esquiva, +3 acerto, +5 RD, alcance +1 e +2 Passos de Dano à distância, ou primeira cura biológica +25%. Não repita a dupla; depois perca 15 RC e ganhe +1 Fome.",
+      "description": "Por 3 turnos, escolha dois aspectos por turno: +54 Passos de Dano, +35 Esquiva, +35 acerto, +120 RD, alcance +1 e +50 Passos de Dano à distância, ou primeira cura biológica +100%. Não repita a dupla; depois perca 55 RC e ganhe +1 Fome.",
       "catalogGroups": [
         "expansion"
-      ]
+      ],
+      "maxRank": 1
     }
   ],
   "drawbacks": [
