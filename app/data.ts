@@ -136,6 +136,7 @@ export interface KaguneEffect {
   levelCostStep?: number;
   requiresEffects?: { id: string; minRank?: number }[];
   minPassiveEffects?: number;
+  rdPerAdditionalRank?: number;
 }
 
 export const kaguneEffects: KaguneEffect[] = perkCatalog.kaguneEffects;

@@ -889,7 +889,11 @@ function calculateCharacterCore(sheet: CharacterSheet, context: {quinque?:boolea
     if (kaguneManifested) kaguneRD += sheet.effects["couraca-revestida"]?.rank || 0;
     if (kaguneManifested && kaguneFamilies.has("Koukaku")) kaguneRD += 5 * evolutionRank(sheet.selectedEvolutions, "revestimento-exoesqueletico");
     const superiorArmor = kaguneManifested ? sheet.effects["couraca-superior"]?.rank || 0 : 0;
-    if (superiorArmor) kaguneRD += activeAttributes.vigor + Math.max(0, superiorArmor - 1);
+    if (superiorArmor) {
+      const configuredRD = kaguneEffects.find(effect => effect.id === "couraca-superior")?.rdPerAdditionalRank;
+      const rdPerAdditionalRank = typeof configuredRD === "number" && Number.isInteger(configuredRD) && configuredRD >= 0 ? configuredRD : 1;
+      kaguneRD += activeAttributes.vigor + Math.max(0, superiorArmor - 1) * rdPerAdditionalRank;
+    }
     if (kaguneManifested) kaguneRD += damage.kaguneExtraRD;
     if (sheet.perks["carne-mineral"] && isActive("kagune", "carne-mineral")) kaguneRD += 3;
     if (sheet.perks["leviata-imortal"] && isActive("kagune", "leviata-imortal")) kaguneRD += 5;

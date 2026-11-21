@@ -11,7 +11,7 @@ const entry={id:'autoral-desvantagem-teste',name:'Limitação de teste',credit:[
 function temporary(p,fn){data.drawbacks.push(p);try{return fn();}finally{data.drawbacks.pop();}}
 test('the unified JSON supplies all existing disadvantages and their saved IDs',()=>{
  assert.equal(data.drawbacks,perkCatalog.drawbacks);assert.equal(data.drawbacks.length,19);
- assert.deepEqual(data.drawbacks.find(d=>d.id==='horrendo').credit,[3,4,5]);
+ assert.deepEqual(data.drawbacks.find(d=>d.id==='horrendo').credit,[5,10,15]);
  assert.equal(data.drawbacks.find(d=>d.id==='desabilidade').uniqueTargets,true);
 });
 test('new disadvantage credits use the selected tier and refund on removal',()=>temporary(entry,()=>{

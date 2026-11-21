@@ -62345,7 +62345,8 @@
       "maxRank": 7,
       "type": "Passivo",
       "description": "No N1, RD igual ao Vigor; níveis seguintes adicionam +1 RD. Máximo metade do Level.",
-      "costMode": "choice"
+      "costMode": "choice",
+      "rdPerAdditionalRank": 1
     },
     {
       "id": "forma-versatil",
