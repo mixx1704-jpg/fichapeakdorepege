@@ -13,6 +13,7 @@ export type CustomSkillEffectType =
   | "damage-steps"
   | "damage-modifier"
   | "extra-attacks"
+  | "tails"
   | "dodge-dice"
   | "block-dice"
   | "rd"
@@ -28,6 +29,7 @@ export type CustomSkillEffectType =
   | "attribute-bonus" | "rc-regenerated" | "pe-gain" | "penetration";
 
 export type CustomSkillEffect = SkillTiming & {
+  valuesByRank?: number[];
   operation?:SkillOperation; activation?:"inherit"|"passive"|"active"; enabled?:boolean;
   id: string;
   type: CustomSkillEffectType;
@@ -59,6 +61,7 @@ export type LegacyCustomSkillBonuses = {
   physicalDamageModifier: number;
   kaguneDamageModifier: number;
   extraAttacks: number;
+  tails: number;
   dodgeDice: number;
   blockDice: number;
   rd: number;
@@ -84,6 +87,7 @@ const effectOptions: { value: CustomSkillEffectType; label: string; configuratio
   { value: "damage-steps", label: "Passos de dano adicionais", configuration: "scope" },
   { value: "damage-modifier", label: "Modificador de dano", configuration: "scope" },
   { value: "extra-attacks", label: "Ataques adicionais" },
+  { value: "tails", label: "Caudas extras de Kagune" },
   { value: "dodge-dice", label: "Acerto de desvio adicional" },
   { value: "block-dice", label: "Acerto de bloqueio adicional" },
   { value: "rd", label: "Redução de Dano (RD)" },
@@ -175,6 +179,7 @@ function calculateLegacyCustomSkillBonuses(skills: CustomSkill[]): LegacyCustomS
     physicalDamageModifier: 0,
     kaguneDamageModifier: 0,
     extraAttacks: 0,
+    tails: 0,
     dodgeDice: 0,
     blockDice: 0,
     rd: 0,
@@ -207,6 +212,7 @@ function calculateLegacyCustomSkillBonuses(skills: CustomSkill[]): LegacyCustomS
       if (effect.type === "damage-steps") addScoped(effect.scope, value, "physicalSteps", "kaguneSteps");
       if (effect.type === "damage-modifier") addScoped(effect.scope, value, "physicalDamageModifier", "kaguneDamageModifier");
       if (effect.type === "extra-attacks") totals.extraAttacks += value;
+      if (effect.type === "tails") totals.tails += value;
       if (effect.type === "dodge-dice") totals.dodgeDice += value;
       if (effect.type === "block-dice") totals.blockDice += value;
       if (effect.type === "rd") totals.rd += value;

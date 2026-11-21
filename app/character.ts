@@ -1,5 +1,6 @@
 import { rollemDice } from './damage-dice';
 import { catalogSkills } from './catalog-skills';
+import { effectNumber, evolutionNumber, perkNumber } from './catalog-mechanics';
 import {calculateArchetype} from './archetype';
 import {combineMultipliers} from './numeric-modifiers';
 import {calculateKakujaBiology,kakujaRegeneration,kakujaWoundPenalty} from './kakuja-biology';
@@ -461,16 +462,16 @@ export function multiplyDamage(expression: string, multiplier: number) {
 }
 
 export function calculateRegeneration(maxLife: number, grade: number, normalRank: number, superiorRank: number) {
-  const normalBase = normalRank > 0 ? 1 + (normalRank - 1) * 2 : 0;
-  const normal = normalRank > 0 ? normalBase + grade : 0;
+  const normalBase = normalRank > 0 ? effectNumber('regeneracao-anormal','firstRankHealing',1) + (normalRank - 1) * effectNumber('regeneracao-anormal','healingPerAdditionalRank',2) : 0;
+  const normal = normalRank > 0 ? normalBase + grade * effectNumber('regeneracao-anormal','healingPerLevel',1) : 0;
   const superiorBase = superiorRank === 1
-    ? Math.floor(maxLife / 6)
+    ? Math.floor(maxLife / Math.max(1,effectNumber('regeneracao-superior','lifeDivisorByRank',6,1)))
     : superiorRank === 2
-      ? Math.floor(maxLife / 4)
+      ? Math.floor(maxLife / Math.max(1,effectNumber('regeneracao-superior','lifeDivisorByRank',4,2)))
       : superiorRank >= 3
-        ? Math.floor(maxLife / 2)
+        ? Math.floor(maxLife / Math.max(1,effectNumber('regeneracao-superior','lifeDivisorByRank',2,3)))
         : 0;
-  const superior = superiorRank > 0 ? superiorBase + grade : 0;
+  const superior = superiorRank > 0 ? superiorBase + grade * effectNumber('regeneracao-superior','healingPerLevel',1) : 0;
   return { normalBase, normal, superior, perTurn: Math.max(normal, superior) };
 }
 
@@ -514,17 +515,26 @@ export function permanentAttributesForSheet(sheet: CharacterSheet) {
   if (sheet.species === "ghoul-artificial") speciesBonuses[sheet.physicalBonus] += sheet.artificialDominantBlend ? 2 : 1;
   const permanentAttributes = blankAttributeMap();
   attributeKeys.forEach((key) => {
-    permanentAttributes[key] = Math.floor(sheet.baseAttributes[key] + speciesBonuses[key] + (sheet.perks[`acurado-${key}`] ? 1 : 0) + sheet.customBonuses.attributes[key]);
+    permanentAttributes[key] = Math.floor(sheet.baseAttributes[key] + speciesBonuses[key] + (sheet.perks[`acurado-${key}`] ? perkNumber(`acurado-${key}`,'attributeBonus',1) : 0) + sheet.customBonuses.attributes[key]);
   });
   return { speciesBonuses, permanentAttributes };
 }
 
-export function perkRequirementMet(perk: Perk, sheet: CharacterSheet, permanentAttributes: Record<AttributeKey, number>) {
+function tailsForRequirements(sheet: CharacterSheet, attributes: Record<AttributeKey, number>) {
+  const base=1+(sheet.effects['multiplas-caudas']?.rank||0)*effectNumber('multiplas-caudas','tailsPerRank',1)+evolutionRank(sheet.selectedEvolutions,'multiplas-caudas-plus')*evolutionNumber('multiplas-caudas-plus','tailsPerRank',1);
+  if(sheet.weaponKind!=='kagune'||!sheet.kaguneActive)return base;
+  const candidates=catalogSkills(sheet,id=>perkRequirementMet(perks.find(p=>p.id===id)!,sheet,attributes,base),
+    item=>effectCompatibleForSheet(item,sheet)&&effectRequirementStatus(item,sheet).met,
+    item=>evolutionRequirementStatus(item,sheet,attributes).met);
+  const bonuses=calculateCustomSkillBonuses([...sheet.customSkills,...candidates],sheet.vats.turn);
+  return Math.min(50,Math.max(1,Math.floor((base+bonuses.tails)*bonuses.multipliers.tails)));
+}
+
+export function perkRequirementMet(perk: Perk, sheet: CharacterSheet, permanentAttributes: Record<AttributeKey, number>, providedTails?: number) {
   const packDefinition = newPackDefinition(perk.id);
   if (packDefinition?.pendingClarification) return false;
   if (packDefinition?.requirements.anyPhysicalMinimum && Math.max(...physicalAttributes.map(key => permanentAttributes[key])) < packDefinition.requirements.anyPhysicalMinimum) return false;
-  const tails = 1 + (sheet.effects['multiplas-caudas']?.rank || 0) + evolutionRank(sheet.selectedEvolutions, 'multiplas-caudas-plus');
-  if (packDefinition?.requirements.minimumTails && tails < packDefinition.requirements.minimumTails) return false;
+  if (packDefinition?.requirements.minimumTails && (providedTails??tailsForRequirements(sheet,permanentAttributes)) < packDefinition.requirements.minimumTails) return false;
   if (perk.requiredWeapon && sheet.weaponKind !== perk.requiredWeapon) return false;
   if (perk.requiredWeapon === "kagune" && !speciesOptions.find(s => s.id === sheet.species)?.hasKagune) return false;
   if (perk.requiresKakuja && (!["ghoul", "ghoul-dominante", "ghoul-artificial"].includes(sheet.species) || sheet.kakuja.cannibalPE < 25)) return false;
@@ -549,6 +559,7 @@ export type RequirementStatus = { met: boolean; missing: string[] };
 
 export function effectRequirementStatus(item: KaguneEffect, sheet: CharacterSheet): RequirementStatus {
   const missing: string[] = [];
+  if (item.grade && sheet.grade < item.grade) missing.push(`Level ${item.grade}`);
   for (const dependency of item.requiresEffects || []) {
     const rank = sheet.effects[dependency.id]?.rank || 0;
     const requiredRank = dependency.minRank || 1;
@@ -606,7 +617,7 @@ export function evolutionRequirementStatus(
   if (item.requiresKakuja === "incomplete" && (!kakujaAwakened || kakujaComplete)) missing.push("Kakuja Incompleta despertada");
   if (item.requiresKakuja === "complete" && !kakujaComplete) missing.push("Kakuja Completa");
   if (item.requiresLowSanity) {
-    const maxSanity = providedMaxSanity ?? maximumSanity(sheet.grade, attributes.controle, -(sheet.selectedEvolutions.includes("monstro") ? 5 : 0) + sheet.customBonuses.sanity, Boolean(sheet.drawbacks["mente-fragil"]));
+    const maxSanity = providedMaxSanity ?? maximumSanity(sheet.grade, attributes.controle, -(sheet.selectedEvolutions.includes("monstro") ? evolutionNumber('monstro','sanityPenalty',5) : 0) + sheet.customBonuses.sanity, Boolean(sheet.drawbacks["mente-fragil"]));
     if (sheet.currentSanity > Math.floor(Math.max(1, maxSanity) / 2)) missing.push("Sanidade em metade ou menos");
   }
   if (item.narrativeRequirement && !sheet.confirmedRequirements[`evolution:${item.id}`]) missing.push(`${item.narrativeRequirement} confirmado pelo Narrador`);
@@ -640,8 +651,8 @@ export function familyColor(family: string) {
 export function effectMaximum(item: KaguneEffect, sheet: CharacterSheet) {
   const gradeCap = Math.max(1, Math.floor(sheet.grade / 2) + 1);
   let max = item.rankCap === "grade" ? gradeCap : item.maxRank || 1;
-  if (item.id === "aumentar-distancia") max = kaguneFamiliesForSheet(sheet).has("Koukaku") ? 2 : 4;
-  if (item.id === "couraca-superior") max = Math.min(item.maxRank || 1, Math.max(1, Math.floor(sheet.grade / 2)));
+  if (item.id === "aumentar-distancia") max = Math.min(item.maxRank||Infinity,kaguneFamiliesForSheet(sheet).has("Koukaku") ? effectNumber('aumentar-distancia','koukakuMaxRank',2) : effectNumber('aumentar-distancia','otherMaxRank',4));
+  if (item.id === "couraca-superior") max = Math.min(item.maxRank || 1, Math.max(1, Math.floor(sheet.grade / Math.max(1,effectNumber('couraca-superior','levelDivisorForMaxRank',2)))));
   if (sheet.kaguneType === "Bikaku" && item.family !== "Geral" && !kaguneFamiliesForSheet(sheet).has(item.family as KaguneFamily) && !sheet.selectedEvolutions.includes("custo-beneficio")) max = Math.max(1, max - 1);
   return max;
 }
@@ -656,7 +667,9 @@ function calculateCharacterCore(sheet: CharacterSheet, context: {quinque?:boolea
     const centipedeActive = sheet.vats.centipedeUntil > sheet.vats.turn;
     const species = speciesOptions.find((item) => item.id === sheet.species) || speciesOptions[0];
     const catalogAttributes = permanentAttributesForSheet(sheet).permanentAttributes;
-    const catalogEffects = catalogSkills(sheet,id=>perkRequirementMet(perks.find(p=>p.id===id)!,sheet,catalogAttributes));
+    const catalogEffects = catalogSkills(sheet,id=>perkRequirementMet(perks.find(p=>p.id===id)!,sheet,catalogAttributes),
+      item=>effectCompatibleForSheet(item,sheet)&&effectRequirementStatus(item,sheet).met,
+      item=>evolutionRequirementStatus(item,sheet,catalogAttributes).met);
     const customSkillBonuses = calculateCustomSkillBonuses([...sheet.customSkills,...catalogEffects],sheet.vats.turn);
     const cm=customSkillBonuses.multipliers;
     const archetypeBonuses=context.quinque?calculateArchetype('',undefined,{level:sheet.grade,hunger:0}):calculateArchetype(sheet.archetype,sheet.archetypeState,{level:sheet.grade,hunger:sheet.hunger});
@@ -666,7 +679,7 @@ function calculateCharacterCore(sheet: CharacterSheet, context: {quinque?:boolea
     const activeAttributes = { ...permanentAttributes };
     attributeKeys.forEach((key) => { activeAttributes[key] += customSkillBonuses.attributeBonus[key] + (pack.bonuses.attributes[key] || 0); });
     const bodyUpgrade = sheet.effects["aprimoramentos-corporais"];
-    if (sheet.kaguneActive && bodyUpgrade?.target) activeAttributes[bodyUpgrade.target] += bodyUpgrade.rank;
+    if (sheet.kaguneActive && bodyUpgrade?.target) activeAttributes[bodyUpgrade.target] += bodyUpgrade.rank * effectNumber('aprimoramentos-corporais','attributePerRank',1);
     attributeKeys.forEach(key => { activeAttributes[key] = Math.max(0,Math.floor(activeAttributes[key]*(cm.attributes[key]??1))); });
     const kakujaState = context.quinque ? { ...sheet.kakuja, active: false } : sheet.kakuja;
     const kakujaManifested = kakujaState.active && sheet.grade >= 6 && ["ghoul", "ghoul-dominante", "ghoul-artificial"].includes(sheet.species) && kakujaState.cannibalPE >= 25;
@@ -715,10 +728,10 @@ function calculateCharacterCore(sheet: CharacterSheet, context: {quinque?:boolea
     };
 
     const permanentDice = blankAttributeMap();
-    if (sheet.perks["cem-por-cento"]) permanentDice.raciocinio += 2;
-    if (sheet.perks["olho-deus"]) permanentDice.percepcao += 1;
-    if (sheet.perks.elegante) permanentDice.presenca += 2;
-    if (sheet.perks["frio-neve"]) permanentDice.controle += 2;
+    if (sheet.perks["cem-por-cento"]) permanentDice.raciocinio += perkNumber('cem-por-cento','attributeCheckBonus',2);
+    if (sheet.perks["olho-deus"]) permanentDice.percepcao += perkNumber('olho-deus','attributeCheckBonus',1);
+    if (sheet.perks.elegante) permanentDice.presenca += perkNumber('elegante','attributeCheckBonus',2);
+    if (sheet.perks["frio-neve"]) permanentDice.controle += perkNumber('frio-neve','attributeCheckBonus',2);
     attributeKeys.forEach((key) => { permanentDice[key] += customSkillBonuses.attributeDice[key]; });
     const attributeTests = Object.fromEntries(attributeKeys.map((key) => {
       const attribute = activeAttributes[key];
@@ -726,13 +739,17 @@ function calculateCharacterCore(sheet: CharacterSheet, context: {quinque?:boolea
       return [key, (cm.attributeChecks[key]??1)===1?formatTest(dice,Math.floor(attribute/2),false,testDie):formatTest(Math.floor((dice+Math.floor(attribute/2))*(cm.attributeChecks[key]??1)),0,false,testDie)];
     })) as Record<AttributeKey, string>;
 
-    const increaseHitRank = sheet.effects["aumentar-acerto"]?.rank || 0;
+    const increaseHitRank = (sheet.effects["aumentar-acerto"]?.rank || 0) * effectNumber('aumentar-acerto','hitPerRank',1);
     const multipleTailsRank = sheet.effects["multiplas-caudas"]?.rank || 0;
     const multipleTailsPlusRank = evolutionRank(sheet.selectedEvolutions, "multiplas-caudas-plus");
-    const naturalTails = Math.max(1, 1 + multipleTailsRank + multipleTailsPlusRank);
+    const effectTails = multipleTailsRank * effectNumber('multiplas-caudas','tailsPerRank',1);
+    const evolutionTails = multipleTailsPlusRank * evolutionNumber('multiplas-caudas-plus','tailsPerRank',1);
+    const skillTails = sheet.weaponKind === 'kagune' && sheet.kaguneActive ? customSkillBonuses.tails : 0;
+    const naturalTails = Math.min(50,Math.max(1,Math.floor((1 + effectTails + evolutionTails + skillTails) * (sheet.weaponKind === 'kagune' && sheet.kaguneActive ? cm.tails : 1))));
+    const paidTailStart = Math.max(1,naturalTails-evolutionTails);
     const milPernasActive = sheet.selectedEvolutions.includes('mil-pernas') && sheet.vats.milPernasUntil > sheet.vats.turn;
     const mitosisExtra = sheet.selectedEvolutions.includes('mitose-tentacruel') && sheet.vats.mitosisUntil > sheet.vats.turn ? Math.min(naturalTails,sheet.vats.mitosisCount) : 0;
-    const maximumTails = naturalTails + sheet.vats.manualTails + (milPernasActive ? 2 : 0) + mitosisExtra;
+    const maximumTails = Math.min(50,naturalTails + sheet.vats.manualTails + (milPernasActive ? evolutionNumber('mil-pernas','extraTails',2) : 0) + mitosisExtra);
     const colossoState = colossoParts({ purchased: !context.quinque && Boolean(sheet.perks[COLOSSO_PERK_ID]?.rank), requested: sheet.colossoActive, kagune: sheet.weaponKind === "kagune", manifested: sheet.kaguneActive, capacity: maximumTails, parts: sheet.vats.parts, turn: sheet.vats.turn, kakuhouUntil: sheet.vats.kakuhouUntil });
     const colossoAgilityPenalty = colossoState.active ? colossoState.extraPairs : 0;
     const tails = tailLoadout(sheet.vats.parts,maximumTails,sheet.kaguneActive,sheet.vats.turn,sheet.vats.kakuhouUntil,sheet.selectedEvolutions.includes('oito-caminhos'),colossoState.active);
@@ -740,14 +757,14 @@ function calculateCharacterCore(sheet: CharacterSheet, context: {quinque?:boolea
     const damage = sheet.damageContext;
     const isActive = (scope: "physical" | "kagune", id: string) => Boolean(damage.active[`${scope}:${id}`]);
     const situationalHit = (scope: "physical" | "kagune") =>
-      (sheet.perks['entre-costelas'] && isActive(scope,'entre-costelas') ? 1 : 0)
+      (sheet.perks['entre-costelas'] && isActive(scope,'entre-costelas') ? perkNumber('entre-costelas','hit',1) : 0)
       - (sheet.perks['golpe-preciso'] && isActive(scope,'golpe-preciso') ? Math.max(0,damage.preciseHitDice) : 0)
-      - (sheet.perks['equacao-letal'] && isActive(scope,'equacao-letal') ? Math.min(2,Math.max(0,damage.equationLethalDice)) : 0);
-    const evolutionHit = (sheet.selectedEvolutions.includes('predador-ceus') && isActive('kagune','predador-ceus') ? Math.min(4,Math.max(0,damage.predadorCeusStacks)) : 0)
-      + (sheet.selectedEvolutions.includes('mil-penas') && isActive('kagune','mil-penas') ? Math.max(0,damage.milPenasSacrifices) : 0)
-      + (sheet.selectedEvolutions.includes('lanca-ceus') && isActive('kagune','lanca-ceus') ? 2 : 0)
-      + (sheet.selectedEvolutions.includes('lanca-deus') && isActive('kagune','lanca-deus') ? 4 : 0);
-    const officialExtraAttacks = evolutionRank(sheet.selectedEvolutions, "ataque-extra");
+      - (sheet.perks['equacao-letal'] && isActive(scope,'equacao-letal') ? Math.min(perkNumber('equacao-letal','maximumSacrificedHit',2),Math.max(0,damage.equationLethalDice)) : 0);
+    const evolutionHit = (sheet.selectedEvolutions.includes('predador-ceus') && isActive('kagune','predador-ceus') ? Math.min(evolutionNumber('predador-ceus','maximumHitStacks',4),Math.max(0,damage.predadorCeusStacks)) * evolutionNumber('predador-ceus','hitPerStack',1) : 0)
+      + (sheet.selectedEvolutions.includes('mil-penas') && isActive('kagune','mil-penas') ? Math.max(0,damage.milPenasSacrifices) * evolutionNumber('mil-penas','hitPerSacrifice',1) : 0)
+      + (sheet.selectedEvolutions.includes('lanca-ceus') && isActive('kagune','lanca-ceus') ? evolutionNumber('lanca-ceus','hit',2) : 0)
+      + (sheet.selectedEvolutions.includes('lanca-deus') && isActive('kagune','lanca-deus') ? evolutionNumber('lanca-deus','hit',4) : 0);
+    const officialExtraAttacks = evolutionRank(sheet.selectedEvolutions, "ataque-extra") * evolutionNumber('ataque-extra','attacksPerRank',1);
     const extraAttacks = Math.floor((officialExtraAttacks + customSkillBonuses.extraAttacks)*cm.extraAttacks);
     const kakujaExtraAttacks = Math.floor((officialExtraAttacks+customSkillBonuses.extraAttacks+kakujaBonuses.extraAttacks+(kakujaManifested?pack.kakujaAttacks:0))*combineMultipliers(cm.extraAttacks,kakujaSkillMultipliers.extraAttacks));
     const primaryAttribute: AttributeKey = sheet.kaguneType === "Ukaku" ? "precisao" : sheet.kaguneType === "Koukaku" ? "vigor" : sheet.kaguneType === "Rinkaku" ? "forca" : "agilidade";
@@ -758,8 +775,8 @@ function calculateCharacterCore(sheet: CharacterSheet, context: {quinque?:boolea
       .map(family => [familyAttributes[family], Math.floor(activeAttributes[familyAttributes[family]] / 2)])) as Partial<Record<AttributeKey, number>>;
     const quimeraModifier = Object.values(quimeraModifiers).reduce((total, value) => total + value, 0);
     const primaryDice = primaryValue + permanentDice[primaryAttribute] + sheet.extraDice[primaryAttribute] + customSkillBonuses.kaguneHitDice + mastery.hit + ghoulCombatDice + tentacleMomentum + situationalHit("kagune") + evolutionHit + increaseHitRank + reworkBonuses.kaguneHit + pack.bonuses.kaguneHit + archetypeBonuses.hit;
-    const kaguneModifier = Math.floor(primaryValue / 2) + quimeraModifier + (multipleTailsRank >= 4 ? 1 : 0);
-    const kaguneTestBeforeRevision = adjustTest(formatTest(primaryDice,kaguneModifier,false,testDie), (physicalAttributes.includes(primaryAttribute) ? vatsWounds.physical : vatsWounds.mental) + (primaryAttribute === "agilidade" ? vatsWounds.agility - colossoAgilityPenalty : 0) + (centipedeActive ? 2 : 0) + (colossoState.active ? colossoState.pairs * 2 : 0));
+    const kaguneModifier = Math.floor(primaryValue / 2) + quimeraModifier + (multipleTailsRank >= effectNumber('multiplas-caudas','hitBonusMinimumRank',4) ? effectNumber('multiplas-caudas','hitModifier',1) : 0);
+    const kaguneTestBeforeRevision = adjustTest(formatTest(primaryDice,kaguneModifier,false,testDie), (physicalAttributes.includes(primaryAttribute) ? vatsWounds.physical : vatsWounds.mental) + (primaryAttribute === "agilidade" ? vatsWounds.agility - colossoAgilityPenalty : 0) + (centipedeActive ? evolutionNumber('centopeia','hit',2) : 0) + (colossoState.active ? colossoState.pairs * 2 : 0));
     const kaguneTest = multiplyTest(kaguneTestBeforeRevision,statMultiplier("kaguneHit"));
     scalingBase.kaguneHit=primaryDice+Math.floor(primaryValue/2)+quimeraModifier;
     // The Kakuja panel multiplies only after adding the complete form's own accuracy.
@@ -769,20 +786,20 @@ function calculateCharacterCore(sheet: CharacterSheet, context: {quinque?:boolea
     const situationalSteps = (scope: "physical" | "kagune") => {
       let total = sheet.perks.furioso?.rank || 0;
       if (sheet.perks["golpe-preciso"] && isActive(scope, "golpe-preciso")) total += damage.preciseHitDice;
-      if (sheet.perks["equacao-letal"] && isActive(scope, "equacao-letal")) total += damage.equationLethalDice * 2;
-      if (sheet.perks["quebra-portas"] && isActive(scope, "quebra-portas")) total += 2;
-      if (scope === "physical" && sheet.perks.skadoosh && isActive(scope, "skadoosh")) total += 40;
-      if (sheet.perks["respiracao-contida"] && isActive(scope, "respiracao-contida")) total += 2;
-      if (sheet.perks["disparo-reflexivo"] && isActive(scope, "disparo-reflexivo")) total -= 2;
-      if (sheet.perks["golpe-direcionado"] && isActive(scope, "golpe-direcionado")) total += 2;
-      if (sheet.perks["olho-cacador"] && isActive(scope, "olho-cacador")) total += 2;
-      if (sheet.perks["disparo-alma"] && isActive(scope, "disparo-alma")) total += 5;
-      if (sheet.perks["entre-costelas"] && isActive(scope, "entre-costelas")) total -= 2;
-      if (sheet.perks.momentum && isActive(scope, "momentum")) total += 2;
-      if (sheet.perks["corpo-lamina"] && isActive(scope, "corpo-lamina")) total += 3;
-      if (sheet.perks.adaptabilidade && isActive(scope, "adaptabilidade")) total += Math.floor(activeAttributes.raciocinio / 2);
-      if (sheet.perks.fortificador && isActive(scope, "fortificador")) total += 2;
-      if (sheet.perks["foco-letal"] && isActive(scope, "foco-letal")) total += damage.focusLethalSteps * 2;
+      if (sheet.perks["equacao-letal"] && isActive(scope, "equacao-letal")) total += damage.equationLethalDice * perkNumber('equacao-letal','stepsPerSacrificedHit',2);
+      if (sheet.perks["quebra-portas"] && isActive(scope, "quebra-portas")) total += perkNumber('quebra-portas','situationalSteps',2);
+      if (scope === "physical" && sheet.perks.skadoosh && isActive(scope, "skadoosh")) total += perkNumber('skadoosh','situationalSteps',40);
+      if (sheet.perks["respiracao-contida"] && isActive(scope, "respiracao-contida")) total += perkNumber('respiracao-contida','situationalSteps',2);
+      if (sheet.perks["disparo-reflexivo"] && isActive(scope, "disparo-reflexivo")) total -= perkNumber('disparo-reflexivo','situationalStepsPenalty',2);
+      if (sheet.perks["golpe-direcionado"] && isActive(scope, "golpe-direcionado")) total += perkNumber('golpe-direcionado','situationalSteps',2);
+      if (sheet.perks["olho-cacador"] && isActive(scope, "olho-cacador")) total += perkNumber('olho-cacador','situationalSteps',2);
+      if (sheet.perks["disparo-alma"] && isActive(scope, "disparo-alma")) total += perkNumber('disparo-alma','situationalSteps',5);
+      if (sheet.perks["entre-costelas"] && isActive(scope, "entre-costelas")) total -= perkNumber('entre-costelas','situationalStepsPenalty',2);
+      if (sheet.perks.momentum && isActive(scope, "momentum")) total += perkNumber('momentum','situationalSteps',2);
+      if (sheet.perks["corpo-lamina"] && isActive(scope, "corpo-lamina")) total += perkNumber('corpo-lamina','situationalSteps',3);
+      if (sheet.perks.adaptabilidade && isActive(scope, "adaptabilidade")) total += Math.floor(activeAttributes.raciocinio / Math.max(1,perkNumber('adaptabilidade','attributeDivisor',2)));
+      if (sheet.perks.fortificador && isActive(scope, "fortificador")) total += perkNumber('fortificador','situationalSteps',2);
+      if (sheet.perks["foco-letal"] && isActive(scope, "foco-letal")) total += damage.focusLethalSteps * perkNumber('foco-letal','stepsPerSacrifice',2);
       return total;
     };
     const consumedSteps = (scope: "physical" | "kagune") =>
@@ -794,119 +811,119 @@ function calculateCharacterCore(sheet: CharacterSheet, context: {quinque?:boolea
     const physicalHitDice = physicalValue + permanentDice[physicalAttribute] + sheet.extraDice[physicalAttribute] + customSkillBonuses.physicalHitDice + ghoulCombatDice + situationalHit("physical") + reworkBonuses.physicalHit + pack.bonuses.physicalHit + archetypeBonuses.hit;
     const physicalHitTest = multiplyTest(adjustTest(formatTest(physicalHitDice,Math.floor(physicalValue/2),false,testDie),vatsWounds.physical),statMultiplier("physicalHit"));
     let physicalSteps = Math.floor(physicalValue / 2) + damage.physicalExtraSteps + situationalSteps("physical") - consumedSteps("physical") + customSkillBonuses.physicalSteps + reworkBonuses.physicalSteps + pack.bonuses.physicalSteps;
-    if (sheet.perks.pugilista) physicalSteps += 2;
+    if (sheet.perks.pugilista) physicalSteps += perkNumber('pugilista','physicalSteps',2);
     if (sheet.drawbacks["soca-fofo"]) physicalSteps -= 2;
-    if (sheet.perks["impacto-cinetico"] && isActive("physical", "impacto-cinetico")) physicalSteps += 2;
-    if (sheet.perks["corpo-cerco"] && isActive("physical", "corpo-cerco")) physicalSteps += 3;
-    if (sheet.perks["cacador-aberturas"] && isActive("physical", "cacador-aberturas")) physicalSteps += 2;
-    if (sheet.perks.oportunista && isActive("physical", "oportunista")) physicalSteps += 2;
-    if (sheet.perks["guarda-agressiva"] && isActive("physical", "guarda-agressiva")) physicalSteps += 2;
-    if (sheet.perks["ritmo-combate"] && isActive("physical", "ritmo-combate")) physicalSteps += 1;
-    if (sheet.perks.carrasco && isActive("physical", "carrasco")) physicalSteps += 2;
-    if (sheet.perks["ultimo-homem-pe"] && isActive("physical", "ultimo-homem-pe")) physicalSteps += 2;
-    if (sheet.perks["lenda-dragao"] && isActive("physical", "lenda-dragao")) physicalSteps += 15;
+    if (sheet.perks["impacto-cinetico"] && isActive("physical", "impacto-cinetico")) physicalSteps += perkNumber('impacto-cinetico','physicalSteps',2);
+    if (sheet.perks["corpo-cerco"] && isActive("physical", "corpo-cerco")) physicalSteps += perkNumber('corpo-cerco','physicalSteps',3);
+    if (sheet.perks["cacador-aberturas"] && isActive("physical", "cacador-aberturas")) physicalSteps += perkNumber('cacador-aberturas','physicalSteps',2);
+    if (sheet.perks.oportunista && isActive("physical", "oportunista")) physicalSteps += perkNumber('oportunista','physicalSteps',2);
+    if (sheet.perks["guarda-agressiva"] && isActive("physical", "guarda-agressiva")) physicalSteps += perkNumber('guarda-agressiva','physicalSteps',2);
+    if (sheet.perks["ritmo-combate"] && isActive("physical", "ritmo-combate")) physicalSteps += perkNumber('ritmo-combate','physicalSteps',1);
+    if (sheet.perks.carrasco && isActive("physical", "carrasco")) physicalSteps += perkNumber('carrasco','physicalSteps',2);
+    if (sheet.perks["ultimo-homem-pe"] && isActive("physical", "ultimo-homem-pe")) physicalSteps += perkNumber('ultimo-homem-pe','physicalSteps',2);
+    if (sheet.perks["lenda-dragao"] && isActive("physical", "lenda-dragao")) physicalSteps += perkNumber('lenda-dragao','physicalSteps',15);
     const physicalDamageModifier = Math.floor(archetypeBonuses.damageFlat + Math.floor(physicalValue / 2) + damage.physicalExtraModifier + hungerDamage + customSkillBonuses.physicalDamageModifier + reworkBonuses.physicalDamage);
     const physicalStepReference=Math.max(0,physicalSteps);
     const physicalStepsUnrounded=physicalStepReference*statMultiplier('physicalSteps');
     physicalSteps = Math.max(0,scaled("physicalSteps",physicalStepReference));
     const physicalDamage = formatDamage(physicalSteps, physicalDamageModifier);
 
-    let kaguneSteps = Math.floor(primaryValue / 2) + (sheet.effects["aumentar-passos"]?.rank || 0) + damage.kaguneExtraSteps + situationalSteps("kagune") - consumedSteps("kagune") + customSkillBonuses.kaguneSteps + mastery.steps + reworkBonuses.kaguneSteps + pack.bonuses.kaguneSteps;
-    let kaguneDamageModifier = archetypeBonuses.damageFlat + Math.floor(primaryValue / 2) + quimeraModifier + (sheet.effects["aumentar-dano"]?.rank || 0) + damage.kaguneExtraModifier + hungerDamage + customSkillBonuses.kaguneDamageModifier + reworkBonuses.kaguneDamage;
+    let kaguneSteps = Math.floor(primaryValue / 2) + ((sheet.effects["aumentar-passos"]?.rank || 0) * effectNumber('aumentar-passos','stepsPerRank',1)) + damage.kaguneExtraSteps + situationalSteps("kagune") - consumedSteps("kagune") + customSkillBonuses.kaguneSteps + mastery.steps + reworkBonuses.kaguneSteps + pack.bonuses.kaguneSteps;
+    let kaguneDamageModifier = archetypeBonuses.damageFlat + Math.floor(primaryValue / 2) + quimeraModifier + ((sheet.effects["aumentar-dano"]?.rank || 0) * effectNumber('aumentar-dano','modifierPerRank',1)) + damage.kaguneExtraModifier + hungerDamage + customSkillBonuses.kaguneDamageModifier + reworkBonuses.kaguneDamage;
     const kaguneFamilies = kaguneFamiliesForSheet(sheet);
     if (kaguneFamilies.has("Rinkaku")) kaguneDamageModifier += 2;
     if ((kaguneFamilies.has("Ukaku") && damage.targetKaguneType === "Bikaku") || (kaguneFamilies.has("Rinkaku") && damage.targetKaguneType === "Koukaku")) kaguneDamageModifier += 2;
     let multipleTailsEvolutionBonusSteps = 0;
-    if (sheet.effects["mudanca-forma"] && isActive("kagune", "mudanca-forma")) kaguneSteps += Math.floor(sheet.effects["mudanca-forma"].rank / 2);
+    if (sheet.effects["mudanca-forma"] && isActive("kagune", "mudanca-forma")) kaguneSteps += Math.floor(sheet.effects["mudanca-forma"].rank / Math.max(1,effectNumber('mudanca-forma','ranksPerStep',2)));
     if (sheet.effects.cristalizacao && isActive("kagune", "cristalizacao")) {
-      kaguneSteps += [0, 2, 3, 4][sheet.effects.cristalizacao.rank] || 4;
-      kaguneDamageModifier += (sheet.effects["cristalizacao-potencializada"]?.rank || 0) * 2;
+      kaguneSteps += effectNumber('cristalizacao','stepsByRank',[0,2,3,4][sheet.effects.cristalizacao.rank]||4,sheet.effects.cristalizacao.rank);
+      kaguneDamageModifier += (sheet.effects["cristalizacao-potencializada"]?.rank || 0) * effectNumber('cristalizacao-potencializada','modifierPerRank',2);
     }
-    if (sheet.effects["criar-arma"] && isActive("kagune", "criar-arma")) kaguneSteps += sheet.effects["criar-arma"].rank;
-    if (sheet.effects["adicionar-elemento"] && isActive("kagune", "adicionar-elemento")) kaguneDamageModifier += sheet.effects["adicionar-elemento"].rank >= 2 ? 6 : 3;
-    if (sheet.effects["tiros-explosivos"] && isActive("kagune", "tiros-explosivos")) kaguneSteps += sheet.effects["tiros-explosivos"].rank;
-    if (sheet.effects["lamina-cauda-viva"] && isActive("kagune", "lamina-cauda-viva")) kaguneSteps += 2;
-    if (sheet.selectedEvolutions.includes("perda-peso") && isActive("kagune", "perda-peso")) kaguneSteps += 2;
-    if (sheet.selectedEvolutions.includes("mestre-armas") && damage.koukakuMode === "attack" && isActive("kagune", "mestre-armas")) kaguneSteps += 2;
+    if (sheet.effects["criar-arma"] && isActive("kagune", "criar-arma")) kaguneSteps += sheet.effects["criar-arma"].rank * effectNumber('criar-arma','stepsPerRank',1);
+    if (sheet.effects["adicionar-elemento"] && isActive("kagune", "adicionar-elemento")) kaguneDamageModifier += effectNumber('adicionar-elemento','modifierByRank',sheet.effects["adicionar-elemento"].rank >= 2 ? 6 : 3,sheet.effects["adicionar-elemento"].rank);
+    if (sheet.effects["tiros-explosivos"] && isActive("kagune", "tiros-explosivos")) kaguneSteps += sheet.effects["tiros-explosivos"].rank * effectNumber('tiros-explosivos','stepsPerRank',1);
+    if (sheet.effects["lamina-cauda-viva"] && isActive("kagune", "lamina-cauda-viva")) kaguneSteps += effectNumber('lamina-cauda-viva','steps',2);
+    if (sheet.selectedEvolutions.includes("perda-peso") && isActive("kagune", "perda-peso")) kaguneSteps += evolutionNumber('perda-peso','kaguneSteps',2);
+    if (sheet.selectedEvolutions.includes("mestre-armas") && damage.koukakuMode === "attack" && isActive("kagune", "mestre-armas")) kaguneSteps += evolutionNumber('mestre-armas','kaguneSteps',2);
     if (sheet.selectedEvolutions.includes("multiplas-caudas-plus") && isActive("kagune", "multiplas-caudas-plus")) {
-      if (multipleTailsPlusRank >= 1) multipleTailsEvolutionBonusSteps = multipleTailsPlusRank === 3 ? 2 : 1;
+      if (multipleTailsPlusRank >= 1) multipleTailsEvolutionBonusSteps = evolutionNumber('multiplas-caudas-plus','stepsByRank',multipleTailsPlusRank === 3 ? 2 : 1,multipleTailsPlusRank);
       kaguneSteps += multipleTailsEvolutionBonusSteps;
     }
-    if (sheet.selectedEvolutions.includes("ferreiro-guerra") && isActive("kagune", "ferreiro-guerra")) kaguneSteps += Math.floor(Math.max(sheet.baseAttributes.forca, sheet.baseAttributes.agilidade) / 2);
-    if (sheet.selectedEvolutions.includes("lanca-ceus") && isActive("kagune", "lanca-ceus")) kaguneSteps += 10;
-    if (milPernasActive) kaguneSteps += 2;
-    if (sheet.selectedEvolutions.includes("predador-perfeito") && isActive("kagune", "predador-perfeito")) kaguneSteps += 2;
-    if (sheet.selectedEvolutions.includes("chuva-carmesim") && isActive("kagune", "chuva-carmesim")) kaguneSteps += 4;
-    if (sheet.selectedEvolutions.includes("chuva-carmesim") && isActive("kagune", "chuva-carmesim-penalidade")) kaguneSteps -= 2;
-    if (sheet.selectedEvolutions.includes("predador-ceus") && isActive("kagune", "predador-ceus")) kaguneSteps += damage.predadorCeusStacks;
-    if (sheet.selectedEvolutions.includes("arsenal-vivo") && isActive("kagune", "arsenal-vivo")) kaguneSteps += 5;
+    if (sheet.selectedEvolutions.includes("ferreiro-guerra") && isActive("kagune", "ferreiro-guerra")) kaguneSteps += Math.floor(Math.max(sheet.baseAttributes.forca, sheet.baseAttributes.agilidade) / Math.max(1,evolutionNumber('ferreiro-guerra','attributeDivisor',2)));
+    if (sheet.selectedEvolutions.includes("lanca-ceus") && isActive("kagune", "lanca-ceus")) kaguneSteps += evolutionNumber('lanca-ceus','kaguneSteps',10);
+    if (milPernasActive) kaguneSteps += evolutionNumber('mil-pernas','steps',2);
+    if (sheet.selectedEvolutions.includes("predador-perfeito") && isActive("kagune", "predador-perfeito")) kaguneSteps += evolutionNumber('predador-perfeito','kaguneSteps',2);
+    if (sheet.selectedEvolutions.includes("chuva-carmesim") && isActive("kagune", "chuva-carmesim")) kaguneSteps += evolutionNumber('chuva-carmesim','kaguneSteps',4);
+    if (sheet.selectedEvolutions.includes("chuva-carmesim") && isActive("kagune", "chuva-carmesim-penalidade")) kaguneSteps -= evolutionNumber('chuva-carmesim','kaguneStepsPenalty',2);
+    if (sheet.selectedEvolutions.includes("predador-ceus") && isActive("kagune", "predador-ceus")) kaguneSteps += damage.predadorCeusStacks * evolutionNumber('predador-ceus','stepsPerStack',1);
+    if (sheet.selectedEvolutions.includes("arsenal-vivo") && isActive("kagune", "arsenal-vivo")) kaguneSteps += evolutionNumber('arsenal-vivo','kaguneSteps',5);
     if (sheet.selectedEvolutions.includes("continua-crescendo")) kaguneSteps += growthBonus(Math.max(sheet.vats.growth, isActive("kagune", "continua-crescendo") ? damage.growthPoints : 0), maximumTails);
-    if (sheet.selectedEvolutions.includes("mestre-nada") && isActive("kagune", "mestre-nada")) kaguneSteps += 4;
-    if (sheet.selectedEvolutions.includes("mil-penas") && isActive("kagune", "mil-penas")) kaguneSteps += damage.milPenasSacrifices * 2;
-    if (sheet.selectedEvolutions.includes("lanca-deus") && isActive("kagune", "lanca-deus")) kaguneSteps += 15;
-    if (sheet.selectedEvolutions.includes("centopeia") && (centipedeActive || isActive("kagune", "centopeia"))) kaguneSteps += 4;
+    if (sheet.selectedEvolutions.includes("mestre-nada") && isActive("kagune", "mestre-nada")) kaguneSteps += evolutionNumber('mestre-nada','kaguneSteps',4);
+    if (sheet.selectedEvolutions.includes("mil-penas") && isActive("kagune", "mil-penas")) kaguneSteps += damage.milPenasSacrifices * evolutionNumber('mil-penas','stepsPerSacrifice',2);
+    if (sheet.selectedEvolutions.includes("lanca-deus") && isActive("kagune", "lanca-deus")) kaguneSteps += evolutionNumber('lanca-deus','kaguneSteps',15);
+    if (sheet.selectedEvolutions.includes("centopeia") && (centipedeActive || isActive("kagune", "centopeia"))) kaguneSteps += evolutionNumber('centopeia','kaguneSteps',4);
     if (sheet.perks["wally-like"] && isActive("kagune", "wally-like")) kaguneSteps += Math.min(activeAttributes.agilidade, Math.floor(activeAttributes.agilidade / 2) + Math.floor(activeAttributes.precisao / 2));
-    if (sheet.perks.ceifador && isActive("kagune", "ceifador")) kaguneSteps += 8;
-    if (sheet.effects["estouro-rc"] && isActive("kagune", "estouro-rc")) kaguneSteps += 3;
-    if (sheet.effects["estouro-rc"] && isActive("kagune", "estouro-rc-penalidade")) kaguneSteps -= 1;
-    if (sheet.perks["cristais-tungstenio"] && isActive("kagune", "cristais-tungstenio")) kaguneSteps += 2;
-    if (sheet.perks["railgun-rc"] && isActive("kagune", "railgun-rc")) kaguneSteps += 7;
-    if (sheet.perks["ultimo-horizonte"] && isActive("kagune", "ultimo-horizonte")) kaguneSteps += 12;
-    if (sheet.perks["hidra-cristalina"] && isActive("kagune", "hidra-cristalina")) kaguneSteps += 3;
-    if (sheet.perks["muda-penas"] && isActive("kagune", "muda-penas")) kaguneSteps += 2;
-    if (sheet.perks["predador-angulo-morto"] && isActive("kagune", "predador-angulo-morto")) kaguneSteps += 2;
-    if (sheet.perks["mergulho-escarlate"] && isActive("kagune", "mergulho-escarlate")) kaguneSteps += 4;
-    if (sheet.perks["tentaculo-blindado"] && isActive("kagune", "tentaculo-blindado")) kaguneSteps += 2;
-    if (sheet.perks["leviata-imortal"] && isActive("kagune", "leviata-imortal")) kaguneSteps += 3;
-    if (sheet.perks["postura-dupla"] && isActive("kagune", "postura-dupla-ataque")) kaguneSteps += 2;
-    if (sheet.perks["lanca-escorpionica"] && isActive("kagune", "lanca-escorpionica")) kaguneSteps += 2;
-    if (sheet.perks["arsenal-carrasco"] && isActive("kagune", "arsenal-carrasco-ataque")) kaguneSteps += 4;
-    if (sheet.perks["cavaleiro-escarlate"] && isActive("kagune", "cavaleiro-escarlate-ataque")) kaguneSteps += 5;
-    if (sheet.perks["danca-serpentes"] && isActive("kagune", "danca-serpentes")) kaguneSteps += 2;
-    if (sheet.perks["predador-reacao"] && isActive("kagune", "predador-reacao")) kaguneSteps += 3;
-    if (sheet.perks.orochi && isActive("kagune", "orochi")) kaguneSteps += 3;
-    if (sheet.perks["serafim-ferro-sangue"] && isActive("kagune", "serafim-ferro-sangue")) kaguneSteps += 3;
-    if (sheet.perks["motor-cerco-celeste"] && isActive("kagune", "motor-cerco-celeste")) kaguneSteps += 2;
-    if (sheet.perks["leviata-carne"] && isActive("kagune", "leviata-carne-ataque")) kaguneSteps += 2;
-    if (sheet.perks["trindade-predatoria"] && isActive("kagune", "trindade-predatoria-ataque")) kaguneSteps += 2;
-    if (sheet.perks["quimera-absoluta"] && isActive("kagune", "quimera-absoluta")) kaguneSteps += 4;
-    if (sheet.perks["impacto-cinetico"] && isActive("kagune", "impacto-cinetico")) kaguneSteps += 2;
-    if (sheet.perks["corpo-cerco"] && isActive("kagune", "corpo-cerco")) kaguneSteps += 3;
-    if (sheet.perks["cacador-aberturas"] && isActive("kagune", "cacador-aberturas")) kaguneSteps += 2;
-    if (sheet.perks.oportunista && isActive("kagune", "oportunista")) kaguneSteps += 2;
-    if (sheet.perks["guarda-agressiva"] && isActive("kagune", "guarda-agressiva")) kaguneSteps += 2;
-    if (sheet.perks["ritmo-combate"] && isActive("kagune", "ritmo-combate")) kaguneSteps += 1;
-    if (sheet.perks.carrasco && isActive("kagune", "carrasco")) kaguneSteps += 2;
-    if (sheet.perks["ultimo-homem-pe"] && isActive("kagune", "ultimo-homem-pe")) kaguneSteps += 2;
+    if (sheet.perks.ceifador && isActive("kagune", "ceifador")) kaguneSteps += perkNumber('ceifador','kaguneSteps',8);
+    if (sheet.effects["estouro-rc"] && isActive("kagune", "estouro-rc")) kaguneSteps += effectNumber('estouro-rc','steps',3);
+    if (sheet.effects["estouro-rc"] && isActive("kagune", "estouro-rc-penalidade")) kaguneSteps -= effectNumber('estouro-rc','aftereffectStepsPenalty',1);
+    if (sheet.perks["cristais-tungstenio"] && isActive("kagune", "cristais-tungstenio")) kaguneSteps += perkNumber('cristais-tungstenio','kaguneSteps',2);
+    if (sheet.perks["railgun-rc"] && isActive("kagune", "railgun-rc")) kaguneSteps += perkNumber('railgun-rc','kaguneSteps',7);
+    if (sheet.perks["ultimo-horizonte"] && isActive("kagune", "ultimo-horizonte")) kaguneSteps += perkNumber('ultimo-horizonte','kaguneSteps',12);
+    if (sheet.perks["hidra-cristalina"] && isActive("kagune", "hidra-cristalina")) kaguneSteps += perkNumber('hidra-cristalina','kaguneSteps',3);
+    if (sheet.perks["muda-penas"] && isActive("kagune", "muda-penas")) kaguneSteps += perkNumber('muda-penas','kaguneSteps',2);
+    if (sheet.perks["predador-angulo-morto"] && isActive("kagune", "predador-angulo-morto")) kaguneSteps += perkNumber('predador-angulo-morto','kaguneSteps',2);
+    if (sheet.perks["mergulho-escarlate"] && isActive("kagune", "mergulho-escarlate")) kaguneSteps += perkNumber('mergulho-escarlate','kaguneSteps',4);
+    if (sheet.perks["tentaculo-blindado"] && isActive("kagune", "tentaculo-blindado")) kaguneSteps += perkNumber('tentaculo-blindado','kaguneSteps',2);
+    if (sheet.perks["leviata-imortal"] && isActive("kagune", "leviata-imortal")) kaguneSteps += perkNumber('leviata-imortal','kaguneSteps',3);
+    if (sheet.perks["postura-dupla"] && isActive("kagune", "postura-dupla-ataque")) kaguneSteps += perkNumber('postura-dupla','kaguneSteps',2);
+    if (sheet.perks["lanca-escorpionica"] && isActive("kagune", "lanca-escorpionica")) kaguneSteps += perkNumber('lanca-escorpionica','kaguneSteps',2);
+    if (sheet.perks["arsenal-carrasco"] && isActive("kagune", "arsenal-carrasco-ataque")) kaguneSteps += perkNumber('arsenal-carrasco','kaguneSteps',4);
+    if (sheet.perks["cavaleiro-escarlate"] && isActive("kagune", "cavaleiro-escarlate-ataque")) kaguneSteps += perkNumber('cavaleiro-escarlate','kaguneSteps',5);
+    if (sheet.perks["danca-serpentes"] && isActive("kagune", "danca-serpentes")) kaguneSteps += perkNumber('danca-serpentes','kaguneSteps',2);
+    if (sheet.perks["predador-reacao"] && isActive("kagune", "predador-reacao")) kaguneSteps += perkNumber('predador-reacao','kaguneSteps',3);
+    if (sheet.perks.orochi && isActive("kagune", "orochi")) kaguneSteps += perkNumber('orochi','kaguneSteps',3);
+    if (sheet.perks["serafim-ferro-sangue"] && isActive("kagune", "serafim-ferro-sangue")) kaguneSteps += perkNumber('serafim-ferro-sangue','kaguneSteps',3);
+    if (sheet.perks["motor-cerco-celeste"] && isActive("kagune", "motor-cerco-celeste")) kaguneSteps += perkNumber('motor-cerco-celeste','kaguneSteps',2);
+    if (sheet.perks["leviata-carne"] && isActive("kagune", "leviata-carne-ataque")) kaguneSteps += perkNumber('leviata-carne','kaguneSteps',2);
+    if (sheet.perks["trindade-predatoria"] && isActive("kagune", "trindade-predatoria-ataque")) kaguneSteps += perkNumber('trindade-predatoria','kaguneSteps',2);
+    if (sheet.perks["quimera-absoluta"] && isActive("kagune", "quimera-absoluta")) kaguneSteps += perkNumber('quimera-absoluta','kaguneSteps',4);
+    if (sheet.perks["impacto-cinetico"] && isActive("kagune", "impacto-cinetico")) kaguneSteps += perkNumber('impacto-cinetico','kaguneSteps',2);
+    if (sheet.perks["corpo-cerco"] && isActive("kagune", "corpo-cerco")) kaguneSteps += perkNumber('corpo-cerco','kaguneSteps',3);
+    if (sheet.perks["cacador-aberturas"] && isActive("kagune", "cacador-aberturas")) kaguneSteps += perkNumber('cacador-aberturas','kaguneSteps',2);
+    if (sheet.perks.oportunista && isActive("kagune", "oportunista")) kaguneSteps += perkNumber('oportunista','kaguneSteps',2);
+    if (sheet.perks["guarda-agressiva"] && isActive("kagune", "guarda-agressiva")) kaguneSteps += perkNumber('guarda-agressiva','kaguneSteps',2);
+    if (sheet.perks["ritmo-combate"] && isActive("kagune", "ritmo-combate")) kaguneSteps += perkNumber('ritmo-combate','kaguneSteps',1);
+    if (sheet.perks.carrasco && isActive("kagune", "carrasco")) kaguneSteps += perkNumber('carrasco','kaguneSteps',2);
+    if (sheet.perks["ultimo-homem-pe"] && isActive("kagune", "ultimo-homem-pe")) kaguneSteps += perkNumber('ultimo-homem-pe','kaguneSteps',2);
 
     kaguneSteps = Math.floor(kaguneSteps);
     kaguneDamageModifier = Math.floor(kaguneDamageModifier);
     const formaVersatilRank = sheet.effects["forma-versatil"]?.rank || 0;
     const canUseVersatileForm = sheet.weaponKind !== "nenhum" && formaVersatilRank > 0 && kaguneFamilies.has("Koukaku");
     const kaguneManifested = sheet.kaguneActive || (canUseVersatileForm && damage.koukakuMode !== "normal");
-    const characterRD = sheet.perks["pele-dura"] ? Math.floor(activeAttributes.vigor / 2) : 0;
+    const characterRD = sheet.perks["pele-dura"] ? Math.floor(activeAttributes.vigor / Math.max(1,perkNumber('pele-dura','vigorDivisor',2))) : 0;
     let kaguneRD = (kaguneManifested && kaguneFamilies.has("Koukaku") ? 2 : 0) + reworkWeaponRD + pack.bonuses.kaguneRD;
-    if (kaguneManifested) kaguneRD += sheet.effects["couraca-revestida"]?.rank || 0;
-    if (kaguneManifested && kaguneFamilies.has("Koukaku")) kaguneRD += 5 * evolutionRank(sheet.selectedEvolutions, "revestimento-exoesqueletico");
+    if (kaguneManifested) kaguneRD += (sheet.effects["couraca-revestida"]?.rank || 0) * effectNumber('couraca-revestida','rdPerRank',1);
+    if (kaguneManifested && kaguneFamilies.has("Koukaku")) kaguneRD += evolutionNumber('revestimento-exoesqueletico','rdPerRank',5) * evolutionRank(sheet.selectedEvolutions, "revestimento-exoesqueletico");
     const superiorArmor = kaguneManifested ? sheet.effects["couraca-superior"]?.rank || 0 : 0;
     if (superiorArmor) {
       const configuredRD = kaguneEffects.find(effect => effect.id === "couraca-superior")?.rdPerAdditionalRank;
       const rdPerAdditionalRank = typeof configuredRD === "number" && Number.isInteger(configuredRD) && configuredRD >= 0 ? configuredRD : 1;
-      kaguneRD += activeAttributes.vigor + Math.max(0, superiorArmor - 1) * rdPerAdditionalRank;
+      kaguneRD += activeAttributes.vigor * effectNumber('couraca-superior','vigorMultiplier',1) + Math.max(0, superiorArmor - 1) * rdPerAdditionalRank;
     }
     if (kaguneManifested) kaguneRD += damage.kaguneExtraRD;
-    if (sheet.perks["carne-mineral"] && isActive("kagune", "carne-mineral")) kaguneRD += 3;
-    if (sheet.perks["leviata-imortal"] && isActive("kagune", "leviata-imortal")) kaguneRD += 5;
-    if (sheet.perks["postura-dupla"] && isActive("kagune", "postura-dupla-defesa")) kaguneRD += 2;
-    if (sheet.perks["arsenal-carrasco"] && isActive("kagune", "arsenal-carrasco-defesa")) kaguneRD += 3;
-    if (sheet.perks["cavaleiro-escarlate"] && isActive("kagune", "cavaleiro-escarlate-defesa")) kaguneRD += 4;
-    if (sheet.perks["guarda-hidra"] && isActive("kagune", "guarda-hidra")) kaguneRD += 2;
-    if (sheet.perks["serafim-ferro-sangue"] && isActive("kagune", "serafim-ferro-sangue-defesa")) kaguneRD += 3;
-    if (sheet.perks["motor-cerco-celeste"] && isActive("kagune", "motor-cerco-celeste-defesa")) kaguneRD += 2;
-    if (sheet.perks["leviata-carne"] && isActive("kagune", "leviata-carne-defesa")) kaguneRD += 2;
-    if (sheet.perks["trindade-predatoria"] && isActive("kagune", "trindade-predatoria-defesa")) kaguneRD += 3;
-    if (sheet.perks["quimera-absoluta"] && isActive("kagune", "quimera-absoluta")) kaguneRD += 4;
-    if (sheet.selectedEvolutions.includes("perda-peso") && isActive("kagune", "perda-peso")) kaguneRD = Math.max(0, kaguneRD - 6);
+    if (sheet.perks["carne-mineral"] && isActive("kagune", "carne-mineral")) kaguneRD += perkNumber('carne-mineral','kaguneRD',3);
+    if (sheet.perks["leviata-imortal"] && isActive("kagune", "leviata-imortal")) kaguneRD += perkNumber('leviata-imortal','kaguneRD',5);
+    if (sheet.perks["postura-dupla"] && isActive("kagune", "postura-dupla-defesa")) kaguneRD += perkNumber('postura-dupla','kaguneRD',2);
+    if (sheet.perks["arsenal-carrasco"] && isActive("kagune", "arsenal-carrasco-defesa")) kaguneRD += perkNumber('arsenal-carrasco','kaguneRD',3);
+    if (sheet.perks["cavaleiro-escarlate"] && isActive("kagune", "cavaleiro-escarlate-defesa")) kaguneRD += perkNumber('cavaleiro-escarlate','kaguneRD',4);
+    if (sheet.perks["guarda-hidra"] && isActive("kagune", "guarda-hidra")) kaguneRD += perkNumber('guarda-hidra','kaguneRD',2);
+    if (sheet.perks["serafim-ferro-sangue"] && isActive("kagune", "serafim-ferro-sangue-defesa")) kaguneRD += perkNumber('serafim-ferro-sangue','kaguneRD',3);
+    if (sheet.perks["motor-cerco-celeste"] && isActive("kagune", "motor-cerco-celeste-defesa")) kaguneRD += perkNumber('motor-cerco-celeste','kaguneRD',2);
+    if (sheet.perks["leviata-carne"] && isActive("kagune", "leviata-carne-defesa")) kaguneRD += perkNumber('leviata-carne','kaguneRD',2);
+    if (sheet.perks["trindade-predatoria"] && isActive("kagune", "trindade-predatoria-defesa")) kaguneRD += perkNumber('trindade-predatoria','kaguneRD',3);
+    if (sheet.perks["quimera-absoluta"] && isActive("kagune", "quimera-absoluta")) kaguneRD += perkNumber('quimera-absoluta','kaguneRD',4);
+    if (sheet.selectedEvolutions.includes("perda-peso") && isActive("kagune", "perda-peso")) kaguneRD = Math.max(0, kaguneRD - evolutionNumber('perda-peso','rdPenalty',6));
     let rawRD = characterRD + kaguneRD + customSkillBonuses.rd + tails.rd + reworkBonuses.rd + pack.bonuses.rd - (reworkWeaponRD - reworkBonuses.weaponRD);
     const stepsBeforeVersatileForm = kaguneSteps;
     const rdBeforeVersatileForm = rawRD;
@@ -917,15 +934,15 @@ function calculateCharacterCore(sheet: CharacterSheet, context: {quinque?:boolea
     let versatileStepChange = 0;
     let versatileRDChange = 0;
     if (canUseVersatileForm && damage.koukakuMode === "defense") {
-      versatileConvertedDamageSteps = Math.floor(versatileDamageBonusSteps / 2);
+      versatileConvertedDamageSteps = Math.floor(versatileDamageBonusSteps / Math.max(1,effectNumber('forma-versatil','stepsToDefenseDivisor',2)));
       kaguneSteps -= versatileConvertedDamageSteps;
       rawRD += formaVersatilRank + versatileConvertedDamageSteps;
       versatileStepChange = -versatileConvertedDamageSteps;
       versatileRDChange = formaVersatilRank + versatileConvertedDamageSteps;
     }
     if (canUseVersatileForm && damage.koukakuMode === "attack") {
-      versatileConvertedRD = Math.floor(versatileConvertibleRD / 2);
-      const gainedSteps = formaVersatilRank + Math.floor(versatileConvertedRD / 2);
+      versatileConvertedRD = Math.floor(versatileConvertibleRD / Math.max(1,effectNumber('forma-versatil','rdToAttackDivisor',2)));
+      const gainedSteps = formaVersatilRank + Math.floor(versatileConvertedRD / Math.max(1,effectNumber('forma-versatil','rdPerAttackStep',2)));
       rawRD -= versatileConvertedRD;
       kaguneSteps += gainedSteps;
       versatileStepChange = gainedSteps;
@@ -936,11 +953,12 @@ function calculateCharacterCore(sheet: CharacterSheet, context: {quinque?:boolea
     const kakujaKaguneSteps=kaguneStepReference;
     kaguneSteps=Math.max(0,scaled('kaguneSteps',kaguneStepReference));
     const kaguneDamagePerPart = formatDamage(kaguneSteps, kaguneDamageModifier);
-    const additionalEvolutionTails = multipleTailsPlusRank;
-    const hasMultipleTails = multipleTailsRank > 0 || additionalEvolutionTails > 0;
+    const additionalEvolutionTails = evolutionTails;
+    const hasMultipleTails = multipleTailsRank > 0 || additionalEvolutionTails > 0 || skillTails > 0 || cm.tails !== 1 && naturalTails > 1;
     const rinkakuTailCount = hasMultipleTails || kaguneFamilies.has("Rinkaku") ? maximumTails : 0;
     const activeTailCount = rinkakuTailCount ? tails.attacks.length : 0;
-    const kagunePartAttackSteps = Math.max(0, Math.floor((kakujaKaguneSteps - (hasMultipleTails ? 2 : 0)) * statMultiplier("kaguneSteps")));
+    const tailStepPenalty = hasMultipleTails ? effectNumber('multiplas-caudas','stepsPenaltyPerTail',2) : 0;
+    const kagunePartAttackSteps = Math.max(0, Math.floor((kakujaKaguneSteps - tailStepPenalty) * statMultiplier("kaguneSteps")));
     const rinkakuTailDamage = rinkakuTailCount ? formatDamage(kagunePartAttackSteps, kaguneDamageModifier) : "";
     const colossoDamagePerPart = rinkakuTailDamage || kaguneDamagePerPart;
     const kaguneDamage = colossoState.active ? sumPartDamage(Array.from({ length: colossoState.partCount }, () => colossoDamagePerPart)) : kaguneDamagePerPart;
@@ -1017,13 +1035,13 @@ function calculateCharacterCore(sheet: CharacterSheet, context: {quinque?:boolea
 
     const baseMaximumLife = maximumLife(sheet.species, sheet.grade, activeAttributes.vigor, activeAttributes.forca);
     const permanentBaseLifeLoss = Math.floor(baseMaximumLife * pack.baseLifeLossPercent);
-    const maxLife = Math.max(1, Math.floor(scaled("life", maximumLife(sheet.species, sheet.grade, activeAttributes.vigor, activeAttributes.forca, (sheet.perks.resistente ? Math.min(sheet.grade, 10) : 0) + sheet.customBonuses.hp + customSkillBonuses.maxLife + reworkBonuses.life + pack.bonuses.life) + archetypeBonuses.lifeFlat - permanentBaseLifeLoss)));
+    const maxLife = Math.max(1, Math.floor(scaled("life", maximumLife(sheet.species, sheet.grade, activeAttributes.vigor, activeAttributes.forca, (sheet.perks.resistente ? Math.min(sheet.grade,perkNumber('resistente','maximumLevelBonus',10)) * perkNumber('resistente','lifePerLevel',1) : 0) + sheet.customBonuses.hp + customSkillBonuses.maxLife + reworkBonuses.life + pack.bonuses.life) + archetypeBonuses.lifeFlat - permanentBaseLifeLoss)));
     const carrying = Math.floor(Math.max(0, (7 + activeAttributes.forca + customSkillBonuses.carrying)*cm.carrying));
     const wounds = kakujaWounds;
     const kaguneBaseRange = kaguneRange(sheet.kaguneType, sheet.effects["aumentar-distancia"]?.rank || 0, sheet.customBonuses.distance + mastery.range + reworkBonuses.range + pack.bonuses.range);
     const distance = Math.floor((kaguneBaseRange + (colossoState.active ? colossoState.extraPairs : 0)) * pack.rangeMultiplier);
     const tacticalMovementLocked = !context.quinque && Boolean(sheet.tactical?.stance && sheet.tactical.stance.until > sheet.vats.turn);
-    const movement = tacticalMovementLocked ? 0 : Math.max(0, Math.floor((wounds.movement * Math.max(0, (sheet.perks.velocista ? 2 : 1) + customSkillBonuses.movement + mastery.movement + reworkBonuses.movement + kakujaBiology.movement) + pack.bonuses.movement) * combineMultipliers(pack.movementMultiplier,cm.movement)));
+    const movement = tacticalMovementLocked ? 0 : Math.max(0, Math.floor((wounds.movement * Math.max(0, (sheet.perks.velocista ? perkNumber('velocista','movementBase',2) : 1) + customSkillBonuses.movement + mastery.movement + reworkBonuses.movement + kakujaBiology.movement) + pack.bonuses.movement) * combineMultipliers(pack.movementMultiplier,cm.movement)));
     const determination = Math.floor(Math.max(0, ((sheet.perks["nunca-prostra"] ? activeAttributes.controle + 4 : activeAttributes.controle + 2) + customSkillBonuses.determination)*cm.determination));
     const evolutionLevelCount = sheet.selectedEvolutions.length;
     const effectRC = sheet.species === "ghoul-dominante" ? actualEffectPE + effectLevelCount : nominalEffectPE;
@@ -1039,8 +1057,8 @@ function calculateCharacterCore(sheet: CharacterSheet, context: {quinque?:boolea
     const rd = Math.max(0, rdBeforePackSacrifice - pack.rdSacrifice);
     const kaguneInvestmentPE = sheet.weaponKind === "kagune" ? actualEffectPE + evolutionPE + kagunePerksPE + customSkillsPE + quimeraCost : 0;
     const rawKaguneDurability = activeAttributes.vigor + kaguneInvestmentPE;
-    const durabilityMultiplier = sheet.kaguneType === "Ukaku" ? (sheet.selectedEvolutions.includes("coruka") ? 0.8 : 0.5) : sheet.kaguneType === "Koukaku" ? 1.5 : 1;
-    const kagunePartDurability = Math.floor((sheet.weaponKind === "kagune" ? Math.max(1, Math.floor(rawKaguneDurability * durabilityMultiplier) - (mastery.noTailPenalty ? 0 : multipleTailsRank) + customSkillBonuses.kaguneDurability + mastery.tailDurability - (milPernasActive ? 2 : 0)) : 0) * combineMultipliers(pack.kaguneDurabilityMultiplier,cm.durability));
+    const durabilityMultiplier = sheet.kaguneType === "Ukaku" ? (sheet.selectedEvolutions.includes("coruka") ? evolutionNumber('coruka','durabilityMultiplier',0.8) : 0.5) : sheet.kaguneType === "Koukaku" ? 1.5 : 1;
+    const kagunePartDurability = Math.floor((sheet.weaponKind === "kagune" ? Math.max(1, Math.floor(rawKaguneDurability * durabilityMultiplier) - (mastery.noTailPenalty ? 0 : multipleTailsRank * effectNumber('multiplas-caudas','durabilityPenaltyPerRank',1)) + customSkillBonuses.kaguneDurability + mastery.tailDurability - (milPernasActive ? evolutionNumber('mil-pernas','durabilityPenalty',2) : 0)) : 0) * combineMultipliers(pack.kaguneDurabilityMultiplier,cm.durability));
     const colosso = calculateColosso(colossoState, { damagePerPart: colossoDamagePerPart, durabilityPerPart: kagunePartDurability, rdPerPart: kagunePartRD, baseRange: kaguneBaseRange });
     const kaguneDurability = colosso.active ? colosso.durability : kagunePartDurability;
     const normalRegenerationRank = sheet.effects["regeneracao-anormal"]?.rank || 0;
@@ -1055,8 +1073,8 @@ function calculateCharacterCore(sheet: CharacterSheet, context: {quinque?:boolea
       cells: Boolean(sheet.perks["celulas-ageis"]), kami: Boolean(sheet.perks["vivo-kami"]),
     }).amount;
     const kakujaDefenseDice = kakujaManifested ? kakujaFormBonuses(sheet.kakuja.complete && sheet.kakuja.cannibalPE >= 60).dice : 0;
-    const blockBonus = (sheet.perks["corpo-pesado"] ? 1 : 0) + (sheet.effects["bloqueio-ferro"] && sheet.kaguneActive ? 1 : 0) + customSkillBonuses.blockDice + mastery.block + ghoulCombatDice + (sheet.selectedEvolutions.includes("perda-peso") && isActive("kagune","perda-peso") ? Math.floor(sheet.baseAttributes.agilidade/2) : 0) + reworkBonuses.block + pack.bonuses.block + archetypeBonuses.block;
-    const dodgeBonus = (centipedeActive ? 2 : 0) + (sheet.perks["corpo-leve"] ? 1 : 0) + (sheet.effects["esquiva-pena"] && sheet.kaguneActive ? 1 : 0) + (sheet.perks["cem-por-cento"] ? 1 : 0) + (sheet.perks.ceifador ? 2 : 0) + customSkillBonuses.dodgeDice + mastery.dodge + ghoulCombatDice + tails.dodge + reworkBonuses.dodge + pack.bonuses.dodge + archetypeBonuses.dodge;
+    const blockBonus = (sheet.perks["corpo-pesado"] ? perkNumber('corpo-pesado','block',1) : 0) + (sheet.effects["bloqueio-ferro"] && sheet.kaguneActive ? effectNumber('bloqueio-ferro','block',1) : 0) + customSkillBonuses.blockDice + mastery.block + ghoulCombatDice + (sheet.selectedEvolutions.includes("perda-peso") && isActive("kagune","perda-peso") ? Math.floor(sheet.baseAttributes.agilidade/Math.max(1,evolutionNumber('perda-peso','blockAttributeDivisor',2))) : 0) + reworkBonuses.block + pack.bonuses.block + archetypeBonuses.block;
+    const dodgeBonus = (centipedeActive ? evolutionNumber('centopeia','dodge',2) : 0) + (sheet.perks["corpo-leve"] ? perkNumber('corpo-leve','dodge',1) : 0) + (sheet.effects["esquiva-pena"] && sheet.kaguneActive ? effectNumber('esquiva-pena','dodge',1) : 0) + (sheet.perks["cem-por-cento"] ? perkNumber('cem-por-cento','dodge',1) : 0) + (sheet.perks.ceifador ? perkNumber('ceifador','dodge',2) : 0) + customSkillBonuses.dodgeDice + mastery.dodge + ghoulCombatDice + tails.dodge + reworkBonuses.dodge + pack.bonuses.dodge + archetypeBonuses.dodge;
     const blockAttribute = pack.blockAttribute || 'vigor';
     const blockDice = activeAttributes[blockAttribute] + permanentDice[blockAttribute] + sheet.extraDice[blockAttribute] + blockBonus;
     const dodgeDice = activeAttributes.agilidade + permanentDice.agilidade + sheet.extraDice.agilidade + dodgeBonus;
@@ -1071,7 +1089,7 @@ function calculateCharacterCore(sheet: CharacterSheet, context: {quinque?:boolea
     const kakujaDodgeTest = pack.dodgeDisabled ? "Indisponível — Postura sem Retorno" : kakujaDefenseTest("dodge", dodgeDice + kakujaDefenseDice + kakujaBonuses.dodge, dodgeModifier, kakujaWounds.dodge - colossoAgilityPenalty - (kakujaManifested && sheet.kakuja.selectedInstabilities.includes("corpo-pesado") ? 1 : 0));
     const kakujaInheritedRD = colosso.active ? colosso.rd : kagunePartRD;
     const kakujaKaguneRD=kakujaInheritedRD;
-    const kakujaPartDurability = kakujaManifested && sheet.kaguneType === "Ukaku" && sheet.selectedEvolutions.includes("coruka") ? Math.floor(Math.max(1, Math.floor(rawKaguneDurability * 1.1) - (mastery.noTailPenalty ? 0 : multipleTailsRank) + customSkillBonuses.kaguneDurability + mastery.tailDurability - (milPernasActive ? 2 : 0)) * combineMultipliers(pack.kaguneDurabilityMultiplier,cm.durability)) : kagunePartDurability;
+    const kakujaPartDurability = kakujaManifested && sheet.kaguneType === "Ukaku" && sheet.selectedEvolutions.includes("coruka") ? Math.floor(Math.max(1, Math.floor(rawKaguneDurability * evolutionNumber('coruka','kakujaDurabilityMultiplier',1.1)) - (mastery.noTailPenalty ? 0 : multipleTailsRank * effectNumber('multiplas-caudas','durabilityPenaltyPerRank',1)) + customSkillBonuses.kaguneDurability + mastery.tailDurability - (milPernasActive ? evolutionNumber('mil-pernas','durabilityPenalty',2) : 0)) * combineMultipliers(pack.kaguneDurabilityMultiplier,cm.durability)) : kagunePartDurability;
     const kakujaKaguneDurability = colosso.active ? Math.floor(kakujaPartDurability * colossoState.partCount / 2) : kakujaPartDurability;
     for (const key of attributeKeys) attributeTests[key] = adjustTest(attributeTests[key], physicalAttributes.includes(key) ? wounds.physical + (key === "agilidade" ? wounds.agility : 0) : wounds.mental);
     attributeTests.agilidade = adjustTest(attributeTests.agilidade, -colossoAgilityPenalty);
@@ -1106,7 +1124,7 @@ function calculateCharacterCore(sheet: CharacterSheet, context: {quinque?:boolea
     const archetypeSurvivalTest=adjustTest(attributeTests.vigor,archetypeBonuses.survivalBonus);
     const kaguneRDReference=colosso.active?kagunePartRawRD*colosso.partCount:kagunePartRawRD;
     const rcRegeneratedMultiplier=cm.rcRegenerated;
-    return { regenerationReference:regenerationBase,carrierAccuracyMultiplier,carrierDodgeMultiplier,kakujaInheritedStepMultiplier,kakujaInheritedRDMultiplier,archetypeBonuses,archetypeSurvivalTest,physicalStepReference,kaguneStepReference,physicalStepsUnrounded,kaguneStepsUnrounded,penetrationStepsPercent,kaguneStepMultiplier:statMultiplier('kaguneSteps'),kaguneRDReference,inheritedRDMultiplier:statMultiplier('rd'),rcRegeneratedMultiplier, baseMaximumLife, permanentBaseLifeLoss, kakujaColosso: colosso, kagunePartAttackSteps, levelRC, kaguneControlPerksRCPE, kagunePerkRC, quimeraModifiers, quimeraModifier, rdBeforePackSacrifice, packEffects, kakujaPackEffects: packEffects, kakujaManifested, kakujaDefenseDice, kakujaBlockTest, kakujaDodgeTest, kakujaExtraAttacks, kakujaKaguneTest, kakujaKaguneSteps, kakujaKaguneDamageModifier:kaguneDamageModifier, kakujaKaguneRD, kakujaKaguneDurability, kakujaKaguneRange:distance, kakujaKagunePenetration:scaling.penetrationPercent, kakujaMovement:movement, kakujaAttributes:activeAttributes, kakujaBiology, rcSuppressed, scaling, poisonConfig, colosso, kagunePartDurability, kagunePartRD, kaguneDamagePerPart, reworkBonuses, initiativeBonus, initiativeTest, testDie, ghoulControlBonus, ghoulCombatBase, kakujaBonuses, ghoulCombatDice, naturalTails, activeTailCount, tails, mastery, maximumTails, tailAttackRC: tailAttackCost(2, mastery.efficientTailRC), distance, wounds, species, speciesBonuses, permanentAttributes, activeAttributes, permanentDice, attributeTests, primaryAttribute, kaguneTest, increaseHitRank, looseHitAdjustments, physicalAttribute, physicalValue, physicalHitTest, physicalSteps, physicalDamageModifier, physicalDamage, kaguneSteps, kaguneDamageModifier, kaguneDamage, extraAttacks, officialExtraAttacks, rinkakuTailCount, rinkakuTailDamage, rinkakuAllTailsDamage, multipleTailsRank, multipleTailsPlusRank, activeMultipleTailsPlusRank: additionalEvolutionTails, formaVersatilRank, stepsBeforeVersatileForm, rdBeforeVersatileForm, versatileDamageBonusSteps, versatileConvertedDamageSteps, versatileConvertibleRD, versatileConvertedRD, versatileStepChange, versatileRDChange, attributePE, catalogPerksPE, nonKaguneCatalogPerksPE, nonKagunePerkCount, kagunePerksPE, kagunePerkLevelCount, customPerksPE, customSkillsPE, customSkillRC, customSkillBonuses, perksPE, drawbackCredit, nominalEffectPE, actualEffectPE, effectLevelCount, effectRC, freeKaguneBudget, paidEffectPE, nominalEvolutionPE, evolutionPE, evolutionLevelCount, evolutionRC, currentGradeRequirement, cumulativeGradeRequirement, gradeGrant, gradeRewardBreakdown, progressionPE, hasNextGrade, nextGrade, nextGradeRequirement, nextCumulativeRequirement, progressRemaining, progressPercent, canAdvanceGrade, peAvailable, peSpent, peRemaining, kakujaCommonPE, maxLife, maxSanity, maxRC, carrying, movement, determination, rd, kaguneInvestmentPE, rawKaguneDurability, durabilityMultiplier, kaguneDurability, normalRegeneration, superiorRegeneration, regenerationSkill, regeneration, blockTest, dodgeTest, purchasedCap, issues, quimeraCost, quimeraTypeCount, frameBudget };
+    return { regenerationReference:regenerationBase,carrierAccuracyMultiplier,carrierDodgeMultiplier,kakujaInheritedStepMultiplier,kakujaInheritedRDMultiplier,archetypeBonuses,archetypeSurvivalTest,physicalStepReference,kaguneStepReference,physicalStepsUnrounded,kaguneStepsUnrounded,penetrationStepsPercent,kaguneStepMultiplier:statMultiplier('kaguneSteps'),kaguneRDReference,inheritedRDMultiplier:statMultiplier('rd'),rcRegeneratedMultiplier, baseMaximumLife, permanentBaseLifeLoss, kakujaColosso: colosso, kagunePartAttackSteps, levelRC, kaguneControlPerksRCPE, kagunePerkRC, quimeraModifiers, quimeraModifier, rdBeforePackSacrifice, packEffects, kakujaPackEffects: packEffects, kakujaManifested, kakujaDefenseDice, kakujaBlockTest, kakujaDodgeTest, kakujaExtraAttacks, kakujaKaguneTest, kakujaKaguneSteps, kakujaKaguneDamageModifier:kaguneDamageModifier, kakujaKaguneRD, kakujaKaguneDurability, kakujaKaguneRange:distance, kakujaKagunePenetration:scaling.penetrationPercent, kakujaMovement:movement, kakujaAttributes:activeAttributes, kakujaBiology, rcSuppressed, scaling, poisonConfig, colosso, kagunePartDurability, kagunePartRD, kaguneDamagePerPart, reworkBonuses, initiativeBonus, initiativeTest, testDie, ghoulControlBonus, ghoulCombatBase, kakujaBonuses, ghoulCombatDice, naturalTails, activeTailCount, tails, mastery, maximumTails, tailStepPenalty, paidTailStart, skillTails, effectTails, tailAttackRC: tailAttackCost(evolutionNumber('multiplas-caudas-plus','tailAttackRC',2), mastery.efficientTailRC), distance, wounds, species, speciesBonuses, permanentAttributes, activeAttributes, permanentDice, attributeTests, primaryAttribute, kaguneTest, increaseHitRank, looseHitAdjustments, physicalAttribute, physicalValue, physicalHitTest, physicalSteps, physicalDamageModifier, physicalDamage, kaguneSteps, kaguneDamageModifier, kaguneDamage, extraAttacks, officialExtraAttacks, rinkakuTailCount, rinkakuTailDamage, rinkakuAllTailsDamage, multipleTailsRank, multipleTailsPlusRank, activeMultipleTailsPlusRank: additionalEvolutionTails, formaVersatilRank, stepsBeforeVersatileForm, rdBeforeVersatileForm, versatileDamageBonusSteps, versatileConvertedDamageSteps, versatileConvertibleRD, versatileConvertedRD, versatileStepChange, versatileRDChange, attributePE, catalogPerksPE, nonKaguneCatalogPerksPE, nonKagunePerkCount, kagunePerksPE, kagunePerkLevelCount, customPerksPE, customSkillsPE, customSkillRC, customSkillBonuses, perksPE, drawbackCredit, nominalEffectPE, actualEffectPE, effectLevelCount, effectRC, freeKaguneBudget, paidEffectPE, nominalEvolutionPE, evolutionPE, evolutionLevelCount, evolutionRC, currentGradeRequirement, cumulativeGradeRequirement, gradeGrant, gradeRewardBreakdown, progressionPE, hasNextGrade, nextGrade, nextGradeRequirement, nextCumulativeRequirement, progressRemaining, progressPercent, canAdvanceGrade, peAvailable, peSpent, peRemaining, kakujaCommonPE, maxLife, maxSanity, maxRC, carrying, movement, determination, rd, kaguneInvestmentPE, rawKaguneDurability, durabilityMultiplier, kaguneDurability, normalRegeneration, superiorRegeneration, regenerationSkill, regeneration, blockTest, dodgeTest, purchasedCap, issues, quimeraCost, quimeraTypeCount, frameBudget };
 
 }
 
@@ -1147,7 +1165,7 @@ function calculateCharacterWithoutLevelDice(sheet: CharacterSheet, context: {qui
   const regenerationSkill=Math.floor(Math.max(0,Math.max(base.normalRegeneration,base.superiorRegeneration)+base.customSkillBonuses.regeneration+inherited.kakujaBonuses.regeneration+base.packEffects.bonuses.regen)*combineMultipliers(base.packEffects.regenMultiplier,base.customSkillBonuses.multipliers.regeneration,formSkills.regeneration,1+base.archetypeBonuses.regenPercent,1+biology.regenerationPercent/100)+base.maxLife*biology.regenerationLifePercent/100);
   const regeneration = passiveRegeneration(sheet.vats,{regeneration:regenerationSkill,regenerationReference:base.regenerationReference,maxLife:base.maxLife,grade:sheet.grade,cells:Boolean(sheet.perks["celulas-ageis"]),kami:Boolean(sheet.perks["vivo-kami"])}).amount;
   const movementLocked = Boolean(sheet.tactical?.stance && sheet.tactical.stance.until > sheet.vats.turn);
-  const movement = movementLocked ? 0 : Math.max(0, Math.floor((wounds.movement * Math.max(0,(sheet.perks.velocista ? 2 : 1) + base.customSkillBonuses.movement + base.mastery.movement + base.reworkBonuses.movement + biology.movement) + base.packEffects.bonuses.movement) * combineMultipliers(base.packEffects.movementMultiplier,base.customSkillBonuses.multipliers.movement)));
+  const movement = movementLocked ? 0 : Math.max(0, Math.floor((wounds.movement * Math.max(0,(sheet.perks.velocista ? perkNumber('velocista','movementBase',2) : 1) + base.customSkillBonuses.movement + base.mastery.movement + base.reworkBonuses.movement + biology.movement) + base.packEffects.bonuses.movement) * combineMultipliers(base.packEffects.movementMultiplier,base.customSkillBonuses.multipliers.movement)));
   return {
     ...base,
     wounds,

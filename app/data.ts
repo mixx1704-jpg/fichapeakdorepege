@@ -137,6 +137,9 @@ export interface KaguneEffect {
   requiresEffects?: { id: string; minRank?: number }[];
   minPassiveEffects?: number;
   rdPerAdditionalRank?: number;
+  grade?: number;
+  mechanics?: import('./catalog-mechanics').CatalogMechanics;
+  automation?: { custom?: import('./perk-catalog').CatalogAutomation['custom'] };
 }
 
 export const kaguneEffects: KaguneEffect[] = perkCatalog.kaguneEffects;
@@ -160,6 +163,8 @@ export interface Evolution {
   requiresKakuja?: "incomplete" | "complete";
   requiresLowSanity?: boolean;
   narrativeRequirement?: string;
+  mechanics?: import('./catalog-mechanics').CatalogMechanics;
+  automation?: { custom?: import('./perk-catalog').CatalogAutomation['custom'] };
 }
 
 export const evolutions: Evolution[] = perkCatalog.evolutions;

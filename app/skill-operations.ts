@@ -3,7 +3,7 @@ import {isConditionalCatalogEntry} from './catalog-filters';
 
 export type SkillOperation='add'|'subtract'|'multiply'|'increase-percent'|'decrease-percent';
 export type SkillTiming={condition?:string;conditionMet?:boolean;durationTurns?:number;activatedTurn?:number;expiresTurn?:number;limitations?:string;source?:string};
-export const skillMultiplierKeys=['physicalHit','kaguneHit','physicalSteps','kaguneSteps','physicalDamage','kaguneDamage','dodge','block','rd','life','rc','sanity','regeneration','durability','movement','carrying','determination','extraAttacks','rcRegenerated','peGain'] as const;
+export const skillMultiplierKeys=['physicalHit','kaguneHit','physicalSteps','kaguneSteps','physicalDamage','kaguneDamage','dodge','block','rd','life','rc','sanity','regeneration','durability','movement','carrying','determination','extraAttacks','tails','rcRegenerated','peGain'] as const;
 export type SkillMultiplierKey=typeof skillMultiplierKeys[number];
 export type CustomMultipliers=Record<SkillMultiplierKey,number>&{attributes:Record<string,number>;attributeChecks:Record<string,number>};
 export function blankCustomMultipliers():CustomMultipliers {return {...Object.fromEntries(skillMultiplierKeys.map(k=>[k,1])),attributes:{},attributeChecks:{}} as CustomMultipliers;}
@@ -28,7 +28,7 @@ export function transitionCustomSkills(previous:CustomSkill[],requested:CustomSk
   });
 }
 export function expireCustomSkills(skills:CustomSkill[],turn:number):CustomSkill[] {return skills.map(skill=>({...skill,...(skill.expiresTurn&&turn>=skill.expiresTurn?{enabled:false}:{}),effects:skill.effects.map(e=>({...e,...(e.expiresTurn&&turn>=e.expiresTurn?{enabled:false}:{})}))}));}
-const targetKeys:Record<string,SkillMultiplierKey>={'hit-dice':'kaguneHit','damage-steps':'kaguneSteps','damage-modifier':'kaguneDamage','extra-attacks':'extraAttacks','dodge-dice':'dodge','block-dice':'block',rd:'rd','max-life':'life','max-rc':'rc','max-sanity':'sanity',regeneration:'regeneration','kagune-durability':'durability',movement:'movement',carrying:'carrying',determination:'determination','rc-regenerated':'rcRegenerated','pe-gain':'peGain'};
+const targetKeys:Record<string,SkillMultiplierKey>={'hit-dice':'kaguneHit','damage-steps':'kaguneSteps','damage-modifier':'kaguneDamage','extra-attacks':'extraAttacks',tails:'tails','dodge-dice':'dodge','block-dice':'block',rd:'rd','max-life':'life','max-rc':'rc','max-sanity':'sanity',regeneration:'regeneration','kagune-durability':'durability',movement:'movement',carrying:'carrying',determination:'determination','rc-regenerated':'rcRegenerated','pe-gain':'peGain'};
 export function projectCustomOperations(skills:CustomSkill[],turn=1) {
   const multipliers=blankCustomMultipliers(),additiveSkills:CustomSkill[]=[],peGainSources:string[]=[];
   let penetration=0;

@@ -1,4 +1,6 @@
 import type { Evolution } from './data';
+import { evolutionNumber, evolutionFlag } from './catalog-mechanics';
+import { perkCatalog } from './perk-catalog';
 
 export const masteryEvolutions: Evolution[] = [
   {id:'eixo-aco',name:'Eixo de Aço',cost:10,grade:8,family:'Koukaku',description:'Com a Kagune manifestada, +2 acertos extras em todos os ataques com ela, inclusive ataques extras e contra-ataques já disponíveis.'},
@@ -19,26 +21,26 @@ export const masteryEvolutions: Evolution[] = [
 ];
 
 export function masteryBonuses(selected: string[], manifested: boolean, baseVigor: number) {
-  const rank = (id: string, max = 1) => manifested ? Math.min(max, selected.filter(x => x === id).length) : 0;
+  const rank = (id: string, max = 1) => manifested ? Math.min(perkCatalog.evolutions.find(item=>item.id===id)?.maxRank||max, selected.filter(x => x === id).length) : 0;
   const architecture = rank('arquitetura-cerco',2), center = rank('dominio-centro',2);
   return {
-    hit: 2 * (rank('eixo-aco') + rank('sinapse-distribuida') + rank('instinto-exatidao')) + 2 * architecture + rank('consciencia-tentacular',3) + (center ? 1 + 2 * center : 0),
-    steps: (rank('nucleo-impacto') ? Math.floor(Math.max(0,baseVigor)/2) : 0) + 2 * rank('gume-integral'),
-    range: 2 * (rank('lamina-telescopica') + rank('tendoes-longo-alcance')),
-    block: 2 * (rank('guarda-estrutural') + rank('equilibrio-absoluto')),
-    dodge: 2 * rank('equilibrio-absoluto'),
-    stability: 2 * rank('guarda-estrutural'),
-    movement: rank('continuidade-predatoria'),
-    tailDurability: 5 * rank('trama-sustentacao'),
-    noTailPenalty: Boolean(rank('trama-sustentacao')),
+    hit: evolutionNumber('eixo-aco','hit',2)*rank('eixo-aco') + evolutionNumber('sinapse-distribuida','hit',2)*rank('sinapse-distribuida') + evolutionNumber('instinto-exatidao','hit',2)*rank('instinto-exatidao') + evolutionNumber('arquitetura-cerco','hitPerRank',2)*architecture + evolutionNumber('consciencia-tentacular','hitPerRank',1)*rank('consciencia-tentacular',3) + (center ? evolutionNumber('dominio-centro','hitByRank',1+2*center,center) : 0),
+    steps: (rank('nucleo-impacto') ? Math.floor(Math.max(0,baseVigor)/Math.max(1,evolutionNumber('nucleo-impacto','vigorDivisor',2))) : 0) + evolutionNumber('gume-integral','steps',2) * rank('gume-integral'),
+    range: evolutionNumber('lamina-telescopica','range',2)*rank('lamina-telescopica') + evolutionNumber('tendoes-longo-alcance','range',2)*rank('tendoes-longo-alcance'),
+    block: evolutionNumber('guarda-estrutural','block',2)*rank('guarda-estrutural') + evolutionNumber('equilibrio-absoluto','block',2)*rank('equilibrio-absoluto'),
+    dodge: evolutionNumber('equilibrio-absoluto','dodge',2)*rank('equilibrio-absoluto'),
+    stability: evolutionNumber('guarda-estrutural','stability',2)*rank('guarda-estrutural'),
+    movement: evolutionNumber('continuidade-predatoria','movement',1)*rank('continuidade-predatoria'),
+    tailDurability: evolutionNumber('trama-sustentacao','tailDurability',5)*rank('trama-sustentacao'),
+    noTailPenalty: Boolean(rank('trama-sustentacao')) && evolutionFlag('trama-sustentacao','removeTailPenalty',true),
     efficientTailRC: Boolean(rank('circuito-rc-eficiente')),
   };
 }
 
 export function tailAttackCost(baseCost: number, efficient: boolean) {
-  return baseCost <= 0 ? 0 : Math.max(1, baseCost - (efficient ? 1 : 0));
+  return baseCost <= 0 ? 0 : Math.max(1, baseCost - (efficient ? evolutionNumber('circuito-rc-eficiente','tailAttackDiscount',1) : 0));
 }
 
 export function growthBonus(stacks: number, tails: number) {
-  return 2 * Math.min(Math.max(0, Math.floor(tails)), Math.max(0, Math.floor(stacks)));
+  return evolutionNumber('continua-crescendo','stepsPerStack',2) * Math.min(Math.max(0, Math.floor(tails)), Math.max(0, Math.floor(stacks)));
 }

@@ -4,12 +4,12 @@ import { isConditionalCatalogEntry } from "./catalog-filters";
 import type { Evolution, KaguneEffect, Perk } from "./data";
 import type { CatalogPerk } from './perk-catalog';
 
-export function QuickCatalogSkills({items,active,currentRC,onToggle,drawbacks=false}:{items:Array<Pick<Perk,'id'|'name'|'description'>>;active:Record<string,boolean>;currentRC:number;onToggle:(id:string,cost:number)=>void;drawbacks?:boolean}) {
+export function QuickCatalogSkills({items,active,currentRC,onToggle,drawbacks=false,disabled=false}:{items:Array<Pick<Perk,'id'|'name'|'description'>>;active:Record<string,boolean>;currentRC:number;onToggle:(id:string,cost:number)=>void;drawbacks?:boolean;disabled?:boolean}) {
   const visible=(items as CatalogPerk[]).filter(p=>p.automation?.custom?.activation==='active');
   if(!visible.length)return null;
   return <section className="section-block quick-activations"><h2>{drawbacks?'Condições das desvantagens':'Habilidades do catálogo'}</h2><p className="section-help">{drawbacks?'Ligue a penalidade enquanto a condição da desvantagem estiver acontecendo.':'Ative o bônus enquanto o efeito durar. O custo de RC é pago uma vez ao ativar.'}</p><div className="quick-activation-grid">{visible.map(p=>{
     const enabled=!!active[`tracking:${p.id}`],cost=p.automation?.custom?.rcCost||0;
-    return <label key={p.id} className={`requirement-confirm quick-activation ${enabled?'active':''}`}><input type="checkbox" checked={enabled} disabled={!enabled&&currentRC<cost} onChange={()=>onToggle(p.id,enabled?0:cost)}/><span><b>{p.name}</b><small>{p.description}</small><em>{drawbacks?(enabled?'Penalidade aplicada':'Condição ausente'):`${enabled?'Ativa':'Inativa'} · ${cost} RC ao ativar`}</em></span></label>;
+    return <label key={p.id} className={`requirement-confirm quick-activation ${enabled?'active':''}`}><input type="checkbox" checked={enabled} disabled={!enabled&&(disabled||currentRC<cost)} onChange={()=>onToggle(p.id,enabled?0:cost)}/><span><b>{p.name}</b><small>{p.description}</small><em>{drawbacks?(enabled?'Penalidade aplicada':'Condição ausente'):`${enabled?'Ativa':'Inativa'} · ${cost} RC ao ativar`}</em></span></label>;
   })}</div></section>;
 }
 

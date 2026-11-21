@@ -1,3 +1,4 @@
+import { evolutionNumber } from './catalog-mechanics';
 export type TailRole = 'attack' | 'guard' | 'dodge' | 'utility';
 export type TailPart = {damage:number;ready:number;sacrificedUntil:number;name?:string;enabled?:boolean;role?:TailRole;notes?:string};
 export function tailAvailability(part:TailPart|undefined, manifested:boolean, turn:number, kakuhouUntil:number) {
@@ -13,11 +14,11 @@ export function tailLoadout(parts:TailPart[],capacity:number,manifested:boolean,
  const attacks=available.filter(i=>!parts[i]?.role||parts[i].role==='attack');
  // Oito Caminhos reserves one tail for one defense, never stacks per tail.
  const reserved=eightPaths?available.find(i=>parts[i]?.role==='guard'||parts[i]?.role==='dodge'):undefined;
- return {available,attacks,reserved,rd:reserved!==undefined&&parts[reserved]?.role==='guard'?2:0,dodge:reserved!==undefined&&parts[reserved]?.role==='dodge'?2:0};
+ return {available,attacks,reserved,rd:reserved!==undefined&&parts[reserved]?.role==='guard'?evolutionNumber('oito-caminhos','rd',2):0,dodge:reserved!==undefined&&parts[reserved]?.role==='dodge'?evolutionNumber('oito-caminhos','dodge',2):0};
 }
 
 export function tailAttackBudget(attacks:number[],paidTailStart:number,perTailCost:number,manualStart=Infinity,manualCount=0,manualCost=0) {
- const costs=attacks.map(i=>i>=manualStart&&i<manualStart+manualCount?Math.max(0,manualCost):i>=paidTailStart?Math.max(1,perTailCost):0);
+ const costs=attacks.map(i=>i>=manualStart&&i<manualStart+manualCount?Math.max(0,manualCost):i>=paidTailStart?Math.max(0,perTailCost):0);
  const paid=costs.filter(c=>c>0).length;
  // Preserve partial per-tail costs until the combined payment is calculated.
  return {paid,free:attacks.length-paid,total:Math.floor(costs.reduce((a,b)=>a+b,0))};

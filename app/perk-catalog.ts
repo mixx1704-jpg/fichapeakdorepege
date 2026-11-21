@@ -15,7 +15,7 @@ export type CatalogAutomation = {
   endgame?: { percentages: Record<string, number>; description: string };
   custom?: { activation: 'passive' | 'active'; rcCost?: number; effects: CustomSkillEffect[] };
 };
-export type CatalogPerk = Perk & { catalogGroups?: string[]; automation?: CatalogAutomation };
+export type CatalogPerk = Perk & { catalogGroups?: string[]; mechanics?: import('./catalog-mechanics').CatalogMechanics; automation?: CatalogAutomation };
 if(raw.schemaVersion!==2||!Array.isArray(raw.drawbacks))throw new Error('Atualize o catálogo: importe e exporte o perks.json pelo editor local de perks e desvantagens.');
 export const perkCatalog = raw as unknown as { schemaVersion: number; perks: CatalogPerk[]; drawbacks: Drawback[]; kakujaPerks: (KakujaPerk & {catalogGroups?: string[]})[]; kaguneEffects: (KaguneEffect & {catalogGroups?: string[]})[]; evolutions: (Evolution & {catalogGroups?: string[]})[] };
 export const catalogGroup = (group: string) => perkCatalog.perks.filter(p => p.catalogGroups?.includes(group));
