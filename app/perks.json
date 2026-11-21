@@ -25987,7 +25987,7 @@
       "id": "r26-revisao-012",
       "name": "FIAÇÃO REATIVA",
       "category": "Controle",
-      "cost": 36,
+      "cost": 15,
       "maxRank": 1,
       "minGrade": 12,
       "description": "Passiva\nREQ: GHOUL & LEVEL 12  |  36 PE\nAs fibras da kagune desenvolvem uma resposta motora quase independente, contraindo-se automaticamente diante de ameaças identificadas pelo usuário.\nEfeitos:\n- +35 BLOQUEIO ao defender-se com a kagune.\n- Uma vez por turno, pode defender com a kagune mesmo que ela esteja simultaneamente realizando outro movimento, desde que possua uma reação disponível.\nA habilidade não cria reações extras.",
@@ -26091,7 +26091,9 @@
           "textoAnterior": "Passiva\nREQ: GHOUL & LEVEL 12  |  22 PE\nAs fibras da kagune desenvolvem uma resposta motora quase independente, contraindo-se automaticamente diante de ameaças identificadas pelo usuário.\nEfeitos:\n- +35 BLOQUEIO ao defender-se com a kagune.\n- Uma vez por turno, pode defender com a kagune mesmo que ela esteja simultaneamente realizando outro movimento, desde que possua uma reação disponível.\nA habilidade não cria reações extras.",
           "motivo": "Remoção de avisos e comentários de revisão; preços citados sincronizados com os campos de compra."
         }
-      }
+      },
+      "costMode": "choice",
+      "min": 0
     },
     {
       "id": "r26-revisao-013",
@@ -36766,7 +36768,7 @@
       "id": "r26-apice-humano",
       "name": "Ápice Humano",
       "category": "Genérica",
-      "cost": 82,
+      "cost": 25,
       "maxRank": 1,
       "minGrade": 14,
       "supplement": true,
@@ -39660,7 +39662,7 @@
       "id": "r26-martelo-cerco",
       "name": "Martelo de Cerco",
       "category": "Combate",
-      "cost": 52,
+      "cost": 25,
       "maxRank": 1,
       "minGrade": 18,
       "supplement": true,
@@ -39744,7 +39746,9 @@
             "damage": 60
           }
         }
-      }
+      },
+      "costMode": "choice",
+      "min": 0
     },
     {
       "id": "r26-bastiao-apocaliptico",
@@ -40199,7 +40203,7 @@
       "id": "r26-nervos-hidra",
       "name": "Nervos da Hidra",
       "category": "Controle",
-      "cost": 44,
+      "cost": 25,
       "maxRank": 1,
       "minGrade": 10,
       "supplement": true,
@@ -40272,7 +40276,8 @@
             "dodge": 22
           }
         }
-      }
+      },
+      "costMode": "choice"
     },
     {
       "id": "r26-sangue-esmagador",
@@ -40357,7 +40362,7 @@
       "id": "r26-hidra-insaciavel",
       "name": "Hidra Insaciável",
       "category": "Combate",
-      "cost": 52,
+      "cost": 25,
       "maxRank": 1,
       "minGrade": 18,
       "supplement": true,
@@ -40441,7 +40446,9 @@
             "rd": 85
           }
         }
-      }
+      },
+      "costMode": "choice",
+      "min": 0
     },
     {
       "id": "r26-orochi-soberano",
@@ -43036,7 +43043,7 @@
       "id": "r26-exp-vigor-guarda-de-granito",
       "name": "Guarda de Granito",
       "category": "Vigor",
-      "cost": 38,
+      "cost": 25,
       "maxRank": 1,
       "minGrade": 8,
       "supplement": true,
@@ -43110,7 +43117,9 @@
             "rd": 50
           }
         }
-      }
+      },
+      "costMode": "choice",
+      "location": "vantagens"
     },
     {
       "id": "r26-exp-vigor-vitalidade-de-guerra",
@@ -43451,7 +43460,7 @@
       "id": "r26-exp-vigor-bastiao-de-carne",
       "name": "Bastião de Carne",
       "category": "Vigor",
-      "cost": 42,
+      "cost": 15,
       "maxRank": 1,
       "minGrade": 16,
       "supplement": true,
@@ -43536,7 +43545,9 @@
             "steps": 45
           }
         }
-      }
+      },
+      "costMode": "choice",
+      "location": "vantagens"
     },
     {
       "id": "r26-exp-vigor-coracao-de-guerra",
@@ -48212,7 +48223,7 @@
       "id": "r26-exp-percepcao-sentido-de-trajetoria",
       "name": "Sentido de Trajetória",
       "category": "Percepção",
-      "cost": 44,
+      "cost": 15,
       "maxRank": 1,
       "minGrade": 6,
       "supplement": true,
@@ -48280,7 +48291,9 @@
             "dodge": 22
           }
         }
-      }
+      },
+      "costMode": "choice",
+      "location": "vantagens"
     },
     {
       "id": "r26-exp-percepcao-pupila-predatoria",
@@ -51043,7 +51056,7 @@
       "id": "r26-exp-controle-guarda-consciente",
       "name": "Guarda Consciente",
       "category": "Controle",
-      "cost": 46,
+      "cost": 25,
       "maxRank": 1,
       "minGrade": 7,
       "supplement": true,
@@ -51125,7 +51138,9 @@
             "reserve": 25
           }
         }
-      }
+      },
+      "costMode": "choice",
+      "location": "vantagens"
     },
     {
       "id": "r26-exp-controle-cerebro-predatorio",
@@ -62930,7 +62945,7 @@
       "id": "r26-passos-koukaku-bastiao-demolidor",
       "name": "Bastião Demolidor",
       "category": "Combate",
-      "cost": 94,
+      "cost": 35,
       "maxRank": 1,
       "minGrade": 16,
       "supplement": true,
@@ -63172,7 +63187,7 @@
       "id": "r26-passos-rinkaku-hidra-dilacerante",
       "name": "Hidra Dilacerante",
       "category": "Combate",
-      "cost": 74,
+      "cost": 35,
       "maxRank": 1,
       "minGrade": 16,
       "supplement": true,
@@ -63262,7 +63277,8 @@
             "hit": 35
           }
         }
-      }
+      },
+      "costMode": "choice"
     },
     {
       "id": "r26-passos-bikaku-cauda-martelo",
@@ -67697,7 +67713,7 @@
       "id": "r26-tatica-bastiao-vivo",
       "name": "Bastião Vivo",
       "category": "Vigor",
-      "cost": 80,
+      "cost": 35,
       "maxRank": 1,
       "minGrade": 20,
       "attribute": "vigor",
@@ -67760,7 +67776,9 @@
           "textoAnterior": "PROPOSTA PARA REVISAR\n\nBastião Vivo: ativação por reação, redução de 75% dos próximos dois danos pós-RD; manter a imobilização.",
           "motivo": "Remoção de avisos e comentários de revisão; preços citados sincronizados com os campos de compra."
         }
-      }
+      },
+      "costMode": "choice",
+      "location": "vantagens"
     },
     {
       "id": "r26-tatica-retaliacao-absoluta",
@@ -68941,7 +68959,7 @@
       "id": "corpo-pesado",
       "name": "Corpo Pesado",
       "category": "Genérica",
-      "cost": 24,
+      "cost": 12,
       "description": "+15 acertos em Vigor para Bloqueio.",
       "mechanics": {
         "block": 15
@@ -68978,7 +68996,7 @@
             },
             {
               "campo": "description",
-              "antes": "PROPOSTA PARA REVISAR\n\n+15 Bloqueio, sem somar o +10 autoral das versões antigas ao +15 nativo.",
+              "antes": "PROPOSTA PARA REVISAR+15 Bloqueio, sem somar o +10 autoral das versões antigas ao +15 nativo.",
               "depois": "+15 acertos em Vigor para Bloqueio."
             }
           ]
@@ -68999,7 +69017,7 @@
       "id": "corpo-leve",
       "name": "Corpo Leve",
       "category": "Genérica",
-      "cost": 24,
+      "cost": 12,
       "description": "+15 acertos em Agilidade para Esquiva.",
       "mechanics": {
         "dodge": 15
@@ -69036,7 +69054,7 @@
             },
             {
               "campo": "description",
-              "antes": "PROPOSTA PARA REVISAR\n\n+15 Esquiva, sem somar o +10 autoral das versões antigas ao +15 nativo.",
+              "antes": "PROPOSTA PARA REVISAR+15 Esquiva, sem somar o +10 autoral das versões antigas ao +15 nativo.",
               "depois": "+15 acertos em Agilidade para Esquiva."
             }
           ]
@@ -157631,7 +157649,7 @@
     {
       "id": "multiplas-caudas-plus",
       "name": "Múltiplas Caudas +",
-      "cost": 20,
+      "cost": 10,
       "grade": 6,
       "family": "Rinkaku",
       "description": "Cada compra cria uma cauda permanente. N1 concede +25 Passo de Dano; N2 mantém +25 Passo total; N3 eleva o bônus total para +25 Passos. Cada cauda adicional pode atacar por 2 RC.",
