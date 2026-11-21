@@ -24941,10 +24941,10 @@
       "id": "r26-revisao-001",
       "name": "SINAPSE HIPER-ACELERADA",
       "category": "Raciocínio",
-      "cost": 28,
+      "cost": 24,
       "maxRank": 1,
       "minGrade": 1,
-      "description": "Passiva\nREQ: 10 RACIOCÍNIO  |  28 PE\nO cérebro do usuário alcança um processamento neural extraordinário, permitindo interpretar múltiplas informações em intervalos infinitesimais de tempo. A percepção do mundo se torna mais lenta em relação à própria consciência, fazendo movimentos convencionalmente rápidos parecerem previsíveis.\nEfeitos:\n- +35 DESVIO permanente.\n- +35 ACERTO permanente.\n- Recebe +30 DESVIO adicional contra ataques que consiga perceber, mesmo quando realizados de surpresa.\nLimitação: A aceleração da percepção não garante que o corpo tenha velocidade física suficiente para acompanhar todas as informações processadas.",
+      "description": "Passiva\nREQ: 10 RACIOCÍNIO  |  46 PE\nO cérebro do usuário alcança um processamento neural extraordinário, permitindo interpretar múltiplas informações em intervalos infinitesimais de tempo. A percepção do mundo se torna mais lenta em relação à própria consciência, fazendo movimentos convencionalmente rápidos parecerem previsíveis.\nEfeitos:\n- +35 DESVIO permanente.\n- +35 ACERTO permanente.\n- Recebe +30 DESVIO adicional contra ataques que consiga perceber, mesmo quando realizados de surpresa.\nLimitação: A aceleração da percepção não garante que o corpo tenha velocidade física suficiente para acompanhar todas as informações processadas.",
       "requirement": "10 RACIOCÍNIO",
       "requirements": {
         "raciocinio": 10
@@ -24966,11 +24966,11 @@
           "section": "RACIOCÍNIO",
           "name": "SINAPSE HIPER-ACELERADA",
           "requirement": "10 RACIOCÍNIO",
-          "cost": 28,
+          "cost": 46,
           "usage": "Passiva",
           "rcCost": null,
-          "body": "Passiva\nREQ: 10 RACIOCÍNIO  |  28 PE\nO cérebro do usuário alcança um processamento neural extraordinário, permitindo interpretar múltiplas informações em intervalos infinitesimais de tempo. A percepção do mundo se torna mais lenta em relação à própria consciência, fazendo movimentos convencionalmente rápidos parecerem previsíveis.\nEfeitos:\n- +35 DESVIO permanente.\n- +35 ACERTO permanente.\n- Recebe +30 DESVIO adicional contra ataques que consiga perceber, mesmo quando realizados de surpresa.\nLimitação: A aceleração da percepção não garante que o corpo tenha velocidade física suficiente para acompanhar todas as informações processadas.",
-          "raw": "SINAPSE HIPER-ACELERADA\nPassiva\nREQ: 10 RACIOCÍNIO  |  28 PE\nO cérebro do usuário alcança um processamento neural extraordinário, permitindo interpretar múltiplas informações em intervalos infinitesimais de tempo. A percepção do mundo se torna mais lenta em relação à própria consciência, fazendo movimentos convencionalmente rápidos parecerem previsíveis.\nEfeitos:\n- +35 DESVIO permanente.\n- +35 ACERTO permanente.\n- Recebe +30 DESVIO adicional contra ataques que consiga perceber, mesmo quando realizados de surpresa.\nLimitação: A aceleração da percepção não garante que o corpo tenha velocidade física suficiente para acompanhar todas as informações processadas.",
+          "body": "Passiva\nREQ: 10 RACIOCÍNIO  |  46 PE\nO cérebro do usuário alcança um processamento neural extraordinário, permitindo interpretar múltiplas informações em intervalos infinitesimais de tempo. A percepção do mundo se torna mais lenta em relação à própria consciência, fazendo movimentos convencionalmente rápidos parecerem previsíveis.\nEfeitos:\n- +35 DESVIO permanente.\n- +35 ACERTO permanente.\n- Recebe +30 DESVIO adicional contra ataques que consiga perceber, mesmo quando realizados de surpresa.\nLimitação: A aceleração da percepção não garante que o corpo tenha velocidade física suficiente para acompanhar todas as informações processadas.",
+          "raw": "SINAPSE HIPER-ACELERADA\nPassiva\nREQ: 10 RACIOCÍNIO  |  46 PE\nO cérebro do usuário alcança um processamento neural extraordinário, permitindo interpretar múltiplas informações em intervalos infinitesimais de tempo. A percepção do mundo se torna mais lenta em relação à própria consciência, fazendo movimentos convencionalmente rápidos parecerem previsíveis.\nEfeitos:\n- +35 DESVIO permanente.\n- +35 ACERTO permanente.\n- Recebe +30 DESVIO adicional contra ataques que consiga perceber, mesmo quando realizados de surpresa.\nLimitação: A aceleração da percepção não garante que o corpo tenha velocidade física suficiente para acompanhar todas as informações processadas.",
           "sourceLine": 5,
           "requirements": {
             "level": 1,
@@ -31055,15 +31055,15 @@
       "name": "Corpo Ginseng",
       "category": "Força",
       "cost": [
-        12,
-        12,
-        12,
-        12,
-        12
+        10,
+        10,
+        10,
+        10,
+        10
       ],
       "maxRank": 5,
       "minGrade": 16,
-      "description": "Categoria: Força & Vigor | DRAWBACK: SÓ EM ATAQUES FISICOS\nTipo: Passiva\nREQ: Level 16\nCusto: 12 PE por Level (5 Leveis)\nCada Level = +25 Acerto & Desvio & Bloqueio.",
+      "description": "Categoria: Força & Vigor | DRAWBACK: SÓ EM ATAQUES FISICOS\nTipo: Passiva\nREQ: Level 16\nCusto: 10 PE por Level (5 Leveis)\nCada Level = +25 Acerto & Desvio & Bloqueio.",
       "requirement": "Level 16",
       "requirements": {},
       "equipmentCompatible": false,
@@ -31082,11 +31082,11 @@
           "section": "FORÇA & VIGOR",
           "name": "Corpo Ginseng",
           "requirement": "Level 16",
-          "cost": 12,
+          "cost": 56,
           "usage": "Passiva",
           "rcCost": null,
-          "body": "Categoria: Força & Vigor | DRAWBACK: SÓ EM ATAQUES FISICOS\nTipo: Passiva\nREQ: Level 16\nCusto: 12 PE por Level (5 Leveis)\nCada Level = +25 Acerto & Desvio & Bloqueio.",
-          "raw": "Corpo Ginseng\nCategoria: Força & Vigor | DRAWBACK: SÓ EM ATAQUES FISICOS\nTipo: Passiva\nREQ: Level 16\nCusto: 12 PE por Level (5 Leveis)\nCada Level = +25 Acerto & Desvio & Bloqueio.",
+          "body": "Categoria: Força & Vigor | DRAWBACK: SÓ EM ATAQUES FISICOS\nTipo: Passiva\nREQ: Level 16\nCusto: 56 PE por Level (5 Leveis)\nCada Level = +25 Acerto & Desvio & Bloqueio.",
+          "raw": "Corpo Ginseng\nCategoria: Força & Vigor | DRAWBACK: SÓ EM ATAQUES FISICOS\nTipo: Passiva\nREQ: Level 16\nCusto: 56 PE por Level (5 Leveis)\nCada Level = +25 Acerto & Desvio & Bloqueio.",
           "sourceLine": 825,
           "requirements": {
             "level": 16,
@@ -31098,11 +31098,11 @@
           "catalogOverrides": {
             "sourceId": "perks-revisao-2026-11.txt",
             "cost": [
-              12,
-              12,
-              12,
-              12,
-              12
+              20,
+              20,
+              20,
+              20,
+              20
             ],
             "costMode": "sum",
             "maxRank": 5
@@ -31198,7 +31198,7 @@
       "supplement": true,
       "sourceId": "REWORK 2026",
       "useType": "Passiva · automática",
-      "description": "Acerto físico: +7; Acerto de Kagune/Quinque: +7.",
+      "description": "Acerto físico: +10; Acerto de Kagune/Quinque: +10.",
       "equipmentCompatible": true,
       "requirement": "LEVEL 1+",
       "catalogGroups": [
@@ -31208,8 +31208,8 @@
       "automation": {
         "rework": {
           "modifiers": {
-            "physicalHit": 7,
-            "kaguneHit": 7
+            "physicalHit": 10,
+            "kaguneHit": 10
           },
           "weaponOnly": false
         }
@@ -31460,7 +31460,7 @@
       "supplement": true,
       "sourceId": "REWORK 2026",
       "useType": "Passiva · automática",
-      "description": "Acerto físico: +7; Acerto de Kagune/Quinque: +7; Iniciativa: +5.",
+      "description": "Acerto físico: +10; Acerto de Kagune/Quinque: +10; Iniciativa: +5.",
       "equipmentCompatible": true,
       "requirement": "LEVEL 5+",
       "catalogGroups": [
@@ -31470,8 +31470,8 @@
       "automation": {
         "rework": {
           "modifiers": {
-            "physicalHit": 7,
-            "kaguneHit": 7,
+            "physicalHit": 10,
+            "kaguneHit": 10,
             "initiative": 5
           },
           "weaponOnly": false
@@ -31753,7 +31753,7 @@
       "supplement": true,
       "sourceId": "REWORK 2026",
       "useType": "Passiva · automática",
-      "description": "Acerto físico: +10; Acerto de Kagune/Quinque: +10; Deslocamento: +1.",
+      "description": "Acerto físico: +15; Acerto de Kagune/Quinque: +15; Deslocamento: +1.",
       "equipmentCompatible": true,
       "requirement": "LEVEL 9+",
       "catalogGroups": [
@@ -31763,8 +31763,8 @@
       "automation": {
         "rework": {
           "modifiers": {
-            "physicalHit": 10,
-            "kaguneHit": 10,
+            "physicalHit": 15,
+            "kaguneHit": 15,
             "movement": 1
           },
           "weaponOnly": false
@@ -32191,7 +32191,7 @@
       "supplement": true,
       "sourceId": "REWORK 2026",
       "useType": "Passiva · automática",
-      "description": "+3 acertos em ataques físicos; +3 acertos de Kagune/Quinque; +5 Iniciativa.",
+      "description": "+15 acertos em ataques físicos; +15 acertos de Kagune/Quinque; +5 Iniciativa.",
       "equipmentCompatible": true,
       "requirement": "LEVEL 15+",
       "catalogGroups": [
@@ -32201,8 +32201,8 @@
       "automation": {
         "rework": {
           "modifiers": {
-            "physicalHit": 3,
-            "kaguneHit": 3,
+            "physicalHit": 5,
+            "kaguneHit": 5,
             "initiative": 3
           },
           "weaponOnly": false
@@ -32366,7 +32366,7 @@
       "supplement": true,
       "sourceId": "REWORK 2026",
       "useType": "Passiva · automática",
-      "description": "Esquiva: +20; Deslocamento: +2; Acerto físico: +13; Acerto de Kagune/Quinque: +13.",
+      "description": "Esquiva: +20; Deslocamento: +2; Acerto físico: +20; Acerto de Kagune/Quinque: +20.",
       "equipmentCompatible": true,
       "requirement": "LEVEL 17+",
       "catalogGroups": [
@@ -32378,8 +32378,8 @@
           "modifiers": {
             "dodge": 20,
             "movement": 2,
-            "physicalHit": 13,
-            "kaguneHit": 13
+            "physicalHit": 20,
+            "kaguneHit": 20
           },
           "weaponOnly": false
         }
@@ -32849,7 +32849,7 @@
       "supplement": true,
       "sourceId": "REWORK 2026",
       "useType": "Passiva · automática",
-      "description": "Acerto físico: +7; Acerto de Kagune/Quinque: +7; Vida máxima: +60.",
+      "description": "Acerto físico: +10; Acerto de Kagune/Quinque: +10; Vida máxima: +60.",
       "attribute": "forca",
       "min": 3,
       "equipmentCompatible": true,
@@ -32861,8 +32861,8 @@
       "automation": {
         "rework": {
           "modifiers": {
-            "physicalHit": 7,
-            "kaguneHit": 7,
+            "physicalHit": 10,
+            "kaguneHit": 10,
             "life": 60
           },
           "weaponOnly": false
@@ -33661,7 +33661,7 @@
       "supplement": true,
       "sourceId": "REWORK 2026",
       "useType": "Passiva · automática",
-      "description": "Acerto físico: +7; Acerto de Kagune/Quinque: +7; Testes de Precisão: +10.",
+      "description": "Acerto físico: +10; Acerto de Kagune/Quinque: +10; Testes de Precisão: +10.",
       "attribute": "precisao",
       "min": 1,
       "equipmentCompatible": true,
@@ -33673,8 +33673,8 @@
       "automation": {
         "rework": {
           "modifiers": {
-            "physicalHit": 7,
-            "kaguneHit": 7,
+            "physicalHit": 10,
+            "kaguneHit": 10,
             "checks": {
               "precisao": 10
             }
@@ -33728,7 +33728,7 @@
       "supplement": true,
       "sourceId": "REWORK 2026",
       "useType": "Passiva · automática",
-      "description": "Acerto físico: +7; Acerto de Kagune/Quinque: +7; Dano fixo físico: +25; Dano fixo de Kagune/Quinque: +25.",
+      "description": "Acerto físico: +10; Acerto de Kagune/Quinque: +10; Dano fixo físico: +25; Dano fixo de Kagune/Quinque: +25.",
       "attribute": "precisao",
       "min": 2,
       "equipmentCompatible": true,
@@ -33740,8 +33740,8 @@
       "automation": {
         "rework": {
           "modifiers": {
-            "physicalHit": 7,
-            "kaguneHit": 7,
+            "physicalHit": 10,
+            "kaguneHit": 10,
             "physicalDamage": 25,
             "kaguneDamage": 25
           },
@@ -34508,7 +34508,7 @@
       "supplement": true,
       "sourceId": "REWORK 2026",
       "useType": "Passiva · automática",
-      "description": "+23 Acerto físico/Kagune, +35 Esquiva e +2 Deslocamento.",
+      "description": "+35 Acerto físico/Kagune, +35 Esquiva e +2 Deslocamento.",
       "attribute": "agilidade",
       "min": 9,
       "equipmentCompatible": true,
@@ -34521,8 +34521,8 @@
         "rework": {
           "modifiers": {
             "dodge": 35,
-            "physicalHit": 23,
-            "kaguneHit": 23,
+            "physicalHit": 35,
+            "kaguneHit": 35,
             "movement": 2
           },
           "weaponOnly": false
@@ -34602,7 +34602,7 @@
       "supplement": true,
       "sourceId": "REWORK 2026",
       "useType": "Passiva · automática",
-      "description": "Acerto físico: +7; Acerto de Kagune/Quinque: +7; Testes de Raciocínio: +10.",
+      "description": "Acerto físico: +10; Acerto de Kagune/Quinque: +10; Testes de Raciocínio: +10.",
       "attribute": "raciocinio",
       "min": 1,
       "equipmentCompatible": true,
@@ -34614,8 +34614,8 @@
       "automation": {
         "rework": {
           "modifiers": {
-            "physicalHit": 7,
-            "kaguneHit": 7,
+            "physicalHit": 10,
+            "kaguneHit": 10,
             "checks": {
               "raciocinio": 10
             }
@@ -35286,7 +35286,7 @@
       "supplement": true,
       "sourceId": "REWORK 2026",
       "useType": "Passiva · automática",
-      "description": "Acerto físico: 1.95 × Percepção; Acerto de Kagune/Quinque: 1.95 × Percepção.",
+      "description": "Acerto físico: 3 × Percepção; Acerto de Kagune/Quinque: 3 × Percepção.",
       "attribute": "percepcao",
       "min": 4,
       "equipmentCompatible": true,
@@ -35300,11 +35300,11 @@
           "modifiers": {
             "physicalHit": {
               "attribute": "percepcao",
-              "multiplier": 1.95
+              "multiplier": 3
             },
             "kaguneHit": {
               "attribute": "percepcao",
-              "multiplier": 1.95
+              "multiplier": 3
             }
           },
           "weaponOnly": false
@@ -35565,7 +35565,7 @@
       "supplement": true,
       "sourceId": "REWORK 2026",
       "useType": "Passiva · automática",
-      "description": "Acerto físico: +7; Acerto de Kagune/Quinque: +7; Sanidade máxima: +20.",
+      "description": "Acerto físico: +10; Acerto de Kagune/Quinque: +10; Sanidade máxima: +20.",
       "attribute": "presenca",
       "min": 1,
       "equipmentCompatible": true,
@@ -35577,8 +35577,8 @@
       "automation": {
         "rework": {
           "modifiers": {
-            "physicalHit": 7,
-            "kaguneHit": 7,
+            "physicalHit": 10,
+            "kaguneHit": 10,
             "sanity": 20
           },
           "weaponOnly": false
@@ -36051,7 +36051,7 @@
       "supplement": true,
       "sourceId": "REWORK 2026",
       "useType": "Passiva · automática",
-      "description": "Acerto físico: +7; Acerto de Kagune/Quinque: +13; Sanidade máxima: +20.",
+      "description": "Acerto físico: +10; Acerto de Kagune/Quinque: +20; Sanidade máxima: +20.",
       "attribute": "controle",
       "min": 1,
       "equipmentCompatible": true,
@@ -36063,8 +36063,8 @@
       "automation": {
         "rework": {
           "modifiers": {
-            "physicalHit": 7,
-            "kaguneHit": 13,
+            "physicalHit": 10,
+            "kaguneHit": 20,
             "sanity": 20
           },
           "weaponOnly": false
@@ -36279,7 +36279,7 @@
       "supplement": true,
       "sourceId": "REWORK 2026",
       "useType": "Passiva · automática",
-      "description": "Acerto físico: 1.3 × Controle (mínimo 7); Acerto de Kagune/Quinque: 1.3 × Controle (mínimo 7); Sanidade máxima: +25.",
+      "description": "Acerto físico: 2 × Controle (mínimo 10); Acerto de Kagune/Quinque: 2 × Controle (mínimo 10); Sanidade máxima: +25.",
       "attribute": "controle",
       "min": 4,
       "equipmentCompatible": true,
@@ -36294,14 +36294,14 @@
             "physicalHit": {
               "attribute": "controle",
               "divisor": 1,
-              "multiplier": 1.3,
-              "minimum": 7
+              "multiplier": 2,
+              "minimum": 10
             },
             "kaguneHit": {
               "attribute": "controle",
               "divisor": 1,
-              "multiplier": 1.3,
-              "minimum": 7
+              "multiplier": 2,
+              "minimum": 10
             },
             "sanity": 25
           },
@@ -36454,7 +36454,7 @@
       "supplement": true,
       "sourceId": "REWORK 2026",
       "useType": "Passiva · automática",
-      "description": "Acerto físico: +13; Acerto de Kagune/Quinque: +13; Passos físicos: +40; Passos de Kagune/Quinque: +40; Bloqueio: +20; Esquiva: +20.",
+      "description": "Acerto físico: +20; Acerto de Kagune/Quinque: +20; Passos físicos: +40; Passos de Kagune/Quinque: +40; Bloqueio: +20; Esquiva: +20.",
       "attribute": "controle",
       "min": 9,
       "equipmentCompatible": true,
@@ -36466,8 +36466,8 @@
       "automation": {
         "rework": {
           "modifiers": {
-            "physicalHit": 13,
-            "kaguneHit": 13,
+            "physicalHit": 20,
+            "kaguneHit": 20,
             "physicalSteps": 40,
             "kaguneSteps": 40,
             "block": 20,
@@ -38427,7 +38427,7 @@
       "supplement": true,
       "sourceId": "REWORK 2026",
       "useType": "Passiva · automática",
-      "description": "Com a Kagune/Quinque manifestada: Acerto de Kagune/Quinque: +7; Dano fixo de Kagune/Quinque: +25.",
+      "description": "Com a Kagune/Quinque manifestada: Acerto de Kagune/Quinque: +10; Dano fixo de Kagune/Quinque: +25.",
       "location": "kakuhou",
       "organGroup": "Ukaku",
       "kaguneTypes": [
@@ -38442,7 +38442,7 @@
       "automation": {
         "rework": {
           "modifiers": {
-            "kaguneHit": 7,
+            "kaguneHit": 10,
             "kaguneDamage": 25
           },
           "weaponOnly": true
@@ -38879,7 +38879,7 @@
       "supplement": true,
       "sourceId": "REWORK 2026",
       "useType": "Passiva · automática",
-      "description": "Com a Kagune/Quinque manifestada: Acerto de Kagune/Quinque: 1.3 × Controle (mínimo 10); Passos de Kagune/Quinque: +35.",
+      "description": "Com a Kagune/Quinque manifestada: Acerto de Kagune/Quinque: 2 × Controle (mínimo 15); Passos de Kagune/Quinque: +35.",
       "location": "kakuhou",
       "organGroup": "Ukaku",
       "kaguneTypes": [
@@ -38899,8 +38899,8 @@
             "kaguneHit": {
               "attribute": "controle",
               "divisor": 1,
-              "multiplier": 1.3,
-              "minimum": 10
+              "multiplier": 2,
+              "minimum": 15
             },
             "kaguneSteps": 35
           },
@@ -39668,7 +39668,7 @@
       "supplement": true,
       "sourceId": "REWORK 2026",
       "useType": "Passiva · automática",
-      "description": "Com a Kagune/Quinque manifestada: Acerto de Kagune/Quinque: +16; Passos de Kagune/Quinque: +55; Dano fixo de Kagune/Quinque: +60.",
+      "description": "Com a Kagune/Quinque manifestada: Acerto de Kagune/Quinque: +25; Passos de Kagune/Quinque: +55; Dano fixo de Kagune/Quinque: +60.",
       "location": "kakuhou",
       "organGroup": "Koukaku",
       "kaguneTypes": [
@@ -39683,7 +39683,7 @@
       "automation": {
         "rework": {
           "modifiers": {
-            "kaguneHit": 16,
+            "kaguneHit": 25,
             "kaguneSteps": 55,
             "kaguneDamage": 60
           },
@@ -39822,7 +39822,7 @@
       "supplement": true,
       "sourceId": "REWORK 2026",
       "useType": "Passiva · automática",
-      "description": "Com a Kagune/Quinque manifestada: Acerto de Kagune/Quinque: +7; Passos de Kagune/Quinque: +25.",
+      "description": "Com a Kagune/Quinque manifestada: Acerto de Kagune/Quinque: +10; Passos de Kagune/Quinque: +25.",
       "location": "kakuhou",
       "organGroup": "Rinkaku",
       "kaguneTypes": [
@@ -39837,7 +39837,7 @@
       "automation": {
         "rework": {
           "modifiers": {
-            "kaguneHit": 7,
+            "kaguneHit": 10,
             "kaguneSteps": 25
           },
           "weaponOnly": true
@@ -40056,7 +40056,7 @@
       "supplement": true,
       "sourceId": "REWORK 2026",
       "useType": "Passiva · automática",
-      "description": "Enquanto a Kagune/Quinque estiver manifestada:\nAcerto de Kagune/Quinque: 1.3 × Controle (mínimo 7); Esquiva: +10.",
+      "description": "Enquanto a Kagune/Quinque estiver manifestada:\nAcerto de Kagune/Quinque: 2 × Controle (mínimo 10); Esquiva: +10.",
       "location": "kakuhou",
       "organGroup": "Rinkaku",
       "kaguneTypes": [
@@ -40076,8 +40076,8 @@
             "kaguneHit": {
               "attribute": "controle",
               "divisor": 1,
-              "multiplier": 1.3,
-              "minimum": 7
+              "multiplier": 2,
+              "minimum": 10
             },
             "dodge": 10
           },
@@ -40289,7 +40289,7 @@
       "supplement": true,
       "sourceId": "REWORK 2026",
       "useType": "Passiva · automática",
-      "description": "Com a Kagune/Quinque manifestada: Acerto de Kagune/Quinque: +10; Passos de Kagune/Quinque: +35; Alcance: +2.",
+      "description": "Com a Kagune/Quinque manifestada: Acerto de Kagune/Quinque: +15; Passos de Kagune/Quinque: +35; Alcance: +2.",
       "location": "kakuhou",
       "organGroup": "Rinkaku",
       "kaguneTypes": [
@@ -40304,7 +40304,7 @@
       "automation": {
         "rework": {
           "modifiers": {
-            "kaguneHit": 10,
+            "kaguneHit": 15,
             "kaguneSteps": 35,
             "range": 2
           },
@@ -40368,7 +40368,7 @@
       "supplement": true,
       "sourceId": "REWORK 2026",
       "useType": "Passiva · automática",
-      "description": "Com a Kagune/Quinque manifestada: Acerto de Kagune/Quinque: +16; Passos de Kagune/Quinque: +55; RD: +85.",
+      "description": "Com a Kagune/Quinque manifestada: Acerto de Kagune/Quinque: +25; Passos de Kagune/Quinque: +55; RD: +85.",
       "location": "kakuhou",
       "organGroup": "Rinkaku",
       "kaguneTypes": [
@@ -40383,7 +40383,7 @@
       "automation": {
         "rework": {
           "modifiers": {
-            "kaguneHit": 16,
+            "kaguneHit": 25,
             "kaguneSteps": 55,
             "rd": 85
           },
@@ -41873,7 +41873,7 @@
       "supplement": true,
       "sourceId": "REWORK 2026",
       "useType": "Passiva · automática",
-      "description": "Acerto físico: 1.3 × Força (mínimo 7); Acerto de Kagune/Quinque: 1.3 × Força (mínimo 7); Bloqueio: +15.",
+      "description": "Acerto físico: 2 × Força (mínimo 10); Acerto de Kagune/Quinque: 2 × Força (mínimo 10); Bloqueio: +15.",
       "attribute": "forca",
       "min": 5,
       "equipmentCompatible": true,
@@ -41887,15 +41887,15 @@
           "modifiers": {
             "physicalHit": {
               "attribute": "forca",
-              "multiplier": 1.3,
+              "multiplier": 2,
               "divisor": 1,
-              "minimum": 7
+              "minimum": 10
             },
             "kaguneHit": {
               "attribute": "forca",
               "divisor": 1,
-              "multiplier": 1.3,
-              "minimum": 7
+              "multiplier": 2,
+              "minimum": 10
             },
             "block": 15
           },
@@ -43816,7 +43816,7 @@
       "supplement": true,
       "sourceId": "REWORK 2026",
       "useType": "Passiva · automática",
-      "description": "Acerto físico: +7; Acerto de Kagune/Quinque: +7; Testes de Precisão: +10.",
+      "description": "Acerto físico: +10; Acerto de Kagune/Quinque: +10; Testes de Precisão: +10.",
       "attribute": "precisao",
       "min": 1,
       "equipmentCompatible": true,
@@ -43828,8 +43828,8 @@
       "automation": {
         "rework": {
           "modifiers": {
-            "physicalHit": 7,
-            "kaguneHit": 7,
+            "physicalHit": 10,
+            "kaguneHit": 10,
             "checks": {
               "precisao": 10
             }
@@ -43946,7 +43946,7 @@
       "supplement": true,
       "sourceId": "REWORK 2026",
       "useType": "Passiva · automática",
-      "description": "Acerto físico: +7; Acerto de Kagune/Quinque: +7; Bloqueio: +10.",
+      "description": "Acerto físico: +10; Acerto de Kagune/Quinque: +10; Bloqueio: +10.",
       "attribute": "precisao",
       "min": 2,
       "equipmentCompatible": true,
@@ -43958,8 +43958,8 @@
       "automation": {
         "rework": {
           "modifiers": {
-            "physicalHit": 7,
-            "kaguneHit": 7,
+            "physicalHit": 10,
+            "kaguneHit": 10,
             "block": 10
           },
           "weaponOnly": false
@@ -44011,7 +44011,7 @@
       "supplement": true,
       "sourceId": "REWORK 2026",
       "useType": "Passiva · automática",
-      "description": "Passos físicos: +35; Passos de Kagune/Quinque: +35; Acerto físico: +7; Acerto de Kagune/Quinque: +7.",
+      "description": "Passos físicos: +35; Passos de Kagune/Quinque: +35; Acerto físico: +10; Acerto de Kagune/Quinque: +10.",
       "attribute": "precisao",
       "min": 2,
       "equipmentCompatible": true,
@@ -44025,8 +44025,8 @@
           "modifiers": {
             "physicalSteps": 35,
             "kaguneSteps": 35,
-            "physicalHit": 7,
-            "kaguneHit": 7
+            "physicalHit": 10,
+            "kaguneHit": 10
           },
           "weaponOnly": false
         }
@@ -44338,7 +44338,7 @@
       "supplement": true,
       "sourceId": "REWORK 2026",
       "useType": "Passiva · automática",
-      "description": "Acerto físico: 1.3 × Precisão (mínimo 7); Acerto de Kagune/Quinque: 1.3 × Precisão (mínimo 7).",
+      "description": "Acerto físico: 2 × Precisão (mínimo 10); Acerto de Kagune/Quinque: 2 × Precisão (mínimo 10).",
       "attribute": "precisao",
       "min": 4,
       "equipmentCompatible": true,
@@ -44352,15 +44352,15 @@
           "modifiers": {
             "physicalHit": {
               "attribute": "precisao",
-              "multiplier": 1.3,
+              "multiplier": 2,
               "divisor": 1,
-              "minimum": 7
+              "minimum": 10
             },
             "kaguneHit": {
               "attribute": "precisao",
-              "multiplier": 1.3,
+              "multiplier": 2,
               "divisor": 1,
-              "minimum": 7
+              "minimum": 10
             }
           },
           "weaponOnly": false
@@ -44576,7 +44576,7 @@
       "supplement": true,
       "sourceId": "REWORK 2026",
       "useType": "Passiva · automática",
-      "description": "Acerto físico: +10; Acerto de Kagune/Quinque: +10; Passos físicos: +30; Passos de Kagune/Quinque: +30.",
+      "description": "Acerto físico: +15; Acerto de Kagune/Quinque: +15; Passos físicos: +30; Passos de Kagune/Quinque: +30.",
       "attribute": "precisao",
       "min": 6,
       "equipmentCompatible": true,
@@ -44588,8 +44588,8 @@
       "automation": {
         "rework": {
           "modifiers": {
-            "physicalHit": 10,
-            "kaguneHit": 10,
+            "physicalHit": 15,
+            "kaguneHit": 15,
             "physicalSteps": 30,
             "kaguneSteps": 30
           },
@@ -44758,7 +44758,7 @@
       "supplement": true,
       "sourceId": "REWORK 2026",
       "useType": "Passiva · automática",
-      "description": "Acerto físico: +13; Acerto de Kagune/Quinque: +13; Bloqueio: +20; Esquiva: +20.",
+      "description": "Acerto físico: +20; Acerto de Kagune/Quinque: +20; Bloqueio: +20; Esquiva: +20.",
       "attribute": "precisao",
       "min": 9,
       "equipmentCompatible": true,
@@ -44770,8 +44770,8 @@
       "automation": {
         "rework": {
           "modifiers": {
-            "physicalHit": 13,
-            "kaguneHit": 13,
+            "physicalHit": 20,
+            "kaguneHit": 20,
             "block": 20,
             "dodge": 20
           },
@@ -45200,8 +45200,8 @@
         "rework": {
           "modifiers": {
             "initiative": 3,
-            "physicalHit": 3,
-            "kaguneHit": 5
+            "physicalHit": 5,
+            "kaguneHit": 8
           },
           "weaponOnly": false
         }
@@ -45268,7 +45268,7 @@
       "supplement": true,
       "sourceId": "REWORK 2026",
       "useType": "Passiva · automática",
-      "description": "Acerto físico: +7; Acerto de Kagune/Quinque: +7; Passos físicos: +25; Passos de Kagune/Quinque: +25.",
+      "description": "Acerto físico: +10; Acerto de Kagune/Quinque: +10; Passos físicos: +25; Passos de Kagune/Quinque: +25.",
       "attribute": "agilidade",
       "min": 2,
       "equipmentCompatible": true,
@@ -45280,8 +45280,8 @@
       "automation": {
         "rework": {
           "modifiers": {
-            "physicalHit": 7,
-            "kaguneHit": 7,
+            "physicalHit": 10,
+            "kaguneHit": 10,
             "physicalSteps": 25,
             "kaguneSteps": 25
           },
@@ -45603,7 +45603,7 @@
       "supplement": true,
       "sourceId": "REWORK 2026",
       "useType": "Passiva · automática",
-      "description": "Acerto físico: +10; Acerto de Kagune/Quinque: +10; Deslocamento: +2.",
+      "description": "Acerto físico: +15; Acerto de Kagune/Quinque: +15; Deslocamento: +2.",
       "attribute": "agilidade",
       "min": 4,
       "equipmentCompatible": true,
@@ -45615,8 +45615,8 @@
       "automation": {
         "rework": {
           "modifiers": {
-            "physicalHit": 10,
-            "kaguneHit": 10,
+            "physicalHit": 15,
+            "kaguneHit": 15,
             "movement": 2
           },
           "weaponOnly": false
@@ -45842,7 +45842,7 @@
       "supplement": true,
       "sourceId": "REWORK 2026",
       "useType": "Passiva · automática",
-      "description": "Acerto físico: +10; Acerto de Kagune/Quinque: +10; Passos físicos: +10; Passos de Kagune/Quinque: +10; Deslocamento: +1.",
+      "description": "Acerto físico: +15; Acerto de Kagune/Quinque: +15; Passos físicos: +10; Passos de Kagune/Quinque: +10; Deslocamento: +1.",
       "attribute": "agilidade",
       "min": 5,
       "equipmentCompatible": true,
@@ -45854,8 +45854,8 @@
       "automation": {
         "rework": {
           "modifiers": {
-            "physicalHit": 10,
-            "kaguneHit": 10,
+            "physicalHit": 15,
+            "kaguneHit": 15,
             "physicalSteps": 10,
             "kaguneSteps": 10,
             "movement": 1
@@ -46007,7 +46007,7 @@
       "supplement": true,
       "sourceId": "REWORK 2026",
       "useType": "Passiva · automática",
-      "description": "Passos físicos: +45; Passos de Kagune/Quinque: +45; Acerto físico: +13; Acerto de Kagune/Quinque: +16.",
+      "description": "Passos físicos: +45; Passos de Kagune/Quinque: +45; Acerto físico: +20; Acerto de Kagune/Quinque: +25.",
       "attribute": "agilidade",
       "min": 7,
       "equipmentCompatible": true,
@@ -46021,8 +46021,8 @@
           "modifiers": {
             "physicalSteps": 45,
             "kaguneSteps": 45,
-            "physicalHit": 13,
-            "kaguneHit": 16
+            "physicalHit": 20,
+            "kaguneHit": 25
           },
           "weaponOnly": false
         }
@@ -46102,7 +46102,7 @@
       "supplement": true,
       "sourceId": "REWORK 2026",
       "useType": "Passiva · automática",
-      "description": "Esquiva: +20; Bloqueio: +20; Acerto físico: +13; Acerto de Kagune/Quinque: +13.",
+      "description": "Esquiva: +20; Bloqueio: +20; Acerto físico: +20; Acerto de Kagune/Quinque: +20.",
       "attribute": "agilidade",
       "min": 9,
       "equipmentCompatible": true,
@@ -46116,8 +46116,8 @@
           "modifiers": {
             "dodge": 20,
             "block": 20,
-            "physicalHit": 13,
-            "kaguneHit": 13
+            "physicalHit": 20,
+            "kaguneHit": 20
           },
           "weaponOnly": false
         }
@@ -46471,7 +46471,7 @@
       "supplement": true,
       "sourceId": "REWORK 2026",
       "useType": "Passiva · automática",
-      "description": "Acerto físico: +7; Acerto de Kagune/Quinque: +7; Testes de Raciocínio: +10.",
+      "description": "Acerto físico: +10; Acerto de Kagune/Quinque: +10; Testes de Raciocínio: +10.",
       "attribute": "raciocinio",
       "min": 1,
       "equipmentCompatible": true,
@@ -46483,8 +46483,8 @@
       "automation": {
         "rework": {
           "modifiers": {
-            "physicalHit": 7,
-            "kaguneHit": 7,
+            "physicalHit": 10,
+            "kaguneHit": 10,
             "checks": {
               "raciocinio": 10
             }
@@ -46694,7 +46694,7 @@
       "supplement": true,
       "sourceId": "REWORK 2026",
       "useType": "Passiva · automática",
-      "description": "Acerto físico: +10; Acerto de Kagune/Quinque: +10; Iniciativa: +5.",
+      "description": "Acerto físico: +15; Acerto de Kagune/Quinque: +15; Iniciativa: +5.",
       "attribute": "raciocinio",
       "min": 2,
       "equipmentCompatible": true,
@@ -46706,8 +46706,8 @@
       "automation": {
         "rework": {
           "modifiers": {
-            "physicalHit": 10,
-            "kaguneHit": 10,
+            "physicalHit": 15,
+            "kaguneHit": 15,
             "initiative": 5
           },
           "weaponOnly": false
@@ -47819,7 +47819,7 @@
       "supplement": true,
       "sourceId": "REWORK 2026",
       "useType": "Passiva · automática",
-      "description": "Acerto físico: +5; Acerto de Kagune/Quinque: +5; Iniciativa: +12.",
+      "description": "Acerto físico: +8; Acerto de Kagune/Quinque: +8; Iniciativa: +12.",
       "attribute": "percepcao",
       "min": 1,
       "equipmentCompatible": true,
@@ -47831,8 +47831,8 @@
       "automation": {
         "rework": {
           "modifiers": {
-            "physicalHit": 5,
-            "kaguneHit": 5,
+            "physicalHit": 8,
+            "kaguneHit": 8,
             "initiative": 12
           },
           "weaponOnly": false
@@ -48305,7 +48305,7 @@
       "supplement": true,
       "sourceId": "REWORK 2026",
       "useType": "Passiva · automática",
-      "description": "Acerto físico: 1.3 × Percepção (mínimo 7); Acerto de Kagune/Quinque: 1.3 × Percepção (mínimo 7); Iniciativa: +5.",
+      "description": "Acerto físico: 2 × Percepção (mínimo 10); Acerto de Kagune/Quinque: 2 × Percepção (mínimo 10); Iniciativa: +5.",
       "attribute": "percepcao",
       "min": 4,
       "equipmentCompatible": true,
@@ -48319,15 +48319,15 @@
           "modifiers": {
             "physicalHit": {
               "attribute": "percepcao",
-              "multiplier": 1.3,
+              "multiplier": 2,
               "divisor": 1,
-              "minimum": 7
+              "minimum": 10
             },
             "kaguneHit": {
               "attribute": "percepcao",
-              "multiplier": 1.3,
+              "multiplier": 2,
               "divisor": 1,
-              "minimum": 7
+              "minimum": 10
             },
             "initiative": 5
           },
@@ -48574,7 +48574,7 @@
       "supplement": true,
       "sourceId": "REWORK 2026",
       "useType": "Passiva · automática",
-      "description": "Acerto físico: +16; Acerto de Kagune/Quinque: +16; Passos físicos: +40; Passos de Kagune/Quinque: +10; Iniciativa: +10.",
+      "description": "Acerto físico: +25; Acerto de Kagune/Quinque: +25; Passos físicos: +40; Passos de Kagune/Quinque: +10; Iniciativa: +10.",
       "attribute": "percepcao",
       "min": 5,
       "equipmentCompatible": true,
@@ -48586,8 +48586,8 @@
       "automation": {
         "rework": {
           "modifiers": {
-            "physicalHit": 16,
-            "kaguneHit": 16,
+            "physicalHit": 25,
+            "kaguneHit": 25,
             "physicalSteps": 40,
             "kaguneSteps": 10,
             "initiative": 10
@@ -48841,7 +48841,7 @@
       "supplement": true,
       "sourceId": "REWORK 2026",
       "useType": "Passiva · automática",
-      "description": "+12 acertos em ataques físicos; +12 acertos de Kagune/Quinque; +10 acertos de Bloqueio; +10 acertos de Desvio.",
+      "description": "+18 acertos em ataques físicos; +18 acertos de Kagune/Quinque; +10 acertos de Bloqueio; +10 acertos de Desvio.",
       "attribute": "percepcao",
       "min": 9,
       "equipmentCompatible": true,
@@ -48853,8 +48853,8 @@
       "automation": {
         "rework": {
           "modifiers": {
-            "physicalHit": 12,
-            "kaguneHit": 12,
+            "physicalHit": 18,
+            "kaguneHit": 18,
             "block": 10,
             "dodge": 10
           },
@@ -49010,7 +49010,7 @@
       "supplement": true,
       "sourceId": "REWORK 2026",
       "useType": "Passiva · automática",
-      "description": "Acerto físico: +23; Acerto de Kagune/Quinque: +23; Passos físicos: +85; Passos de Kagune/Quinque: +85; Dano fixo físico: +90; Dano fixo de Kagune/Quinque: +90.",
+      "description": "Acerto físico: +35; Acerto de Kagune/Quinque: +35; Passos físicos: +85; Passos de Kagune/Quinque: +85; Dano fixo físico: +90; Dano fixo de Kagune/Quinque: +90.",
       "attribute": "percepcao",
       "min": 13,
       "equipmentCompatible": true,
@@ -49022,8 +49022,8 @@
       "automation": {
         "rework": {
           "modifiers": {
-            "physicalHit": 23,
-            "kaguneHit": 23,
+            "physicalHit": 35,
+            "kaguneHit": 35,
             "physicalSteps": 85,
             "kaguneSteps": 85,
             "physicalDamage": 90,
@@ -49197,7 +49197,7 @@
       "supplement": true,
       "sourceId": "REWORK 2026",
       "useType": "Passiva · automática",
-      "description": "Acerto físico: +7; Acerto de Kagune/Quinque: +7; Sanidade máxima: +20.",
+      "description": "Acerto físico: +10; Acerto de Kagune/Quinque: +10; Sanidade máxima: +20.",
       "attribute": "presenca",
       "min": 1,
       "equipmentCompatible": true,
@@ -49209,8 +49209,8 @@
       "automation": {
         "rework": {
           "modifiers": {
-            "physicalHit": 7,
-            "kaguneHit": 7,
+            "physicalHit": 10,
+            "kaguneHit": 10,
             "sanity": 20
           },
           "weaponOnly": false
@@ -49502,7 +49502,7 @@
       "supplement": true,
       "sourceId": "REWORK 2026",
       "useType": "Passiva · automática",
-      "description": "Acerto físico: +10; Acerto de Kagune/Quinque: +10; Dano fixo físico: +30; Dano fixo de Kagune/Quinque: +30.",
+      "description": "Acerto físico: +15; Acerto de Kagune/Quinque: +15; Dano fixo físico: +30; Dano fixo de Kagune/Quinque: +30.",
       "attribute": "presenca",
       "min": 3,
       "equipmentCompatible": true,
@@ -49514,8 +49514,8 @@
       "automation": {
         "rework": {
           "modifiers": {
-            "physicalHit": 10,
-            "kaguneHit": 10,
+            "physicalHit": 15,
+            "kaguneHit": 15,
             "physicalDamage": 30,
             "kaguneDamage": 30
           },
@@ -50566,7 +50566,7 @@
       "supplement": true,
       "sourceId": "REWORK 2026",
       "useType": "Passiva · automática",
-      "description": "Acerto físico: +7; Acerto de Kagune/Quinque: +7; Sanidade máxima: +20.",
+      "description": "Acerto físico: +10; Acerto de Kagune/Quinque: +10; Sanidade máxima: +20.",
       "attribute": "controle",
       "min": 1,
       "equipmentCompatible": true,
@@ -50578,8 +50578,8 @@
       "automation": {
         "rework": {
           "modifiers": {
-            "physicalHit": 7,
-            "kaguneHit": 7,
+            "physicalHit": 10,
+            "kaguneHit": 10,
             "sanity": 20
           },
           "weaponOnly": false
@@ -51152,7 +51152,7 @@
       "supplement": true,
       "sourceId": "REWORK 2026",
       "useType": "Passiva · automática",
-      "description": "Acerto físico: 1.3 × Controle; Acerto de Kagune/Quinque: 1.3 × Controle; Iniciativa: +12.",
+      "description": "Acerto físico: 2 × Controle; Acerto de Kagune/Quinque: 2 × Controle; Iniciativa: +12.",
       "attribute": "controle",
       "min": 4,
       "equipmentCompatible": true,
@@ -51166,11 +51166,11 @@
           "modifiers": {
             "physicalHit": {
               "attribute": "controle",
-              "multiplier": 1.3
+              "multiplier": 2
             },
             "kaguneHit": {
               "attribute": "controle",
-              "multiplier": 1.3
+              "multiplier": 2
             },
             "initiative": 12
           },
@@ -51344,7 +51344,7 @@
       "supplement": true,
       "sourceId": "REWORK 2026",
       "useType": "Passiva · automática",
-      "description": "Acerto físico: +7; Acerto de Kagune/Quinque: +7; Passos físicos: +25; Passos de Kagune/Quinque: +25; Sanidade máxima: +20.",
+      "description": "Acerto físico: +10; Acerto de Kagune/Quinque: +10; Passos físicos: +25; Passos de Kagune/Quinque: +25; Sanidade máxima: +20.",
       "attribute": "controle",
       "min": 5,
       "equipmentCompatible": true,
@@ -51356,8 +51356,8 @@
       "automation": {
         "rework": {
           "modifiers": {
-            "physicalHit": 7,
-            "kaguneHit": 7,
+            "physicalHit": 10,
+            "kaguneHit": 10,
             "physicalSteps": 25,
             "kaguneSteps": 25,
             "sanity": 20
@@ -51616,7 +51616,7 @@
       "supplement": true,
       "sourceId": "REWORK 2026",
       "useType": "Passiva · automática",
-      "description": "Acerto físico: +13; Acerto de Kagune/Quinque: +13; Bloqueio: +20; Esquiva: +20; RD: +75.",
+      "description": "Acerto físico: +20; Acerto de Kagune/Quinque: +20; Bloqueio: +20; Esquiva: +20; RD: +75.",
       "attribute": "controle",
       "min": 9,
       "equipmentCompatible": true,
@@ -51628,8 +51628,8 @@
       "automation": {
         "rework": {
           "modifiers": {
-            "physicalHit": 13,
-            "kaguneHit": 13,
+            "physicalHit": 20,
+            "kaguneHit": 20,
             "block": 20,
             "dodge": 20,
             "rd": 75
@@ -51814,7 +51814,7 @@
       "id": "r26-exp-controle-alma-inabalavel",
       "name": "Alma Inabalável",
       "category": "Controle",
-      "cost": 140,
+      "cost": 60,
       "maxRank": 1,
       "minGrade": 19,
       "supplement": true,
@@ -51923,7 +51923,9 @@
           "textoAnterior": "PROPOSTA PARA REVISAR\n\nRecuperar o pacote histórico (+40 Acerto físico, +60 Kagune/Bloqueio/Esquiva, +80 Passos Kagune e +50 Vida). Preço ligeiramente acima dos 45 históricos pela amplitude.",
           "motivo": "Remoção de avisos e comentários de revisão; preços citados sincronizados com os campos de compra."
         }
-      }
+      },
+      "costMode": "choice",
+      "location": "vantagens"
     },
     {
       "id": "r26-exp-geral-olhar-de-cacador",
@@ -51935,7 +51937,7 @@
       "supplement": true,
       "sourceId": "REWORK 2026",
       "useType": "Passiva · automática",
-      "description": "Acerto físico: +7; Acerto de Kagune/Quinque: +7.",
+      "description": "Acerto físico: +10; Acerto de Kagune/Quinque: +10.",
       "equipmentCompatible": true,
       "requirement": "LEVEL 1+",
       "catalogGroups": [
@@ -51945,8 +51947,8 @@
       "automation": {
         "rework": {
           "modifiers": {
-            "physicalHit": 7,
-            "kaguneHit": 7
+            "physicalHit": 10,
+            "kaguneHit": 10
           },
           "weaponOnly": false
         }
@@ -52239,7 +52241,7 @@
       "supplement": true,
       "sourceId": "REWORK 2026",
       "useType": "Passiva · automática",
-      "description": "Acerto físico: +7; Acerto de Kagune/Quinque: +7; Iniciativa: +5.",
+      "description": "Acerto físico: +10; Acerto de Kagune/Quinque: +10; Iniciativa: +5.",
       "equipmentCompatible": true,
       "requirement": "LEVEL 2+",
       "catalogGroups": [
@@ -52249,8 +52251,8 @@
       "automation": {
         "rework": {
           "modifiers": {
-            "physicalHit": 7,
-            "kaguneHit": 7,
+            "physicalHit": 10,
+            "kaguneHit": 10,
             "initiative": 5
           },
           "weaponOnly": false
@@ -52489,7 +52491,7 @@
       "supplement": true,
       "sourceId": "REWORK 2026",
       "useType": "Passiva · automática",
-      "description": "Acerto físico: +10; Acerto de Kagune/Quinque: +10; Testes de Percepção: +10.",
+      "description": "Acerto físico: +15; Acerto de Kagune/Quinque: +15; Testes de Percepção: +10.",
       "equipmentCompatible": true,
       "requirement": "LEVEL 3+",
       "catalogGroups": [
@@ -52499,8 +52501,8 @@
       "automation": {
         "rework": {
           "modifiers": {
-            "physicalHit": 10,
-            "kaguneHit": 10,
+            "physicalHit": 15,
+            "kaguneHit": 15,
             "checks": {
               "percepcao": 10
             }
@@ -52754,7 +52756,7 @@
       "supplement": true,
       "sourceId": "REWORK 2026",
       "useType": "Passiva · automática",
-      "description": "Acerto físico: +10; Acerto de Kagune/Quinque: +10; Dano fixo físico: +25; Dano fixo de Kagune/Quinque: +25.",
+      "description": "Acerto físico: +15; Acerto de Kagune/Quinque: +15; Dano fixo físico: +25; Dano fixo de Kagune/Quinque: +25.",
       "equipmentCompatible": true,
       "requirement": "LEVEL 4+",
       "catalogGroups": [
@@ -52764,8 +52766,8 @@
       "automation": {
         "rework": {
           "modifiers": {
-            "physicalHit": 10,
-            "kaguneHit": 10,
+            "physicalHit": 15,
+            "kaguneHit": 15,
             "physicalDamage": 25,
             "kaguneDamage": 25
           },
@@ -53028,7 +53030,7 @@
       "supplement": true,
       "sourceId": "REWORK 2026",
       "useType": "Passiva · automática",
-      "description": "Acerto físico: +10; Acerto de Kagune/Quinque: +10; Testes de Precisão: +10.",
+      "description": "Acerto físico: +15; Acerto de Kagune/Quinque: +15; Testes de Precisão: +10.",
       "equipmentCompatible": true,
       "requirement": "LEVEL 5+",
       "catalogGroups": [
@@ -53038,8 +53040,8 @@
       "automation": {
         "rework": {
           "modifiers": {
-            "physicalHit": 10,
-            "kaguneHit": 10,
+            "physicalHit": 15,
+            "kaguneHit": 15,
             "checks": {
               "precisao": 10
             }
@@ -53331,7 +53333,7 @@
       "supplement": true,
       "sourceId": "REWORK 2026",
       "useType": "Passiva · automática",
-      "description": "+3 acertos em ataques físicos; +3 acertos de Kagune/Quinque; +2 Iniciativa.",
+      "description": "+5 acertos em ataques físicos; +5 acertos de Kagune/Quinque; +2 Iniciativa.",
       "equipmentCompatible": true,
       "requirement": "LEVEL 6+",
       "catalogGroups": [
@@ -53341,8 +53343,8 @@
       "automation": {
         "rework": {
           "modifiers": {
-            "physicalHit": 3,
-            "kaguneHit": 3,
+            "physicalHit": 5,
+            "kaguneHit": 5,
             "initiative": 2
           },
           "weaponOnly": false
@@ -53637,7 +53639,7 @@
       "supplement": true,
       "sourceId": "REWORK 2026",
       "useType": "Passiva · automática",
-      "description": "Acerto físico: +7; Acerto de Kagune/Quinque: +7; Testes de Precisão: +15.",
+      "description": "Acerto físico: +10; Acerto de Kagune/Quinque: +10; Testes de Precisão: +15.",
       "equipmentCompatible": true,
       "requirement": "LEVEL 7+",
       "catalogGroups": [
@@ -53647,8 +53649,8 @@
       "automation": {
         "rework": {
           "modifiers": {
-            "physicalHit": 7,
-            "kaguneHit": 7,
+            "physicalHit": 10,
+            "kaguneHit": 10,
             "checks": {
               "precisao": 15
             }
@@ -54279,7 +54281,7 @@
       "supplement": true,
       "sourceId": "REWORK 2026",
       "useType": "Passiva · automática",
-      "description": "Acerto físico: +7; Acerto de Kagune/Quinque: +7; Iniciativa: +10.",
+      "description": "Acerto físico: +10; Acerto de Kagune/Quinque: +10; Iniciativa: +10.",
       "equipmentCompatible": true,
       "requirement": "LEVEL 9+",
       "catalogGroups": [
@@ -54289,8 +54291,8 @@
       "automation": {
         "rework": {
           "modifiers": {
-            "physicalHit": 7,
-            "kaguneHit": 7,
+            "physicalHit": 10,
+            "kaguneHit": 10,
             "initiative": 10
           },
           "weaponOnly": false
@@ -54930,7 +54932,7 @@
       "supplement": true,
       "sourceId": "REWORK 2026",
       "useType": "Passiva · automática",
-      "description": "Acerto físico: +10; Acerto de Kagune/Quinque: +10; Deslocamento: +3; Iniciativa: +10.",
+      "description": "Acerto físico: +15; Acerto de Kagune/Quinque: +15; Deslocamento: +3; Iniciativa: +10.",
       "equipmentCompatible": true,
       "requirement": "LEVEL 11+",
       "catalogGroups": [
@@ -54940,8 +54942,8 @@
       "automation": {
         "rework": {
           "modifiers": {
-            "physicalHit": 10,
-            "kaguneHit": 10,
+            "physicalHit": 15,
+            "kaguneHit": 15,
             "movement": 3,
             "initiative": 10
           },
@@ -55264,7 +55266,7 @@
       "supplement": true,
       "sourceId": "REWORK 2026",
       "useType": "Passiva · automática",
-      "description": "Acerto físico: +10; Acerto de Kagune/Quinque: +10; Iniciativa: +10.",
+      "description": "Acerto físico: +15; Acerto de Kagune/Quinque: +15; Iniciativa: +10.",
       "equipmentCompatible": true,
       "requirement": "LEVEL 12+",
       "catalogGroups": [
@@ -55274,8 +55276,8 @@
       "automation": {
         "rework": {
           "modifiers": {
-            "physicalHit": 10,
-            "kaguneHit": 10,
+            "physicalHit": 15,
+            "kaguneHit": 15,
             "initiative": 10
           },
           "weaponOnly": false
@@ -55936,7 +55938,7 @@
       "supplement": true,
       "sourceId": "REWORK 2026",
       "useType": "Passiva · automática",
-      "description": "+13 acertos em ataques físicos; +13 acertos de Kagune/Quinque; +5 Iniciativa; +5 acertos em testes de Percepção.",
+      "description": "+20 acertos em ataques físicos; +20 acertos de Kagune/Quinque; +5 Iniciativa; +5 acertos em testes de Percepção.",
       "equipmentCompatible": true,
       "requirement": "LEVEL 14+",
       "catalogGroups": [
@@ -55946,8 +55948,8 @@
       "automation": {
         "rework": {
           "modifiers": {
-            "physicalHit": 13,
-            "kaguneHit": 13,
+            "physicalHit": 20,
+            "kaguneHit": 20,
             "initiative": 5,
             "checks": {
               "percepcao": 5
@@ -56264,7 +56266,7 @@
       "supplement": true,
       "sourceId": "REWORK 2026",
       "useType": "Passiva · automática",
-      "description": "Acerto físico: +16; Acerto de Kagune/Quinque: +16; Dano fixo físico: +60; Dano fixo de Kagune/Quinque: +60.",
+      "description": "Acerto físico: +25; Acerto de Kagune/Quinque: +25; Dano fixo físico: +60; Dano fixo de Kagune/Quinque: +60.",
       "equipmentCompatible": true,
       "requirement": "LEVEL 15+",
       "catalogGroups": [
@@ -56274,8 +56276,8 @@
       "automation": {
         "rework": {
           "modifiers": {
-            "physicalHit": 16,
-            "kaguneHit": 16,
+            "physicalHit": 25,
+            "kaguneHit": 25,
             "physicalDamage": 60,
             "kaguneDamage": 60
           },
@@ -56609,7 +56611,7 @@
       "supplement": true,
       "sourceId": "REWORK 2026",
       "useType": "Passiva · automática",
-      "description": "Acerto físico: +20; Acerto de Kagune/Quinque: +20; Iniciativa: +25; Deslocamento: +4.",
+      "description": "Acerto físico: +30; Acerto de Kagune/Quinque: +30; Iniciativa: +25; Deslocamento: +4.",
       "equipmentCompatible": true,
       "requirement": "LEVEL 16+",
       "catalogGroups": [
@@ -56619,8 +56621,8 @@
       "automation": {
         "rework": {
           "modifiers": {
-            "physicalHit": 20,
-            "kaguneHit": 20,
+            "physicalHit": 30,
+            "kaguneHit": 30,
             "initiative": 25,
             "movement": 4
           },
@@ -58061,8 +58063,8 @@
       "automation": {
         "rework": {
           "modifiers": {
-            "physicalHit": 26,
-            "kaguneHit": 26,
+            "physicalHit": 40,
+            "kaguneHit": 40,
             "physicalSteps": 100
           },
           "weaponOnly": false
@@ -58304,7 +58306,7 @@
       "supplement": true,
       "sourceId": "REWORK 2026",
       "useType": "Passiva · automática",
-      "description": "Deslocamento: +2; Acerto físico: +7; Acerto de Kagune/Quinque: +7.",
+      "description": "Deslocamento: +2; Acerto físico: +10; Acerto de Kagune/Quinque: +10.",
       "equipmentCompatible": true,
       "requirement": "LEVEL 1+",
       "catalogGroups": [
@@ -58315,8 +58317,8 @@
         "rework": {
           "modifiers": {
             "movement": 2,
-            "physicalHit": 7,
-            "kaguneHit": 7
+            "physicalHit": 10,
+            "kaguneHit": 10
           },
           "weaponOnly": false
         }
@@ -58719,7 +58721,7 @@
       "supplement": true,
       "sourceId": "REWORK 2026",
       "useType": "Passiva · automática",
-      "description": "+4 Iniciativa; +2 espaços de Deslocamento; +10 acertos em ataques físicos; +10 acertos de Kagune/Quinque.",
+      "description": "+4 Iniciativa; +2 espaços de Deslocamento; +15 acertos em ataques físicos; +15 acertos de Kagune/Quinque.",
       "equipmentCompatible": true,
       "requirement": "LEVEL 4+",
       "catalogGroups": [
@@ -58731,8 +58733,8 @@
           "modifiers": {
             "initiative": 4,
             "movement": 2,
-            "physicalHit": 10,
-            "kaguneHit": 10
+            "physicalHit": 15,
+            "kaguneHit": 15
           },
           "weaponOnly": false
         }
@@ -59151,7 +59153,7 @@
       "supplement": true,
       "sourceId": "REWORK 2026",
       "useType": "Passiva · automática",
-      "description": "Deslocamento: +3; Acerto físico: +10; Acerto de Kagune/Quinque: +10; Iniciativa: +8.",
+      "description": "Deslocamento: +3; Acerto físico: +15; Acerto de Kagune/Quinque: +15; Iniciativa: +8.",
       "equipmentCompatible": true,
       "requirement": "LEVEL 7+",
       "catalogGroups": [
@@ -59162,8 +59164,8 @@
         "rework": {
           "modifiers": {
             "movement": 3,
-            "physicalHit": 10,
-            "kaguneHit": 10,
+            "physicalHit": 15,
+            "kaguneHit": 15,
             "initiative": 8
           },
           "weaponOnly": false
@@ -59457,7 +59459,7 @@
       "supplement": true,
       "sourceId": "REWORK 2026",
       "useType": "Passiva · automática",
-      "description": "Iniciativa: +10; Acerto físico: +13; Acerto de Kagune/Quinque: +13; Dano fixo físico: +30; Dano fixo de Kagune/Quinque: +30.",
+      "description": "Iniciativa: +10; Acerto físico: +20; Acerto de Kagune/Quinque: +20; Dano fixo físico: +30; Dano fixo de Kagune/Quinque: +30.",
       "equipmentCompatible": true,
       "requirement": "LEVEL 9+",
       "catalogGroups": [
@@ -59468,8 +59470,8 @@
         "rework": {
           "modifiers": {
             "initiative": 10,
-            "physicalHit": 13,
-            "kaguneHit": 13,
+            "physicalHit": 20,
+            "kaguneHit": 20,
             "physicalDamage": 30,
             "kaguneDamage": 30
           },
@@ -59781,7 +59783,7 @@
       "supplement": true,
       "sourceId": "REWORK 2026",
       "useType": "Passiva · automática",
-      "description": "Iniciativa: +10; Deslocamento: +3; Acerto físico: +10; Acerto de Kagune/Quinque: +10.",
+      "description": "Iniciativa: +10; Deslocamento: +3; Acerto físico: +15; Acerto de Kagune/Quinque: +15.",
       "equipmentCompatible": true,
       "requirement": "LEVEL 11+",
       "catalogGroups": [
@@ -59793,8 +59795,8 @@
           "modifiers": {
             "initiative": 10,
             "movement": 3,
-            "physicalHit": 10,
-            "kaguneHit": 10
+            "physicalHit": 15,
+            "kaguneHit": 15
           },
           "weaponOnly": false
         }
@@ -60276,7 +60278,7 @@
       "supplement": true,
       "sourceId": "REWORK 2026",
       "useType": "Passiva · automática",
-      "description": "Deslocamento: +5; Acerto físico: +13; Acerto de Kagune/Quinque: +13; Iniciativa: +15.",
+      "description": "Deslocamento: +5; Acerto físico: +20; Acerto de Kagune/Quinque: +20; Iniciativa: +15.",
       "equipmentCompatible": true,
       "requirement": "LEVEL 14+",
       "catalogGroups": [
@@ -60287,8 +60289,8 @@
         "rework": {
           "modifiers": {
             "movement": 5,
-            "physicalHit": 13,
-            "kaguneHit": 13,
+            "physicalHit": 20,
+            "kaguneHit": 20,
             "initiative": 15
           },
           "weaponOnly": false
@@ -60642,7 +60644,7 @@
       "supplement": true,
       "sourceId": "REWORK 2026",
       "useType": "Passiva · automática",
-      "description": "Iniciativa: +25; Acerto físico: +20; Acerto de Kagune/Quinque: +20; Deslocamento: +4.",
+      "description": "Iniciativa: +25; Acerto físico: +30; Acerto de Kagune/Quinque: +30; Deslocamento: +4.",
       "equipmentCompatible": true,
       "requirement": "LEVEL 16+",
       "catalogGroups": [
@@ -60653,8 +60655,8 @@
         "rework": {
           "modifiers": {
             "initiative": 25,
-            "physicalHit": 20,
-            "kaguneHit": 20,
+            "physicalHit": 30,
+            "kaguneHit": 30,
             "movement": 4
           },
           "weaponOnly": false
@@ -61189,7 +61191,7 @@
       "supplement": true,
       "sourceId": "REWORK 2026",
       "useType": "Passiva · automática",
-      "description": "Deslocamento: +7; Iniciativa: +30; Acerto físico: +23; Acerto de Kagune/Quinque: +23.",
+      "description": "Deslocamento: +7; Iniciativa: +30; Acerto físico: +35; Acerto de Kagune/Quinque: +35.",
       "equipmentCompatible": true,
       "requirement": "LEVEL 19+",
       "catalogGroups": [
@@ -61201,8 +61203,8 @@
           "modifiers": {
             "movement": 7,
             "initiative": 30,
-            "physicalHit": 23,
-            "kaguneHit": 23
+            "physicalHit": 35,
+            "kaguneHit": 35
           },
           "weaponOnly": false
         }
@@ -61753,7 +61755,7 @@
       "supplement": true,
       "sourceId": "REWORK 2026",
       "useType": "Passiva · automática",
-      "description": "Passos físicos: +75; Passos de Kagune/Quinque: +75; Acerto físico: +23; Acerto de Kagune/Quinque: +23.",
+      "description": "Passos físicos: +75; Passos de Kagune/Quinque: +75; Acerto físico: +35; Acerto de Kagune/Quinque: +35.",
       "equipmentCompatible": true,
       "requirement": "LEVEL 16+",
       "catalogGroups": [
@@ -61765,8 +61767,8 @@
           "modifiers": {
             "physicalSteps": 75,
             "kaguneSteps": 75,
-            "physicalHit": 23,
-            "kaguneHit": 23
+            "physicalHit": 35,
+            "kaguneHit": 35
           },
           "weaponOnly": false
         }
@@ -62610,7 +62612,7 @@
       "supplement": true,
       "sourceId": "REWORK 2026",
       "useType": "Passiva · automática",
-      "description": "Enquanto a Kagune/Quinque estiver em uso: +50 Passos de Dano de Kagune/Quinque; +20 acertos de Kagune/Quinque; +30 metros de alcance da Kagune/Quinque.",
+      "description": "Enquanto a Kagune/Quinque estiver em uso: +50 Passos de Dano de Kagune/Quinque; +30 acertos de Kagune/Quinque; +30 metros de alcance da Kagune/Quinque.",
       "location": "kakuhou",
       "organGroup": "Ukaku",
       "kaguneTypes": [
@@ -62628,7 +62630,7 @@
         "rework": {
           "modifiers": {
             "kaguneSteps": 50,
-            "kaguneHit": 20,
+            "kaguneHit": 30,
             "range": 30
           },
           "weaponOnly": true
@@ -64028,7 +64030,7 @@
       "supplement": true,
       "useType": "Passiva · automática",
       "equipmentCompatible": true,
-      "description": "+5% de acertos em ataques físicos; +5% de acertos de Kagune/Quinque. Percentuais da mesma grandeza somam até 75%, sobre o subtotal sem estas perks; o bônus é calculado uma única vez, arredondado para baixo.",
+      "description": "+10% de acertos em ataques físicos; +10% de acertos de Kagune/Quinque. Percentuais da mesma grandeza somam até 75%, sobre o subtotal sem estas perks; o bônus é calculado uma única vez, arredondado para baixo.",
       "requirement": "LEVEL 5+",
       "catalogGroups": [
         "rework",
@@ -64037,8 +64039,8 @@
       "automation": {
         "scaling": {
           "percentages": {
-            "physicalHit": 5,
-            "kaguneHit": 5
+            "physicalHit": 10,
+            "kaguneHit": 10
           },
           "weaponOnly": false
         }
@@ -64198,7 +64200,7 @@
       "supplement": true,
       "useType": "Passiva · automática",
       "equipmentCompatible": true,
-      "description": "+25% de Passos de Dano físico; +25% de Passos de Dano de Kagune/Quinque; +8% de acertos em ataques físicos; +8% de acertos de Kagune/Quinque. Percentuais da mesma grandeza somam até 75%, sobre o subtotal sem estas perks; o bônus é calculado uma única vez, arredondado para baixo.",
+      "description": "+25% de Passos de Dano físico; +25% de Passos de Dano de Kagune/Quinque; +15% de acertos em ataques físicos; +15% de acertos de Kagune/Quinque. Percentuais da mesma grandeza somam até 75%, sobre o subtotal sem estas perks; o bônus é calculado uma única vez, arredondado para baixo.",
       "requirement": "LEVEL 18+",
       "catalogGroups": [
         "rework",
@@ -64209,8 +64211,8 @@
           "percentages": {
             "physicalSteps": 25,
             "kaguneSteps": 25,
-            "physicalHit": 8,
-            "kaguneHit": 8
+            "physicalHit": 15,
+            "kaguneHit": 15
           },
           "weaponOnly": false
         }
@@ -155413,7 +155415,7 @@
         30,
         35,
         30,
-        40
+        53
       ],
       "maxRank": 8,
       "type": "Passivo · Biológico",
@@ -155425,8 +155427,8 @@
         "tailsPerRank": 1,
         "hitBonusMinimumRank": 4,
         "hitModifier": 4,
-        "stepsPenaltyPerTail": 2,
-        "durabilityPenaltyPerRank": 1
+        "stepsPenaltyPerTail": 25,
+        "durabilityPenaltyPerRank": 25
       },
       "grade": 1,
       "costMode": "choice",
@@ -157717,6 +157719,22 @@
             "tails": 1,
             "steps": 25
           }
+        }
+      },
+      "automation": {
+        "custom": {
+          "activation": "passive",
+          "rcCost": 0,
+          "effects": [
+            {
+              "id": "efeito-4ba1ad69",
+              "type": "damage-steps",
+              "value": 15,
+              "scope": "kagune",
+              "attribute": "forca",
+              "operation": "subtract"
+            }
+          ]
         }
       }
     },
