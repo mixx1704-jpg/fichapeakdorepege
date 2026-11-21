@@ -1,5 +1,5 @@
 import raw from './perks.json';
-import type { Perk, KaguneEffect, Evolution } from './data';
+import type { Perk, Drawback, KaguneEffect, Evolution } from './data';
 import type { KakujaPerk } from './kakuja-perks';
 import type { CustomSkillEffect } from './CustomSkillsPanel';
 import type { NewPackDefinition } from './new-pack-catalog';
@@ -16,5 +16,6 @@ export type CatalogAutomation = {
   custom?: { activation: 'passive' | 'active'; rcCost?: number; effects: CustomSkillEffect[] };
 };
 export type CatalogPerk = Perk & { catalogGroups?: string[]; automation?: CatalogAutomation };
-export const perkCatalog = raw as unknown as { schemaVersion: number; perks: CatalogPerk[]; kakujaPerks: (KakujaPerk & {catalogGroups?: string[]})[]; kaguneEffects: (KaguneEffect & {catalogGroups?: string[]})[]; evolutions: (Evolution & {catalogGroups?: string[]})[] };
+if(raw.schemaVersion!==2||!Array.isArray(raw.drawbacks))throw new Error('Atualize o catálogo: importe e exporte o perks.json pelo editor local de perks e desvantagens.');
+export const perkCatalog = raw as unknown as { schemaVersion: number; perks: CatalogPerk[]; drawbacks: Drawback[]; kakujaPerks: (KakujaPerk & {catalogGroups?: string[]})[]; kaguneEffects: (KaguneEffect & {catalogGroups?: string[]})[]; evolutions: (Evolution & {catalogGroups?: string[]})[] };
 export const catalogGroup = (group: string) => perkCatalog.perks.filter(p => p.catalogGroups?.includes(group));
