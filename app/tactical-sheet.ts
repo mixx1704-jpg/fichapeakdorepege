@@ -1,3 +1,4 @@
+import { fixedAccuracyTotal } from './combat-progression';
 import { calculateCharacter, type CharacterSheet } from './character';
 import { resolveTactical } from './tactical';
 import { isRCSuppressed } from './vats-engine';
@@ -32,7 +33,7 @@ export function applyCharacterTacticalAction(sheet: CharacterSheet, action: Tact
     rcCostIncrease: derived.packEffects.rcCostIncrease,
     rcCostMultiplier: derived.packEffects.rcCostMultiplier,
     penetrationPercent:derived.scaling.penetrationPercent,
-    hitBonus: [...(sheet.weaponKind === 'kagune' && sheet.kaguneActive ? derived.kaguneTest : derived.physicalHitTest).matchAll(/[+-]\d+/g)].reduce((sum, match) => sum + Number(match[0]), 0),
+    hitBonus: fixedAccuracyTotal(sheet.weaponKind === "kagune" && sheet.kaguneActive ? derived.kaguneTest : derived.physicalHitTest),
   };
   const synced = resolveTactical(sheet.tactical, { type: 'sync-turn', turn: sheet.vats.turn }, freshContext).state;
   const result = resolveTactical(synced, action, freshContext);

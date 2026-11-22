@@ -1,4 +1,5 @@
 "use client";
+import { fixedAccuracyTotal } from './combat-progression';
 import {useState} from 'react';
 import {filterCatalogQuality,normalizeCatalogSearch} from './catalog-filters';
 import {CatalogQualityControls,defaultCatalogQuality} from './CatalogQualityControls';
@@ -28,7 +29,7 @@ export function QuinquesPanel({items,selectedId,onSelect,onChange,owner}:{items:
  const d=calculateQuinque(q,owner);
  const automatic=d.carrierBonuses;
  const signed=(value:number)=>`${value>=0?'+':''}${Math.floor(value)}`;
- const tacticalContext:TacticalContext={damageMultiplier:d.packEffects.damageMultiplier.kagune,rcDiscount:d.packEffects.rcDiscount,rcCostIncrease:d.packEffects.rcCostIncrease,rcCostMultiplier:d.packEffects.rcCostMultiplier,level:q.grade,species:'humano',attributes:d.permanentAttributes,ownedPerks:q.perks,currentRC:0,currentLife:0,maxLife:0,damageSteps:d.kaguneSteps,damageFormula:d.kaguneDamage,penetrationPercent:d.scaling.penetrationPercent,hitBonus:[...d.kaguneTest.matchAll(/[+-]\d+/g)].reduce((sum,match)=>sum+Number(match[0]),0),rd:d.rd,control:d.activeAttributes.controle,weaponKind:'quinque',kaguneType:q.rcType,isRCSuppressed:false,weaponActive:true,weaponOnly:true,die:20};
+ const tacticalContext:TacticalContext={damageMultiplier:d.packEffects.damageMultiplier.kagune,rcDiscount:d.packEffects.rcDiscount,rcCostIncrease:d.packEffects.rcCostIncrease,rcCostMultiplier:d.packEffects.rcCostMultiplier,level:q.grade,species:'humano',attributes:d.permanentAttributes,ownedPerks:q.perks,currentRC:0,currentLife:0,maxLife:0,damageSteps:d.kaguneSteps,damageFormula:d.kaguneDamage,penetrationPercent:d.scaling.penetrationPercent,hitBonus:fixedAccuracyTotal(d.kaguneTest),rd:d.rd,control:d.activeAttributes.controle,weaponKind:'quinque',kaguneType:q.rcType,isRCSuppressed:false,weaponActive:true,weaponOnly:true,die:20};
  const test=d.kaguneTest;
  const matches=(x:{name:string;description:string})=>normalizeCatalogSearch(`${x.name} ${x.description}`).includes(normalizeCatalogSearch(query));
  const effectItems=filterCatalogQuality(kaguneEffects.filter(e=>quinqueAllowsEffect(q,e)&&matches(e)),quality);

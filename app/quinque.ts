@@ -1,3 +1,4 @@
+import { applyCombatLevelDie, fixedAccuracyTotal } from './combat-progression';
 import { attributeKeys, evolutions, kaguneEffects, perks, type AttributeKey, type KaguneFamily, type Evolution, type KaguneEffect, type Perk } from './data';
 import {combineMultipliers} from './numeric-modifiers';
 import {normalizePEHistory,type PERewardRecord} from './pe-rewards';
@@ -112,11 +113,11 @@ export function calculateQuinque(q:Quinque,carrier?:QuinqueCarrier) {
  const scaling={...d.scaling,bonuses:{...d.scaling.bonuses,kaguneHit:hitScalingBonus},totals:{...d.scaling.totals,kaguneHit:hitSubtotal+hitScalingBonus}};
  const testMultiplier=(test:string,multiplier:number)=>{
   if(multiplier===1)return test;
-  const total=[...test.matchAll(/[+-]\d+/g)].reduce((sum,match)=>sum+Number(match[0]),0);
+  const total=fixedAccuracyTotal(test);
   return adjustTest(test,Math.floor(total*multiplier)-total);
  };
  const kaguneTest=testMultiplier(`${d.kakujaKaguneTest}${manualHitModifier>0?`+${manualHitModifier}`:manualHitModifier<0?manualHitModifier:''}`,combineMultipliers(d.packEffects.offensiveAccuracyMultiplier,inherited.offensiveAccuracyMultiplier));
  const dodgeTest=inherited.dodgeDisabled?'Indisponível — Postura sem Retorno':testMultiplier(d.dodgeTest,inherited.dodgeMultiplier);
  const attributeTests=Object.fromEntries(attributeKeys.map(key=>[key,appendQuinqueSuccesses(d.attributeTests[key],inherited.attributeChecks[key])])) as Record<AttributeKey,string>;
- return {...d,dodgeTest,attributeTests,carrierBonuses:inherited,scaling,kaguneTest,conditions:damageConditionsForSheet(s,'kagune'),available,spent,remaining:available-spent,effectPE:Math.floor(effectPE),evolutionPE:Math.floor(evolutionPE),perkPE:Math.floor(perkPE),invalidEffects:[...new Set(invalidEffects)],invalidEvolutions:[...new Set(invalidEvolutions)],invalidPerks,rd:Math.floor(q.rdOverride??d.rd),durability:Math.floor(q.durabilityOverride??d.kaguneDurability),nextGradePE:gradeRequirementFor(q.grade),hitModifier:Math.floor(Math.floor(d.activeAttributes[primary]/2)+q.hitModifier)};
+ return applyCombatLevelDie({...d,dodgeTest,attributeTests,carrierBonuses:inherited,scaling,kaguneTest,conditions:damageConditionsForSheet(s,'kagune'),available,spent,remaining:available-spent,effectPE:Math.floor(effectPE),evolutionPE:Math.floor(evolutionPE),perkPE:Math.floor(perkPE),invalidEffects:[...new Set(invalidEffects)],invalidEvolutions:[...new Set(invalidEvolutions)],invalidPerks,rd:Math.floor(q.rdOverride??d.rd),durability:Math.floor(q.durabilityOverride??d.kaguneDurability),nextGradePE:gradeRequirementFor(q.grade),hitModifier:Math.floor(Math.floor(d.activeAttributes[primary]/2)+q.hitModifier)}, q.grade);
 }

@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/set-state-in-effect, @next/next/no-img-element */
 "use client";
+import { fixedAccuracyTotal } from './combat-progression';
 import { filterPerkCatalog, filterCatalogQuality, normalizeCatalogSearch } from "./catalog-filters";
 import { CatalogQualityControls, defaultCatalogQuality } from "./CatalogQualityControls";
 import { QuickCustomSkills, QuickRuleConditions, QuickCatalogSkills } from "./QuickActivations";
@@ -409,7 +410,7 @@ export default function Home() {
     damageSteps:sheet.weaponKind === "kagune" && sheet.kaguneActive ? derived.kaguneSteps : derived.physicalSteps,
     damageFormula:sheet.weaponKind === "kagune" && sheet.kaguneActive ? derived.kaguneDamage : derived.physicalDamage,
     penetrationPercent:derived.scaling.penetrationPercent,
-    hitBonus:[...(sheet.weaponKind === "kagune" && sheet.kaguneActive ? derived.kaguneTest : derived.physicalHitTest).matchAll(/[+-]\d+/g)].reduce((sum,match)=>sum+Number(match[0]),0),
+    hitBonus:fixedAccuracyTotal(sheet.weaponKind === "kagune" && sheet.kaguneActive ? derived.kaguneTest : derived.physicalHitTest),
     rd:derived.rd,control:derived.activeAttributes.controle,weaponKind:sheet.weaponKind,kaguneType:sheet.kaguneType,
     isRCSuppressed:derived.rcSuppressed,weaponActive:sheet.weaponKind !== "kagune" || (sheet.kaguneActive && !derived.rcSuppressed && sheet.vats.kakuhouUntil <= sheet.vats.turn),
     turn:sheet.vats.turn,die:derived.testDie,

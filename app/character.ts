@@ -1,3 +1,4 @@
+import { applyCombatLevelDie, fixedAccuracyTotal } from './combat-progression';
 import { rollemDice } from './damage-dice';
 import { catalogSkills } from './catalog-skills';
 import { effectNumber, evolutionNumber, perkNumber } from './catalog-mechanics';
@@ -723,7 +724,7 @@ function calculateCharacterCore(sheet: CharacterSheet, context: {quinque?:boolea
       return formatTest(dice + scaled(stat, subtotal) - subtotal, modifier, false, testDie);
     };
     const multiplyTest = (test: string, multiplier: number) => {
-      const total = [...test.matchAll(/[+-]\d+/g)].reduce((sum, match) => sum + Number(match[0]), 0);
+      const total = fixedAccuracyTotal(test);
       return multiplier === 1 ? test : adjustTest(test, Math.floor(total * multiplier) - total);
     };
 
@@ -1133,7 +1134,7 @@ function calculateCharacterCore(sheet: CharacterSheet, context: {quinque?:boolea
 function calculateCharacterWithPack(sheet: CharacterSheet, context: {quinque?:boolean}) {
   const baseline = calculateCharacterCore(sheet, context);
   if (!Object.keys(sheet.perks).some(id => newPackDefinition(id)) && !sheet.packConditions['r26-revisao-009']?.value) return baseline;
-  const total = (test: string) => [...test.matchAll(/[+-]\d+/g)].reduce((sum, match) => sum + Number(match[0]), 0);
+  const total = fixedAccuracyTotal;
   const packContext = {
     perks: sheet.perks, attributes: baseline.activeAttributes, requirementAttributes: baseline.permanentAttributes,
     level: sheet.grade, species: sheet.species, kaguneTypes: [...kaguneFamiliesForSheet(sheet)], primaryKaguneType: sheet.kaguneType,
@@ -1287,9 +1288,5 @@ export const damageConditionsForSheet = (sheet: CharacterSheet, scope: "physical
 /** Combat progression is derived once, never stored in purchased attributes. */
 export function calculateCharacter(sheet: CharacterSheet, context: {quinque?:boolean} = {}) {
   const result = calculateCharacterWithoutLevelDice(sheet, context);
-  const count = context.quinque ? 0 : Math.min(10, Math.max(0, Math.floor(sheet.grade / 2)));
-  const bonus = (test: string) => count && /^1d\d+/.test(test) ? test + '+' + count + 'd10' : test;
-  return { ...result, physicalHitTest: bonus(result.physicalHitTest), kaguneTest: bonus(result.kaguneTest),
-    blockTest: bonus(result.blockTest), dodgeTest: bonus(result.dodgeTest),
-    kakujaKaguneTest: bonus(result.kakujaKaguneTest), kakujaBlockTest: bonus(result.kakujaBlockTest), kakujaDodgeTest: bonus(result.kakujaDodgeTest) };
+  return context.quinque ? result : applyCombatLevelDie(result, sheet.grade);
 }
