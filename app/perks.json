@@ -67215,7 +67215,7 @@
       "equipmentCompatible": false,
       "useType": "Ativa · união de partes",
       "requirement": "LEVEL 1+ · Kagune com partes extras",
-      "description": "Una todas as partes em uma única grande Kagune. Para N tentáculos usados, ganhe +2 acertos de Kagune a cada par completo: 2 × piso(N/2). A parte unida recebe piso(soma da Dureza de todas as partes/2), a soma integral da RD e o mesmo dano de acertar todas as partes unidas. Com 8 tentáculos, são +8 acertos, dureza de 4 partes e RD de 8 partes. Cada par completo de partes extras mantém +1 metro de alcance base e −1 acerto em testes de Agilidade. O dano unido soma o dano completo de cada tentáculo, incluindo todos os dados e modificadores, sem perdas ao ativar a fusão. A Kakuja herda o dano, a dureza e a RD da fusão. A ficha permite ativar, conferir os totais e copiar o ataque; ao desfazer, as partes e a mobilidade originais retornam.",
+      "description": "Una todas as partes da Kagune em uma única estrutura de grandes proporções.\n\nDano: 100% do dano base da parte principal (dados e modificadores próprios) + 50% do dano base de cada parte adicional. Propriedades individuais das partes integram o cálculo proporcional. Modificadores globais de dano e bônus concedidos diretamente ao personagem são aplicados uma única vez ao ataque fundido, sem multiplicação pela quantidade de partes.\n\nRD: 100% da RD da parte mais resistente + 25% da soma da RD das demais partes, arredondada para baixo.\n\nDureza: piso(soma da Dureza de todas as partes/2).\n\nAcerto: +2 Acerto de Kagune para cada par completo de partes fundidas (2 × piso(N/2)).\n\nAlcance: +1 metro de alcance base para cada par completo de partes extras.\n\nMobilidade: −1 Acerto em testes de Agilidade para cada par completo de partes extras.\n\nA Kakuja herda o dano, a Dureza e a RD resultantes da fusão, sem reaplicar os multiplicadores da fusão. Ao desfazer a fusão, as partes e a mobilidade originais retornam.",
       "catalogGroups": [
         "rework"
       ],
@@ -67259,6 +67259,14 @@
           "beneficios": {
             "hit": 14
           }
+        },
+        "nerfColosso": {
+          "status": "Nerf de balanceamento",
+          "custo": 11,
+          "descricaoAnterior": "Una todas as partes em uma única grande Kagune. Para N tentáculos usados, ganhe +2 acertos de Kagune a cada par completo: 2 × piso(N/2). A parte unida recebe piso(soma da Dureza de todas as partes/2), a soma integral da RD e o mesmo dano de acertar todas as partes unidas. Com 8 tentáculos, são +8 acertos, dureza de 4 partes e RD de 8 partes. Cada par completo de partes extras mantém +1 metro de alcance base e −1 acerto em testes de Agilidade. O dano unido soma o dano completo de cada tentáculo, incluindo todos os dados e modificadores, sem perdas ao ativar a fusão. A Kakuja herda o dano, a dureza e a RD da fusão. A ficha permite ativar, conferir os totais e copiar o ataque; ao desfazer, as partes e a mobilidade originais retornam.",
+          "descricaoAtual": "Una todas as partes da Kagune em uma única estrutura de grandes proporções.\n\nDano: 100% do dano base da parte principal (dados e modificadores próprios) + 50% do dano base de cada parte adicional. Propriedades individuais das partes integram o cálculo proporcional. Modificadores globais de dano e bônus concedidos diretamente ao personagem são aplicados uma única vez ao ataque fundido, sem multiplicação pela quantidade de partes.\n\nRD: 100% da RD da parte mais resistente + 25% da soma da RD das demais partes, arredondada para baixo.\n\nDureza: piso(soma da Dureza de todas as partes/2).\n\nAcerto: +2 Acerto de Kagune para cada par completo de partes fundidas (2 × piso(N/2)).\n\nAlcance: +1 metro de alcance base para cada par completo de partes extras.\n\nMobilidade: −1 Acerto em testes de Agilidade para cada par completo de partes extras.\n\nA Kakuja herda o dano, a Dureza e a RD resultantes da fusão, sem reaplicar os multiplicadores da fusão. Ao desfazer a fusão, as partes e a mobilidade originais retornam.",
+          "criterio": "Reduzir a escalabilidade da RD e do dano da fusão, sem alterar o preço ou os demais benefícios.",
+          "pendencia": "Atualizar as fórmulas nativas do Colosso no motor da ficha para aplicar a nova regra; a edição do JSON por si só não altera o código."
         }
       }
     },
